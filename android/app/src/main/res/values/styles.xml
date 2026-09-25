@@ -13,6 +13,11 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@null</item>
+        <!-- Pencere zemini uygulamanın zemini. Eski WebView'de (< 140) Capacitor
+             WebView'e padding verir ve çubukların arkasında bu renk görünür;
+             tanımsızken DayNight temasının açık/koyu grisi (#fafafa / #303030)
+             çıkıyordu. -->
+        <item name="android:windowBackground">@color/app_background</item>
     </style>
 
 

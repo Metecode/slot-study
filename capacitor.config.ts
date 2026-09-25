@@ -15,6 +15,18 @@ const config: CapacitorConfig = {
     */
     androidScheme: "https",
   },
+  plugins: {
+    SystemBars: {
+      /*
+        Çubuk ikonları hep açık: uygulamanın yalnızca koyu teması var.
+        Varsayılan (DEFAULT) sistemin açık/koyu moduna uyuyor ve açık modda
+        koyu zemin üstüne koyu ikon çiziyordu. Açık tema gelirse stil
+        src/platform/'dan SystemBars.setStyle ile temaya bağlanmalı.
+        insetsHandling varsayılan (css) bırakıldı.
+      */
+      style: "DARK",
+    },
+  },
 };
 
 export default config;
