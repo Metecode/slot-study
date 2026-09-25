@@ -23,13 +23,20 @@
   border: 1px solid var(--line);
   border-radius: 999px;
   cursor: help;
-  transition: border-color var(--dur-fast) var(--ease-out);
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
 @media (hover: hover) {
   .badge:hover {
     border-color: var(--text-faint);
   }
+}
+
+/* Basma geri bildirimi: diğer düğmelerle aynı hareket, 1px aşağı. */
+.badge:active {
+  transform: translateY(1px);
 }
 
 .badge:focus-visible {

@@ -41,6 +41,16 @@ button {
   appearance: none;
 }
 
+/*
+  Android WebView ve Chrome, dokunulan öğenin üstüne köşeli mavi bir
+  vurgu çiziyor. Her tıklanabilir öğenin kendi :active geri bildirimi
+  var, bu vurgu onun üstüne biniyordu. Özellik kalıtılıyor; kökte bir
+  kez yazmak yeter. Klavye odağı :focus-visible ile ayrı, etkilenmez.
+*/
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   background: var(--bg);
