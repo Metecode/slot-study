@@ -16,7 +16,8 @@
     "android:open": "cap open android",
     "android:run": "npm run build && cap sync android && cap run android",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "scan:layout": "node scripts/scan-layout.mjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",
@@ -41,6 +42,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",
     "globals": "^17.12.0",
+    "playwright-core": "1.63.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.69.0",

@@ -65,6 +65,44 @@ body {
 }
 
 /*
+  Sistem çubuklarının zemini. viewport-fit=cover'da (iOS ana ekran,
+  Android edge-to-edge) durum çubuğu ve gezinme çubuğu saydam, sayfanın
+  üstüne çiziliyor; kaydırınca içerik saatin, pilin ve gezinme
+  tuşlarının arkasından geçiyordu. İki şerit o bölgeleri hep --bg ile
+  örter. Tarayıcıda ve masaüstünde --safe-* 0: şeritler yüksekliksiz,
+  hiçbir şey çizilmez.
+
+  body'nin sözde öğeleri, hiçbir bileşenin değil: sayfanın kök yığın
+  bağlamında dururlar. z-index her katmanın üstünde (üst çubuk 20, oturum
+  paneli onun içinde); showModal diyalogları üst katmanda (top layer),
+  şeritlerin de üstünde kalır.
+
+  Sabit konum yatay taşmaya duyarlı: sayfa viewport'tan genişken mobil
+  tarayıcı layout viewport'u büyütüyor ve kaydırmada şeritler ekran
+  kenarından kopuyordu. Taşmayı npm run scan:layout yakalar.
+*/
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--bg);
+  pointer-events: none;
+}
+
+body::before {
+  top: 0;
+  height: var(--safe-top);
+}
+
+body::after {
+  bottom: 0;
+  height: var(--safe-bottom);
+}
+
+/*
   Dokunmatik cihazda küçük düğmelerin (anahtar, çip, ikon butonu) görünür
   boyutu aynı kalır ama dokunma alanı büyür: negatif inset'li görünmez
   bir ::after ile. Masaüstünde fare kullanımını hiç etkilemez, yalnızca
