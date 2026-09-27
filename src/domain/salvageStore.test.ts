@@ -34,7 +34,7 @@ describe("salvageStore", () => {
     const result = salvageStore({
       schemaVersion: SCHEMA_VERSION,
       progress: {},
-      settings: { fastMode: true, soundEnabled: "evet", lang: "de", initialized: true },
+      settings: { fastMode: true, soundEnabled: "evet", hapticsEnabled: 1, lang: "de", initialized: true },
     });
 
     expect(result.store.settings).toEqual({
@@ -43,7 +43,7 @@ describe("salvageStore", () => {
       initialized: true,
     });
     // Eksik alanlar (soundHintShown, activeCategories) sıfırlanmış sayılmaz.
-    expect(result.resetSettings).toEqual(["soundEnabled", "lang"]);
+    expect(result.resetSettings).toEqual(["soundEnabled", "hapticsEnabled", "lang"]);
   });
 
   it("nesne olmayan settings'in tüm alanlarını sıfırlanmış sayar", () => {

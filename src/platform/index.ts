@@ -28,10 +28,14 @@ const native = isNativePlatform();
  *   ve senkron hiç denenmez.
  * - serviceWorker: Native'de varlıklar zaten paketin içinde; önbellek
  *   katmanı gereksiz ve güncellemeyi uygulama mağazası yapıyor.
+ * - haptics: Native'de @capacitor/haptics ile titreşim ve Ayarlar'da
+ *   "Titreşim" anahtarı. Web'de anahtar yok; kol çekişindeki kısa
+ *   navigator.vibrate koşulsuz kalır (bkz. haptics.ts).
  */
 export const platformFeatures = {
   auth: !native,
   serviceWorker: !native,
+  haptics: native,
 } as const;
 
 /* ------------------------------------------------------------------ */

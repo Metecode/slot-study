@@ -6,6 +6,7 @@ import { Lever } from "./Lever";
 import { SoundHint } from "./SoundHint";
 import { SoundToggle } from "./SoundToggle";
 import { useMachineSound } from "../hooks/useMachineSound";
+import { haptics } from "../platform/haptics";
 import { CATEGORY_LABELS } from "../content/labels";
 import type { Category, Question } from "../domain/question";
 import styles from "./Machine.module.css";
@@ -278,6 +279,7 @@ export function Machine({
                 onRowPass={onRowPass}
                 onSettle={() => {
                   sound.stop();
+                  haptics.reelStop();
                   bumpTick(leftSlotRef.current);
                   if (settleOwner === "left") onSettle();
                 }}
@@ -295,6 +297,7 @@ export function Machine({
                 onRowPass={onRowPass}
                 onSettle={() => {
                   sound.stop();
+                  haptics.reelStop();
                   bumpTick(rightSlotRef.current);
                   if (settleOwner === "right") onSettle();
                 }}
@@ -341,7 +344,9 @@ export function Machine({
             <Lever
               disabled={spinning || !canSpin}
               onPull={() => {
+                // Ses ve titreşim aynı anda: kol çekişinin tek anı burası.
                 sound.lever();
+                haptics.leverPull();
                 onPull();
               }}
             />

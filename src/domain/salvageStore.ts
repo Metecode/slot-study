@@ -102,6 +102,7 @@ function salvageSettings(value: unknown): { value: Store["settings"]; reset: str
       fastMode: pick("fastMode", shape.fastMode, defaults.fastMode),
       soundEnabled: pick("soundEnabled", shape.soundEnabled, defaults.soundEnabled),
       soundHintShown: pick("soundHintShown", shape.soundHintShown, defaults.soundHintShown),
+      hapticsEnabled: pick("hapticsEnabled", shape.hapticsEnabled, defaults.hapticsEnabled),
       lang: pick("lang", shape.lang, defaults.lang),
       activeCategories: pick("activeCategories", shape.activeCategories, defaults.activeCategories),
       initialized: pick("initialized", shape.initialized, defaults.initialized),

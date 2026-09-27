@@ -35,10 +35,35 @@ describe("readStore", () => {
     expect(recovered).toBe(false);
     expect(store.settings.soundHintShown).toBe(false);
   });
+
+  it("hapticsEnabled alanı olmayan eski kayıt kırılmaz, titreşim açık gelir", () => {
+    const old = {
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { fastMode: true, soundEnabled: false, activeCategories: ["sql"], initialized: true },
+    };
+
+    const { store, recovered } = readStore(old);
+
+    expect(recovered).toBe(false);
+    expect(store.settings.hapticsEnabled).toBe(true);
+    // Sesten bağımsız: kapalı ses titreşimi kapatmaz.
+    expect(store.settings.soundEnabled).toBe(false);
+  });
+
+  it("kapatılmış titreşim tercihini korur", () => {
+    const saved = { schemaVersion: SCHEMA_VERSION, progress: {}, settings: { hapticsEnabled: false } };
+
+    expect(readStore(saved).store.settings.hapticsEnabled).toBe(false);
+  });
 });
 
 describe("emptyStore", () => {
   it("ilk açılışta ses açık", () => {
     expect(emptyStore().settings.soundEnabled).toBe(true);
+  });
+
+  it("ilk açılışta titreşim açık", () => {
+    expect(emptyStore().settings.hapticsEnabled).toBe(true);
   });
 });

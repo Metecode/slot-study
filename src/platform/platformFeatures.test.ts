@@ -31,18 +31,18 @@ afterEach(() => {
 });
 
 describe("platformFeatures", () => {
-  it("web'de auth ve service worker açık", async () => {
+  it("web'de auth ve service worker açık, haptik kapalı", async () => {
     mockCapacitor(false);
     const { platformFeatures } = await import("./index");
 
-    expect(platformFeatures).toEqual({ auth: true, serviceWorker: true });
+    expect(platformFeatures).toEqual({ auth: true, serviceWorker: true, haptics: false });
   });
 
-  it("native'de auth ve service worker kapalı", async () => {
+  it("native'de auth ve service worker kapalı, haptik açık", async () => {
     mockCapacitor(true);
     const { platformFeatures } = await import("./index");
 
-    expect(platformFeatures).toEqual({ auth: false, serviceWorker: false });
+    expect(platformFeatures).toEqual({ auth: false, serviceWorker: false, haptics: true });
   });
 });
 

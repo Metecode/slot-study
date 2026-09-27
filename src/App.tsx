@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
 
 import styles from "./App.module.css";
 import { ensureAudioReady } from "./audio/audioContext";
@@ -14,6 +14,8 @@ import { StepIndicator } from "./components/StepIndicator";
 import { Switch } from "./components/Switch";
 import { TopBar } from "./components/TopBar";
 import { IS_APPLE_TOUCH_DEVICE, useSoundHint } from "./hooks/useSoundHint";
+import { platformFeatures } from "./platform";
+import { haptics } from "./platform/haptics";
 import { AVAILABLE_CATEGORIES, QUESTIONS } from "./content";
 import { evaluateLexical } from "./domain/evaluate";
 import { initialSessionState, sessionReducer, toStore } from "./domain/session";
@@ -77,6 +79,7 @@ function Session({ store, warning, save }: SessionProps) {
   const [soundEnabled, setSoundEnabled] = useState(store.settings.soundEnabled);
   const soundHint = useSoundHint(store.settings.soundHintShown);
   const soundHintShown = soundHint.hintShown;
+  const [hapticsEnabled, setHapticsEnabled] = useState(store.settings.hapticsEnabled);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [lastAnswer, setLastAnswer] = useState("");
   const [warningDismissed, setWarningDismissed] = useState(false);
@@ -88,8 +91,16 @@ function Session({ store, warning, save }: SessionProps) {
   // karşılaştırma noktası yapar (bkz. storage/storeWriter.ts).
   const { progress, activeCategories } = state;
   useEffect(() => {
-    save(toStore({ progress, activeCategories }, { fastMode, soundEnabled, soundHintShown }));
-  }, [progress, activeCategories, fastMode, soundEnabled, soundHintShown, save]);
+    save(
+      toStore({ progress, activeCategories }, { fastMode, soundEnabled, soundHintShown, hapticsEnabled }),
+    );
+  }, [progress, activeCategories, fastMode, soundEnabled, soundHintShown, hapticsEnabled, save]);
+
+  // Haptik modülü tercihi kendisi tutuyor, çağrı noktalarına ayar inmiyor.
+  // Boyamadan önce eşitlenir: tıklama her zaman güncel değeri görür.
+  useLayoutEffect(() => {
+    haptics.setEnabled(hapticsEnabled);
+  }, [hapticsEnabled]);
 
   // Sunucu ikinci kopya: senkron oturuma yazar, diske yazmayı yukarıdaki
   // efekt zaten üstleniyor. Doğrudan IndexedDB'ye yazsaydı bu efekt bir
@@ -162,6 +173,12 @@ function Session({ store, warning, save }: SessionProps) {
       playLever();
     }
     setSoundEnabled(enabled);
+  }
+
+  // Açılınca bir kez titreşir: ses açılınca kol sesinin çalmasının karşılığı.
+  function handleHapticsChange(enabled: boolean) {
+    if (enabled) haptics.switchedOn();
+    setHapticsEnabled(enabled);
   }
 
   // Sessiz anahtar ipucu yalnızca hoparlör düğmesinde: ipucu onun yanında
@@ -261,6 +278,9 @@ function Session({ store, warning, save }: SessionProps) {
                     </span>
                   )}
                 </span>
+                {platformFeatures.haptics && (
+                  <Switch checked={hapticsEnabled} onChange={handleHapticsChange} label="Titreşim" />
+                )}
               </div>
             </Collapse>
           </div>
