@@ -19,11 +19,17 @@
     (viewport-fit=cover). Bileşenler env()'i doğrudan değil bunları okur:
     geliştirmede ?safe=iphone bunları ezip masaüstünde iPhone'u taklit
     ediyor (bkz. src/dev/safeAreaSimulation.ts). Tarayıcıda hepsi 0.
+
+    --safe-area-inset-*: Capacitor'ın SystemBars eklentisi (insetsHandling
+    "css") aynı değerleri <html>'in inline stiline yazıyor. Android
+    WebView'de env() her zaman dolmuyor (Android 14, WebView 143'te 0 kaldı,
+    logo durum çubuğunun altına girdi); max() hangisi doluysa onu alır.
+    Tarayıcıda değişken hiç tanımlı değil, ikisi de 0.
   */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --safe-right: max(env(safe-area-inset-right, 0px), var(--safe-area-inset-right, 0px));
+  --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+  --safe-left: max(env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px));
 }
 
 * {
