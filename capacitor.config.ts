@@ -26,6 +26,15 @@ const config: CapacitorConfig = {
       */
       style: "DARK",
     },
+    LocalNotifications: {
+      /*
+        Tekrar hatırlatıcısının küçük ikonu: tek renkli logo
+        (android/app/src/main/res/drawable/ic_stat_slot.xml). Renk tokens.css
+        --accent; Android ikonu ve uygulama adını bu renkle boyar.
+      */
+      smallIcon: "ic_stat_slot",
+      iconColor: "#22d3ee",
+    },
   },
 };
 

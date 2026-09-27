@@ -34,8 +34,9 @@ const serverOnlyPaths = [/^\/api\//, /^\/oauth2\//, /^\/login\//];
 
 /*
   Yalnızca native'de (Capacitor) dinamik import ile yüklenen modüller:
-  dosya deposu ve eklentisi, haptik eklentisi (seçim kodu
-  src/platform/haptics.ts web'de de yüklenir, eklentinin kendisi yüklenmez).
+  dosya deposu ve eklentisi, haptik ve yerel bildirim eklentileri (seçim
+  kodu src/platform/haptics.ts ve reminders.ts web'de de yüklenir,
+  eklentilerin kendisi yüklenmez).
   Web bu chunk'ları hiç istemez; precache'e
   girselerdi her PWA kurulumu kullanmayacağı kodu indirirdi. Chunk'ları
   "native-" önekiyle adlandırılır ve workbox'ın globIgnores'u onları
@@ -44,7 +45,7 @@ const serverOnlyPaths = [/^\/api\//, /^\/oauth2\//, /^\/login\//];
   precache boyutundaki artış bunu hemen gösterir.
 */
 const nativeOnlyModules = [
-  /\/node_modules\/@capacitor\/(filesystem|synapse|haptics)\//,
+  /\/node_modules\/@capacitor\/(filesystem|synapse|haptics|local-notifications)\//,
   /\/src\/platform\/storage\/(filesystemAdapter|namespaceFile)\.ts$/,
 ];
 const isNativeOnlyModule = (id: string) => nativeOnlyModules.some((pattern) => pattern.test(id.replaceAll("\\", "/")));

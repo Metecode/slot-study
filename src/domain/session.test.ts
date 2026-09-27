@@ -478,6 +478,8 @@ describe("HYDRATE", () => {
       soundEnabled: false,
       soundHintShown: false,
       hapticsEnabled: true,
+      reminderEnabled: false,
+      reminderOfferShown: false,
       lang: "tr",
       activeCategories: ["sql"],
       initialized: true,
@@ -562,6 +564,8 @@ describe("toStore", () => {
       soundEnabled: true,
       soundHintShown: true,
       hapticsEnabled: false,
+      reminderEnabled: true,
+      reminderOfferShown: true,
     });
 
     expect(store).toEqual({
@@ -572,6 +576,8 @@ describe("toStore", () => {
         soundEnabled: true,
         soundHintShown: true,
         hapticsEnabled: false,
+        reminderEnabled: true,
+        reminderOfferShown: true,
         lang: "tr",
         activeCategories: ["sql"],
         initialized: true,
@@ -586,6 +592,8 @@ describe("toStore", () => {
       soundEnabled: false,
       soundHintShown: false,
       hapticsEnabled: true,
+      reminderEnabled: false,
+      reminderOfferShown: false,
     });
 
     expect(store.settings.initialized).toBe(true);

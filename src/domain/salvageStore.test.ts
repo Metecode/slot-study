@@ -34,16 +34,25 @@ describe("salvageStore", () => {
     const result = salvageStore({
       schemaVersion: SCHEMA_VERSION,
       progress: {},
-      settings: { fastMode: true, soundEnabled: "evet", hapticsEnabled: 1, lang: "de", initialized: true },
+      settings: {
+        fastMode: true,
+        soundEnabled: "evet",
+        hapticsEnabled: 1,
+        reminderEnabled: "açık",
+        reminderOfferShown: true,
+        lang: "de",
+        initialized: true,
+      },
     });
 
     expect(result.store.settings).toEqual({
       ...emptyStore().settings,
       fastMode: true,
+      reminderOfferShown: true,
       initialized: true,
     });
     // Eksik alanlar (soundHintShown, activeCategories) sıfırlanmış sayılmaz.
-    expect(result.resetSettings).toEqual(["soundEnabled", "hapticsEnabled", "lang"]);
+    expect(result.resetSettings).toEqual(["soundEnabled", "hapticsEnabled", "reminderEnabled", "lang"]);
   });
 
   it("nesne olmayan settings'in tüm alanlarını sıfırlanmış sayar", () => {

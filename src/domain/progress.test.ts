@@ -51,6 +51,33 @@ describe("readStore", () => {
     expect(store.settings.soundEnabled).toBe(false);
   });
 
+  it("hatırlatıcı alanları olmayan eski kayıt kırılmaz, ikisi de kapalı gelir", () => {
+    const old = {
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { fastMode: true, hapticsEnabled: false, activeCategories: ["sql"], initialized: true },
+    };
+
+    const { store, recovered } = readStore(old);
+
+    expect(recovered).toBe(false);
+    expect(store.settings.reminderEnabled).toBe(false);
+    expect(store.settings.reminderOfferShown).toBe(false);
+    expect(store.settings.hapticsEnabled).toBe(false);
+  });
+
+  it("açılmış hatırlatıcıyı ve gösterilmiş öneriyi korur", () => {
+    const saved = {
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { reminderEnabled: true, reminderOfferShown: true },
+    };
+
+    const { settings } = readStore(saved).store;
+    expect(settings.reminderEnabled).toBe(true);
+    expect(settings.reminderOfferShown).toBe(true);
+  });
+
   it("kapatılmış titreşim tercihini korur", () => {
     const saved = { schemaVersion: SCHEMA_VERSION, progress: {}, settings: { hapticsEnabled: false } };
 
@@ -61,6 +88,11 @@ describe("readStore", () => {
 describe("emptyStore", () => {
   it("ilk açılışta ses açık", () => {
     expect(emptyStore().settings.soundEnabled).toBe(true);
+  });
+
+  it("ilk açılışta hatırlatıcı kapalı, öneri gösterilmemiş", () => {
+    expect(emptyStore().settings.reminderEnabled).toBe(false);
+    expect(emptyStore().settings.reminderOfferShown).toBe(false);
   });
 
   it("ilk açılışta titreşim açık", () => {

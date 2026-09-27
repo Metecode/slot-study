@@ -103,6 +103,8 @@ function salvageSettings(value: unknown): { value: Store["settings"]; reset: str
       soundEnabled: pick("soundEnabled", shape.soundEnabled, defaults.soundEnabled),
       soundHintShown: pick("soundHintShown", shape.soundHintShown, defaults.soundHintShown),
       hapticsEnabled: pick("hapticsEnabled", shape.hapticsEnabled, defaults.hapticsEnabled),
+      reminderEnabled: pick("reminderEnabled", shape.reminderEnabled, defaults.reminderEnabled),
+      reminderOfferShown: pick("reminderOfferShown", shape.reminderOfferShown, defaults.reminderOfferShown),
       lang: pick("lang", shape.lang, defaults.lang),
       activeCategories: pick("activeCategories", shape.activeCategories, defaults.activeCategories),
       initialized: pick("initialized", shape.initialized, defaults.initialized),

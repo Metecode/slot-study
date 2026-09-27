@@ -31,11 +31,14 @@ const native = isNativePlatform();
  * - haptics: Native'de @capacitor/haptics ile titreşim ve Ayarlar'da
  *   "Titreşim" anahtarı. Web'de anahtar yok; kol çekişindeki kısa
  *   navigator.vibrate koşulsuz kalır (bkz. haptics.ts).
+ * - reminders: Native'de yerel bildirimle tekrar hatırlatıcısı, Ayarlar'da
+ *   anahtarı ve öneri kartı. Web'de hiçbiri yok (bkz. reminders.ts).
  */
 export const platformFeatures = {
   auth: !native,
   serviceWorker: !native,
   haptics: native,
+  reminders: native,
 } as const;
 
 /* ------------------------------------------------------------------ */

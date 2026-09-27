@@ -9,15 +9,20 @@ import { ChevronIcon } from "./components/ChevronIcon";
 import { Collapse } from "./components/Collapse";
 import { Footer } from "./components/Footer";
 import { Machine } from "./components/Machine";
+import { ReminderOffer } from "./components/ReminderOffer";
+import { ReminderSetting } from "./components/ReminderSetting";
 import { Stage } from "./components/Stage";
 import { StepIndicator } from "./components/StepIndicator";
 import { Switch } from "./components/Switch";
 import { TopBar } from "./components/TopBar";
+import { useReviewReminder } from "./hooks/useReviewReminder";
 import { IS_APPLE_TOUCH_DEVICE, useSoundHint } from "./hooks/useSoundHint";
 import { platformFeatures } from "./platform";
 import { haptics } from "./platform/haptics";
+import { reminders } from "./platform/reminders";
 import { AVAILABLE_CATEGORIES, QUESTIONS } from "./content";
 import { evaluateLexical } from "./domain/evaluate";
+import { countRatings, shouldOfferReminder } from "./domain/reminder";
 import { initialSessionState, sessionReducer, toStore } from "./domain/session";
 import type { SessionState } from "./domain/session";
 import { loadWarning } from "./storage/loadWarning";
@@ -80,6 +85,11 @@ function Session({ store, warning, save }: SessionProps) {
   const soundHint = useSoundHint(store.settings.soundHintShown);
   const soundHintShown = soundHint.hintShown;
   const [hapticsEnabled, setHapticsEnabled] = useState(store.settings.hapticsEnabled);
+  const [reminderEnabled, setReminderEnabled] = useState(store.settings.reminderEnabled);
+  const [reminderOfferShown, setReminderOfferShown] = useState(store.settings.reminderOfferShown);
+  // Oturumluk: izin reddi notu ve bu oturumda açılan öneri kartı diske yazılmaz.
+  const [reminderDenied, setReminderDenied] = useState(false);
+  const [reminderOfferOpen, setReminderOfferOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [lastAnswer, setLastAnswer] = useState("");
   const [warningDismissed, setWarningDismissed] = useState(false);
@@ -92,9 +102,22 @@ function Session({ store, warning, save }: SessionProps) {
   const { progress, activeCategories } = state;
   useEffect(() => {
     save(
-      toStore({ progress, activeCategories }, { fastMode, soundEnabled, soundHintShown, hapticsEnabled }),
+      toStore(
+        { progress, activeCategories },
+        { fastMode, soundEnabled, soundHintShown, hapticsEnabled, reminderEnabled, reminderOfferShown },
+      ),
     );
-  }, [progress, activeCategories, fastMode, soundEnabled, soundHintShown, hapticsEnabled, save]);
+  }, [
+    progress,
+    activeCategories,
+    fastMode,
+    soundEnabled,
+    soundHintShown,
+    hapticsEnabled,
+    reminderEnabled,
+    reminderOfferShown,
+    save,
+  ]);
 
   // Haptik modülü tercihi kendisi tutuyor, çağrı noktalarına ayar inmiyor.
   // Boyamadan önce eşitlenir: tıklama her zaman güncel değeri görür.
@@ -114,6 +137,19 @@ function Session({ store, warning, save }: SessionProps) {
     // Misafirde null: senkron modülü hiç istek atmaz.
     userId: status === "authenticated" && user ? user.id : null,
     onMerged: handleMerged,
+  });
+
+  // Tekrar hatırlatıcısı: kayıt, kategori değişimi ve arka plana geçişte
+  // yeniden kurulur. İzin sistemden kaldırılmışsa anahtar kapanır.
+  useReviewReminder({
+    enabled: reminderEnabled,
+    progress,
+    questions: QUESTIONS,
+    activeCategories,
+    onPermissionLost: () => {
+      setReminderEnabled(false);
+      setReminderDenied(true);
+    },
   });
 
   // Kategori seçicisinin yanındaki havuz bilgisi: aktif kategorilerdeki soru sayısı.
@@ -156,6 +192,39 @@ function Session({ store, warning, save }: SessionProps) {
     // Soru id'si dispatch'ten önce alınır: RATE turu kapatınca current null olur.
     if (state.current) pushQuestion(state.current.id);
     dispatch({ type: "RATE", rating, answer: lastAnswer, now: new Date() });
+
+    // Öneri kartı değerlendirmenin ardından, bir kez: gösterildiği an işaretlenir,
+    // kullanıcı düğmeye basmasa da bir sonraki oturumda tekrar çıkmaz.
+    const offer = shouldOfferReminder({
+      available: platformFeatures.reminders,
+      enabled: reminderEnabled,
+      offerShown: reminderOfferShown,
+      // Bu değerlendirme henüz state'e yansımadı.
+      totalRatings: countRatings(progress) + 1,
+      ratedThisSession: true,
+    });
+    if (offer) {
+      setReminderOfferOpen(true);
+      setReminderOfferShown(true);
+    }
+  }
+
+  /** İzni ister; verilirse hatırlatıcıyı açar. Anahtar ve öneri kartı ortak. */
+  async function enableReminder(): Promise<boolean> {
+    const granted = (await reminders.requestPermission()) === "granted";
+    setReminderEnabled(granted);
+    setReminderDenied(!granted);
+    return granted;
+  }
+
+  // İzin yalnızca kullanıcı açtığında istenir; kapatmak izne dokunmaz.
+  function handleReminderChange(enabled: boolean) {
+    if (enabled) {
+      void enableReminder();
+      return;
+    }
+    setReminderEnabled(false);
+    setReminderDenied(false);
   }
 
   /*
@@ -247,6 +316,10 @@ function Session({ store, warning, save }: SessionProps) {
             </p>
           )}
 
+          {reminderOfferOpen && (
+            <ReminderOffer onAccept={enableReminder} onClose={() => setReminderOfferOpen(false)} />
+          )}
+
           {/* Makineye ait ayarlar, soruya değil: yeri makinenin hemen altı.
               Varsayılan kapalı — kimse ayar aramak zorunda kalmasın. */}
           <div className={styles.settings}>
@@ -280,6 +353,13 @@ function Session({ store, warning, save }: SessionProps) {
                 </span>
                 {platformFeatures.haptics && (
                   <Switch checked={hapticsEnabled} onChange={handleHapticsChange} label="Titreşim" />
+                )}
+                {platformFeatures.reminders && (
+                  <ReminderSetting
+                    checked={reminderEnabled}
+                    onChange={handleReminderChange}
+                    denied={reminderDenied}
+                  />
                 )}
               </div>
             </Collapse>

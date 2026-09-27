@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bildirim küçük ikonu (tekrar hatırlatıcısı). public/favicon.svg'den elle
+  aktarıldı: koyu zemin atıldı, çerçeve + daire + çubuk beyaz kaldı; Android
+  küçük ikonda yalnızca alfa kanalını kullanır. Görüntü alanı SVG ile aynı
+  (28), grup ölçeği şekli 24dp içindeki 20dp'lik canlı alana sığdırır.
+  Çerçeve çizgisi 1.5 yerine 2: 24dp'de ~1dp kalıp kayboluyordu.
+  capacitor.config.ts → plugins.LocalNotifications.smallIcon.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+    <group
+        android:pivotX="14"
+        android:pivotY="14"
+        android:scaleX="0.8333"
+        android:scaleY="0.8333">
+        <path
+            android:strokeColor="#FFFFFFFF"
+            android:strokeWidth="2"
+            android:pathData="M8.5,1.5 H19.5 A7,7 0 0 1 26.5,8.5 V19.5 A7,7 0 0 1 19.5,26.5 H8.5 A7,7 0 0 1 1.5,19.5 V8.5 A7,7 0 0 1 8.5,1.5 Z" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M11.4,10.5 A2.6,2.6 0 1 0 16.6,10.5 A2.6,2.6 0 1 0 11.4,10.5 Z" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M9.7,16.5 H18.3 A1.2,1.2 0 0 1 18.3,18.9 H9.7 A1.2,1.2 0 0 1 9.7,16.5 Z" />
+    </group>
+</vector>

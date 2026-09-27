@@ -5,6 +5,8 @@ import {
   MAX_ATTEMPTS,
   STAGE_COUNT,
   applyAttempt,
+  dueAt,
+  dueAtOf,
   nextBox,
   nextReviewInLabel,
   ratingSavedLabel,
@@ -48,6 +50,40 @@ describe("BOX_INTERVALS_DAYS", () => {
     for (const box of ALL_BOXES) {
       expect(BOX_INTERVALS_DAYS[box - 1]).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("dueAt", () => {
+  const SEEN = new Date("2026-03-28T20:00:00.000Z");
+  const DAY = 24 * 60 * 60 * 1000;
+
+  it("görülme anına kutunun aralığını tam gün (24 saat) olarak ekler", () => {
+    const boxes: Box[] = [1, 2, 3, 4, 5];
+    const gaps = boxes.map((box) => (dueAt(box, SEEN).getTime() - SEEN.getTime()) / DAY);
+
+    expect(gaps).toEqual([1, 2, 4, 8, 16]);
+  });
+
+  it("yaz saati geçişini aşan aralıkta da milisaniye farkı sabit kalır", () => {
+    // 29 Mart 2026 Avrupa'da ileri alma günü; takvim hesabı 23 saat verirdi.
+    expect(dueAt(1, SEEN).toISOString()).toBe("2026-03-29T20:00:00.000Z");
+  });
+
+  it("gelen tarihi değiştirmez", () => {
+    const seen = new Date(SEEN);
+    dueAt(3, seen);
+    expect(seen.getTime()).toBe(SEEN.getTime());
+  });
+});
+
+describe("dueAtOf", () => {
+  it("kaydın kutusu ve lastSeenAt'inden tekrar zamanını verir", () => {
+    const due = dueAtOf({ box: 2, lastSeenAt: "2026-01-10T09:00:00.000Z" });
+    expect(due?.toISOString()).toBe("2026-01-12T09:00:00.000Z");
+  });
+
+  it("okunamayan lastSeenAt'te null döner", () => {
+    expect(dueAtOf({ box: 1, lastSeenAt: "dün akşam" })).toBeNull();
   });
 });
 
