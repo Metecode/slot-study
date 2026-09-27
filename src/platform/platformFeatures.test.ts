@@ -46,6 +46,36 @@ describe("platformFeatures", () => {
   });
 });
 
+describe("storage seçimi", () => {
+  afterEach(() => {
+    vi.doUnmock("./storage/filesystemAdapter");
+  });
+
+  it("web'de IndexedDB adapter'ı", async () => {
+    mockCapacitor(false);
+    const { storage } = await import("./index");
+    const { indexedDbAdapter } = await import("./storage/indexedDbAdapter");
+
+    expect(storage).toBe(indexedDbAdapter);
+  });
+
+  it("native'de dosya adapter'ı, modül yüklenirken değil ilk çağrıda yüklenir", async () => {
+    mockCapacitor(true);
+    const { createMemoryAdapter } = await import("./storage/memoryAdapter");
+    const createFilesystemAdapter = vi.fn(createMemoryAdapter);
+    vi.doMock("./storage/filesystemAdapter", () => ({ createFilesystemAdapter }));
+
+    const { storage } = await import("./index");
+    const { indexedDbAdapter } = await import("./storage/indexedDbAdapter");
+    expect(storage).not.toBe(indexedDbAdapter);
+    expect(createFilesystemAdapter).not.toHaveBeenCalled();
+
+    await storage.set("ns", "k", 1);
+    expect(await storage.get("ns", "k")).toBe(1);
+    expect(createFilesystemAdapter).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("registerServiceWorker", () => {
   it("web'de /sw.js'i kök kapsamla kaydeder", async () => {
     mockCapacitor(false);

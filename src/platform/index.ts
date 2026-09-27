@@ -1,6 +1,7 @@
 import { Capacitor } from "@capacitor/core";
 
 import { indexedDbAdapter } from "./storage/indexedDbAdapter";
+import { createLazyAdapter } from "./storage/lazyAdapter";
 import type { StorageAdapter } from "./storage/StorageAdapter";
 
 /* ------------------------------------------------------------------ */
@@ -39,10 +40,15 @@ export const platformFeatures = {
 
 /*
   Uygulamanın kullandığı depo burada seçilir; modüller kendi adapter'ını
-  oluşturmaz. Şimdilik yalnızca web var. Mobil (Capacitor + SQLite)
-  geldiğinde seçim burada yapılacak, tüketiciler değişmeyecek.
+  oluşturmaz. Web'de IndexedDB. Native'de uygulama klasöründeki JSON
+  dosyaları: iOS'ta WKWebView'in IndexedDB'si cihazda yer azalınca
+  silinebiliyor. Native adapter ve @capacitor/filesystem ilk çağrıda
+  dinamik import ile yüklenir, web bundle'ına ve precache'e girmez
+  (bkz. vite.config.ts). IndexedDB'den taşıma yok: v1 yayında değil.
 */
-export const storage: StorageAdapter = indexedDbAdapter;
+export const storage: StorageAdapter = native
+  ? createLazyAdapter(() => import("./storage/filesystemAdapter").then((m) => m.createFilesystemAdapter()))
+  : indexedDbAdapter;
 
 export type { StorageAdapter } from "./storage/StorageAdapter";
 export { requestPersistentStorage } from "./storage/persist";

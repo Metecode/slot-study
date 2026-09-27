@@ -32,6 +32,21 @@ const backendProxy = {
 // index.html verilseydi giriş sunucuya hiç ulaşmazdı.
 const serverOnlyPaths = [/^\/api\//, /^\/oauth2\//, /^\/login\//];
 
+/*
+  Yalnızca native'de (Capacitor) dinamik import ile yüklenen modüller:
+  dosya deposu ve eklentisi. Web bu chunk'ları hiç istemez; precache'e
+  girselerdi her PWA kurulumu kullanmayacağı kodu indirirdi. Chunk'ları
+  "native-" önekiyle adlandırılır ve workbox'ın globIgnores'u onları
+  dışarıda bırakır. Önek yalnızca TAMAMI native modüllerden oluşan
+  chunk'a verilir: web koduyla karışan bir chunk precache'te kalır ve
+  precache boyutundaki artış bunu hemen gösterir.
+*/
+const nativeOnlyModules = [
+  /\/node_modules\/@capacitor\/(filesystem|synapse)\//,
+  /\/src\/platform\/storage\/(filesystemAdapter|namespaceFile)\.ts$/,
+];
+const isNativeOnlyModule = (id: string) => nativeOnlyModules.some((pattern) => pattern.test(id.replaceAll("\\", "/")));
+
 const pwa = VitePWA({
   /*
     Güncelleme: yeni sürüm arka planda iner ve BEKLER; açık sekmelerin
@@ -66,6 +81,7 @@ const pwa = VitePWA({
     // Uygulama kabuğu, JS/CSS (soru içeriği JS'e gömülü), fontlar, ikonlar.
     // Sesler dosya değil, Web Audio ile üretiliyor.
     globPatterns: ["**/*.{html,js,css,woff2,svg,png}"],
+    globIgnores: ["**/native-*.js"],
     navigateFallback: "/index.html",
     navigateFallbackDenylist: serverOnlyPaths,
     runtimeCaching: [
@@ -83,6 +99,16 @@ const pwa = VitePWA({
 
 export default defineConfig({
   plugins: [react(), pwa],
+  build: {
+    rollupOptions: {
+      output: {
+        chunkFileNames: (chunk) =>
+          chunk.moduleIds.length > 0 && chunk.moduleIds.every(isNativeOnlyModule)
+            ? "assets/native-[name]-[hash].js"
+            : "assets/[name]-[hash].js",
+      },
+    },
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
     __COMMIT_SHA__: JSON.stringify(commitSha),
