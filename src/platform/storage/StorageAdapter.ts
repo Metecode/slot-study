@@ -3,12 +3,13 @@
 /* ------------------------------------------------------------------ */
 
 /*
-  Web'de IndexedDB, mobilde ileride SQLite. Uygulama yalnızca bu arayüzü
-  görür; hangi gerçeklemenin kullanılacağına platform/index.ts karar verir.
+  Web'de IndexedDB, native'de namespace başına tek JSON dosyası
+  (filesystemAdapter.ts). Uygulama yalnızca bu arayüzü görür; hangi
+  gerçeklemenin kullanılacağına platform/index.ts karar verir.
 
   Model bilerek düz: (ns, key) → değer. Index'e dayalı sorgu yok, bu
-  yüzden IndexedDB'de tek object store'a, SQLite'ta (ns, key) birleşik
-  anahtarlı tek tabloya doğrudan eşleniyor.
+  yüzden IndexedDB'de tek object store'a, native'de ns başına bir
+  { key: value } haritasına doğrudan eşleniyor.
 
   Adapter hata yutmaz. "Depo çalışmıyorsa uygulama yine açılsın" kararı
   çağıranın işi (bkz. storage/db.ts); adapter yalnızca iletir.
@@ -18,7 +19,11 @@ export interface StorageAdapter {
   get<T>(ns: string, key: string): Promise<T | undefined>;
   getAll<T>(ns: string): Promise<Array<{ key: string; value: T }>>;
   set<T>(ns: string, key: string, value: T): Promise<void>;
-  /** Hepsi yazılır ya da hiçbiri: tek transaction. */
+  /**
+   * Hepsi yazılır ya da hiçbiri: tek transaction. Native gerçekleme bunu
+   * yalnızca tek namespace içinde sağlayabiliyor (tek dosya); birden çok
+   * namespace verilirse hiçbir şey yazmadan reddeder.
+   */
   setMany(entries: Array<{ ns: string; key: string; value: unknown }>): Promise<void>;
   delete(ns: string, key: string): Promise<void>;
   /** ns verilmezse tüm depo silinir. */

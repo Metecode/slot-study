@@ -76,8 +76,37 @@
   color: var(--accent);
 }
 
+/* Kısa etiket geniş ekranda hiç çizilmez. */
+.short {
+  display: none;
+}
+
 @media (max-width: 560px) {
   .step {
     font-size: var(--fs-mono-sm);
+  }
+
+  /*
+    Dar ekranda hücre üçte bir sütun (360px'te ~100px metin alanı).
+    "3. Değerlendirme" buna %100 yazı ölçeğinde bile sığmıyordu; Android
+    WebView sistem yazı boyutunu px'lere de uyguladığı için büyük ölçekte
+    açık daha da büyüyor. Numarasız kısa etiket görünür ("Kontrol"
+    %150'de 320px'te de sığar); sıra zaten soldan sağa okunuyor. Tam
+    etiket görsel kırpmayla gizlenir: ekran okuyucu numaralı metni
+    okumaya devam eder. Kırpma SyncIndicator'daki .srOnly ile aynı kalıp.
+  */
+  .full {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .short {
+    display: inline;
   }
 }

@@ -1,3 +1,4 @@
+import { platformFeatures } from "../platform";
 import { AuthArea } from "./AuthArea";
 import { SyncIndicator } from "./SyncIndicator";
 import styles from "./TopBar.module.css";
@@ -37,15 +38,19 @@ export function TopBar() {
           </div>
         </div>
 
-        <div className={styles.meta}>
-          {/* Kendi durumunu kendi okur; misafirde hiç çizilmez. */}
-          <SyncIndicator />
+        {/* Native'de (mobil v1) kimlik kapalı: giriş, senkron göstergesi
+            ve hesap silme (AuthArea'nın içinde) hiç çizilmez. */}
+        {platformFeatures.auth && (
+          <div className={styles.meta}>
+            {/* Kendi durumunu kendi okur; misafirde hiç çizilmez. */}
+            <SyncIndicator />
 
-          {/* Oturum alanı en sağda: kendi durumunu kendi okur, TopBar'a
-              prop olarak geçirilmiyor — üst çubuğun geri kalanı oturumla
-              ilgilenmiyor. */}
-          <AuthArea />
-        </div>
+            {/* Oturum alanı en sağda: kendi durumunu kendi okur, TopBar'a
+                prop olarak geçirilmiyor — üst çubuğun geri kalanı oturumla
+                ilgilenmiyor. */}
+            <AuthArea />
+          </div>
+        )}
       </div>
     </header>
   );

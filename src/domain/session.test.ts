@@ -477,6 +477,9 @@ describe("HYDRATE", () => {
       fastMode: false,
       soundEnabled: false,
       soundHintShown: false,
+      hapticsEnabled: true,
+      reminderEnabled: false,
+      reminderOfferShown: false,
       lang: "tr",
       activeCategories: ["sql"],
       initialized: true,
@@ -556,7 +559,14 @@ describe("toStore", () => {
       progress,
     });
 
-    const store = toStore(state, { fastMode: true, soundEnabled: true, soundHintShown: true });
+    const store = toStore(state, {
+      fastMode: true,
+      soundEnabled: true,
+      soundHintShown: true,
+      hapticsEnabled: false,
+      reminderEnabled: true,
+      reminderOfferShown: true,
+    });
 
     expect(store).toEqual({
       schemaVersion: SCHEMA_VERSION,
@@ -565,6 +575,9 @@ describe("toStore", () => {
         fastMode: true,
         soundEnabled: true,
         soundHintShown: true,
+        hapticsEnabled: false,
+        reminderEnabled: true,
+        reminderOfferShown: true,
         lang: "tr",
         activeCategories: ["sql"],
         initialized: true,
@@ -574,7 +587,14 @@ describe("toStore", () => {
 
   it("initialized'ı her zaman true yazar", () => {
     // toStore'a giren state bir oturumdan geldiği için "ilk açılış" artık geçmişte.
-    const store = toStore(makeState(), { fastMode: false, soundEnabled: false, soundHintShown: false });
+    const store = toStore(makeState(), {
+      fastMode: false,
+      soundEnabled: false,
+      soundHintShown: false,
+      hapticsEnabled: true,
+      reminderEnabled: false,
+      reminderOfferShown: false,
+    });
 
     expect(store.settings.initialized).toBe(true);
   });

@@ -5,7 +5,15 @@ import styles from "./StepIndicator.module.css";
 /* Adım göstergesi — turun neresindeyiz                                */
 /* ------------------------------------------------------------------ */
 
-const STEPS = ["1. Soru", "2. Yanıt", "3. Değerlendirme"] as const;
+/**
+ * `short` dar ekranda görünen etiket: numarasız ve kısa. Ekran okuyucu
+ * her genişlikte numaralı tam etiketi okur.
+ */
+const STEPS: readonly { label: string; short: string }[] = [
+  { label: "1. Soru", short: "Soru" },
+  { label: "2. Yanıt", short: "Yanıt" },
+  { label: "3. Değerlendirme", short: "Kontrol" },
+];
 
 /**
  * Faz → adım. Makara dönerken de "Soru" adımındayız: kazanan henüz
@@ -40,7 +48,7 @@ export function StepIndicator({ phase }: StepIndicatorProps) {
       <div className={styles.track} style={{ "--step": active } as React.CSSProperties}>
         <span className={styles.marker} aria-hidden="true" />
         <ol className={styles.steps}>
-          {STEPS.map((label, index) => (
+          {STEPS.map(({ label, short }, index) => (
             <li
               key={label}
               className={styles.step}
@@ -48,7 +56,10 @@ export function StepIndicator({ phase }: StepIndicatorProps) {
               data-state={index === active ? "active" : index < active ? "done" : "next"}
               aria-current={index === active ? "step" : undefined}
             >
-              {label}
+              <span className={styles.full}>{label}</span>
+              <span className={styles.short} aria-hidden="true">
+                {short}
+              </span>
             </li>
           ))}
         </ol>

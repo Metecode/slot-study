@@ -5,14 +5,17 @@ import type { Store } from "../domain/progress";
 import type { Question } from "../domain/question";
 import { initialSessionState, sessionReducer, toStore } from "../domain/session";
 import type { SessionState } from "../domain/session";
-import { createMemoryAdapter } from "../platform/storage/memoryAdapter";
+import { fakeFs } from "../platform/storage/fakeFilesystem";
+import { TEST_ADAPTERS } from "../platform/storage/testAdapters";
 import type { StorageAdapter } from "../platform";
 import { loadStore, saveStore } from "./db";
 import { STORE_KEY, STORE_NS } from "./storeKeys";
 
 /* ------------------------------------------------------------------ */
-/* Depo — bellek adapter'ı ile okuma/yazma                             */
+/* Depo — her adapter ile okuma/yazma (describe.each)                  */
 /* ------------------------------------------------------------------ */
+
+vi.mock("@capacitor/filesystem", () => import("../platform/storage/fakeFilesystem"));
 
 const QUESTION: Question = {
   id: "q1",
@@ -53,10 +56,18 @@ function rate(state: SessionState, now: Date): SessionState {
 }
 
 function persisted(state: SessionState): Store {
-  return toStore(state, { fastMode: false, soundEnabled: true, soundHintShown: false });
+  return toStore(state, {
+    fastMode: false,
+    soundEnabled: true,
+    soundHintShown: false,
+    hapticsEnabled: true,
+    reminderEnabled: false,
+    reminderOfferShown: false,
+  });
 }
 
 beforeEach(() => {
+  fakeFs.reset();
   // Hata yolları bilerek loglanıyor; test çıktısını kirletmesin.
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -65,84 +76,86 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("Leitner ilerlemesi depoda kalıcı", () => {
-  it("iki oturum boyunca kutu yükselir ve denemeler birikir", async () => {
-    const storage = createMemoryAdapter();
+describe.each(TEST_ADAPTERS)("%s", (_name, create) => {
+  describe("Leitner ilerlemesi depoda kalıcı", () => {
+    it("iki oturum boyunca kutu yükselir ve denemeler birikir", async () => {
+      const storage = create();
 
-    // İlk açılış: depo boş.
-    const first = await loadStore(storage);
-    expect(first.status).toBe("empty");
-    const afterFirst = rate(hydrate(first.store), new Date("2026-04-01T10:00:00.000Z"));
-    await saveStore(storage, persisted(afterFirst));
+      // İlk açılış: depo boş.
+      const first = await loadStore(storage);
+      expect(first.status).toBe("empty");
+      const afterFirst = rate(hydrate(first.store), new Date("2026-04-01T10:00:00.000Z"));
+      await saveStore(storage, persisted(afterFirst));
 
-    // Sayfa yenilendi: yeni oturum diskten kurulur.
-    const second = await loadStore(storage);
-    expect(second.store.progress.q1.box).toBe(2);
-    const afterSecond = rate(hydrate(second.store), new Date("2026-04-03T10:00:00.000Z"));
-    await saveStore(storage, persisted(afterSecond));
+      // Sayfa yenilendi: yeni oturum diskten kurulur.
+      const second = await loadStore(storage);
+      expect(second.store.progress.q1.box).toBe(2);
+      const afterSecond = rate(hydrate(second.store), new Date("2026-04-03T10:00:00.000Z"));
+      await saveStore(storage, persisted(afterSecond));
 
-    const third = await loadStore(storage);
-    const progress = third.store.progress.q1;
-    expect(progress.box).toBe(3);
-    expect(progress.lastSeenAt).toBe("2026-04-03T10:00:00.000Z");
-    expect(progress.attempts.map((attempt) => attempt.answer)).toEqual(["birinci", "birinci"]);
-  });
-});
-
-describe("loadStore", () => {
-  it("mevcut kullanıcı verisini sabit ns/key altından okur", async () => {
-    const storage = createMemoryAdapter();
-    const existing: Store = {
-      ...emptyStore(),
-      progress: {
-        q1: { questionId: "q1", box: 4, lastSeenAt: "2026-03-01T00:00:00.000Z", attempts: [] },
-      },
-    };
-    await storage.set("mulakat-slot", "store", existing);
-
-    expect(STORE_NS).toBe("mulakat-slot");
-    expect(STORE_KEY).toBe("store");
-    const { store, status } = await loadStore(storage);
-    expect(status).toBe("ok");
-    expect(store.progress.q1.box).toBe(4);
+      const third = await loadStore(storage);
+      const progress = third.store.progress.q1;
+      expect(progress.box).toBe(3);
+      expect(progress.lastSeenAt).toBe("2026-04-03T10:00:00.000Z");
+      expect(progress.attempts.map((attempt) => attempt.answer)).toEqual(["birinci", "birinci"]);
+    });
   });
 
-  it("geçerli kayıtta depoya yazmaz", async () => {
-    const storage = createMemoryAdapter();
-    await storage.set(STORE_NS, STORE_KEY, emptyStore());
-    const set = vi.spyOn(storage, "set");
+  describe("loadStore", () => {
+    it("mevcut kullanıcı verisini sabit ns/key altından okur", async () => {
+      const storage = create();
+      const existing: Store = {
+        ...emptyStore(),
+        progress: {
+          q1: { questionId: "q1", box: 4, lastSeenAt: "2026-03-01T00:00:00.000Z", attempts: [] },
+        },
+      };
+      await storage.set("mulakat-slot", "store", existing);
 
-    await loadStore(storage);
-    expect(set).not.toHaveBeenCalled();
+      expect(STORE_NS).toBe("mulakat-slot");
+      expect(STORE_KEY).toBe("store");
+      const { store, status } = await loadStore(storage);
+      expect(status).toBe("ok");
+      expect(store.progress.q1.box).toBe(4);
+    });
+
+    it("geçerli kayıtta depoya yazmaz", async () => {
+      const storage = create();
+      await storage.set(STORE_NS, STORE_KEY, emptyStore());
+      const set = vi.spyOn(storage, "set");
+
+      await loadStore(storage);
+      expect(set).not.toHaveBeenCalled();
+    });
+
+    it("depo okunamazsa fırlatmaz, boş store ve failed döner", async () => {
+      const storage: StorageAdapter = {
+        ...create(),
+        get: () => Promise.reject(new Error("IndexedDB kapalı")),
+      };
+
+      const { store, status } = await loadStore(storage);
+      expect(status).toBe("failed");
+      expect(store).toEqual(emptyStore());
+    });
   });
 
-  it("depo okunamazsa fırlatmaz, boş store ve failed döner", async () => {
-    const storage: StorageAdapter = {
-      ...createMemoryAdapter(),
-      get: () => Promise.reject(new Error("IndexedDB kapalı")),
-    };
+  describe("saveStore", () => {
+    it("şemadan geçmeyen store'u yazmaz", async () => {
+      const storage = create();
+      const invalid = { ...emptyStore(), schemaVersion: 99 } as unknown as Store;
 
-    const { store, status } = await loadStore(storage);
-    expect(status).toBe("failed");
-    expect(store).toEqual(emptyStore());
-  });
-});
+      await saveStore(storage, invalid);
+      expect(await storage.get(STORE_NS, STORE_KEY)).toBeUndefined();
+    });
 
-describe("saveStore", () => {
-  it("şemadan geçmeyen store'u yazmaz", async () => {
-    const storage = createMemoryAdapter();
-    const invalid = { ...emptyStore(), schemaVersion: 99 } as unknown as Store;
+    it("depo yazamazsa fırlatmaz", async () => {
+      const storage: StorageAdapter = {
+        ...create(),
+        set: () => Promise.reject(new Error("kota dolu")),
+      };
 
-    await saveStore(storage, invalid);
-    expect(await storage.get(STORE_NS, STORE_KEY)).toBeUndefined();
-  });
-
-  it("depo yazamazsa fırlatmaz", async () => {
-    const storage: StorageAdapter = {
-      ...createMemoryAdapter(),
-      set: () => Promise.reject(new Error("kota dolu")),
-    };
-
-    await expect(saveStore(storage, emptyStore())).resolves.toBeUndefined();
+      await expect(saveStore(storage, emptyStore())).resolves.toBeUndefined();
+    });
   });
 });

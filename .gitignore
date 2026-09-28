@@ -15,6 +15,8 @@ dist-ssr
 .env
 .env.local
 coverage
+# npm run scan:layout ekran görüntüleri
+scan-layout-output
 src/content/raw/*
 # Editor directories and files
 .vscode/*
@@ -32,3 +34,8 @@ backend/target
 backend/.mvn/wrapper/maven-wrapper.jar
 *.class
 HELP.md
+
+# Android imza anahtarları — asla repoya girmez
+*.jks
+*.keystore
+keystore.properties

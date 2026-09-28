@@ -5,15 +5,22 @@ import App from "./App";
 import { bootstrap } from "./auth/authClient";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { isSafeDebugRequested } from "./debug/isSafeDebugRequested";
-import { requestPersistentStorage } from "./platform";
+import { platformFeatures, requestPersistentStorage } from "./platform";
+import { registerServiceWorker } from "./platform/serviceWorker";
 import "./index.css";
 
 /*
   Oturum açılışta bir kez sessizce yenilenir. Render bunu BEKLEMEZ:
   uygulama hesapsız tam çalışıyor, kimlik yalnızca senkron için.
   Beklemek herkesi boş ekranda bir ağ gidiş dönüşü kadar tutardı.
+  Native'de (mobil v1, tamamen çevrimdışı) hiç denenmez.
 */
-void bootstrap();
+if (platformFeatures.auth) {
+  void bootstrap();
+}
+
+// Web'de PWA önbelleği; native'de kapalı (kontrol fonksiyonun içinde).
+registerServiceWorker();
 
 // İlerleme yalnızca bu cihazda duruyor olabilir; tarayıcı yer açarken
 // silmesin. Sonuç yalnızca loglanır, render beklemez.

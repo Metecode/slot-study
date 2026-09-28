@@ -2,6 +2,7 @@ import { useEffect, useEffectEvent, useId, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
+import { haptics } from "../../platform/haptics";
 import { ratingSavedLabel, reviewWhenLabel } from "../../domain/leitner";
 import type { Box, SelfRating as Rating } from "../../domain/progress";
 import { RatingIcon } from "./RatingIcon";
@@ -82,6 +83,9 @@ export function SelfRating({
     // İkinci tıklama ya da tuş ilk seçimin kaydını ikiye katlamasın.
     if (chosen !== null) return;
     setChosen(rating);
+    // Dokunulduğu anda, 400 ms beklemeden: kayıt alındı. Üç seçenekte aynı;
+    // "Bilmiyordum"a farklı titreşim dürüst cevabı cezalandırırdı.
+    haptics.rated();
 
     if (reduced) {
       onRate(rating);

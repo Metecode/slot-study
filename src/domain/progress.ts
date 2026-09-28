@@ -72,6 +72,23 @@ export const storeSchema = z.object({
      * default false: ipucu bir kez daha çıkar, kırıcı değil.
      */
     soundHintShown: z.boolean().default(false),
+    /**
+     * Titreşim (yalnızca native'de anahtarı var). Sesten bağımsız. Varsayılan
+     * açık; eski kayıtta alan yok, default doldurur — kırıcı değil,
+     * schemaVersion artmıyor.
+     */
+    hapticsEnabled: z.boolean().default(true),
+    /**
+     * Tekrar hatırlatıcısı (yalnızca native'de anahtarı var). Varsayılan
+     * kapalı: bildirim izni ancak kullanıcı açınca istenir. Eski kayıtta
+     * alan yok, default doldurur — kırıcı değil, schemaVersion artmıyor.
+     */
+    reminderEnabled: z.boolean().default(false),
+    /**
+     * Hatırlatıcı öneri kartı bir kez gösterildi mi? Hangi düğmeyle
+     * kapatılırsa kapatılsın bir daha çıkmaz. Eski kayıtta default false.
+     */
+    reminderOfferShown: z.boolean().default(false),
     lang: z.enum(["tr", "en"]).default("tr"),
     activeCategories: z.array(z.string()).default([]),
     /**
@@ -92,6 +109,9 @@ export const emptyStore = (): Store => ({
     fastMode: false,
     soundEnabled: true,
     soundHintShown: false,
+    hapticsEnabled: true,
+    reminderEnabled: false,
+    reminderOfferShown: false,
     lang: "tr",
     activeCategories: [],
     initialized: false,

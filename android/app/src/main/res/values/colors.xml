@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- src/styles/tokens.css içindeki bg token'ı ile aynı. Web tarafında
+         değişirse burası da değişir (XML yorumunda çift tire yazılamıyor). -->
+    <color name="app_background">#0b0f14</color>
+</resources>

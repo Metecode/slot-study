@@ -23,7 +23,6 @@
   cursor: grab;
   /* Sürükleme sırasında tarayıcı sayfayı kaydırmasın. */
   touch-action: none;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .root:active:not(:disabled) {

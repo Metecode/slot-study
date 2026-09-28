@@ -3,6 +3,7 @@ import { useId, useState } from "react";
 import { ChevronIcon } from "./ChevronIcon";
 import { Collapse } from "./Collapse";
 import { CATEGORY_LABELS } from "../content/labels";
+import { summarizeCategories } from "../domain/categorySummary";
 import type { Category } from "../domain/question";
 import styles from "./CategoryPicker.module.css";
 
@@ -14,7 +15,7 @@ export type CategoryPickerProps = {
   /** Gösterilecek kategoriler. İçinde soru olmayan kategori buraya hiç gelmez. */
   categories: Category[];
   active: Category[];
-  /** Seçili kategorilerdeki soru sayısı; çekilişin havuzu. */
+  /** Seçili kategorilerdeki soru sayısı; çekilişin havuzu. Özette yazılır. */
   poolCount: number;
   /** true iken hiçbir çip tıklanamaz (ör. makara dönerken). */
   disabled: boolean;
@@ -22,21 +23,6 @@ export type CategoryPickerProps = {
   /** Tümünü seç / tümünü kaldır arasında geçiş yapar. */
   onToggleAll: () => void;
 };
-
-/**
- * Kapalı özet metni: hepsi seçiliyse tek kelime, değilse ilk iki etiket +
- * kalan sayı. Sayım yalnızca görünen kategoriler üzerinden yapılır —
- * seçimde kalmış ama içeriği olmayan bir kategori özeti şişirmesin.
- */
-function summarize(active: Category[], categories: Category[]): string {
-  const shown = categories.filter((category) => active.includes(category));
-  if (shown.length === categories.length && categories.length > 0) return "tümü seçili";
-  if (shown.length === 0) return "hiçbiri seçili değil";
-
-  const labels = shown.map((category) => CATEGORY_LABELS[category]);
-  if (labels.length <= 2) return labels.join(", ");
-  return `${labels.slice(0, 2).join(", ")} +${labels.length - 2}`;
-}
 
 export function CategoryPicker({
   categories,
@@ -64,29 +50,26 @@ export function CategoryPicker({
           aria-controls={listId}
           onClick={() => setOpen((value) => !value)}
         >
-          <span>
-            {categories.length} kategori · {summarize(active, categories)}
-          </span>
+          {/* Havuzdaki soru sayısı özetin içinde ("6 kategori · 13 soru").
+              Canlı bölge değil: çip değiştikçe okunması gereken bir şey yok;
+              düğmenin adının parçası olduğu için odakta okunur. */}
+          <span>{summarizeCategories(active, categories, poolCount)}</span>
           <ChevronIcon className={styles.chevron} />
         </button>
 
-        {/* Açık/kapalı fark etmeden erişilebilir olsun diye özet
-            düğmesinin yanında, koleksiyonun içine gömülü değil. */}
-        <button
-          type="button"
-          className={styles.selectAll}
-          disabled={disabled}
-          onClick={onToggleAll}
-        >
-          {allSelected ? "Tümünü kaldır" : "Tümünü seç"}
-        </button>
-
-        {/* Havuz seçime bağlı bilgi; üst çubukta değil seçimin yanında.
-            Canlı bölge değil: çip değiştikçe okunması gereken bir şey yok. */}
-        {/* Dar ekranda "Havuzda" görsel olarak gizlenir ("13 soru");
-            ekran okuyucu her genişlikte tam metni okur. */}
-        <span className={styles.pool}>
-          <span className={styles.poolPrefix}>Havuzda</span> {poolCount} soru
+        {/* Satıra sığmazsa alt satıra iner; orada metni özet pill'inin
+            metniyle aynı sol çizgide başlar (bkz. .selectAll). */}
+        <span className={styles.actions}>
+          {/* Açık/kapalı fark etmeden erişilebilir olsun diye özet
+              düğmesinin yanında, koleksiyonun içine gömülü değil. */}
+          <button
+            type="button"
+            className={styles.selectAll}
+            disabled={disabled}
+            onClick={onToggleAll}
+          >
+            {allSelected ? "Tümünü kaldır" : "Tümünü seç"}
+          </button>
         </span>
       </div>
 
