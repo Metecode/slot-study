@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
   BOX_INTERVALS_DAYS,
@@ -41,6 +41,25 @@ function makeProgress(over: Partial<QuestionProgress> = {}): QuestionProgress {
 
 const ALL_BOXES: Box[] = [1, 2, 3, 4, 5];
 
+/*
+  Tekrar zamanı yerel takvime bağlı (bkz. studyDay.ts). Tarihler her testin
+  İÇİNDE kurulur: modül seviyesinde kurulsa saat dilimi ayarlanmadan önce
+  hesaplanırdı.
+*/
+function useTimeZone(tz: string): void {
+  beforeAll(() => {
+    vi.stubEnv("TZ", tz);
+  });
+  afterAll(() => {
+    vi.unstubAllEnvs();
+  });
+}
+
+/** Yerel saat; ay 1'den başlar. */
+function local(year: number, month: number, day: number, hour = 0, minute = 0): Date {
+  return new Date(year, month - 1, day, hour, minute);
+}
+
 describe("BOX_INTERVALS_DAYS", () => {
   it("kutu 1..5 için ikişer katlanan aralıklar tutar", () => {
     expect(BOX_INTERVALS_DAYS).toEqual([1, 2, 4, 8, 16]);
@@ -54,32 +73,56 @@ describe("BOX_INTERVALS_DAYS", () => {
 });
 
 describe("dueAt", () => {
-  const SEEN = new Date("2026-03-28T20:00:00.000Z");
-  const DAY = 24 * 60 * 60 * 1000;
+  useTimeZone("Europe/Istanbul");
 
-  it("görülme anına kutunun aralığını tam gün (24 saat) olarak ekler", () => {
-    const boxes: Box[] = [1, 2, 3, 4, 5];
-    const gaps = boxes.map((box) => (dueAt(box, SEEN).getTime() - SEEN.getTime()) / DAY);
+  it("görüldüğü günden aralık kadar gün sonrasının 04:00'ı", () => {
+    const seen = local(2026, 3, 10, 20, 30);
+    const due = ALL_BOXES.map((box) => dueAt(box, seen));
 
-    expect(gaps).toEqual([1, 2, 4, 8, 16]);
+    expect(due).toEqual([
+      local(2026, 3, 11, 4),
+      local(2026, 3, 12, 4),
+      local(2026, 3, 14, 4),
+      local(2026, 3, 18, 4),
+      local(2026, 3, 26, 4),
+    ]);
   });
 
-  it("yaz saati geçişini aşan aralıkta da milisaniye farkı sabit kalır", () => {
-    // 29 Mart 2026 Avrupa'da ileri alma günü; takvim hesabı 23 saat verirdi.
-    expect(dueAt(1, SEEN).toISOString()).toBe("2026-03-29T20:00:00.000Z");
+  it("görülme saati tekrar gününü değiştirmez: sabah ya da gece, 'yarın' ertesi gün", () => {
+    expect(dueAt(1, local(2026, 3, 10, 9))).toEqual(local(2026, 3, 11, 4));
+    expect(dueAt(1, local(2026, 3, 10, 23, 50))).toEqual(local(2026, 3, 11, 4));
+  });
+
+  it("gece yarısından sonra 04:00'a kadar görülen önceki günün sorusudur", () => {
+    expect(dueAt(1, local(2026, 3, 11, 1, 30))).toEqual(local(2026, 3, 11, 4));
   });
 
   it("gelen tarihi değiştirmez", () => {
-    const seen = new Date(SEEN);
+    const seen = local(2026, 3, 10, 20);
+    const before = seen.getTime();
     dueAt(3, seen);
-    expect(seen.getTime()).toBe(SEEN.getTime());
+    expect(seen.getTime()).toBe(before);
+  });
+});
+
+describe("dueAt — yaz saati (Europe/Berlin)", () => {
+  useTimeZone("Europe/Berlin");
+
+  it("ileri alma gününü aşan aralıkta da yerel 04:00'da kalır", () => {
+    // 29 Mart 2026 ileri alma günü: 24 saat eklense yerel saat kayardı.
+    const due = dueAt(1, local(2026, 3, 28, 21));
+    expect(due).toEqual(local(2026, 3, 29, 4));
+    expect(due.toISOString()).toBe("2026-03-29T02:00:00.000Z");
   });
 });
 
 describe("dueAtOf", () => {
+  useTimeZone("Europe/Istanbul");
+
   it("kaydın kutusu ve lastSeenAt'inden tekrar zamanını verir", () => {
+    // 09:00Z İstanbul'da 12:00; kutu 2: iki gün sonra 04:00 (01:00Z).
     const due = dueAtOf({ box: 2, lastSeenAt: "2026-01-10T09:00:00.000Z" });
-    expect(due?.toISOString()).toBe("2026-01-12T09:00:00.000Z");
+    expect(due?.toISOString()).toBe("2026-01-12T01:00:00.000Z");
   });
 
   it("okunamayan lastSeenAt'te null döner", () => {
@@ -125,6 +168,26 @@ describe("nextReviewInLabel", () => {
     expect(nextReviewInLabel(4)).toBe("Sonraki tekrar: 8 gün sonra");
     expect(nextReviewInLabel(5)).toBe("Sonraki tekrar: 16 gün sonra");
   });
+});
+
+describe("metinlerdeki gün sayısı — saat diliminden bağımsız", () => {
+  // Gün farkı yerel takvimle hesaplanıyor; çapanın yerel saati ne olursa
+  // olsun aralık tablosunu vermeli.
+  for (const tz of ["America/Los_Angeles", "Asia/Tokyo", "Europe/Berlin"]) {
+    describe(tz, () => {
+      useTimeZone(tz);
+
+      it("her kutuda aralık tablosundaki günü yazar", () => {
+        expect(ALL_BOXES.map((box) => nextReviewInLabel(box))).toEqual([
+          "Sonraki tekrar: yarın",
+          "Sonraki tekrar: 2 gün sonra",
+          "Sonraki tekrar: 4 gün sonra",
+          "Sonraki tekrar: 8 gün sonra",
+          "Sonraki tekrar: 16 gün sonra",
+        ]);
+      });
+    });
+  }
 });
 
 describe("nextBox", () => {

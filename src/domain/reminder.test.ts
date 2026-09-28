@@ -53,7 +53,10 @@ function makeQuestion(id: string, category: Category = "sql"): Question {
   };
 }
 
-/** Tekrar zamanı tam `due` olacak şekilde görülmüş bir kayıt. */
+/**
+ * Tekrar günü `due`nun günü olacak şekilde görülmüş bir kayıt: aralık kadar
+ * gün önce, aynı saatte. Tekrar zamanı o günün 04:00'ıdır (bkz. dueAt).
+ */
 function dueProgress(questionId: string, due: Date, box: Box = 1): QuestionProgress {
   const seenAt = new Date(due.getTime() - BOX_INTERVALS_DAYS[box - 1] * DAY_MS);
   return { questionId, box, lastSeenAt: seenAt.toISOString(), attempts: [] };
@@ -141,10 +144,14 @@ describe("nextReminderAt", () => {
     expect(nextReminderAt(input)).toEqual(local(2026, 3, 13, 19));
   });
 
-  it("zamanı o gün 19:00'dan sonra geliyorsa ertesi gün 19:00", () => {
-    const now = local(2026, 3, 10, 14);
-    const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 3, 13, 20)) } });
-    expect(nextReminderAt(input)).toEqual(local(2026, 3, 14, 19));
+  it("akşam 19:00'dan sonra görülen soruda da tekrar gününün 19:00'ı", () => {
+    // Tekrar zamanı görülme saatine değil güne bağlı (13 Mart 04:00). 24 saat
+    // eklenseydi 13 Mart 20:00 olurdu ve hatırlatma bir gün kayardı.
+    const now = local(2026, 3, 12, 20);
+    const progress: Record<string, QuestionProgress> = {
+      q1: { questionId: "q1", box: 1, lastSeenAt: local(2026, 3, 12, 20).toISOString(), attempts: [] },
+    };
+    expect(nextReminderAt(makeInput({ now, progress }))).toEqual(local(2026, 3, 13, 19));
   });
 
   it("zamanı tam 19:00'da geliyorsa o an", () => {
@@ -221,9 +228,9 @@ describe("nextReminderAt — yaz saati (Europe/Berlin)", () => {
     expect(at?.getHours()).toBe(19);
   });
 
-  it("geçişin iki yakasında: zamanı geçişten sonraki gün 19:00'da kalır", () => {
-    // 27 Mart 20:00'da görülen kutu 2 sorusu: 48 saat sonra, geçiş yüzünden
-    // yerel 29 Mart 21:00. 19:00'ı geçtiği için hatırlatma 30 Mart 19:00.
+  it("geçişin iki yakasında: tekrar günü takvimle sayılır, hatırlatma o gün 19:00", () => {
+    // 27 Mart 20:00'da görülen kutu 2 sorusu: tekrar günü 29 Mart (04:00).
+    // Gün takvimle eklendiği için geçiş saati kaydırmaz, gün de kaymaz.
     const now = local(2026, 3, 27, 20);
     const seen = local(2026, 3, 27, 20);
     const progress: Record<string, QuestionProgress> = {
@@ -232,7 +239,7 @@ describe("nextReminderAt — yaz saati (Europe/Berlin)", () => {
 
     const at = nextReminderAt(makeInput({ now, progress }));
 
-    expect(at).toEqual(local(2026, 3, 30, 19));
+    expect(at).toEqual(local(2026, 3, 29, 19));
     expect(at?.getHours()).toBe(19);
   });
 });

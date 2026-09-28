@@ -1,4 +1,5 @@
 import type { Attempt, Box, QuestionProgress, SelfRating } from "./progress";
+import { studyDayAfter, studyDaysBetween } from "./studyDay";
 
 /* ------------------------------------------------------------------ */
 /* Leitner — kutu geçişi ve deneme kaydı                               */
@@ -9,8 +10,6 @@ import type { Attempt, Box, QuestionProgress, SelfRating } from "./progress";
  * Kutu yükseldikçe soru seyrekleşir; çekiliş ağırlığı bu aralığa bakar.
  */
 export const BOX_INTERVALS_DAYS = [1, 2, 4, 8, 16] as const;
-
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /** Tavan kutu. Buradan yukarısı yok. */
 export const MAX_BOX: Box = 5;
@@ -42,17 +41,17 @@ export function nextBox(
 /* ------------------------------------------------------------------ */
 
 /**
- * Sorunun tekrar zamanı: görüldüğü an + kutunun aralığı. Gün takvim günü
- * değil, 24 saat: 23:30'da görülen kutu 1 sorusunun zamanı ertesi gün
- * 23:30'da gelir. Aralık milisaniyeyle eklendiği için yaz saati geçişi
- * farkı kaydırmaz.
+ * Sorunun tekrar zamanı: görüldüğü çalışma gününden kutunun aralığı kadar
+ * sonraki çalışma gününün başı (yerel 04:00, bkz. studyDay.ts). Aralık
+ * saatle değil takvim günüyle sayılır: kutu 1'de 20:30'da görülen soru
+ * ertesi gün 04:00'dan itibaren gelmiştir, ertesi akşam 20:30'u beklemez.
+ * "Yarın" dediğimiz gün, kullanıcı o gün hangi saatte açarsa açsın gelmiş
+ * olur.
  *
- * Çekiliş bu zamanı filtre olarak kullanmıyor (bkz. draw.ts weightOf);
- * zamanı gelmemiş soru da çekilebilir. Kullanıcıya söylenen tarih ve
- * hatırlatıcı buna dayanıyor.
+ * Kullanıcıya söylenen gün ve hatırlatıcı buna dayanıyor.
  */
 export function dueAt(box: Box, seenAt: Date): Date {
-  return new Date(seenAt.getTime() + BOX_INTERVALS_DAYS[box - 1] * MS_PER_DAY);
+  return studyDayAfter(seenAt, BOX_INTERVALS_DAYS[box - 1]);
 }
 
 /** Kayıttan tekrar zamanı; lastSeenAt okunamıyorsa null. */
@@ -63,14 +62,15 @@ export function dueAtOf(progress: Pick<QuestionProgress, "box" | "lastSeenAt">):
 }
 
 /**
- * Metinler için tekrara kalan gün. Fark görülme anına bağlı değil, bu
- * yüzden sabit bir çapa yeter: arayüz "şimdi"yi bilmeden aynı sayıyı
- * dueAt'ten okur, gün sayısı ile hatırlatıcı ayrışmaz.
+ * Metinler için tekrara kalan gün: görüldüğü çalışma günü ile tekrar
+ * gününün farkı. Fark görülme anına bağlı değil, bu yüzden sabit bir çapa
+ * yeter: arayüz "şimdi"yi bilmeden aynı sayıyı dueAt'ten okur, gün sayısı
+ * ile hatırlatıcı ayrışmaz.
  */
 const LABEL_ANCHOR = new Date(0);
 
 function daysUntilDue(box: Box): number {
-  return (dueAt(box, LABEL_ANCHOR).getTime() - LABEL_ANCHOR.getTime()) / MS_PER_DAY;
+  return studyDaysBetween(LABEL_ANCHOR, dueAt(box, LABEL_ANCHOR));
 }
 
 /* ------------------------------------------------------------------ */
