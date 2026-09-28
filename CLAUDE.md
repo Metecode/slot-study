@@ -22,6 +22,27 @@ cevabını yazar, kavram bazlı geri bildirim alır.
 - **Kazanan animasyondan önce belirlenir.** Soru ağırlıklı çekilişle
   seçilir, makara animasyonu yalnızca sonucu gösterir. Animasyonun
   sonucu belirlemesine izin veren bir değişiklik ağırlıklandırmayı bozar.
+- **Gün 04:00'da döner.** "Bugün", "yarın" ve tekrar günü yalnızca
+  `domain/studyDay.ts`'ten okunur; `dueAt`, arayüzdeki "yarın / N gün
+  sonra" metinleri ve hatırlatıcının ertesi gün kuralı onu kullanır.
+  Aralık 24 saatle değil takvim günüyle sayılır: 24 saatte "yarın" denen
+  soruların yalnızca %46'sı ertesi günün oturumunda gelmiş oluyordu,
+  akşam oynayanın hatırlatması iki gün sonraya kayıyordu. Gece yarısı
+  değil 04:00: 23:50'de görülen soru on dakika sonra "yarının sorusu"
+  olmasın.
+- **Çekilişte zamanı gelen önce gelir** (`domain/drawTiers.ts`).
+  Soğutmadan sonra: zamanı gelmiş sorular, onlar varken günde en fazla
+  1 yeni soru; zamanı gelmiş yoksa yeniler sınırsız; hiçbiri yoksa
+  zamanına en yakın olan (kutu ağırlığı × (geçen/aralık)²). Eski
+  ağırlıklarla 100 soruluk havuzda, günde 10 turda 30. günde 65 soru
+  ortalama 6.5 gün gecikmeli bekliyordu; şimdi ~4 soru, ~1 gün. Bedeli
+  daha yavaş tanıtım (30 günde 95 yerine 50). Yedekteki oranın alt sınırı
+  0.01: toplam ağırlık hiç sıfır olmaz; 0.1'de 13 soruluk havuzda aynı
+  gün tekrar günde 0.2'den 1.7'ye çıkıyordu.
+- **İleri tarihli ya da bozuk kayıt zamanı gelmiş sayılır.** `lastSeenAt`
+  şimdiden sonraysa (cihaz saati kaymış), okunamıyorsa ya da kutu aralık
+  tablosu dışındaysa soru öne alınır: gösterilir, değerlendirilir, kaydı
+  düzelir. Geri planda bekletilse kendiliğinden düzelmezdi.
 - **`src/domain/` saf kalır.** React importu yok, DOM erişimi yok,
   yan etki yok. Test edilebilirliği ve ileride paylaşılabilirliği buna bağlı.
 - **İçerik ve ilerleme ayrı.** Sorular repo'dan gelir ve değişir;
