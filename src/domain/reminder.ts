@@ -1,6 +1,7 @@
 import { dueAtOf } from "./leitner";
 import type { QuestionProgress } from "./progress";
 import type { Category, Question } from "./question";
+import { studyDayAfter } from "./studyDay";
 
 /* ------------------------------------------------------------------ */
 /* Tekrar hatırlatıcısı — ne zaman ve kime                             */
@@ -10,9 +11,8 @@ import type { Category, Question } from "./question";
   Bildirimin kendisi platform katmanında (src/platform/reminders.ts);
   burada yalnızca karar var: saat, tarih ve öneri kartı.
 
-  Bildirim "tekrar zamanı gelmiş soru var" demek için kurulur ama
-  çekilişin o soruları göstereceğini vaat etmez: çekiliş zamanı gelmemiş
-  soruyu da seçebiliyor (bkz. draw.ts). Metin bu yüzden genel.
+  Bildirim yalnızca "tekrar zamanı gelen soru var" der; hangi sorunun
+  geleceğine çekiliş karar verir (bkz. draw.ts).
 */
 
 /** Hatırlatıcının çaldığı yerel saat. Sabit; ayar yok. */
@@ -41,12 +41,14 @@ export type ReminderInput = {
 /**
  * Bir sonraki hatırlatmanın zamanı; hatırlatacak bir şey yoksa null.
  *
- * 1. Seçili kategorilerde, içerikte hâlâ var olan ve tarihi okunabilen
- *    kayıtların en erken tekrar zamanı bulunur.
+ * 1. Seçili kategorilerde, içerikte hâlâ var olan ve tekrar zamanı
+ *    hesaplanabilen kayıtların en erken tekrar zamanı bulunur.
  * 2. Ertesi gün kuralı: bugün uygulamayı açan kullanıcıya bugün
  *    hatırlatılmaz. Zamanlama hep uygulama açıkken yapıldığı için "bugün"
- *    kullanıcının son kullandığı gün.
- * 3. Bu ikisinden sonraki ilk yerel REMINDER_HOUR seçilir.
+ *    kullanıcının son kullandığı gün. Gün çalışma günüdür (studyDay.ts,
+ *    04:00'da döner): gece 00:30'da oynayan hâlâ dünün oturumunda, ona
+ *    aynı takvim gününün 19:00'ında hatırlatılır.
+ * 3. Bu ikisinden geç olanın gününün yerel REMINDER_HOUR'u seçilir.
  *
  * Saat yerel takvimle kurulur, 24 saat eklenerek değil: yaz saati
  * geçişinde 19:00 18:00'e ya da 20:00'ye kaymasın.
@@ -59,22 +61,26 @@ export function nextReminderAt({ now, progress, questions, activeCategories }: R
     if (!active.has(question.category)) continue;
     const entry = progress[question.id];
     if (!entry) continue;
-    const due = dueAtOf(entry);
-    if (!due) continue;
-    if (earliest === null || due.getTime() < earliest) earliest = due.getTime();
+    const due = dueAtOf(entry)?.getTime();
+    // Okunamayan tarih ya da aralık tablosu dışındaki kutu: tekrar zamanı
+    // yok. NaN'ı atlamak şart; en erkene girerse bütün karşılaştırmaları
+    // yanlış yapar ve hatırlatma geçersiz bir tarihe kurulurdu.
+    if (due === undefined || !Number.isFinite(due)) continue;
+    if (earliest === null || due < earliest) earliest = due;
   }
   if (earliest === null) return null;
 
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-  const notBefore = new Date(Math.max(earliest, tomorrow.getTime()));
+  const nextStudyDay = studyDayAfter(now, 1);
+  const notBefore = new Date(Math.max(earliest, nextStudyDay.getTime()));
 
-  const sameDay = atReminderHour(notBefore, 0);
-  return sameDay.getTime() >= notBefore.getTime() ? sameDay : atReminderHour(notBefore, 1);
+  // Tekrar zamanı da ertesi gün de bir çalışma gününün başı (04:00); o
+  // günün REMINDER_HOUR'u her zaman ondan sonra gelir.
+  return atReminderHour(notBefore);
 }
 
-/** Verilen günün (artı gün farkının) yerel REMINDER_HOUR'u. */
-function atReminderHour(day: Date, dayOffset: number): Date {
-  return new Date(day.getFullYear(), day.getMonth(), day.getDate() + dayOffset, REMINDER_HOUR);
+/** Verilen günün yerel REMINDER_HOUR'u. */
+function atReminderHour(day: Date): Date {
+  return new Date(day.getFullYear(), day.getMonth(), day.getDate(), REMINDER_HOUR);
 }
 
 export type ReminderOfferInput = {

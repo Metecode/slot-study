@@ -132,13 +132,13 @@ describe("nextReminderAt", () => {
     expect(nextReminderAt(input)).toEqual(local(2026, 3, 11, 19));
   });
 
-  it("zamanı bugün gelecek olsa da bugün değil yarın 19:00 (ertesi gün kuralı)", () => {
+  it("zamanı bugün gelen soru için de bugün değil yarın 19:00 (ertesi gün kuralı)", () => {
     const now = local(2026, 3, 10, 10);
     const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 3, 10, 15)) } });
     expect(nextReminderAt(input)).toEqual(local(2026, 3, 11, 19));
   });
 
-  it("zamanı üç gün sonra sabah geliyorsa o gün 19:00", () => {
+  it("tekrar günü üç gün sonraysa o gün 19:00", () => {
     const now = local(2026, 3, 10, 14);
     const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 3, 13, 8), 3) } });
     expect(nextReminderAt(input)).toEqual(local(2026, 3, 13, 19));
@@ -154,12 +154,6 @@ describe("nextReminderAt", () => {
     expect(nextReminderAt(makeInput({ now, progress }))).toEqual(local(2026, 3, 13, 19));
   });
 
-  it("zamanı tam 19:00'da geliyorsa o an", () => {
-    const now = local(2026, 3, 10, 14);
-    const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 3, 13, 19)) } });
-    expect(nextReminderAt(input)).toEqual(local(2026, 3, 13, 19));
-  });
-
   it("birden çok sorudan en erken zamanlıyı alır", () => {
     const now = local(2026, 3, 10, 14);
     const input = makeInput({
@@ -172,17 +166,29 @@ describe("nextReminderAt", () => {
     expect(nextReminderAt(input)).toEqual(local(2026, 3, 15, 19));
   });
 
-  describe("gece yarısı sınırı", () => {
+  describe("gün dönümü (04:00)", () => {
+    // Hepsinde zamanı çoktan gelmiş bir soru var; sonucu yalnızca ertesi
+    // gün kuralı belirler.
+    const overdue = () => ({ q1: dueProgress("q1", local(2026, 3, 1, 8)) });
+
     it("23:59'da kullanan için ertesi gün 19:00", () => {
       const now = local(2026, 3, 10, 23, 59);
-      const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 3, 1, 8)) } });
-      expect(nextReminderAt(input)).toEqual(local(2026, 3, 11, 19));
+      expect(nextReminderAt(makeInput({ now, progress: overdue() }))).toEqual(local(2026, 3, 11, 19));
     });
 
-    it("00:01'de kullanan için o gün değil, bir sonraki gün 19:00", () => {
-      const now = local(2026, 3, 11, 0, 1);
-      const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 3, 1, 8)) } });
-      expect(nextReminderAt(input)).toEqual(local(2026, 3, 12, 19));
+    it("00:30'da kullanan hâlâ önceki günün oturumunda: aynı takvim günü 19:00", () => {
+      const now = local(2026, 3, 11, 0, 30);
+      expect(nextReminderAt(makeInput({ now, progress: overdue() }))).toEqual(local(2026, 3, 11, 19));
+    });
+
+    it("03:59'da kullanan için aynı takvim günü 19:00", () => {
+      const now = local(2026, 3, 11, 3, 59);
+      expect(nextReminderAt(makeInput({ now, progress: overdue() }))).toEqual(local(2026, 3, 11, 19));
+    });
+
+    it("04:00'da kullanan yeni günde: ertesi gün 19:00", () => {
+      const now = local(2026, 3, 11, 4);
+      expect(nextReminderAt(makeInput({ now, progress: overdue() }))).toEqual(local(2026, 3, 12, 19));
     });
 
     it("yıl sonunda yeni yılın ilk günü 19:00", () => {
@@ -190,6 +196,23 @@ describe("nextReminderAt", () => {
       const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 12, 30, 8)) } });
       expect(nextReminderAt(input)).toEqual(local(2027, 1, 1, 19));
     });
+
+    it("yılbaşı gecesi 01:00'de kullanan hâlâ 31 Aralık'ta: 1 Ocak 19:00", () => {
+      const now = local(2027, 1, 1, 1);
+      const input = makeInput({ now, progress: { q1: dueProgress("q1", local(2026, 12, 30, 8)) } });
+      expect(nextReminderAt(input)).toEqual(local(2027, 1, 1, 19));
+    });
+  });
+
+  it("aralık tablosu dışındaki kutu hatırlatmayı bozmaz", () => {
+    // Bozuk depo ya da ileri sürümden gelen kutu 9: tekrar zamanı NaN.
+    const now = local(2026, 3, 10, 14);
+    const broken = { ...dueProgress("q1", local(2026, 3, 11, 8)), box: 9 as unknown as Box };
+    const input = makeInput({
+      now,
+      progress: { q1: broken, q2: dueProgress("q2", local(2026, 3, 13, 8)) },
+    });
+    expect(nextReminderAt(input)).toEqual(local(2026, 3, 13, 19));
   });
 
   it("girdiyi değiştirmez", () => {
