@@ -18,6 +18,14 @@
   max-width: var(--shell-wide);
   margin: 0 auto;
   padding: 0 var(--gutter);
+  /*
+    İçerikten gelen kırılamaz bir parça (uzun satır içi kod, URL) kendi
+    satırına sığmıyorsa kırılır; yoksa kartın dışına, dar ekranda sayfanın
+    dışına taşıyor. Kod blokları etkilenmez: pre satır kırmaz, kendi
+    içinde kayar. Kapsam bilerek panel: makine etiketleri gibi arayüz
+    metinleri kırılmasın.
+  */
+  overflow-wrap: break-word;
 }
 
 /*
@@ -113,8 +121,13 @@
 @media (min-width: 1024px) {
   .columns {
     display: grid;
-    /* 2fr ve 3fr: %40 ile %60 */
-    grid-template-columns: 2fr 3fr;
+    /*
+      2fr ve 3fr: %40 ile %60. Model cevap sütununun alt sınırı 0: uzun
+      bir kod satırı sütunu genişletip sayfayı taşırmasın, bloğun içinde
+      kaysın. Sol sütun auto alt sınırını koruyor; öz-değerlendirme
+      düğmeleri onu 2fr'den geniş tutuyor ve 0'a inerse kartından taşarlar.
+    */
+    grid-template-columns: 2fr minmax(0, 3fr);
     /*
       Dördüncü satır esnek ve boş. Model cevap bütün satırlara yayılıyor;
       esnek bir satıra yayılan öğe soldaki auto satırların boyunu

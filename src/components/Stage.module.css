@@ -7,8 +7,16 @@
   animasyonu her karede düzen tetikliyor.
 */
 
+/*
+  Sütun minmax(0, 1fr), örtük auto değil: auto sütun, katmanın
+  min-content genişliğine kadar açılıyordu. Model cevaptaki en uzun kod
+  satırı sütunu, dolayısıyla bütün sonuç ekranını telefonda viewport'tan
+  geniş yapıyor ve sayfa yana kayıyordu. Sütun artık sahnenin genişliğini
+  aşmaz; uzun satır kod bloğunun içinde kayar.
+*/
 .stage {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .stageLayer {
