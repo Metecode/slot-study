@@ -6,13 +6,14 @@ import { openExternal } from "./openExternal";
 /* ------------------------------------------------------------------ */
 
 /*
-  Kopyalama AskOwnAi.tsx'teki mantığın tekrarı; 3. fazda AskOwnAi bu
-  adapter'ı kullanınca oradaki kopya kaldırılacak.
+  Kopyalama önce Clipboard API'yi dener; güvenli olmayan bağlamda (HTTP)
+  yoksa ya da izin verilmezse eski yol: görünmez bir metin alanını seçip
+  execCommand("copy").
 
-  Oradan tek farkı: writeText reddedince execCommand yedeğine yalnızca
-  belge hâlâ odaktaysa düşülür. handoff.ts kopyayı başlatıp hemen yeni
-  sekme açıyor; ret "Document is not focused" yüzündense sekme zaten
-  değişmiştir, execCommand ya çalışmaz ya da kopyalamadan true döner.
+  writeText reddedince execCommand yedeğine yalnızca belge hâlâ odaktaysa
+  düşülür. handoff.ts kopyayı başlatıp hemen yeni sekme açıyor; ret
+  "Document is not focused" yüzündense sekme zaten değişmiştir,
+  execCommand ya çalışmaz ya da kopyalamadan true döner.
 */
 
 /**
