@@ -1,5 +1,8 @@
 import { Capacitor } from "@capacitor/core";
 
+import type { AiHandoffAdapter } from "./aiHandoff/AiHandoffAdapter";
+import { createNativeAiHandoff } from "./aiHandoff/nativeAiHandoff";
+import { webAiHandoff } from "./aiHandoff/webAiHandoff";
 import { indexedDbAdapter } from "./storage/indexedDbAdapter";
 import { createLazyAdapter } from "./storage/lazyAdapter";
 import type { StorageAdapter } from "./storage/StorageAdapter";
@@ -57,5 +60,14 @@ export const storage: StorageAdapter = native
   ? createLazyAdapter(() => import("./storage/filesystemAdapter").then((m) => m.createFilesystemAdapter()))
   : indexedDbAdapter;
 
+/*
+  İstemi yapay zekâ aracına taşıma. Depodan farklı olarak adapter tembel
+  sarılmaz: open ve kopyanın başlaması tıklamayla aynı senkron akışta
+  olmalı. Native'de yalnızca eklentiler dinamik import ile gelir (bkz.
+  aiHandoff/nativeAiHandoff.ts); sıralama aiHandoff/handoff.ts'te.
+*/
+export const aiHandoff: AiHandoffAdapter = native ? createNativeAiHandoff() : webAiHandoff;
+
+export type { AiHandoffAdapter, ShareResult } from "./aiHandoff/AiHandoffAdapter";
 export type { StorageAdapter } from "./storage/StorageAdapter";
 export { requestPersistentStorage } from "./storage/persist";
