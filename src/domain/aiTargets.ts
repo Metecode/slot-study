@@ -46,8 +46,9 @@ export const AI_TARGETS = [
     queryParam: "q",
   },
   {
-    // // son elle doğrulama: 2026-09-29 — q ile prompt kutuya dolar, otomatik gönderilmez.
-    // claude.ai önceden doldurulmuş promptlar için uyarı bandı gösterir (bizim kontrolümüzde değil).
+    // son elle doğrulama: 2026-09-29 — q ile prompt kutuya dolar, otomatik gönderilmez.
+    // claude.ai önceden doldurulmuş promptlar için uyarı bandı gösterir
+    // (bizim kontrolümüzde değil).
     id: "claude",
     label: "Claude",
     openLabel: "Claude'da aç",
