@@ -14,7 +14,12 @@
         {
           "id": "children-is-a-prop",
           "label": "Etiket arası içerik prop olarak gelir",
-          "aliases": ["children", "etiket arası", "jsx içeriği", "prop olarak geçer"],
+          "aliases": [
+            "children",
+            "etiket arası",
+            "jsx içeriği",
+            "prop olarak geçer"
+          ],
           "anchors": [
             "Açılış ve kapanış etiketleri arasına yazılan JSX children prop'u olarak bileşene geçer.",
             "children sıradan bir prop'tur, JSX ile yazılmış halidir."
@@ -23,7 +28,13 @@
         {
           "id": "composition-over-inheritance",
           "label": "Kalıtım yerine kompozisyon",
-          "aliases": ["composition", "kompozisyon", "kalıtım yerine", "wrapper", "sarmalayıcı"],
+          "aliases": [
+            "composition",
+            "kompozisyon",
+            "kalıtım yerine",
+            "wrapper",
+            "sarmalayıcı"
+          ],
           "anchors": [
             "İçeriğini bilmeyen sarmalayıcı bileşenler yazmayı sağlar, kalıtıma gerek kalmaz.",
             "React'te bileşenleri birleştirerek yeniden kullanım kompozisyonla yapılır."
@@ -32,7 +43,12 @@
         {
           "id": "children-shape-varies",
           "label": "children'ın tipi sabit değil",
-          "aliases": ["dizi olmayabilir", "tek eleman", "React.Children", "map güvenli değil"],
+          "aliases": [
+            "dizi olmayabilir",
+            "tek eleman",
+            "React.Children",
+            "map güvenli değil"
+          ],
           "anchors": [
             "children tek eleman, dizi, metin ya da undefined olabilir; her zaman dizi değildir.",
             "Doğrudan map çalıştırmak yerine React.Children.map kullanmak gerekir."
@@ -57,7 +73,12 @@
         {
           "id": "memory-tree",
           "label": "Bellekteki ağaç",
-          "aliases": ["bellek", "javascript nesnesi", "hafıza", "temsil"],
+          "aliases": [
+            "bellek",
+            "javascript nesnesi",
+            "hafıza",
+            "temsil"
+          ],
           "anchors": [
             "Arayüzün bellekte tutulan hafif bir kopyasıdır, düz JavaScript nesnelerinden oluşur.",
             "Gerçek DOM yerine bellekte bir ağaç yapısı tutulur."
@@ -66,7 +87,13 @@
         {
           "id": "diff-then-minimal-write",
           "label": "Karşılaştırıp yalnızca değişeni yazma",
-          "aliases": ["diff", "karşılaştır", "reconciliation", "sadece değişen", "minimum"],
+          "aliases": [
+            "diff",
+            "karşılaştır",
+            "reconciliation",
+            "sadece değişen",
+            "minimum"
+          ],
           "anchors": [
             "Yeni ağaç öncekiyle karşılaştırılır ve sadece farklı düğümler gerçek DOM'a yazılır.",
             "React iki sürümü kıyaslayıp en az sayıda DOM işlemi yapar."
@@ -75,7 +102,13 @@
         {
           "id": "heuristic-not-full-diff",
           "label": "Tam karşılaştırma değil, kestirme",
-          "aliases": ["varsayım", "heuristic", "kestirme", "key", "farklı tip"],
+          "aliases": [
+            "varsayım",
+            "heuristic",
+            "kestirme",
+            "key",
+            "farklı tip"
+          ],
           "anchors": [
             "Karşılaştırma tam bir ağaç karşılaştırması değildir, iki varsayıma dayanan bir kestirmedir.",
             "Farklı tipteki elemanlar baştan farklı sayılır, listelerde kimlik key ile verilir."
@@ -87,6 +120,2836 @@
         "Virtual DOM olmayan bir kütüphane aynı işi nasıl yapıyor olabilir?"
       ],
       "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+    },
+    {
+      "id": "react-nedir",
+      "category": "react",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "React nedir?",
+      "modelAnswer": "Kullanıcı arayüzü geliştirmek için açık kaynaklı, component tabanlı bir JavaScript kütüphanesidir. Uygulamanın view katmanıyla ilgilenir; arayüz yeniden kullanılabilir component'lere bölünür ve her component kendi state'ini yönetir. Meta (Facebook) tarafından geliştirilmiştir.",
+      "keyConcepts": [
+        {
+          "id": "kutuphane",
+          "label": "UI kütüphanesi",
+          "aliases": [
+            "kütüphane",
+            "library",
+            "kullanıcı arayüzü",
+            "user interface",
+            "arayüz geliştir",
+            "view katman"
+          ],
+          "anchors": [
+            "React kullanıcı arayüzü geliştirmek için kullanılan bir JavaScript kütüphanesidir."
+          ]
+        },
+        {
+          "id": "component",
+          "label": "Component tabanlı",
+          "aliases": [
+            "component",
+            "bileşen"
+          ],
+          "anchors": [
+            "Arayüz yeniden kullanılabilir component'lere bölünür."
+          ]
+        },
+        {
+          "id": "yeniden-kullanim",
+          "label": "Yeniden kullanılabilirlik",
+          "aliases": [
+            "yeniden kullan",
+            "tekrar kullan",
+            "reusable",
+            "reuse"
+          ],
+          "anchors": [
+            "Component'ler farklı yerlerde tekrar kullanılabilir."
+          ]
+        },
+        {
+          "id": "state",
+          "label": "State yönetimi",
+          "aliases": [
+            "state",
+            "durum"
+          ],
+          "anchors": [
+            "Her component kendi state'ini yönetir ve state değişince arayüz güncellenir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-ozellikleri",
+      "category": "react",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "React'in başlıca özellikleri nelerdir?",
+      "modelAnswer": "Component tabanlı mimari, Virtual DOM ile verimli güncelleme, JSX sözdizimi, tek yönlü veri akışı ve deklaratif UI temel özellikleridir. Bunların yanında hook'lar, Context API, error boundary'ler, SSR ve Suspense gibi özellikler de sunar.",
+      "keyConcepts": [
+        {
+          "id": "virtual-dom",
+          "label": "Virtual DOM",
+          "aliases": [
+            "virtual dom",
+            "sanal dom",
+            "vdom"
+          ],
+          "anchors": [
+            "React Virtual DOM ile yalnızca değişen kısımları günceller."
+          ]
+        },
+        {
+          "id": "jsx",
+          "label": "JSX",
+          "aliases": [
+            "jsx"
+          ],
+          "anchors": [
+            "JSX ile JavaScript içinde HTML benzeri kod yazılır."
+          ]
+        },
+        {
+          "id": "tek-yonlu",
+          "label": "Tek yönlü veri akışı",
+          "aliases": [
+            "tek yönlü",
+            "one-way",
+            "one way",
+            "unidirectional",
+            "yukarıdan aşağı",
+            "parent'tan child"
+          ],
+          "anchors": [
+            "Veri parent'tan child'a tek yönde akar."
+          ]
+        },
+        {
+          "id": "deklaratif",
+          "label": "Deklaratif UI",
+          "aliases": [
+            "deklaratif",
+            "declarative",
+            "bildirimsel"
+          ],
+          "anchors": [
+            "Arayüzün state'e göre nasıl görüneceği tarif edilir, DOM güncellemesini React yapar."
+          ]
+        },
+        {
+          "id": "component",
+          "label": "Component mimarisi",
+          "aliases": [
+            "component",
+            "bileşen"
+          ],
+          "anchors": [
+            "Uygulama bağımsız ve yeniden kullanılabilir component'lerden oluşur."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-jsx",
+      "category": "react",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "JSX nedir?",
+      "modelAnswer": "JavaScript içinde HTML benzeri kod yazmayı sağlayan bir sözdizimi uzantısıdır. Tarayıcı JSX'i doğrudan anlamaz; derleme sırasında React.createElement (veya yeni JSX transform ile jsx()) çağrılarına dönüştürülür. HTML'den daha katıdır; örneğin class yerine className kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "sozdizimi",
+          "label": "Sözdizimi uzantısı",
+          "aliases": [
+            "sözdizimi",
+            "syntax",
+            "html benzeri",
+            "html gibi",
+            "xml"
+          ],
+          "anchors": [
+            "JSX, JavaScript içinde HTML benzeri kod yazmayı sağlayan bir sözdizimi uzantısıdır."
+          ]
+        },
+        {
+          "id": "createelement",
+          "label": "createElement'e derlenir",
+          "aliases": [
+            "createelement",
+            "jsx()",
+            "react.createelement",
+            "fonksiyon çağrı"
+          ],
+          "anchors": [
+            "JSX, React.createElement veya jsx() çağrılarına dönüştürülür."
+          ]
+        },
+        {
+          "id": "derleme",
+          "label": "Derleme gerekir",
+          "aliases": [
+            "derle",
+            "compile",
+            "transpile",
+            "babel",
+            "tarayıcı anlamaz",
+            "esbuild"
+          ],
+          "anchors": [
+            "Tarayıcı JSX'i doğrudan anlamaz, derleme adımında dönüştürülür."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-element-vs-component",
+      "category": "react",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "Element ile component arasındaki fark nedir?",
+      "modelAnswer": "Element, ekranda ne görünmesi gerektiğini tarif eden düz ve değiştirilemez (immutable) bir JavaScript nesnesidir; oluşturmak ucuzdur ve doğrudan DOM üretmez. Component ise props alıp element (veya element ağacı) döndüren bir fonksiyon ya da class'tır; mantık ve state barındırabilir.",
+      "keyConcepts": [
+        {
+          "id": "element-nesne",
+          "label": "Element düz bir nesnedir",
+          "aliases": [
+            "düz nesne",
+            "plain object",
+            "javascript nesnesi",
+            "js nesnesi",
+            "obje"
+          ],
+          "anchors": [
+            "Element ekranda ne görüneceğini tarif eden düz bir JavaScript nesnesidir."
+          ]
+        },
+        {
+          "id": "immutable",
+          "label": "Element değiştirilemez",
+          "aliases": [
+            "immutable",
+            "değiştirilemez",
+            "değişmez"
+          ],
+          "anchors": [
+            "Element oluşturulduktan sonra değiştirilemez, yenisi oluşturulur."
+          ]
+        },
+        {
+          "id": "component-fonksiyon",
+          "label": "Component fonksiyon/class'tır",
+          "aliases": [
+            "fonksiyon",
+            "function",
+            "class",
+            "sınıf"
+          ],
+          "anchors": [
+            "Component element döndüren bir fonksiyon veya class'tır."
+          ]
+        },
+        {
+          "id": "props-girdi",
+          "label": "Component props alır",
+          "aliases": [
+            "props",
+            "girdi",
+            "parametre"
+          ],
+          "anchors": [
+            "Component props alır ve bunlara göre element üretir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-state",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "React'te state nedir?",
+      "modelAnswer": "Bir component'in yaşam süresi boyunca değişebilen ve component'in kendisine ait olan veridir. State değiştiğinde component yeniden render edilir. Function component'lerde useState veya useReducer ile yönetilir.",
+      "keyConcepts": [
+        {
+          "id": "degisen-veri",
+          "label": "Değişebilen veri",
+          "aliases": [
+            "değişebil",
+            "değişen",
+            "zamanla değiş",
+            "mutable"
+          ],
+          "anchors": [
+            "State component'in yaşam süresi boyunca değişebilen veridir."
+          ]
+        },
+        {
+          "id": "component-ait",
+          "label": "Component'e ait",
+          "aliases": [
+            "component'e ait",
+            "kendi",
+            "yerel",
+            "local",
+            "içinde tutul"
+          ],
+          "anchors": [
+            "State component'in kendisine aittir ve orada yönetilir."
+          ]
+        },
+        {
+          "id": "rerender",
+          "label": "Değişince yeniden render",
+          "aliases": [
+            "render",
+            "yeniden çiz",
+            "ui güncel",
+            "arayüz güncel"
+          ],
+          "anchors": [
+            "State değiştiğinde component yeniden render edilir."
+          ]
+        },
+        {
+          "id": "hook",
+          "label": "useState ile yönetilir",
+          "aliases": [
+            "usestate",
+            "usereducer",
+            "setstate"
+          ],
+          "anchors": [
+            "Function component'lerde state useState veya useReducer ile tutulur."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-props",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "React'te props nedir?",
+      "modelAnswer": "Parent component'ten child component'e aktarılan girdilerdir; HTML attribute'larına benzer şekilde verilir. Props salt okunurdur, child component onları değiştiremez. Veri ve callback fonksiyonları props ile aşağıya iletilir.",
+      "keyConcepts": [
+        {
+          "id": "parent-child",
+          "label": "Parent'tan child'a aktarılır",
+          "aliases": [
+            "parent",
+            "child",
+            "üst component",
+            "alt component",
+            "ebeveyn",
+            "aşağı aktar",
+            "dışarıdan"
+          ],
+          "anchors": [
+            "Props parent component'ten child component'e aktarılır."
+          ]
+        },
+        {
+          "id": "readonly",
+          "label": "Salt okunur",
+          "aliases": [
+            "salt okunur",
+            "read-only",
+            "readonly",
+            "değiştirilemez",
+            "değiştiremez",
+            "immutable"
+          ],
+          "anchors": [
+            "Child component aldığı props'u değiştiremez."
+          ]
+        },
+        {
+          "id": "girdi",
+          "label": "Component girdisi",
+          "aliases": [
+            "girdi",
+            "input",
+            "parametre",
+            "argüman",
+            "attribute"
+          ],
+          "anchors": [
+            "Props bir component'in girdileridir, fonksiyon parametrelerine benzer."
+          ]
+        },
+        {
+          "id": "callback",
+          "label": "Fonksiyon da geçirilebilir",
+          "aliases": [
+            "callback",
+            "fonksiyon geçir",
+            "handler",
+            "event handler",
+            "fonksiyon da"
+          ],
+          "anchors": [
+            "Props ile veri yanında callback fonksiyonları da aktarılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-state-vs-props",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "State ile props arasındaki fark nedir?",
+      "modelAnswer": "State component'in kendi içinde yönettiği ve değiştirebildiği veridir; props ise parent'tan gelen ve child için salt okunur olan girdilerdir. İkisi de değiştiğinde yeniden render tetiklenir. Kısacası props fonksiyon parametrelerine, state fonksiyon içindeki değişkenlere benzer.",
+      "keyConcepts": [
+        {
+          "id": "state-ic",
+          "label": "State component içinde yönetilir",
+          "aliases": [
+            "component içinde",
+            "kendi içinde",
+            "kendi state",
+            "yerel",
+            "içeride yönet"
+          ],
+          "anchors": [
+            "State component'in kendi içinde yönettiği veridir."
+          ]
+        },
+        {
+          "id": "props-disardan",
+          "label": "Props dışarıdan gelir",
+          "aliases": [
+            "parent",
+            "dışarıdan",
+            "üst component",
+            "ebeveyn"
+          ],
+          "anchors": [
+            "Props parent component'ten gelir."
+          ]
+        },
+        {
+          "id": "props-readonly",
+          "label": "Props salt okunur",
+          "aliases": [
+            "salt okunur",
+            "read-only",
+            "readonly",
+            "değiştiremez",
+            "değiştirilemez"
+          ],
+          "anchors": [
+            "Component kendi props'unu değiştiremez."
+          ]
+        },
+        {
+          "id": "state-degisir",
+          "label": "State güncellenebilir",
+          "aliases": [
+            "güncellen",
+            "değiştirebil",
+            "değiştirilebilir",
+            "setstate",
+            "usestate",
+            "setter"
+          ],
+          "anchors": [
+            "State setter fonksiyonuyla güncellenebilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-html-vs-react-event",
+      "category": "react",
+      "topic": "Olaylar",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "HTML ile React'te event handling arasındaki fark nedir?",
+      "modelAnswer": "React'te event isimleri camelCase yazılır (onclick yerine onClick). Handler'a string değil fonksiyon referansı verilir, yani parantezsiz yazılır. Varsayılan davranışı engellemek için return false yeterli değildir, preventDefault() açıkça çağrılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "camelcase",
+          "label": "camelCase isimlendirme",
+          "aliases": [
+            "camelcase",
+            "camel case",
+            "onclick",
+            "büyük harf"
+          ],
+          "anchors": [
+            "React'te event isimleri camelCase yazılır, örneğin onClick."
+          ]
+        },
+        {
+          "id": "fonksiyon-ref",
+          "label": "Fonksiyon referansı verilir",
+          "aliases": [
+            "referans",
+            "parantezsiz",
+            "string değil",
+            "fonksiyonun kendisi",
+            "süslü parantez"
+          ],
+          "anchors": [
+            "Handler'a string yerine fonksiyon referansı verilir."
+          ]
+        },
+        {
+          "id": "preventdefault",
+          "label": "preventDefault açıkça çağrılır",
+          "aliases": [
+            "preventdefault",
+            "return false"
+          ],
+          "anchors": [
+            "Varsayılan davranışı engellemek için preventDefault çağrılmalıdır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-synthetic-event",
+      "category": "react",
+      "topic": "Olaylar",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "React'te synthetic event nedir?",
+      "modelAnswer": "Tarayıcının native event'ini saran, tüm tarayıcılarda aynı şekilde çalışan bir cross-browser sarmalayıcıdır. Native event ile aynı API'yi sunar (stopPropagation, preventDefault gibi). Orijinal native event'e nativeEvent özelliğiyle erişilebilir.",
+      "keyConcepts": [
+        {
+          "id": "wrapper",
+          "label": "Native event sarmalayıcısı",
+          "aliases": [
+            "sarmala",
+            "wrapper",
+            "sarar",
+            "native event"
+          ],
+          "anchors": [
+            "Synthetic event tarayıcının native event'ini saran bir nesnedir."
+          ]
+        },
+        {
+          "id": "cross-browser",
+          "label": "Tarayıcılar arası tutarlı",
+          "aliases": [
+            "cross-browser",
+            "cross browser",
+            "tüm tarayıcı",
+            "tarayıcılar arası",
+            "her tarayıcı",
+            "tutarlı"
+          ],
+          "anchors": [
+            "Tüm tarayıcılarda aynı şekilde çalışır."
+          ]
+        },
+        {
+          "id": "ayni-api",
+          "label": "Aynı API",
+          "aliases": [
+            "preventdefault",
+            "stoppropagation",
+            "aynı api"
+          ],
+          "anchors": [
+            "Native event ile aynı API'yi sunar."
+          ]
+        },
+        {
+          "id": "nativeevent",
+          "label": "nativeEvent erişimi",
+          "aliases": [
+            "nativeevent"
+          ],
+          "anchors": [
+            "Orijinal event'e nativeEvent ile erişilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-key-prop",
+      "category": "react",
+      "topic": "Listeler",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "key prop nedir ve listelerde kullanmanın faydası nedir?",
+      "modelAnswer": "Listeleri render ederken her elemana verilen özel bir prop'tur; React'in hangi elemanın eklendiğini, silindiğini veya değiştiğini tanımasını sağlar. Kardeşler arasında benzersiz ve kararlı olmalıdır, genellikle verideki id kullanılır. Doğru key gereksiz render'ı önler ve liste elemanlarının state'inin doğru korunmasını sağlar.",
+      "keyConcepts": [
+        {
+          "id": "tanimlama",
+          "label": "Elemanları tanımlar",
+          "aliases": [
+            "hangi eleman",
+            "tanı",
+            "ayırt",
+            "değişti",
+            "eklendi",
+            "silindi",
+            "eşleştir",
+            "kimli"
+          ],
+          "anchors": [
+            "Key React'in hangi elemanın eklendiğini, silindiğini veya değiştiğini tanımasını sağlar."
+          ]
+        },
+        {
+          "id": "benzersiz",
+          "label": "Kardeşler arasında benzersiz",
+          "aliases": [
+            "benzersiz",
+            "unique",
+            "eşsiz",
+            "kardeş"
+          ],
+          "anchors": [
+            "Key kardeş elemanlar arasında benzersiz olmalıdır."
+          ]
+        },
+        {
+          "id": "kararli",
+          "label": "Kararlı olmalı",
+          "aliases": [
+            "kararlı",
+            "stable",
+            "sabit",
+            "veriden gelen",
+            "veritabanı id",
+            "todo.id",
+            "item.id"
+          ],
+          "anchors": [
+            "Key render'lar arasında değişmeyen, veriden gelen bir değer olmalıdır."
+          ]
+        },
+        {
+          "id": "performans",
+          "label": "Verimli güncelleme",
+          "aliases": [
+            "gereksiz render",
+            "performans",
+            "verimli",
+            "reconciliation",
+            "state koru",
+            "state'i koru"
+          ],
+          "anchors": [
+            "Doğru key gereksiz render'ı önler ve eleman state'ini korur."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-shadow-dom-vs-virtual-dom",
+      "category": "react",
+      "topic": "Rendering",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "Shadow DOM ile Virtual DOM arasındaki fark nedir?",
+      "modelAnswer": "Shadow DOM, web component'lerde CSS ve DOM'u kapsüllemek için kullanılan bir tarayıcı teknolojisidir ve gerçek DOM'un parçasıdır. Virtual DOM ise React gibi kütüphanelerin JavaScript'te tuttuğu, bellekteki bir kopyadır ve amacı DOM güncellemelerini minimize etmektir. Biri kapsülleme, diğeri performans içindir.",
+      "keyConcepts": [
+        {
+          "id": "shadow-kapsulleme",
+          "label": "Shadow DOM kapsülleme içindir",
+          "aliases": [
+            "kapsülle",
+            "encapsulation",
+            "izole",
+            "scope",
+            "stil izol",
+            "css izol"
+          ],
+          "anchors": [
+            "Shadow DOM web component'lerde DOM ve CSS'i kapsüller."
+          ]
+        },
+        {
+          "id": "shadow-tarayici",
+          "label": "Shadow DOM tarayıcı özelliği",
+          "aliases": [
+            "tarayıcı teknolojisi",
+            "tarayıcı özelliği",
+            "browser",
+            "web component",
+            "gerçek dom'un parçası"
+          ],
+          "anchors": [
+            "Shadow DOM tarayıcının sağladığı bir teknolojidir ve gerçek DOM'un parçasıdır."
+          ]
+        },
+        {
+          "id": "virtual-bellek",
+          "label": "Virtual DOM bellekte",
+          "aliases": [
+            "belle",
+            "in-memory",
+            "memory",
+            "javascript'te tutul",
+            "kopya"
+          ],
+          "anchors": [
+            "Virtual DOM kütüphanenin bellekte tuttuğu bir temsildir."
+          ]
+        },
+        {
+          "id": "virtual-performans",
+          "label": "Virtual DOM performans içindir",
+          "aliases": [
+            "performans",
+            "diffing",
+            "minimum güncelle",
+            "verimli güncelle",
+            "karşılaştır"
+          ],
+          "anchors": [
+            "Virtual DOM'un amacı DOM güncellemelerini en aza indirmektir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-controlled-component",
+      "category": "react",
+      "topic": "Formlar",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Controlled component nedir?",
+      "modelAnswer": "Form elemanının değerinin React state'i tarafından yönetildiği component'tir. Input'un value'su state'e bağlanır ve her değişiklik onChange ile state'e yazılır; böylece tek doğruluk kaynağı (single source of truth) React olur. Validasyon ve anlık geri bildirim kolaylaşır, ancak her tuşta re-render olur.",
+      "keyConcepts": [
+        {
+          "id": "state-yonetir",
+          "label": "Değeri React state'i tutar",
+          "aliases": [
+            "state",
+            "usestate"
+          ],
+          "anchors": [
+            "Form elemanının değeri React state'inde tutulur."
+          ]
+        },
+        {
+          "id": "value-onchange",
+          "label": "value + onChange",
+          "aliases": [
+            "onchange",
+            "value"
+          ],
+          "anchors": [
+            "Input'un value'su state'e bağlanır, değişiklik onChange ile yazılır."
+          ]
+        },
+        {
+          "id": "tek-kaynak",
+          "label": "Tek doğruluk kaynağı",
+          "aliases": [
+            "single source of truth",
+            "tek doğruluk",
+            "tek kaynak",
+            "doğruluk kaynağı"
+          ],
+          "anchors": [
+            "Form verisinin tek doğruluk kaynağı React'tir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-uncontrolled-component",
+      "category": "react",
+      "topic": "Formlar",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Uncontrolled component nedir?",
+      "modelAnswer": "Form elemanının değerini React state'i yerine DOM'un kendisinin tuttuğu component'tir. Değere ihtiyaç duyulduğunda ref (useRef) ile DOM'dan okunur; başlangıç değeri defaultValue ile verilir. Daha az kod gerektirir ve re-render azdır, ancak kontrol daha düşüktür.",
+      "keyConcepts": [
+        {
+          "id": "dom-tutar",
+          "label": "Değeri DOM tutar",
+          "aliases": [
+            "dom tutar",
+            "dom'da",
+            "dom kendi",
+            "dom yönet",
+            "dom içinde",
+            "dom'un kendisi"
+          ],
+          "anchors": [
+            "Uncontrolled component'te değeri DOM'un kendisi tutar."
+          ]
+        },
+        {
+          "id": "ref",
+          "label": "Ref ile okunur",
+          "aliases": [
+            "ref",
+            "useref",
+            "createref"
+          ],
+          "anchors": [
+            "Değer ihtiyaç anında ref ile DOM'dan okunur."
+          ]
+        },
+        {
+          "id": "defaultvalue",
+          "label": "defaultValue ile başlangıç",
+          "aliases": [
+            "defaultvalue",
+            "default value",
+            "başlangıç değeri"
+          ],
+          "anchors": [
+            "Başlangıç değeri defaultValue ile verilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-fragment",
+      "category": "react",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Fragment nedir?",
+      "modelAnswer": "Bir component'in birden fazla elemanı DOM'a ekstra bir düğüm (ör. gereksiz bir div) eklemeden döndürmesini sağlar. <Fragment> veya kısa yazımı <></> ile kullanılır. Listelerde key vermek gerekiyorsa uzun <Fragment key={...}> yazımı kullanılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "ekstra-dugum",
+          "label": "Ekstra DOM düğümü eklemez",
+          "aliases": [
+            "ekstra",
+            "gereksiz div",
+            "fazladan",
+            "extra",
+            "düğüm eklemeden",
+            "dom'a eklenmez",
+            "node eklemez"
+          ],
+          "anchors": [
+            "Fragment DOM'a ekstra bir düğüm eklemez."
+          ]
+        },
+        {
+          "id": "coklu-eleman",
+          "label": "Birden fazla eleman döndürme",
+          "aliases": [
+            "birden fazla",
+            "çoklu",
+            "gruplama",
+            "grupla",
+            "multiple"
+          ],
+          "anchors": [
+            "Bir component'in birden fazla eleman döndürmesini sağlar."
+          ]
+        },
+        {
+          "id": "kisa-yazim",
+          "label": "<></> kısa yazımı",
+          "aliases": [
+            "<></>",
+            "<fragment",
+            "kısa yazım",
+            "boş etiket"
+          ],
+          "anchors": [
+            "Fragment <></> kısa yazımıyla kullanılabilir."
+          ]
+        },
+        {
+          "id": "key",
+          "label": "Listede key için uzun yazım",
+          "aliases": [
+            "key"
+          ],
+          "anchors": [
+            "Key gerekiyorsa uzun Fragment yazımı kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-innerhtml",
+      "category": "react",
+      "topic": "Güvenlik",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "React'te innerHTML nasıl kullanılır?",
+      "modelAnswer": "innerHTML'in React karşılığı dangerouslySetInnerHTML prop'udur ve {{ __html: '...' }} şeklinde bir nesne alır. Adındaki \"dangerously\" XSS riskini hatırlatır; bu yüzden yalnızca güvenilir ya da sanitize edilmiş (ör. DOMPurify) HTML ile kullanılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "dangerously",
+          "label": "dangerouslySetInnerHTML",
+          "aliases": [
+            "dangerouslysetinnerhtml"
+          ],
+          "anchors": [
+            "innerHTML'in React karşılığı dangerouslySetInnerHTML'dir."
+          ]
+        },
+        {
+          "id": "html-nesne",
+          "label": "__html nesnesi",
+          "aliases": [
+            "__html"
+          ],
+          "anchors": [
+            "Değer __html anahtarlı bir nesne olarak verilir."
+          ]
+        },
+        {
+          "id": "xss",
+          "label": "XSS riski",
+          "aliases": [
+            "xss",
+            "cross-site",
+            "script enjeksiyon",
+            "güvenli"
+          ],
+          "anchors": [
+            "XSS saldırısı riski taşır."
+          ]
+        },
+        {
+          "id": "sanitize",
+          "label": "Sanitize edilmeli",
+          "aliases": [
+            "sanitize",
+            "dompurify",
+            "temizle",
+            "güvenilir"
+          ],
+          "anchors": [
+            "Yalnızca güvenilir veya sanitize edilmiş HTML ile kullanılmalıdır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-reconciliation",
+      "category": "react",
+      "topic": "Rendering",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Reconciliation nedir?",
+      "modelAnswer": "React'in state veya props değiştiğinde yeni Virtual DOM ağacını öncekiyle karşılaştırıp gerçek DOM'a uygulanacak minimum değişikliği belirleme sürecidir. Diffing algoritması farklı tipteki elemanları tamamen yeniden oluşturur, aynı tipte olanları günceller; listelerde eşleştirme için key kullanır.",
+      "keyConcepts": [
+        {
+          "id": "karsilastirma",
+          "label": "Ağaçları karşılaştırma",
+          "aliases": [
+            "karşılaştır",
+            "diff",
+            "önceki ağaç",
+            "eski ağaç",
+            "compare"
+          ],
+          "anchors": [
+            "Reconciliation yeni Virtual DOM ağacını öncekiyle karşılaştırır."
+          ]
+        },
+        {
+          "id": "minimum",
+          "label": "Minimum DOM değişikliği",
+          "aliases": [
+            "minimum",
+            "en az",
+            "sadece değişen",
+            "yalnızca değişen",
+            "değişen kısım"
+          ],
+          "anchors": [
+            "Gerçek DOM'a uygulanacak minimum değişiklik belirlenir."
+          ]
+        },
+        {
+          "id": "tip",
+          "label": "Farklı tip yeniden oluşturulur",
+          "aliases": [
+            "tip",
+            "type",
+            "farklı eleman",
+            "yeniden oluştur",
+            "sıfırdan"
+          ],
+          "anchors": [
+            "Farklı tipteki elemanlar tamamen yeniden oluşturulur."
+          ]
+        },
+        {
+          "id": "key",
+          "label": "Listelerde key",
+          "aliases": [
+            "key"
+          ],
+          "anchors": [
+            "Listelerde elemanlar key ile eşleştirilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-fiber",
+      "category": "react",
+      "topic": "Rendering",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "React Fiber nedir?",
+      "modelAnswer": "React 16 ile gelen, eski stack tabanlı algoritmanın yerini alan yeni reconciliation motorudur. Render işini küçük birimlere bölerek duraklatmaya, iptal etmeye, yeniden kullanmaya ve güncellemelere öncelik vermeye izin verir. Concurrent rendering, Suspense ve transition gibi özelliklerin temelidir.",
+      "keyConcepts": [
+        {
+          "id": "motor",
+          "label": "Yeni reconciliation motoru",
+          "aliases": [
+            "reconciliation",
+            "motor",
+            "engine",
+            "yeniden yazım",
+            "algoritma"
+          ],
+          "anchors": [
+            "Fiber React'in yeniden yazılmış reconciliation motorudur."
+          ]
+        },
+        {
+          "id": "bolme",
+          "label": "İşi küçük birimlere böler",
+          "aliases": [
+            "birim",
+            "parça",
+            "bölme",
+            "böler",
+            "bölün",
+            "unit",
+            "incremental"
+          ],
+          "anchors": [
+            "Render işini küçük birimlere böler."
+          ]
+        },
+        {
+          "id": "kesinti",
+          "label": "Duraklatma ve kesme",
+          "aliases": [
+            "duraklat",
+            "kesinti",
+            "pause",
+            "interrupt",
+            "iptal",
+            "abort",
+            "yarıda"
+          ],
+          "anchors": [
+            "Render işi duraklatılabilir, iptal edilebilir veya yeniden kullanılabilir."
+          ]
+        },
+        {
+          "id": "oncelik",
+          "label": "Önceliklendirme",
+          "aliases": [
+            "önceli",
+            "priority",
+            "prioritiz"
+          ],
+          "anchors": [
+            "Güncellemelere öncelik verilebilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-lifting-state-up",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "Lifting state up nedir?",
+      "modelAnswer": "Birden fazla component aynı değişen veriye ihtiyaç duyduğunda state'i onların en yakın ortak parent'ına taşımaktır. Parent veriyi props ile, değiştirme fonksiyonunu da callback olarak child'lara geçirir. Böylece veri tek bir yerde tutulur ve senkron kalır.",
+      "keyConcepts": [
+        {
+          "id": "ortak-parent",
+          "label": "En yakın ortak parent",
+          "aliases": [
+            "ortak parent",
+            "ortak ata",
+            "common ancestor",
+            "ortak üst",
+            "ortak ebeveyn",
+            "en yakın"
+          ],
+          "anchors": [
+            "State en yakın ortak parent'a taşınır."
+          ]
+        },
+        {
+          "id": "paylasim",
+          "label": "Aynı veriyi paylaşma",
+          "aliases": [
+            "paylaş",
+            "ortak veri",
+            "aynı veri",
+            "aynı değişen",
+            "share"
+          ],
+          "anchors": [
+            "Birden fazla component aynı veriye ihtiyaç duyduğunda uygulanır."
+          ]
+        },
+        {
+          "id": "props-callback",
+          "label": "Props ve callback ile iletim",
+          "aliases": [
+            "props",
+            "callback",
+            "fonksiyon geçir",
+            "handler"
+          ],
+          "anchors": [
+            "Parent veriyi props ile, güncelleme fonksiyonunu callback ile iletir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-hoc",
+      "category": "react",
+      "topic": "Mimari",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Higher-Order Component (HOC) nedir?",
+      "modelAnswer": "Bir component alıp ek props veya davranışla zenginleştirilmiş yeni bir component döndüren fonksiyondur. Kimlik doğrulama, veri çekme, tema gibi ortak mantığı component'lerin içini değiştirmeden paylaşmak için kullanılır (ör. connect, withRouter). Günümüzde çoğu kullanımda yerini custom hook'lara bırakmıştır.",
+      "keyConcepts": [
+        {
+          "id": "component-al-dondur",
+          "label": "Component alır, component döndürür",
+          "aliases": [
+            "component alır",
+            "component döndür",
+            "yeni component",
+            "component'i alıp",
+            "component'i sarar"
+          ],
+          "anchors": [
+            "HOC bir component alıp yeni bir component döndüren fonksiyondur."
+          ]
+        },
+        {
+          "id": "fonksiyon",
+          "label": "Bir fonksiyondur",
+          "aliases": [
+            "fonksiyon",
+            "function"
+          ],
+          "anchors": [
+            "HOC bir fonksiyondur, component değildir."
+          ]
+        },
+        {
+          "id": "mantik-paylasim",
+          "label": "Mantık paylaşımı",
+          "aliases": [
+            "mantık paylaş",
+            "ortak mantı",
+            "code reuse",
+            "tekrar kullan",
+            "yeniden kullan",
+            "logic"
+          ],
+          "anchors": [
+            "Ortak mantığı birden fazla component arasında paylaşmak için kullanılır."
+          ]
+        },
+        {
+          "id": "ornek",
+          "label": "Örnekler",
+          "aliases": [
+            "connect",
+            "withrouter",
+            "withauth",
+            "with"
+          ],
+          "anchors": [
+            "connect ve withRouter HOC örnekleridir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-portal",
+      "category": "react",
+      "topic": "Mimari",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "React'te portal nedir?",
+      "modelAnswer": "Bir child'ı parent component'in DOM hiyerarşisi dışındaki bir DOM düğümüne render etmeyi sağlar (createPortal). Modal, tooltip ve dropdown gibi overflow veya z-index sorunlarından etkilenen elemanlar için kullanılır. İçerik DOM'da başka yerde olsa da React ağacında yerini korur; context'e erişir ve event'ler React ağacı üzerinden bubble olur.",
+      "keyConcepts": [
+        {
+          "id": "createportal",
+          "label": "createPortal",
+          "aliases": [
+            "createportal",
+            "portal"
+          ],
+          "anchors": [
+            "Portal createPortal ile oluşturulur."
+          ]
+        },
+        {
+          "id": "dom-disi",
+          "label": "Parent DOM'unun dışına render",
+          "aliases": [
+            "dışına",
+            "dışında",
+            "başka bir dom",
+            "body",
+            "farklı dom",
+            "hiyerarşi dışı"
+          ],
+          "anchors": [
+            "Child, parent'ın DOM hiyerarşisi dışındaki bir düğüme render edilir."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Modal ve tooltip",
+          "aliases": [
+            "modal",
+            "tooltip",
+            "dropdown",
+            "popup",
+            "dialog"
+          ],
+          "anchors": [
+            "Modal ve tooltip gibi elemanlarda kullanılır."
+          ]
+        },
+        {
+          "id": "react-agaci",
+          "label": "React ağacında kalır",
+          "aliases": [
+            "context",
+            "react ağacı",
+            "bubble",
+            "event",
+            "component ağacı"
+          ],
+          "anchors": [
+            "İçerik React ağacındaki yerini korur, context ve event bubbling çalışır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-index-as-key",
+      "category": "react",
+      "topic": "Listeler",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Index'i key olarak kullanmanın etkisi nedir?",
+      "modelAnswer": "Index key elemanın kimliğine değil sırasına bağlıdır; liste yeniden sıralandığında, başa eleman eklendiğinde veya eleman silindiğinde React yanlış elemanları eşleştirir. Bu gereksiz render'a ve input değerleri gibi component state'inin yanlış elemana kaymasına yol açar. Liste statikse ve sırası değişmiyorsa sorun olmaz; aksi halde verideki kararlı id kullanılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "sira",
+          "label": "Kimliğe değil sıraya bağlı",
+          "aliases": [
+            "sıra",
+            "order",
+            "pozisyon",
+            "konum"
+          ],
+          "anchors": [
+            "Index key elemanın kimliğine değil sırasına bağlıdır."
+          ]
+        },
+        {
+          "id": "degisim",
+          "label": "Sıralama, ekleme, silme sorunu",
+          "aliases": [
+            "yeniden sırala",
+            "sıralama",
+            "ekle",
+            "sil",
+            "başa",
+            "değişirse"
+          ],
+          "anchors": [
+            "Liste değiştiğinde React yanlış elemanları eşleştirir."
+          ]
+        },
+        {
+          "id": "state-kaymasi",
+          "label": "State yanlış elemana kayar",
+          "aliases": [
+            "state",
+            "input değer",
+            "kayma",
+            "yanlış eleman",
+            "hata"
+          ],
+          "anchors": [
+            "Component state'i yanlış elemana kayabilir."
+          ]
+        },
+        {
+          "id": "id",
+          "label": "Kararlı id kullanılmalı",
+          "aliases": [
+            "id kullan",
+            "kararlı",
+            "stable",
+            "benzersiz",
+            "unique"
+          ],
+          "anchors": [
+            "Verideki kararlı id kullanılmalıdır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-memo",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "React.memo nedir?",
+      "modelAnswer": "Bir function component'i sarmalayarak props değişmediği sürece yeniden render edilmesini engelleyen bir higher-order component'tir. Props'u yüzeysel (shallow) karşılaştırır; class component'lerdeki PureComponent'in karşılığıdır. Obje veya fonksiyon props'larında referans her render'da değişiyorsa işe yaramaz, bu yüzden genelde useMemo/useCallback ile birlikte kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "rerender-engel",
+          "label": "Gereksiz render'ı engeller",
+          "aliases": [
+            "gereksiz render",
+            "yeniden render",
+            "re-render",
+            "render etme",
+            "render'ı engel"
+          ],
+          "anchors": [
+            "React.memo props değişmediği sürece yeniden render'ı engeller."
+          ]
+        },
+        {
+          "id": "shallow",
+          "label": "Props yüzeysel karşılaştırılır",
+          "aliases": [
+            "shallow",
+            "yüzeysel",
+            "props karşılaştır",
+            "props değiş"
+          ],
+          "anchors": [
+            "Props yüzeysel olarak karşılaştırılır."
+          ]
+        },
+        {
+          "id": "hoc",
+          "label": "Component'i sarmalar",
+          "aliases": [
+            "sarmala",
+            "wrap",
+            "hoc",
+            "higher-order",
+            "purecomponent"
+          ],
+          "anchors": [
+            "Function component'i sarmalayan bir HOC'tur, PureComponent'in karşılığıdır."
+          ]
+        },
+        {
+          "id": "referans",
+          "label": "Referans sorunu",
+          "aliases": [
+            "referans",
+            "usecallback",
+            "usememo",
+            "obje",
+            "fonksiyon prop"
+          ],
+          "anchors": [
+            "Referansı her render'da değişen props'ta işe yaramaz, useCallback veya useMemo gerekir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-lazy",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "React.lazy nedir?",
+      "modelAnswer": "Dinamik import ile bir component'i ilk render edileceği ana kadar yüklemeyi erteleyen fonksiyondur; böylece component ayrı bir bundle'a (chunk) ayrılır. Default export döndüren bir Promise bekler ve yüklenirken gösterilecek fallback için Suspense ile birlikte kullanılır. Route bazlı code splitting'in temel aracıdır.",
+      "keyConcepts": [
+        {
+          "id": "dinamik-import",
+          "label": "Dinamik import",
+          "aliases": [
+            "import(",
+            "dinamik import",
+            "dynamic import"
+          ],
+          "anchors": [
+            "React.lazy dinamik import ile çalışır."
+          ]
+        },
+        {
+          "id": "gec-yukleme",
+          "label": "İhtiyaç anında yükleme",
+          "aliases": [
+            "lazy",
+            "tembel",
+            "gecikmeli",
+            "ihtiyaç an",
+            "render edilince",
+            "sonradan yükle",
+            "ertele"
+          ],
+          "anchors": [
+            "Component ilk render edileceği ana kadar yüklenmez."
+          ]
+        },
+        {
+          "id": "suspense",
+          "label": "Suspense ile birlikte",
+          "aliases": [
+            "suspense",
+            "fallback"
+          ],
+          "anchors": [
+            "Yükleme sırasında Suspense fallback'i gösterilir."
+          ]
+        },
+        {
+          "id": "code-splitting",
+          "label": "Code splitting",
+          "aliases": [
+            "code splitting",
+            "code-splitting",
+            "chunk",
+            "bundle",
+            "ayrı dosya"
+          ],
+          "anchors": [
+            "Component ayrı bir chunk'a ayrılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-hook",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "Hook nedir?",
+      "modelAnswer": "Function component'lerde state, yaşam döngüsü ve diğer React özelliklerini class yazmadan kullanmayı sağlayan özel fonksiyonlardır. React 16.8 ile geldiler ve adları \"use\" ile başlar (useState, useEffect gibi). Stateful mantığın component'ten ayrılıp custom hook'larla tekrar kullanılmasını sağlarlar.",
+      "keyConcepts": [
+        {
+          "id": "function-component",
+          "label": "Function component'te React özellikleri",
+          "aliases": [
+            "function component",
+            "fonksiyon component",
+            "fonksiyonel"
+          ],
+          "anchors": [
+            "Hook'lar function component'lerde React özelliklerini kullanmayı sağlar."
+          ]
+        },
+        {
+          "id": "class-gereksiz",
+          "label": "Class yazmadan",
+          "aliases": [
+            "class",
+            "sınıf"
+          ],
+          "anchors": [
+            "Hook'larla class yazmadan state kullanılabilir."
+          ]
+        },
+        {
+          "id": "use-onek",
+          "label": "use ile başlar",
+          "aliases": [
+            "use ile",
+            "use önek",
+            "use prefix",
+            "usestate",
+            "useeffect"
+          ],
+          "anchors": [
+            "Hook adları use ile başlar."
+          ]
+        },
+        {
+          "id": "surum",
+          "label": "React 16.8",
+          "aliases": [
+            "16.8"
+          ],
+          "anchors": [
+            "Hook'lar React 16.8 ile geldi."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-hook-kurallari",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "Hook kuralları nelerdir?",
+      "modelAnswer": "İki kural vardır: hook'lar yalnızca en üst seviyede çağrılır (döngü, koşul, iç içe fonksiyon veya erken return sonrasında çağrılmaz) ve yalnızca function component'lerden ya da custom hook'lardan çağrılır. Sebebi, React'in hook state'ini çağrılma sırasına göre eşleştirmesidir; sıra her render'da aynı kalmalıdır. eslint-plugin-react-hooks bu kuralları denetler.",
+      "keyConcepts": [
+        {
+          "id": "ust-seviye",
+          "label": "Yalnızca en üst seviyede",
+          "aliases": [
+            "üst seviye",
+            "top level",
+            "en üst",
+            "koşul",
+            "döngü",
+            "if içinde",
+            "loop"
+          ],
+          "anchors": [
+            "Hook'lar koşul veya döngü içinde değil, en üst seviyede çağrılır."
+          ]
+        },
+        {
+          "id": "react-fonksiyonu",
+          "label": "Yalnızca React fonksiyonlarından",
+          "aliases": [
+            "function component",
+            "custom hook",
+            "react fonksiyon",
+            "component içinde",
+            "normal fonksiyon"
+          ],
+          "anchors": [
+            "Hook'lar yalnızca function component'lerden veya custom hook'lardan çağrılır."
+          ]
+        },
+        {
+          "id": "sira",
+          "label": "Çağrılma sırası sabit kalmalı",
+          "aliases": [
+            "sıra",
+            "order",
+            "aynı sırada"
+          ],
+          "anchors": [
+            "React hook state'ini çağrılma sırasıyla eşleştirir."
+          ]
+        },
+        {
+          "id": "eslint",
+          "label": "ESLint kuralı",
+          "aliases": [
+            "eslint",
+            "lint"
+          ],
+          "anchors": [
+            "eslint-plugin-react-hooks bu kuralları denetler."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-error-boundary",
+      "category": "react",
+      "topic": "Hata yönetimi",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Error boundary nedir?",
+      "modelAnswer": "Alt ağacındaki render sırasında oluşan JavaScript hatalarını yakalayıp tüm uygulamanın çökmesi yerine bir fallback UI gösteren component'tir. getDerivedStateFromError ve componentDidCatch ile yazılır; hâlâ yalnızca class component olarak tanımlanabilir (pratikte react-error-boundary kütüphanesi kullanılır). Event handler'lardaki, asenkron koddaki ve SSR'daki hataları yakalamaz.",
+      "keyConcepts": [
+        {
+          "id": "yakalar",
+          "label": "Alt ağaçtaki hataları yakalar",
+          "aliases": [
+            "yakala",
+            "catch",
+            "hata",
+            "error"
+          ],
+          "anchors": [
+            "Error boundary alt ağacındaki render hatalarını yakalar."
+          ]
+        },
+        {
+          "id": "fallback",
+          "label": "Fallback UI gösterir",
+          "aliases": [
+            "fallback",
+            "yedek arayüz",
+            "hata ekranı",
+            "çökmek yerine",
+            "çökmesini"
+          ],
+          "anchors": [
+            "Uygulama çökmek yerine fallback UI gösterir."
+          ]
+        },
+        {
+          "id": "class",
+          "label": "Class component gerekir",
+          "aliases": [
+            "class",
+            "getderivedstatefromerror",
+            "componentdidcatch",
+            "react-error-boundary"
+          ],
+          "anchors": [
+            "Error boundary class component olarak yazılır."
+          ]
+        },
+        {
+          "id": "sinir",
+          "label": "Neyi yakalamaz",
+          "aliases": [
+            "event handler",
+            "asenkron",
+            "async",
+            "settimeout",
+            "ssr"
+          ],
+          "anchors": [
+            "Event handler ve asenkron koddaki hataları yakalamaz."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-code-splitting",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Code splitting nedir?",
+      "modelAnswer": "Uygulama kodunu tek büyük bundle yerine, ihtiyaç anında yüklenen küçük parçalara (chunk) bölme tekniğidir. Vite veya Webpack gibi bundler'lar dinamik import() gördüğünde ayrı chunk üretir; React tarafında bu genelde React.lazy ve Suspense ile yapılır. İlk yükleme süresini kısaltır, en yaygın kullanımı route bazlı bölmedir.",
+      "keyConcepts": [
+        {
+          "id": "parcalama",
+          "label": "Kodu parçalara bölme",
+          "aliases": [
+            "chunk",
+            "parça",
+            "bölme",
+            "böler",
+            "bölün",
+            "ayrı bundle",
+            "split"
+          ],
+          "anchors": [
+            "Kod tek bundle yerine küçük parçalara bölünür."
+          ]
+        },
+        {
+          "id": "ihtiyac",
+          "label": "İhtiyaç anında yükleme",
+          "aliases": [
+            "ihtiyaç",
+            "gerektiğinde",
+            "lazy",
+            "tembel",
+            "sonradan",
+            "runtime"
+          ],
+          "anchors": [
+            "Parçalar ihtiyaç anında yüklenir."
+          ]
+        },
+        {
+          "id": "dinamik-import",
+          "label": "Dinamik import",
+          "aliases": [
+            "import(",
+            "dinamik import",
+            "dynamic import",
+            "react.lazy"
+          ],
+          "anchors": [
+            "Bölme dinamik import ve React.lazy ile yapılır."
+          ]
+        },
+        {
+          "id": "ilk-yukleme",
+          "label": "İlk yükleme süresi",
+          "aliases": [
+            "ilk yükleme",
+            "initial load",
+            "yükleme süre",
+            "bundle boyut",
+            "performans"
+          ],
+          "anchors": [
+            "İlk yükleme süresini kısaltır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-suspense",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Suspense nedir?",
+      "modelAnswer": "Alt ağacındaki bir component henüz hazır değilken (lazy component yükleniyor veya veri bekleniyor) render'ı erteleyip bunun yerine fallback UI gösteren component'tir. React.lazy ile code splitting'de ve Suspense uyumlu veri çekme (ör. React 19'daki use()) ile kullanılır. İç içe Suspense sınırlarıyla sayfanın parçaları kademeli olarak gösterilebilir.",
+      "keyConcepts": [
+        {
+          "id": "fallback",
+          "label": "Fallback gösterir",
+          "aliases": [
+            "fallback",
+            "loading",
+            "yükleniyor",
+            "spinner",
+            "skeleton"
+          ],
+          "anchors": [
+            "Suspense beklenirken fallback UI gösterir."
+          ]
+        },
+        {
+          "id": "bekleme",
+          "label": "Hazır olmayanı bekler",
+          "aliases": [
+            "bekle",
+            "hazır değil",
+            "ertele",
+            "askıya",
+            "suspend"
+          ],
+          "anchors": [
+            "Alt ağaç hazır olana kadar render'ı erteler."
+          ]
+        },
+        {
+          "id": "lazy",
+          "label": "React.lazy ile",
+          "aliases": [
+            "lazy",
+            "code splitting"
+          ],
+          "anchors": [
+            "React.lazy ile code splitting'de kullanılır."
+          ]
+        },
+        {
+          "id": "veri",
+          "label": "Veri çekme",
+          "aliases": [
+            "veri",
+            "data",
+            "use(",
+            "fetch"
+          ],
+          "anchors": [
+            "Suspense uyumlu veri çekmeyle de kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-windowing",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "Windowing (virtualization) tekniği nedir?",
+      "modelAnswer": "Uzun listelerde tüm satırları değil, yalnızca ekranda görünen satırları (ve küçük bir tamponu) render etme tekniğidir. Kaydırdıkça görünür pencere güncellenir; böylece DOM düğümü sayısı ve render maliyeti büyük ölçüde düşer. react-window, react-virtualized ve TanStack Virtual yaygın kütüphanelerdir.",
+      "keyConcepts": [
+        {
+          "id": "gorunur",
+          "label": "Yalnızca görünen satırlar",
+          "aliases": [
+            "görünen",
+            "görünür",
+            "ekranda",
+            "visible",
+            "viewport"
+          ],
+          "anchors": [
+            "Yalnızca ekranda görünen satırlar render edilir."
+          ]
+        },
+        {
+          "id": "uzun-liste",
+          "label": "Uzun listeler için",
+          "aliases": [
+            "uzun liste",
+            "büyük liste",
+            "binlerce",
+            "çok satır",
+            "long list"
+          ],
+          "anchors": [
+            "Uzun listelerde kullanılır."
+          ]
+        },
+        {
+          "id": "dom-azaltma",
+          "label": "DOM düğümü azalır",
+          "aliases": [
+            "dom düğüm",
+            "dom node",
+            "düğüm sayı",
+            "render maliyet",
+            "performans"
+          ],
+          "anchors": [
+            "DOM düğümü sayısı ve render maliyeti düşer."
+          ]
+        },
+        {
+          "id": "kutuphane",
+          "label": "Kütüphaneler",
+          "aliases": [
+            "react-window",
+            "react-virtualized",
+            "tanstack virtual",
+            "virtuoso"
+          ],
+          "anchors": [
+            "react-window ve react-virtualized yaygın kütüphanelerdir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-useeffect",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "useEffect nedir?",
+      "modelAnswer": "Function component'lerde yan etkileri (veri çekme, abonelik, timer, manuel DOM işlemi) render sonrasında çalıştırmayı sağlayan hook'tur. Dependency array'e göre çalışır: boş dizi yalnızca mount'ta, bağımlılık verilirse o değerler değiştiğinde, dizi yoksa her render'da çalışır. Döndürülen cleanup fonksiyonu unmount'ta ve effect yeniden çalışmadan önce çağrılır.",
+      "keyConcepts": [
+        {
+          "id": "yan-etki",
+          "label": "Yan etkiler",
+          "aliases": [
+            "yan etki",
+            "side effect",
+            "veri çek",
+            "fetch",
+            "abonel",
+            "subscription",
+            "timer"
+          ],
+          "anchors": [
+            "useEffect yan etkileri çalıştırmak için kullanılır."
+          ]
+        },
+        {
+          "id": "render-sonrasi",
+          "label": "Render sonrası çalışır",
+          "aliases": [
+            "render sonra",
+            "render'dan sonra",
+            "after render",
+            "ekrana çizildikten",
+            "paint"
+          ],
+          "anchors": [
+            "Effect render sonrasında çalışır."
+          ]
+        },
+        {
+          "id": "dependency",
+          "label": "Dependency array",
+          "aliases": [
+            "dependency",
+            "bağımlılı",
+            "boş dizi",
+            "[]"
+          ],
+          "anchors": [
+            "Dependency array effect'in ne zaman çalışacağını belirler."
+          ]
+        },
+        {
+          "id": "cleanup",
+          "label": "Cleanup fonksiyonu",
+          "aliases": [
+            "cleanup",
+            "temizle",
+            "unmount",
+            "return"
+          ],
+          "anchors": [
+            "Döndürülen cleanup fonksiyonu unmount'ta ve yeniden çalışmadan önce çağrılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-server-components",
+      "category": "react",
+      "topic": "SSR",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "React Server Components nedir?",
+      "modelAnswer": "Yalnızca sunucuda çalışan ve JavaScript kodu client bundle'ına hiç gönderilmeyen component'lerdir. Veritabanına veya dosya sistemine doğrudan erişip async/await ile veri çekebilirler, ancak state, effect veya event handler kullanamazlar; etkileşim gereken yerler \"use client\" ile işaretlenen client component'lerle yapılır. React 19 ile kararlı hâle geldi ve Next.js App Router'ın temelini oluşturur.",
+      "keyConcepts": [
+        {
+          "id": "sunucu",
+          "label": "Yalnızca sunucuda çalışır",
+          "aliases": [
+            "sunucu",
+            "server"
+          ],
+          "anchors": [
+            "Server component'ler yalnızca sunucuda çalışır."
+          ]
+        },
+        {
+          "id": "bundle",
+          "label": "Client bundle'a girmez",
+          "aliases": [
+            "bundle",
+            "client'a gönderilmez",
+            "javascript gönderil",
+            "boyut"
+          ],
+          "anchors": [
+            "Kodları client bundle'ına gönderilmez."
+          ]
+        },
+        {
+          "id": "kisit",
+          "label": "State ve event kullanamaz",
+          "aliases": [
+            "state",
+            "event",
+            "etkileşim",
+            "usestate",
+            "useeffect"
+          ],
+          "anchors": [
+            "State, effect ve event handler kullanamazlar."
+          ]
+        },
+        {
+          "id": "use-client",
+          "label": "use client ayrımı",
+          "aliases": [
+            "use client",
+            "client component"
+          ],
+          "anchors": [
+            "Etkileşimli kısımlar use client ile işaretlenen client component'lerde yazılır."
+          ]
+        },
+        {
+          "id": "veri",
+          "label": "Doğrudan veri erişimi",
+          "aliases": [
+            "veritaban",
+            "database",
+            "async",
+            "dosya sistem",
+            "doğrudan veri"
+          ],
+          "anchors": [
+            "Veritabanına doğrudan erişip async olarak veri çekebilirler."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-prop-drilling",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 1,
+      "kind": "definition",
+      "prompt": "Prop drilling nedir?",
+      "modelAnswer": "Bir veriyi, ona ihtiyacı olmayan ara component'ler üzerinden katman katman props ile derindeki bir component'e taşımaktır. Kodu gereksiz bağımlı ve bakımı zor hâle getirir. Context API, state yönetim kütüphaneleri (Redux, Zustand) veya composition (children ile geçirme) ile çözülür.",
+      "keyConcepts": [
+        {
+          "id": "ara-component",
+          "label": "İhtiyacı olmayan ara component'ler",
+          "aliases": [
+            "ara component",
+            "ihtiyacı olmayan",
+            "kullanmayan",
+            "aradaki",
+            "ara katman"
+          ],
+          "anchors": [
+            "Veri, ona ihtiyacı olmayan ara component'lerden geçirilir."
+          ]
+        },
+        {
+          "id": "katman",
+          "label": "Katman katman props",
+          "aliases": [
+            "katman",
+            "derin",
+            "kademe",
+            "seviye",
+            "props"
+          ],
+          "anchors": [
+            "Props katman katman aşağı taşınır."
+          ]
+        },
+        {
+          "id": "cozum",
+          "label": "Çözümler",
+          "aliases": [
+            "context",
+            "redux",
+            "zustand",
+            "composition",
+            "state yönetim"
+          ],
+          "anchors": [
+            "Context, state kütüphaneleri veya composition ile çözülür."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-usestate-vs-useref",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "useState ile useRef arasındaki fark nedir?",
+      "modelAnswer": "useState değeri değiştiğinde component'i yeniden render eder; useRef'in .current değeri değiştiğinde ise render tetiklenmez. useRef render'lar arasında kalıcı, değiştirilebilir bir kutu gibidir; DOM elemanlarına erişmek ya da timer id, önceki değer gibi ekrana yansımayan verileri tutmak için kullanılır. Ekranda gösterilen veri için useState kullanılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "render",
+          "label": "useState render tetikler, useRef tetiklemez",
+          "aliases": [
+            "render tetikle",
+            "re-render",
+            "yeniden render",
+            "render etmez",
+            "render olmaz",
+            "render'a sebep"
+          ],
+          "anchors": [
+            "useState değiştiğinde render tetiklenir, useRef değiştiğinde tetiklenmez."
+          ]
+        },
+        {
+          "id": "current",
+          "label": "useRef .current ile değiştirilebilir",
+          "aliases": [
+            "current",
+            "mutable",
+            "değiştirilebilir",
+            "kutu"
+          ],
+          "anchors": [
+            "useRef'in değeri .current üzerinden değiştirilebilir."
+          ]
+        },
+        {
+          "id": "dom",
+          "label": "useRef DOM erişimi",
+          "aliases": [
+            "dom eleman",
+            "dom'a eriş",
+            "dom eriş",
+            "dom node",
+            "dom düğüm"
+          ],
+          "anchors": [
+            "useRef DOM elemanlarına erişmek için kullanılır."
+          ]
+        },
+        {
+          "id": "kalicilik",
+          "label": "Render'lar arası kalıcı",
+          "aliases": [
+            "kalıcı",
+            "render'lar arası",
+            "korunur",
+            "persist",
+            "önceki değer",
+            "timer id"
+          ],
+          "anchors": [
+            "useRef değeri render'lar arasında korunur."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-useeffect-vs-uselayouteffect",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "useEffect ile useLayoutEffect arasındaki fark nedir?",
+      "modelAnswer": "useEffect tarayıcı ekranı boyadıktan (paint) sonra asenkron çalışır; useLayoutEffect ise DOM güncellendikten sonra ama paint'ten önce senkron çalışır. Bu yüzden useLayoutEffect eleman ölçme ve konum ayarlama gibi titreme (flicker) oluşturabilecek işlerde kullanılır. Paint'i bloke ettiği için performans maliyeti vardır; varsayılan tercih useEffect olmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "zamanlama",
+          "label": "Paint öncesi / sonrası",
+          "aliases": [
+            "paint",
+            "boya",
+            "ekrana çiz",
+            "çizimden"
+          ],
+          "anchors": [
+            "useEffect paint'ten sonra, useLayoutEffect paint'ten önce çalışır."
+          ]
+        },
+        {
+          "id": "senkron",
+          "label": "Senkron / asenkron",
+          "aliases": [
+            "senkron",
+            "asenkron",
+            "sync",
+            "async",
+            "bloke"
+          ],
+          "anchors": [
+            "useLayoutEffect senkron çalışır ve paint'i bloke eder."
+          ]
+        },
+        {
+          "id": "flicker",
+          "label": "Titremeyi önler",
+          "aliases": [
+            "flicker",
+            "titre",
+            "görsel sıçrama",
+            "zıpla"
+          ],
+          "anchors": [
+            "useLayoutEffect görsel titremeyi önler."
+          ]
+        },
+        {
+          "id": "olcum",
+          "label": "Layout ölçme",
+          "aliases": [
+            "ölçme",
+            "ölçer",
+            "ölçü",
+            "measure",
+            "layout",
+            "konum",
+            "boyut"
+          ],
+          "anchors": [
+            "useLayoutEffect eleman ölçme ve konumlama için kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-strictmode",
+      "category": "react",
+      "topic": "Hata yönetimi",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "StrictMode nedir?",
+      "modelAnswer": "Yalnızca development modunda çalışan ve olası hataları erkenden gösteren bir yardımcı component'tir; DOM'a ekstra eleman eklemez. Saf olmayan render'ları ve eksik cleanup'ları yakalamak için component'leri iki kez render eder, effect'leri de mount-unmount-mount şeklinde iki kez çalıştırır. Eskimiş API kullanımları için de uyarı verir; production'ı etkilemez.",
+      "keyConcepts": [
+        {
+          "id": "development",
+          "label": "Yalnızca development",
+          "aliases": [
+            "development",
+            "geliştirme",
+            "dev mod",
+            "production etkilen"
+          ],
+          "anchors": [
+            "StrictMode yalnızca development modunda çalışır."
+          ]
+        },
+        {
+          "id": "iki-kez",
+          "label": "İki kez çalıştırma",
+          "aliases": [
+            "iki kez",
+            "çift",
+            "twice",
+            "double"
+          ],
+          "anchors": [
+            "Component'leri ve effect'leri iki kez çalıştırır."
+          ]
+        },
+        {
+          "id": "sorun-tespit",
+          "label": "Olası sorunları gösterir",
+          "aliases": [
+            "sorun",
+            "uyarı",
+            "warning",
+            "saf olmayan",
+            "impure",
+            "cleanup",
+            "deprecated",
+            "eskimiş"
+          ],
+          "anchors": [
+            "Saf olmayan render'ları, eksik cleanup'ları ve eskimiş API'leri yakalar."
+          ]
+        },
+        {
+          "id": "dom-yok",
+          "label": "DOM'a eleman eklemez",
+          "aliases": [
+            "dom'a",
+            "ekstra",
+            "eleman eklemez"
+          ],
+          "anchors": [
+            "DOM'a ekstra eleman eklemez."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-batching",
+      "category": "react",
+      "topic": "Rendering",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "React state güncellemelerini nasıl batch'ler?",
+      "modelAnswer": "Aynı olay içindeki birden fazla state güncellemesini gruplayıp tek bir re-render ile uygular; buna batching denir. React 18 öncesinde bu yalnızca React event handler'larında geçerliydi; React 18 ile gelen automatic batching sayesinde promise, setTimeout ve native event içindeki güncellemeler de gruplanır. Gerekirse flushSync ile batching devre dışı bırakılabilir.",
+      "keyConcepts": [
+        {
+          "id": "gruplama",
+          "label": "Güncellemeleri gruplar",
+          "aliases": [
+            "grupla",
+            "toplu",
+            "birleştir",
+            "batch"
+          ],
+          "anchors": [
+            "Birden fazla state güncellemesi gruplanır."
+          ]
+        },
+        {
+          "id": "tek-render",
+          "label": "Tek render",
+          "aliases": [
+            "tek render",
+            "tek bir render",
+            "tek bir re-render",
+            "tek re-render",
+            "bir kez render",
+            "tek seferde"
+          ],
+          "anchors": [
+            "Gruplanan güncellemeler tek bir render ile uygulanır."
+          ]
+        },
+        {
+          "id": "automatic",
+          "label": "React 18 automatic batching",
+          "aliases": [
+            "automatic",
+            "otomatik",
+            "react 18",
+            "settimeout",
+            "promise"
+          ],
+          "anchors": [
+            "React 18 ile promise ve setTimeout içindekiler de gruplanır."
+          ]
+        },
+        {
+          "id": "flushsync",
+          "label": "flushSync",
+          "aliases": [
+            "flushsync"
+          ],
+          "anchors": [
+            "flushSync ile batching devre dışı bırakılabilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-hydration",
+      "category": "react",
+      "topic": "SSR",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "Hydration nedir?",
+      "modelAnswer": "Sunucuda render edilip tarayıcıya statik HTML olarak gönderilen sayfaya, client tarafında React'in event handler'ları ve state'i bağlayarak onu etkileşimli hâle getirme işlemidir. hydrateRoot ile yapılır; React mevcut HTML'i yeniden oluşturmaz, üzerine bağlanır. Sunucu ve client çıktısı farklı olursa hydration mismatch hatası oluşur.",
+      "keyConcepts": [
+        {
+          "id": "ssr-html",
+          "label": "Sunucudan gelen HTML",
+          "aliases": [
+            "ssr",
+            "sunucu",
+            "server",
+            "statik html",
+            "hazır html"
+          ],
+          "anchors": [
+            "Sunucuda render edilmiş HTML tarayıcıya gönderilir."
+          ]
+        },
+        {
+          "id": "etkilesim",
+          "label": "Etkileşim ekleme",
+          "aliases": [
+            "etkileşim",
+            "interaktif",
+            "event handler",
+            "olay dinleyici",
+            "bağla"
+          ],
+          "anchors": [
+            "Client tarafında event handler'lar ve state bağlanarak sayfa etkileşimli olur."
+          ]
+        },
+        {
+          "id": "hydrateroot",
+          "label": "hydrateRoot",
+          "aliases": [
+            "hydrateroot"
+          ],
+          "anchors": [
+            "Hydration hydrateRoot ile yapılır."
+          ]
+        },
+        {
+          "id": "mismatch",
+          "label": "Hydration mismatch",
+          "aliases": [
+            "mismatch",
+            "uyuşmazlı",
+            "farklı çıktı",
+            "eşleşmezse"
+          ],
+          "anchors": [
+            "Sunucu ve client çıktısı farklıysa hydration mismatch oluşur."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-usereducer-vs-usestate",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "useReducer ile useState arasındaki fark nedir?",
+      "modelAnswer": "useState basit ve bağımsız state için uygundur; değer doğrudan setter ile güncellenir. useReducer ise birbirine bağlı alanları olan karmaşık state için tercih edilir; güncellemeler dispatch edilen action'larla, component dışındaki saf bir reducer fonksiyonunda yapılır. Bu sayede güncelleme mantığı tek yerde toplanır ve kolayca test edilir.",
+      "keyConcepts": [
+        {
+          "id": "karmasiklik",
+          "label": "Basit / karmaşık state",
+          "aliases": [
+            "karmaşı",
+            "basit",
+            "complex",
+            "iç içe",
+            "bağlı alan"
+          ],
+          "anchors": [
+            "useState basit, useReducer karmaşık state için uygundur."
+          ]
+        },
+        {
+          "id": "dispatch",
+          "label": "Action dispatch edilir",
+          "aliases": [
+            "dispatch",
+            "action",
+            "aksiyon"
+          ],
+          "anchors": [
+            "useReducer'da güncelleme action dispatch edilerek yapılır."
+          ]
+        },
+        {
+          "id": "reducer",
+          "label": "Reducer fonksiyonu",
+          "aliases": [
+            "reducer",
+            "saf fonksiyon",
+            "pure function",
+            "component dışı"
+          ],
+          "anchors": [
+            "Güncelleme mantığı saf bir reducer fonksiyonunda toplanır."
+          ]
+        },
+        {
+          "id": "test",
+          "label": "Test edilebilirlik",
+          "aliases": [
+            "test",
+            "merkezi",
+            "tek yerde"
+          ],
+          "anchors": [
+            "Reducer ayrı olduğu için kolayca test edilir."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-updater-function",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Updater function nedir, ne zaman kullanılır?",
+      "modelAnswer": "State setter'ına doğrudan değer yerine önceki state'i alıp yeni state'i döndüren bir fonksiyon vermektir, ör. setCount(c => c + 1). Yeni değer önceki değere bağlıysa ve aynı handler içinde art arda güncelleme yapılıyorsa ya da closure'daki eski (stale) state riski varsa kullanılır. Değer önceki state'ten bağımsızsa gerek yoktur.",
+      "keyConcepts": [
+        {
+          "id": "onceki-state",
+          "label": "Önceki state'i alır",
+          "aliases": [
+            "önceki state",
+            "prev",
+            "previous",
+            "önceki değer",
+            "mevcut state"
+          ],
+          "anchors": [
+            "Updater function önceki state'i alıp yeni state'i döndürür."
+          ]
+        },
+        {
+          "id": "art-arda",
+          "label": "Art arda güncelleme",
+          "aliases": [
+            "art arda",
+            "ardışı",
+            "birden fazla güncelle",
+            "üç kez",
+            "kuyru",
+            "queue"
+          ],
+          "anchors": [
+            "Aynı handler içinde art arda güncellemede her biri son değeri kullanır."
+          ]
+        },
+        {
+          "id": "stale",
+          "label": "Stale state riski",
+          "aliases": [
+            "stale",
+            "eski değer",
+            "bayat",
+            "closure"
+          ],
+          "anchors": [
+            "Closure'daki eski state riskini önler."
+          ]
+        },
+        {
+          "id": "gereksiz",
+          "label": "Her zaman gerekmez",
+          "aliases": [
+            "gerek yok",
+            "her zaman değil",
+            "bağımsız",
+            "sabit değer"
+          ],
+          "anchors": [
+            "Değer önceki state'e bağlı değilse gerekmez."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-usememo-vs-usecallback",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "useMemo ile useCallback arasındaki fark nedir?",
+      "modelAnswer": "useMemo bir hesaplamanın sonucunu (değeri), useCallback ise fonksiyonun kendisini (referansını) bağımlılıklar değişene kadar önbellekte tutar. useCallback(fn, deps), useMemo(() => fn, deps) ile eşdeğerdir. useMemo pahalı hesaplamalar için, useCallback ise React.memo'lu child'a callback geçirirken referans eşitliğini korumak için kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "usememo-deger",
+          "label": "useMemo değeri saklar",
+          "aliases": [
+            "değer",
+            "sonuç",
+            "hesaplama sonucu",
+            "result"
+          ],
+          "anchors": [
+            "useMemo bir hesaplamanın sonucunu saklar."
+          ]
+        },
+        {
+          "id": "usecallback-fonksiyon",
+          "label": "useCallback fonksiyonu saklar",
+          "aliases": [
+            "fonksiyon",
+            "referans",
+            "function"
+          ],
+          "anchors": [
+            "useCallback fonksiyonun referansını saklar."
+          ]
+        },
+        {
+          "id": "bagimlilik",
+          "label": "Bağımlılık değişene kadar",
+          "aliases": [
+            "bağımlılı",
+            "dependency",
+            "deps"
+          ],
+          "anchors": [
+            "İkisi de bağımlılıklar değişene kadar önbellekte tutar."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Kullanım amacı",
+          "aliases": [
+            "pahalı",
+            "react.memo",
+            "child",
+            "referans eşit",
+            "gereksiz render"
+          ],
+          "anchors": [
+            "useMemo pahalı hesaplamada, useCallback memo'lu child'a callback geçerken kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-custom-hook",
+      "category": "react",
+      "topic": "Hooks",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Custom hook nedir?",
+      "modelAnswer": "Adı \"use\" ile başlayan ve içinde başka hook'ları kullanarak component mantığını tekrar kullanılabilir hâle getiren fonksiyondur (ör. useFetch, useDebounce). Mantığı paylaşır ama state'i paylaşmaz; her kullanımda bağımsız bir state oluşur. Component'leri sade tutar ve mantığın ayrı test edilmesini sağlar.",
+      "keyConcepts": [
+        {
+          "id": "use",
+          "label": "use ile başlar",
+          "aliases": [
+            "use ile",
+            "use önek",
+            "use prefix",
+            "usefetch",
+            "usedebounce"
+          ],
+          "anchors": [
+            "Custom hook adı use ile başlar."
+          ]
+        },
+        {
+          "id": "mantik",
+          "label": "Mantığı tekrar kullanma",
+          "aliases": [
+            "mantı",
+            "logic",
+            "tekrar kullan",
+            "yeniden kullan",
+            "paylaş",
+            "reuse"
+          ],
+          "anchors": [
+            "Component mantığını tekrar kullanılabilir hâle getirir."
+          ]
+        },
+        {
+          "id": "hook-kullanir",
+          "label": "Başka hook'ları kullanır",
+          "aliases": [
+            "usestate",
+            "useeffect",
+            "hook'ları kullan",
+            "başka hook"
+          ],
+          "anchors": [
+            "İçinde başka hook'ları kullanır."
+          ]
+        },
+        {
+          "id": "state-paylasilmaz",
+          "label": "State paylaşılmaz",
+          "aliases": [
+            "state paylaşılmaz",
+            "bağımsız state",
+            "her kullanımda",
+            "ayrı state"
+          ],
+          "anchors": [
+            "Her kullanımda bağımsız state oluşur."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-usetransition-vs-usedeferredvalue",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "useTransition ile useDeferredValue arasındaki fark nedir?",
+      "modelAnswer": "İkisi de acil olmayan güncellemeleri düşük öncelikli yaparak UI'ın donmasını önler. useTransition state güncellemesini startTransition ile sarmalar ve isPending bayrağı verir; güncellemeyi kendin tetikliyorsan kullanılır. useDeferredValue ise bir değerin gecikmeli kopyasını döndürür; değer props gibi kontrol etmediğin bir yerden geliyorsa kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "oncelik",
+          "label": "Acil olmayan güncelleme",
+          "aliases": [
+            "acil olmayan",
+            "non-urgent",
+            "düşük önceli",
+            "önceli",
+            "donma"
+          ],
+          "anchors": [
+            "İkisi de acil olmayan güncellemeleri düşük öncelikli yapar."
+          ]
+        },
+        {
+          "id": "transition",
+          "label": "useTransition güncellemeyi sarar",
+          "aliases": [
+            "starttransition",
+            "ispending",
+            "güncellemeyi sar",
+            "setstate"
+          ],
+          "anchors": [
+            "useTransition state güncellemesini startTransition ile sarar ve isPending verir."
+          ]
+        },
+        {
+          "id": "deferred",
+          "label": "useDeferredValue değeri geciktirir",
+          "aliases": [
+            "gecikmeli",
+            "deferred",
+            "değerin kopya",
+            "değer"
+          ],
+          "anchors": [
+            "useDeferredValue bir değerin gecikmeli kopyasını döndürür."
+          ]
+        },
+        {
+          "id": "secim",
+          "label": "Ne zaman hangisi",
+          "aliases": [
+            "kontrol etmediğin",
+            "props'tan",
+            "kendin tetikl",
+            "dışarıdan gelen"
+          ],
+          "anchors": [
+            "Güncellemeyi kontrol ediyorsan useTransition, değer dışarıdan geliyorsa useDeferredValue kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-memo-context",
+      "category": "react",
+      "topic": "Performans",
+      "difficulty": 3,
+      "kind": "definition",
+      "prompt": "React.memo, context tüketicilerinin re-render olmasını engeller mi?",
+      "modelAnswer": "Hayır. React.memo yalnızca props'u karşılaştırır; useContext ile context okuyan bir component, context değeri değiştiğinde memo'lu olsa bile yeniden render olur. Çözüm olarak context'ler sorumluluğa göre bölünür, provider value'su useMemo ile sabitlenir veya selector destekli bir state kütüphanesi (Redux, Zustand) kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "hayir",
+          "label": "Hayır, engellemez",
+          "aliases": [
+            "hayır",
+            "engellemez",
+            "engelleyemez",
+            "render olur",
+            "yine render"
+          ],
+          "anchors": [
+            "React.memo context tüketicilerinin render olmasını engellemez."
+          ]
+        },
+        {
+          "id": "props",
+          "label": "Yalnızca props'a bakar",
+          "aliases": [
+            "props",
+            "yalnızca props",
+            "sadece props"
+          ],
+          "anchors": [
+            "React.memo yalnızca props'u karşılaştırır."
+          ]
+        },
+        {
+          "id": "bolme",
+          "label": "Context'i bölme",
+          "aliases": [
+            "bölme",
+            "böler",
+            "bölün",
+            "split",
+            "ayrı context"
+          ],
+          "anchors": [
+            "Context'ler sorumluluğa göre bölünebilir."
+          ]
+        },
+        {
+          "id": "usememo-selector",
+          "label": "Value memoize / selector",
+          "aliases": [
+            "usememo",
+            "selector",
+            "zustand",
+            "redux",
+            "value"
+          ],
+          "anchors": [
+            "Provider value'su useMemo ile sabitlenir ya da selector'lı kütüphane kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
+    },
+    {
+      "id": "react-client-vs-server-state",
+      "category": "react",
+      "topic": "State",
+      "difficulty": 2,
+      "kind": "definition",
+      "prompt": "Client state ile server state arasındaki fark nedir?",
+      "modelAnswer": "Client state yalnızca arayüze ait veridir (modal açık mı, seçili sekme, form girdisi); tek doğruluk kaynağı client'tır. Server state ise backend'de tutulan verinin client'taki önbellek kopyasıdır; eskiyebilir ve yükleme, hata, yeniden çekme, önbellek geçersizleştirme gerektirir. Client state için useState veya Zustand, server state için React Query, RTK Query veya SWR gibi araçlar uygundur.",
+      "keyConcepts": [
+        {
+          "id": "client",
+          "label": "Client state arayüze aittir",
+          "aliases": [
+            "arayüz",
+            "ui state",
+            "modal",
+            "sekme",
+            "form",
+            "tarayıcı"
+          ],
+          "anchors": [
+            "Client state yalnızca arayüze ait veridir."
+          ]
+        },
+        {
+          "id": "server",
+          "label": "Server state backend'in kopyasıdır",
+          "aliases": [
+            "backend",
+            "sunucu",
+            "server",
+            "veritaban",
+            "kopya"
+          ],
+          "anchors": [
+            "Server state backend verisinin client'taki kopyasıdır."
+          ]
+        },
+        {
+          "id": "stale",
+          "label": "Eskiyebilir",
+          "aliases": [
+            "eski",
+            "stale",
+            "güncel olmay",
+            "bayat",
+            "yeniden çek",
+            "refetch",
+            "invalid"
+          ],
+          "anchors": [
+            "Server state eskiyebilir, yeniden çekme ve geçersizleştirme gerektirir."
+          ]
+        },
+        {
+          "id": "arac",
+          "label": "Araçlar",
+          "aliases": [
+            "react query",
+            "tanstack",
+            "rtk query",
+            "swr",
+            "usestate",
+            "zustand"
+          ],
+          "anchors": [
+            "Server state için React Query, client state için useState veya Zustand kullanılır."
+          ]
+        }
+      ],
+      "source": "sudheerj/reactjs-interview-questions (MIT)"
     }
   ]
 }
