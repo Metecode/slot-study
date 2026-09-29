@@ -17,7 +17,8 @@
     "android:run": "npm run build && cap sync android && cap run android",
     "test": "vitest run",
     "test:watch": "vitest",
-    "scan:layout": "node scripts/scan-layout.mjs"
+    "scan:layout": "node scripts/scan-layout.mjs",
+    "icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",

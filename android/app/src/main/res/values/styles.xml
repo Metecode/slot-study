@@ -21,7 +21,17 @@
     </style>
 
 
+    <!-- Açılış teması: koyu zemin, ortada ikonun ön katmanı. Eklenti yok,
+         installSplashScreen() çağrılmıyor. Android 12+'da sistem açılış
+         ekranı bu iki özelliği okur; 11 ve öncesinde (API 23+)
+         Theme.SplashScreen'in kendi windowBackground'u aynı ikisinden
+         çizilen bir layer-list. Zemin tanımsızken sistem temanın açık
+         rengine düşüyor, açılışta beyaz flaş oluyordu; şablondaki
+         splash.png'ler bu yüzden kaldırıldı. postSplashScreenTheme yok:
+         BridgeActivity onCreate'te temayı kendisi AppTheme.NoActionBar
+         yapıyor. -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
-        <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">@color/app_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
     </style>
 </resources>
