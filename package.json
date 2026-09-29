@@ -18,6 +18,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "scan:layout": "node scripts/scan-layout.mjs",
+    "icons": "node scripts/generate-icons.mjs",
     "merge-questions": "node scripts/merge-questions.ts"
   },
   "dependencies": {

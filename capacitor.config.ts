@@ -5,6 +5,13 @@ const config: CapacitorConfig = {
   appName: "Slot",
   // Vite'ın çıktı klasörü (vite.config.ts'te build.outDir yok, varsayılan).
   webDir: "dist",
+  /*
+    WebView'in zemini, sayfa ilk kareyi çizene kadar görünen renk.
+    Tanımsızken varsayılan beyaz: açılış ekranı kalkınca kısa bir beyaz
+    flaş görünebilir. tokens.css --bg ve android/.../values/colors.xml
+    app_background ile aynı.
+  */
+  backgroundColor: "#0b0f14",
   server: {
     /*
       Varsayılan zaten "https"; açıkça yazıldı çünkü origin'i belirliyor

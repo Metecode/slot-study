@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Bildirim küçük ikonu (tekrar hatırlatıcısı). public/favicon.svg'den elle
-  aktarıldı: koyu zemin atıldı, çerçeve + daire + çubuk beyaz kaldı; Android
-  küçük ikonda yalnızca alfa kanalını kullanır. Görüntü alanı SVG ile aynı
-  (28), grup ölçeği şekli 24dp içindeki 20dp'lik canlı alana sığdırır.
-  Çerçeve çizgisi 1.5 yerine 2: 24dp'de ~1dp kalıp kayboluyordu.
+  Bildirim küçük ikonu (tekrar hatırlatıcısı). design/icon/slot_notification_24.svg'den
+  elle aktarıldı; görüntü alanı SVG ile aynı (24). Android küçük ikonda yalnızca
+  alfa kanalını kullanır, renk beyaz kalır. Çerçeve 2, içerik 1.5 kalınlıkta:
+  24dp'de daha incesi kayboluyor.
   capacitor.config.ts → plugins.LocalNotifications.smallIcon.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
-    android:viewportWidth="28"
-    android:viewportHeight="28">
-    <group
-        android:pivotX="14"
-        android:pivotY="14"
-        android:scaleX="0.8333"
-        android:scaleY="0.8333">
-        <path
-            android:strokeColor="#FFFFFFFF"
-            android:strokeWidth="2"
-            android:pathData="M8.5,1.5 H19.5 A7,7 0 0 1 26.5,8.5 V19.5 A7,7 0 0 1 19.5,26.5 H8.5 A7,7 0 0 1 1.5,19.5 V8.5 A7,7 0 0 1 8.5,1.5 Z" />
-        <path
-            android:fillColor="#FFFFFFFF"
-            android:pathData="M11.4,10.5 A2.6,2.6 0 1 0 16.6,10.5 A2.6,2.6 0 1 0 11.4,10.5 Z" />
-        <path
-            android:fillColor="#FFFFFFFF"
-            android:pathData="M9.7,16.5 H18.3 A1.2,1.2 0 0 1 18.3,18.9 H9.7 A1.2,1.2 0 0 1 9.7,16.5 Z" />
-    </group>
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2"
+        android:pathData="M6,6.5 H18 A3,3 0 0 1 21,9.5 V14.5 A3,3 0 0 1 18,17.5 H6 A3,3 0 0 1 3,14.5 V9.5 A3,3 0 0 1 6,6.5 Z" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M8.75,9.25 C7.6,9.25 7.4,9.7 7.4,10.6 L7.4,11 C7.4,11.6 7,12 6.4,12 C7,12 7.4,12.4 7.4,13 L7.4,13.4 C7.4,14.3 7.6,14.75 8.75,14.75" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M15.25,9.25 C16.4,9.25 16.6,9.7 16.6,10.6 L16.6,11 C16.6,11.6 17,12 17.6,12 C17,12 16.6,12.4 16.6,13 L16.6,13.4 C16.6,14.3 16.4,14.75 15.25,14.75" />
+    <path
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,10.1 L12,13.9" />
 </vector>
