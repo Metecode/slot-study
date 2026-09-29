@@ -37,7 +37,7 @@ export type AiTarget = {
 
 export const AI_TARGETS = [
   {
-    // son elle doğrulama: yok
+    // son elle doğrulama: 2026-09-29 — q ile prompt dolar; web ve Android'de doğrulandı.
     // İstemi açılır açılmaz gönderebilir.
     id: "chatgpt",
     label: "ChatGPT",
@@ -46,7 +46,7 @@ export const AI_TARGETS = [
     queryParam: "q",
   },
   {
-    // // son elle doğrulama: 2026-09-28 — q ile prompt kutuya dolar, otomatik gönderilmez.
+    // // son elle doğrulama: 2026-09-29 — q ile prompt kutuya dolar, otomatik gönderilmez.
     // claude.ai önceden doldurulmuş promptlar için uyarı bandı gösterir (bizim kontrolümüzde değil).
     id: "claude",
     label: "Claude",
@@ -55,7 +55,8 @@ export const AI_TARGETS = [
     queryParam: "q",
   },
   {
-    // son elle doğrulama: yok
+    // son elle doğrulama: 2026-09-29 — q parametresi yok; kopyala + yapıştır akışı
+    // web ve Android'de doğrulandı.
     // Resmî ve kararlı bir istem parametresi bilinmiyor; kullanıcı yapıştırır.
     id: "gemini",
     label: "Gemini",
@@ -63,7 +64,8 @@ export const AI_TARGETS = [
     baseUrl: "https://gemini.google.com/app",
   },
   {
-    // son elle doğrulama: yok
+    // son elle doğrulama: 2026-09-29 — q ile prompt dolar ve arama başlar;
+    // web ve Android'de doğrulandı.
     // Arama motoru entegrasyonunun biçimi; aramayı hemen başlatır.
     id: "perplexity",
     label: "Perplexity",
