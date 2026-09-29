@@ -11,8 +11,8 @@ cevabını yazar, kavram bazlı geri bildirim alır.
 - **Değerlendirme: kelime eşleşmesi + öz-değerlendirme.** Alias kelime
   eşleşmesi ve kullanıcının öz-değerlendirmesi. Uygulama hiçbir yapay
   zekâ sağlayıcısını çağırmaz; kullanıcı isterse "Kendi yapay zekâna sor"
-  ile istemi kendi aracına taşır (bkz. "Yapay zekâ değerlendirmesi —
-  denendi, kaldırıldı").
+  ile istemi kendi aracında açar ya da kopyalar (bkz. "Yapay zekâ
+  değerlendirmesi — denendi, kaldırıldı").
   Tarayıcıda embedding ile kavram eşleştirme de denendi ve çıkarıldı:
   e5-small ile alakasız çapalar 0.88, doğru kavramlar 0.88-0.91 skor
   alıyordu — Türkçede eşik koyacak kadar ayrışmıyor. Kod silinmedi,
@@ -399,11 +399,47 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
      onay ekranıyla bile iyi bir varsayılan değil.
   3. Kullanıcıların zaten kendi yapay zekâ araçları var.
 - **Yerine: "Kendi yapay zekâna sor".** Sonuç panelinde, kavram
-  çiplerinin altında ikincil bir düğme; API çağırmaz. Panoya soru,
-  kullanıcının cevabı ve kriterler (kavram adı + ilk çapa cümlesi) ile bir
-  değerlendirme istemi kopyalar. Metni `domain/ownAiPrompt.ts` üretir
-  (saf, testli). Model cevap isteme konmaz — istem kısa kalsın; isteyen
-  yanında görüyor. Pas geçilen soruda düğme yok.
+  çiplerinin altında ikincil bir bölüm; API çağırmaz. İstem soru,
+  kullanıcının cevabı ve kriterlerden (kavram adı + ilk çapa cümlesi)
+  oluşur; metni `domain/ownAiPrompt.ts` üretir (saf, testli). Model cevap
+  isteme konmaz — istem kısa kalsın; isteyen yanında görüyor. Pas geçilen
+  soruda bölüm yok. Arayüzde kelime "prompt" ("Promptu kopyala"), kodda
+  ve yorumlarda "istem".
+- **Hedefte açma.** ChatGPT, Claude, Gemini, Perplexity
+  (`domain/aiTargets.ts`). Düğme aracı yeni sayfada açar, istem sorgu
+  parametresiyle gider (`domain/aiHandoff.ts`); parametre yoksa (Gemini)
+  ya da encode edilmiş URL 6000 karakteri aşarsa parametresiz açılır ve
+  kullanıcı yapıştırır. 6000: nginx/Apache'nin 8 KB request line sınırının
+  altında pay; bugünkü içerikte 600 karakterlik Türkçe cevapla en uzun URL
+  ~3000. Hangi servisin parametreyi kabul ettiği değişebiliyor: her
+  hedefin yanında "son elle doğrulama" notu var, emin olunmayan parametre
+  yazılmaz. Marka logosu yok; eklenirse resmî marka kitlerinden,
+  `AiTargetId` anahtarlı ayrı bir haritayla.
+- **Kopya her durumda, sıra tek yerde.** İstem adreste gitse de panoya
+  kopyalanır: servis parametreyi düşürebilir ya da girişe yönlendirip
+  kaybedebilir. `platform/aiHandoff/handoff.ts`: kopya başlar (beklenmez),
+  adres aynı tıklamada senkron açılır, sonra kopya beklenir — önce
+  beklenseydi açılır pencere kullanıcı hareketi dışında kalırdı. Bu yüzden
+  `handoff` tıklama işleyicisinden önünde `await` olmadan çağrılır.
+- **Web ve native ayrı adapter** (`platform/aiHandoff/`, seçim
+  `platform/index.ts`'te). Web: `writeText`, reddedince yalnızca belge
+  hâlâ odaktaysa `execCommand` yedeği (yeni sekme öne geldiyse yedek ya
+  çalışmaz ya da yalan söyler). Sıra `WEB_COPY_ORDER` sabitiyle
+  "önce execCommand"a çevrilebilir; masaüstünde yeni sekme `writeText`'i
+  düşürürse değişecek olan yalnızca o. Native: açma aynı `window.open`
+  (Capacitor dış adresi sistem tarayıcısına verir, app-launcher yok);
+  pano `@capacitor/clipboard`, çünkü açma uygulamayı arka plana atıyor ve
+  WebView'in `writeText`'i odak ister, iOS'ta `capacitor://` güvenli bağlam
+  sayılmayabilir. Paylaşım `@capacitor/share`. Eklentiler web bundle'ına
+  girmez, native'de adapter oluşurken önceden yüklenir.
+- **Düzen `canShare`'e göre.** Dokunmatik birincil işaretçide (mobil web)
+  ve native'de önce "Paylaş" (birincil), "Promptu kopyala", sonra sade
+  hedef düğmeleri; masaüstünde hedefler, altında "Promptu kopyala".
+  "Promptu göster" hep açılabilir (readOnly, odakta tümü seçili); kopya
+  düşerse kendiliğinden açılır. Hangi sonuçta ne söyleneceği saf
+  `components/result/askOwnAiStatus.ts`'te: başarılı açılışta mesaj yok
+  (kullanıcı başka sayfada, döndüğünde bayat olurdu), istem gitmediyse
+  "yapıştırman yeterli", paylaşımdan vazgeçmek hata değil.
 - **Geri getirmeden önce** yukarıdaki üç sebep yeniden değerlendirilir
   (ücretli katman, kendi anahtarını getirme vb.). Deney dalındaki CLAUDE.md
   sağlayıcıyla ilgili doğrulanmış bulguları (zaman aşımı, düşünme

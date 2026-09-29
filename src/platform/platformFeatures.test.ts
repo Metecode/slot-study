@@ -76,6 +76,32 @@ describe("storage seçimi", () => {
   });
 });
 
+describe("aiHandoff seçimi", () => {
+  afterEach(() => {
+    vi.doUnmock("./aiHandoff/nativeAiHandoff");
+  });
+
+  it("web'de web adapter'ı", async () => {
+    mockCapacitor(false);
+    const { aiHandoff } = await import("./index");
+    const { webAiHandoff } = await import("./aiHandoff/webAiHandoff");
+
+    expect(aiHandoff).toBe(webAiHandoff);
+  });
+
+  it("native'de native adapter'ı, modül yüklenirken oluşturulur", async () => {
+    mockCapacitor(true);
+    const nativeAdapter = { copy: vi.fn(), canShare: vi.fn(), share: vi.fn(), open: vi.fn() };
+    const createNativeAiHandoff = vi.fn(() => nativeAdapter);
+    vi.doMock("./aiHandoff/nativeAiHandoff", () => ({ createNativeAiHandoff }));
+
+    const { aiHandoff } = await import("./index");
+
+    expect(aiHandoff).toBe(nativeAdapter);
+    expect(createNativeAiHandoff).toHaveBeenCalledOnce();
+  });
+});
+
 describe("registerServiceWorker", () => {
   it("web'de /sw.js'i kök kapsamla kaydeder", async () => {
     mockCapacitor(false);
