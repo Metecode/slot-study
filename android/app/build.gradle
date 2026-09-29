@@ -1,5 +1,46 @@
 apply plugin: 'com.android.application'
 
+/*
+  Sürümün tek kaynağı package.json; artırmak için `npm version patch|minor|major`.
+  versionCode ondan türetilir: major*10000 + minor*100 + patch (1.2.3 → 10203).
+  Play her yüklemede daha büyük bir versionCode ister, semver arttıkça bu da artar.
+  minor ya da patch 99'u aşarsa bir üst basamağa taşar (1.0.100 → 10100, yani
+  1.1.0 ile aynı kod), bu yüzden derleme durur. Ön sürüm etiketi (-beta.1)
+  sayıya çevrilemediği için o da durdurur.
+*/
+def appVersionName = new groovy.json.JsonSlurper().parse(rootProject.file('../package.json')).version as String
+def versionMatch = appVersionName =~ /^(\d+)\.(\d+)\.(\d+)$/
+if (!versionMatch.matches()) {
+    throw new GradleException("package.json sürümü \"${appVersionName}\" X.Y.Z biçiminde değil; versionCode türetilemiyor.")
+}
+def (versionMajor, versionMinor, versionPatch) = (1..3).collect { Integer.parseInt(versionMatch.group(it)) }
+if (versionMinor > 99 || versionPatch > 99) {
+    throw new GradleException("package.json sürümü ${appVersionName}: minor ve patch en fazla 99 olabilir " +
+        "(versionCode = major*10000 + minor*100 + patch). Bir üst basamağı artır: npm version minor ya da npm version major.")
+}
+def appVersionCode = versionMajor * 10000 + versionMinor * 100 + versionPatch
+
+/*
+  Release imzası android/keystore.properties'ten okunur (repoda yok, .gitignore'da).
+  Dosya yoksa (başka makine, CI, yalnızca debug derleyen) derleme bozulmaz:
+  release imzasız çıkar, release derlemesinin sonunda uyarı yazılır. Dosya var
+  ama anahtar eksikse derleme durur; imzalamak isteyen sessizce imzasız pakete
+  düşmesin. Değerler hiçbir mesaja yazılmaz.
+  UTF-8 okunur: Properties.load(InputStream) Latin-1 varsayar ve Türkçe
+  karakterli şifreyi bozardı. storeFile mutlak ya da android/'e göre göreli;
+  .properties'te \ kaçış karakteri olduğundan Windows yolunda / kullanılır.
+*/
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+def hasReleaseKeystore = keystorePropertiesFile.exists()
+if (hasReleaseKeystore) {
+    keystorePropertiesFile.withReader('UTF-8') { keystoreProperties.load(it) }
+    def missingKeys = ['storeFile', 'storePassword', 'keyAlias', 'keyPassword'].findAll { !keystoreProperties.getProperty(it) }
+    if (missingKeys) {
+        throw new GradleException("android/keystore.properties'te eksik anahtar: ${missingKeys.join(', ')}")
+    }
+}
+
 android {
     namespace = "com.meteucar.slot"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +48,8 @@ android {
         applicationId "com.meteucar.slot"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode = appVersionCode
+        versionName = appVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,10 +57,34 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            release {
+                storeFile = rootProject.file(keystoreProperties.getProperty('storeFile'))
+                storePassword = keystoreProperties.getProperty('storePassword')
+                keyAlias = keystoreProperties.getProperty('keyAlias')
+                keyPassword = keystoreProperties.getProperty('keyPassword')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (hasReleaseKeystore) {
+                signingConfig = signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+// Uyarı derlemenin sonunda, "BUILD SUCCESSFUL"un hemen üstünde görünsün diye doLast'te.
+if (!hasReleaseKeystore) {
+    tasks.matching { it.name == 'bundleRelease' || it.name == 'assembleRelease' }.configureEach {
+        doLast {
+            logger.warn("UYARI: android/keystore.properties bulunamadı, release paketi İMZASIZ derlendi. " +
+                "Play Console imzasız paketi kabul etmez. İmzalamak için dosyaya storeFile, storePassword, " +
+                "keyAlias ve keyPassword yaz.")
         }
     }
 }

@@ -6,6 +6,13 @@ const config: CapacitorConfig = {
   // Vite'ın çıktı klasörü (vite.config.ts'te build.outDir yok, varsayılan).
   webDir: "dist",
   /*
+    Varsayılan zaten "debug"; açıkça yazıldı çünkü release'te köprü loglarının
+    kapalı olması buna bağlı. Debug derlemesinde köprü eklenti sonuçlarını,
+    açılışta okunan store ve içindeki cevaplar dahil, logcat'e yazar.
+    "production" yapılmaz: cevap metni release'te de loga düşerdi.
+  */
+  loggingBehavior: "debug",
+  /*
     WebView'in zemini, sayfa ilk kareyi çizene kadar görünen renk.
     Tanımsızken varsayılan beyaz: açılış ekranı kalkınca kısa bir beyaz
     flaş görünebilir. tokens.css --bg ve android/.../values/colors.xml

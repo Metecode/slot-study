@@ -445,6 +445,20 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   sağlayıcıyla ilgili doğrulanmış bulguları (zaman aşımı, düşünme
   seviyeleri, token sınırı) içeriyor.
 
+## Android sürümü
+
+- **Sürümün tek kaynağı package.json.** `android/app/build.gradle`
+  `versionName`'i oradan okur, `versionCode`'u türetir:
+  `major*10000 + minor*100 + patch` (1.2.3 → 10203). Gradle dosyasına elle
+  sürüm yazılmaz.
+- **Sürüm artırma: `npm version patch|minor|major`.** package.json ve
+  package-lock.json'ı günceller, commit ve `vX.Y.Z` etiketi atar (temiz
+  çalışma ağacı ister; yalnızca dosyaları değiştirmek için
+  `--no-git-tag-version`). Play aynı ya da daha küçük versionCode'u kabul
+  etmez; her yüklemeden önce sürüm artar.
+- minor ya da patch 99'u aşarsa ya da sürüm `X.Y.Z` değilse (ön sürüm
+  etiketi dahil) derleme durur: 1.0.100 → 10100, 1.1.0 ile aynı kod olurdu.
+
 ## Çalışma bölümü
 
 Mimari ve yeni modüller sohbette yazılır. Claude Code mekanik işleri
