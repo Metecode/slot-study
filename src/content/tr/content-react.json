@@ -14,7 +14,12 @@
         {
           "id": "children-is-a-prop",
           "label": "Etiket arası içerik prop olarak gelir",
-          "aliases": ["children", "etiket arası", "jsx içeriği", "prop olarak geçer"],
+          "aliases": [
+            "children",
+            "etiket arası",
+            "jsx içeriği",
+            "prop olarak geçer"
+          ],
           "anchors": [
             "Açılış ve kapanış etiketleri arasına yazılan JSX children prop'u olarak bileşene geçer.",
             "children sıradan bir prop'tur, JSX ile yazılmış halidir."
@@ -23,7 +28,13 @@
         {
           "id": "composition-over-inheritance",
           "label": "Kalıtım yerine kompozisyon",
-          "aliases": ["composition", "kompozisyon", "kalıtım yerine", "wrapper", "sarmalayıcı"],
+          "aliases": [
+            "composition",
+            "kompozisyon",
+            "kalıtım yerine",
+            "wrapper",
+            "sarmalayıcı"
+          ],
           "anchors": [
             "İçeriğini bilmeyen sarmalayıcı bileşenler yazmayı sağlar, kalıtıma gerek kalmaz.",
             "React'te bileşenleri birleştirerek yeniden kullanım kompozisyonla yapılır."
@@ -32,7 +43,12 @@
         {
           "id": "children-shape-varies",
           "label": "children'ın tipi sabit değil",
-          "aliases": ["dizi olmayabilir", "tek eleman", "React.Children", "map güvenli değil"],
+          "aliases": [
+            "dizi olmayabilir",
+            "tek eleman",
+            "React.Children",
+            "map güvenli değil"
+          ],
           "anchors": [
             "children tek eleman, dizi, metin ya da undefined olabilir; her zaman dizi değildir.",
             "Doğrudan map çalıştırmak yerine React.Children.map kullanmak gerekir."
@@ -57,7 +73,12 @@
         {
           "id": "memory-tree",
           "label": "Bellekteki ağaç",
-          "aliases": ["bellek", "javascript nesnesi", "hafıza", "temsil"],
+          "aliases": [
+            "bellek",
+            "javascript nesnesi",
+            "hafıza",
+            "temsil"
+          ],
           "anchors": [
             "Arayüzün bellekte tutulan hafif bir kopyasıdır, düz JavaScript nesnelerinden oluşur.",
             "Gerçek DOM yerine bellekte bir ağaç yapısı tutulur."
@@ -66,7 +87,13 @@
         {
           "id": "diff-then-minimal-write",
           "label": "Karşılaştırıp yalnızca değişeni yazma",
-          "aliases": ["diff", "karşılaştır", "reconciliation", "sadece değişen", "minimum"],
+          "aliases": [
+            "diff",
+            "karşılaştır",
+            "reconciliation",
+            "sadece değişen",
+            "minimum"
+          ],
           "anchors": [
             "Yeni ağaç öncekiyle karşılaştırılır ve sadece farklı düğümler gerçek DOM'a yazılır.",
             "React iki sürümü kıyaslayıp en az sayıda DOM işlemi yapar."
@@ -75,7 +102,13 @@
         {
           "id": "heuristic-not-full-diff",
           "label": "Tam karşılaştırma değil, kestirme",
-          "aliases": ["varsayım", "heuristic", "kestirme", "key", "farklı tip"],
+          "aliases": [
+            "varsayım",
+            "heuristic",
+            "kestirme",
+            "key",
+            "farklı tip"
+          ],
           "anchors": [
             "Karşılaştırma tam bir ağaç karşılaştırması değildir, iki varsayıma dayanan bir kestirmedir.",
             "Farklı tipteki elemanlar baştan farklı sayılır, listelerde kimlik key ile verilir."
