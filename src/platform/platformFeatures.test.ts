@@ -31,18 +31,30 @@ afterEach(() => {
 });
 
 describe("platformFeatures", () => {
-  it("web'de auth ve service worker açık, haptik ve hatırlatıcı kapalı", async () => {
+  it("web'de auth, service worker ve aynı origin sayfalar açık, haptik ve hatırlatıcı kapalı", async () => {
     mockCapacitor(false);
     const { platformFeatures } = await import("./index");
 
-    expect(platformFeatures).toEqual({ auth: true, serviceWorker: true, haptics: false, reminders: false });
+    expect(platformFeatures).toEqual({
+      auth: true,
+      serviceWorker: true,
+      haptics: false,
+      reminders: false,
+      sameOriginPages: true,
+    });
   });
 
-  it("native'de auth ve service worker kapalı, haptik ve hatırlatıcı açık", async () => {
+  it("native'de auth, service worker ve aynı origin sayfalar kapalı, haptik ve hatırlatıcı açık", async () => {
     mockCapacitor(true);
     const { platformFeatures } = await import("./index");
 
-    expect(platformFeatures).toEqual({ auth: false, serviceWorker: false, haptics: true, reminders: true });
+    expect(platformFeatures).toEqual({
+      auth: false,
+      serviceWorker: false,
+      haptics: true,
+      reminders: true,
+      sameOriginPages: false,
+    });
   });
 });
 

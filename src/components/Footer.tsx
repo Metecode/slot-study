@@ -1,3 +1,4 @@
+import { platformFeatures } from "../platform";
 import styles from "./Footer.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -5,6 +6,8 @@ import styles from "./Footer.module.css";
 /* ------------------------------------------------------------------ */
 
 const REPO_URL = "https://github.com/Metecode/interview-prep-slots";
+/** Mobil uygulamada göreli yol işe yaramaz (bkz. platformFeatures.sameOriginPages). */
+const PRIVACY_URL_LIVE = "https://slot.meteucar.com/privacy";
 
 export function Footer() {
   return (
@@ -12,11 +15,18 @@ export function Footer() {
       <div className={styles.inner}>
         <span>
           Açık kaynak · MIT ·{" "}
-          {/* Statik sayfa, React'in dışında: tam sayfa geçişi. Service worker
-              /privacy'yi SPA yedeğine düşürmüyor (vite.config.ts). */}
-          <a className={styles.link} href="/privacy">
-            Gizlilik
-          </a>
+          {platformFeatures.sameOriginPages ? (
+            /* Statik sayfa, React'in dışında: tam sayfa geçişi. Service worker
+               /privacy'yi SPA yedeğine düşürmüyor (vite.config.ts). */
+            <a className={styles.link} href="/privacy">
+              Gizlilik
+            </a>
+          ) : (
+            /* Native: dış adres, Capacitor sistem tarayıcısında açar. */
+            <a className={styles.link} href={PRIVACY_URL_LIVE} target="_blank" rel="noreferrer">
+              Gizlilik
+            </a>
+          )}
         </span>
         <div className={styles.end}>
           {/* Hangi derlemenin çalıştığını söyler; hata bildiriminde işe yarar. */}
