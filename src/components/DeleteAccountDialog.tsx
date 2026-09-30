@@ -35,6 +35,8 @@ export type DeleteAccountDialogProps = {
 type Phase = "confirm" | "pending" | "deleted" | "localClearFailed";
 
 const GITHUB_APPS_URL = "https://github.com/settings/applications";
+/** Politikanın "Hesabını silme" bölümü; id privacy/index.html'de. */
+const POLICY_DELETION_URL = "/privacy#hesap-silme";
 
 export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -163,6 +165,15 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
               github.com/settings/applications
             </a>{" "}
             adresinden kaldırabilirsin.
+          </p>
+
+          {/* Yeni sekmede: aynı sekmede açılsaydı diyalog ve yarım kalan
+              karar kaybolurdu. */}
+          <p className={styles.note}>
+            Ayrıntılar:{" "}
+            <a href={POLICY_DELETION_URL} target="_blank" rel="noopener" className={styles.link}>
+              Gizlilik politikası: Hesabını silme
+            </a>
           </p>
 
           {error && (

@@ -1,0 +1,257 @@
+<!doctype html>
+<!--
+  Kaynak: docs/gizlilik-politikasi.md (İngilizce bölüm). Elle senkron tutulur;
+  başlıklar, tarih ya da doldurulmamış bir boşluk farkını
+  src/privacyPolicySync.test.ts yakalar. Stil ve yapı Türkçe sayfayla aynı.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0b0f14" />
+    <meta name="description" content="What data Slot processes, why, and what your rights are." />
+    <title>Privacy Policy — Slot</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="https://slot.meteucar.com/privacy/en" />
+    <link rel="alternate" hreflang="tr" href="https://slot.meteucar.com/privacy" />
+    <link rel="alternate" hreflang="en" href="https://slot.meteucar.com/privacy/en" />
+    <link rel="stylesheet" href="/privacy/privacy.css" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="home" href="/">← Slot</a>
+      <nav aria-label="Language">
+        <ul class="langs">
+          <li><a href="/privacy" hreflang="tr" lang="tr">Türkçe</a></li>
+          <li><a href="/privacy/en" aria-current="page">English</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="page">
+      <h1>Slot — Privacy Policy</h1>
+      <p class="updated">Last updated: 30 September 2026</p>
+
+      <p>
+        This policy explains what data Slot (slot.meteucar.com and the Slot mobile app) processes, why, and what
+        your rights are.
+      </p>
+
+      <section id="data-controller">
+        <h2>Data controller</h2>
+        <p>
+          Mete Uçar (independent developer)<br />
+          Contact: <a href="mailto:i.meteucar@gmail.com">i.meteucar@gmail.com</a> ·
+          <a href="https://meteucar.com">meteucar.com</a>
+        </p>
+      </section>
+
+      <section id="summary">
+        <h2>Summary</h2>
+        <ul>
+          <li>
+            Slot works fully without an account. Without an account, your progress and settings are stored on your
+            device and are not sent to us.
+          </li>
+          <li>We use no advertising, analytics or tracking tools. We do not sell your data or share it for marketing.</li>
+          <li>
+            If you choose to sign in with GitHub, your progress is stored on our server so it can sync across your
+            devices. Sign-in is available only in the web version.
+          </li>
+          <li>You can delete your account from within the app at any time.</li>
+        </ul>
+      </section>
+
+      <section id="without-account">
+        <h2>1. Using Slot without an account</h2>
+        <p>
+          Your answers, ratings, progress and settings are kept in the app's storage on your device (in the web
+          version, the browser's IndexedDB) and are not sent to us. To work offline, the web version stores the
+          app's files in the browser cache. You can remove this data by clearing your browser data or uninstalling
+          the app.
+        </p>
+        <p>
+          When you open the web version, your browser loads the page from our server. The technical logs of these
+          requests are described in <a href="#server-logs">section 5</a>.
+        </p>
+      </section>
+
+      <section id="mobile-app">
+        <h2>2. Mobile app</h2>
+        <p>The mobile app has no accounts or sign-in, and it sends no requests to our server.</p>
+        <ul>
+          <li>
+            <strong>Progress and settings:</strong> Stored on your device, in JSON files in the app's own folder, and
+            not sent to our server. Uninstalling the app deletes these files. If Android backup is turned on, these
+            files may be included in the device backup in your Google account; we have no access to that backup.
+          </li>
+          <li>
+            <strong>Reminders:</strong> If you turn on review reminders, the notification is scheduled locally on
+            your device; no notification server is used. You can turn reminders off in Settings.
+          </li>
+          <li>
+            <strong>No analytics or ads:</strong> The app contains no analytics, advertising or crash-reporting SDK.
+          </li>
+          <li>
+            <strong>Ask your own AI:</strong> Only when you start it, the prompt is passed to the third-party service
+            you choose; Slot does not send this data to its server. For ChatGPT, Claude and Perplexity the prompt
+            travels in the address (<code>?q=</code>) and may appear in that service's history in your own account.
+            Details in <a href="#storage-and-sharing">section 6</a>.
+          </li>
+        </ul>
+        <p>Signing in with GitHub, cookies and server logs (sections 3–5) apply only to the web version.</p>
+      </section>
+
+      <section id="github-sign-in">
+        <h2>3. Signing in with GitHub (optional)</h2>
+        <p>
+          Sign-in is currently offered only in the web version. When you sign in, we request permission to read
+          your public profile only (<code>read:user</code>) and store:
+        </p>
+        <ul>
+          <li>your GitHub user ID (numeric) and username,</li>
+          <li>the time your Slot account was created.</li>
+        </ul>
+        <p>
+          We do not store your email address, name or profile picture. The access token GitHub gives us is used
+          only during sign-in and is deleted once sign-in completes.
+        </p>
+        <p>
+          For syncing, the following is sent to and stored on our server: which questions you have studied, each
+          question's box level, when you last studied it, and up to your last 10 attempts per question. Attempts
+          include the answer text you wrote, the number of matched concepts, your self-rating and the result.
+        </p>
+        <p>We recommend not entering personal information in the answer field; the text you write is stored as is.</p>
+        <p>When you sign out, your progress remains on your device.</p>
+      </section>
+
+      <section id="cookies">
+        <h2>4. Cookies and on-device storage</h2>
+        <p>We use no tracking or analytics cookies. Only two cookies are needed for sign-in:</p>
+        <ul>
+          <li>
+            <strong>refresh_token:</strong> keeps you signed in. Valid for 30 days, renewed on each use, and not
+            readable by JavaScript.
+          </li>
+          <li><strong>JSESSIONID:</strong> used only during the GitHub sign-in flow and deleted once sign-in completes.</li>
+        </ul>
+        <p>No cookies are set when you use Slot without an account.</p>
+      </section>
+
+      <section id="server-logs">
+        <h2>5. Server logs</h2>
+        <p>
+          When you use the web version, our server records the following for each request: IP address, time,
+          requested URL, response code, referring page and browser information (User-Agent). These logs are kept
+          for security and troubleshooting and are deleted automatically after at most 15 days.
+        </p>
+        <p>
+          The application's own logs may contain your account ID; they never contain your answer texts. These logs
+          are size-limited, and older entries are deleted as new ones arrive.
+        </p>
+      </section>
+
+      <section id="storage-and-sharing">
+        <h2>6. Where data is stored and who it is shared with</h2>
+        <p>
+          Our server is located in Netcup GmbH's data centre in Nuremberg, Germany. Transfers abroad are described
+          in <a href="#transfers-abroad">section 7</a>.
+        </p>
+        <p>We share data only with the following service providers, and only as far as needed to run the service:</p>
+        <ul>
+          <li><strong>Netcup GmbH (Germany):</strong> hosting.</li>
+          <li>
+            <strong>GitHub, Inc. (USA):</strong> authentication, only when you sign in. GitHub's own privacy policy
+            applies.
+          </li>
+        </ul>
+        <p>If you download the app from the App Store or Google Play, those stores process data under their own policies.</p>
+        <p>
+          "Ask your own AI" works only when you press a button. The prompt (the question, the answer you wrote and
+          the evaluation criteria) is passed to the service you choose (ChatGPT, Claude, Gemini, Perplexity) or to
+          the app you pick in the share menu, and copied to your device's clipboard. Slot does not send this text to
+          its server. For ChatGPT, Claude and Perplexity the prompt travels in the address (<code>?q=</code>), so it
+          may appear in your browser history and in that service's history in your own account. The privacy policy
+          of the service you pass the text to applies.
+        </p>
+      </section>
+
+      <section id="transfers-abroad">
+        <h2>7. Transfers abroad (KVKK Art. 9)</h2>
+        <p>
+          When you use the web version, your server logs (<a href="#server-logs">section 5</a>), and when you sign
+          in with GitHub, your account and sync data, are stored on the servers of our hosting provider Netcup GmbH
+          in Nuremberg, Germany. If you use Slot from Turkey, this means your personal data is transferred abroad.
+        </p>
+        <p>
+          When you sign in with GitHub, sign-in takes place on the servers of GitHub, Inc. (USA): your browser
+          connects directly to GitHub, which authenticates you and passes your user ID and username to us.
+        </p>
+      </section>
+
+      <section id="legal-basis">
+        <h2>8. Legal basis</h2>
+        <ul>
+          <li>Account and sync data: performance of a contract (KVKK Art. 5/2-c; GDPR Art. 6(1)(b)).</li>
+          <li>Server logs: legitimate interest in keeping the service secure (KVKK Art. 5/2-f; GDPR Art. 6(1)(f)).</li>
+        </ul>
+      </section>
+
+      <section id="retention">
+        <h2>9. Retention</h2>
+        <ul>
+          <li>Account and sync data: until you delete your account.</li>
+          <li>Server access logs: at most 15 days.</li>
+          <li>
+            Database backups: at most 15 days. Deleted accounts are removed from backups at the latest when this
+            period ends.
+          </li>
+          <li>Session cookie: 30 days if unused.</li>
+        </ul>
+      </section>
+
+      <section id="account-deletion">
+        <h2>10. Deleting your account</h2>
+        <p>
+          Once signed in, choose <strong>Delete account</strong> from the user menu. Your account and synced data
+          are permanently deleted from our server immediately, and all your sessions end. You can optionally delete
+          the data on your device in the same step.
+        </p>
+        <p>
+          After deletion, traces may remain in server access logs (at most 15 days) and backups (at most 15 days);
+          they are deleted when these periods end. You can revoke the app's permission on GitHub at
+          <a href="https://github.com/settings/applications">github.com/settings/applications</a>.
+        </p>
+        <p>
+          If you cannot access the app, send your deletion request to
+          <a href="mailto:i.meteucar@gmail.com">i.meteucar@gmail.com</a>.
+        </p>
+      </section>
+
+      <section id="your-rights">
+        <h2>11. Your rights</h2>
+        <p>
+          Under KVKK Art. 11 and the GDPR, you have the right to know whether your data is processed, to access
+          it, to request its correction or deletion, to object to processing, and to receive your data in a
+          portable format. Send requests to <a href="mailto:i.meteucar@gmail.com">i.meteucar@gmail.com</a>; we
+          respond within 30 days. You may also lodge a complaint with the Turkish Personal Data Protection Board
+          or, if you are in the EU, with your local data protection authority.
+        </p>
+      </section>
+
+      <section id="children">
+        <h2>12. Children</h2>
+        <p>Slot is not designed for children under 13, and we do not knowingly collect data from them.</p>
+      </section>
+
+      <section id="changes">
+        <h2>13. Changes</h2>
+        <p>
+          If we update this policy, we will change the date at the top. Significant changes will also be announced
+          in the app.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

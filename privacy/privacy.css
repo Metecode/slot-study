@@ -1,0 +1,140 @@
+/*
+  Gizlilik sayfaları (TR ve EN). Uygulamanın gövde CSS'i olduğu gibi
+  alınır: fontlar, token'lar, --sans/--mono ve safe-area değişkenleri tek
+  kaynakta kalır. Vite bu dosyayı ve fontları uygulamayla ortak, özetli
+  adlarla /assets'e koyar. Burada yalnızca okuma sayfasının düzeni var.
+*/
+
+@import "../src/index.css";
+
+body {
+  /* Ana ekrandan açılışta çentik ve ev göstergesinin altında kalmasın. */
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Okuma sütunu: satır başına ~68 karakter, dar ekranda 16px kenar. */
+.top,
+.page {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.home {
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.langs {
+  display: flex;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: var(--fs-mono);
+}
+
+.langs a {
+  /* Mono yazı küçük; dokunma alanı dikeyde büyütülür. */
+  display: inline-block;
+  padding: var(--space-2) 0;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+
+/* Bulunulan dil: renk yerine altı çizili ve parlak metin, accent yok. */
+.langs a[aria-current="page"] {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.page {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-12);
+}
+
+h1 {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-title);
+  line-height: var(--lh-tight);
+}
+
+h2 {
+  margin: var(--space-8) 0 var(--space-3);
+  font-size: var(--fs-heading);
+  line-height: var(--lh-snug);
+}
+
+.updated {
+  margin: 0 0 var(--space-6);
+  font-family: var(--mono);
+  font-size: var(--fs-mono);
+  color: var(--text-dim);
+}
+
+p,
+ul {
+  margin: 0 0 var(--space-4);
+}
+
+ul {
+  padding-left: var(--space-6);
+}
+
+/* Yalnızca metindeki listeler: üstteki dil listesi yatay, aralık almaz. */
+.page li + li {
+  margin-top: var(--space-2);
+}
+
+/* Bölüm bağlantısıyla gelindiğinde başlık üst kenara yapışmasın. */
+section {
+  scroll-margin-top: var(--space-6);
+}
+
+strong {
+  font-weight: var(--fw-semibold);
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+  color: var(--text);
+}
+
+a {
+  color: var(--text);
+  text-underline-offset: 3px;
+  /* Uzun e-posta ve adresler dar ekranda satırı taşırmasın. */
+  overflow-wrap: anywhere;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Bölüm bağlantısıyla gelinen başlık hafifçe işaretlenir. */
+section:target h2 {
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 6px;
+}

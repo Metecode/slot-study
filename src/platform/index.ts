@@ -36,12 +36,18 @@ const native = isNativePlatform();
  *   navigator.vibrate koşulsuz kalır (bkz. haptics.ts).
  * - reminders: Native'de yerel bildirimle tekrar hatırlatıcısı, Ayarlar'da
  *   anahtarı ve öneri kartı. Web'de hiçbiri yok (bkz. reminders.ts).
+ * - sameOriginPages: Sitenin statik sayfaları (/privacy) uygulamayla aynı
+ *   origin'de mi. Native'de origin https://localhost; göreli /privacy
+ *   paketteki kopyaya ya da uygulamanın kendisine düşerdi. Bağlantı orada
+ *   canlı sitenin mutlak adresine gider, Capacitor onu sistem tarayıcısına
+ *   verir.
  */
 export const platformFeatures = {
   auth: !native,
   serviceWorker: !native,
   haptics: native,
   reminders: native,
+  sameOriginPages: !native,
 } as const;
 
 /* ------------------------------------------------------------------ */
