@@ -98,3 +98,36 @@ export function CopyIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+/**
+ * Yeni sayfada açan düğmeler: kutudan dışarı çıkan ok. Genel bir sembol,
+ * hiçbir markanın logosu değil.
+ */
+export function ExternalLinkIcon({ className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M9.5 7v2a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 9V4A1.5 1.5 0 0 1 3 2.5h2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M7 1.5h3.5V5M10.5 1.5 5.5 6.5"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}

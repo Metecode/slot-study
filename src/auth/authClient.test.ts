@@ -354,3 +354,37 @@ describe("deleteAccount", () => {
     expect(auth.getSnapshot().status).toBe("authenticated");
   });
 });
+
+describe("native platform (kimlik kapalı)", () => {
+  async function loadNativeClient(): Promise<AuthModule> {
+    vi.resetModules();
+    vi.doMock("@capacitor/core", () => ({
+      Capacitor: { isNativePlatform: () => true },
+    }));
+    return import("./authClient");
+  }
+
+  afterEach(() => {
+    vi.doUnmock("@capacitor/core");
+  });
+
+  it("açılışta anonim başlar ve bootstrap hiç istek atmaz", async () => {
+    const auth = await loadNativeClient();
+
+    expect(auth.getSnapshot().status).toBe("anonymous");
+    await expect(auth.bootstrap()).resolves.toBe(false);
+    await expect(auth.refresh()).resolves.toBe(false);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("apiFetch, logout ve deleteAccount ağa çıkmaz", async () => {
+    const auth = await loadNativeClient();
+
+    await expect(auth.apiFetch("/api/progress")).rejects.toThrow();
+    await auth.logout();
+    await expect(auth.deleteAccount()).resolves.toBe(false);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

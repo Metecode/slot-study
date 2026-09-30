@@ -3,13 +3,24 @@
   geliyor (className olarak iniyor), burada yalnızca içerik var.
 */
 
+/*
+  Rakam açıklama bloğuna göre dikeyde ortalanır: tek satırda metnin
+  ortasıyla, çok satırda bloğun ortasıyla. Kutu merkezi ile mürekkep
+  merkezi arasındaki fark ölçüldü, 1 px civarı; text-box ile kırpmak onu
+  sıfırlıyor ama kartın dikey ritmini de değiştiriyordu.
+*/
 .score {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: var(--space-3);
 }
 
 .scoreValue {
+  flex-shrink: 0;
+  /* "N/M" her zaman üç karakter (şema en fazla 6 kavram); pas geçilince
+     tire aynı kutuda ortalanır, açıklama iki durumda aynı yerden başlar. */
+  min-width: 3ch;
+  text-align: center;
   font-family: var(--mono);
   font-size: var(--fs-score);
   font-weight: var(--fw-bold);

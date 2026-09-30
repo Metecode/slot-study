@@ -16,28 +16,10 @@
   background: var(--bg);
   /* Ana ekrandan açılınca durum çubuğu sayfanın üstüne biniyor
      (viewport-fit=cover); zemin onun altına uzanır, içerik çentiğin
-     altından başlar. Tarayıcıda --safe-top 0, düzen değişmez. */
+     altından başlar. Tarayıcıda --safe-top 0, düzen değişmez.
+     Kaydırırken durum çubuğunu örten şerit sayfanın kabuğunda
+     (index.css, body::before), üst çubuğa bağlı değil. */
   padding-top: var(--safe-top);
-}
-
-/*
-  Durum çubuğunun zemini. Üst çubuk yapışkan değil, sayfayla kayıyor;
-  black-translucent'ta durum çubuğu saydam olduğu için kaydırınca üst
-  çubuğun (ve altındaki her şeyin) içeriği saatin arkasında görünüyordu.
-  Bu şerit o bölgeyi hep --bg ile örter. Masaüstünde --safe-top 0: şerit
-  yüksekliksiz, düzen değişmez. .bar'ın yığın bağlamında en üstte —
-  oturum paneli (z-index 30) kayarken de onun altında kalır.
-*/
-.bar::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--safe-top);
-  background: var(--bg);
-  z-index: 40;
-  pointer-events: none;
 }
 
 .inner {

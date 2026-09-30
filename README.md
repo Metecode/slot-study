@@ -15,7 +15,7 @@ Kategorini seç, kolu çek, ekrana düşen soruyu kendi cümlelerinle yanıtla.
 ![License: MIT](https://img.shields.io/badge/Kod-MIT-green)
 ![License: CC BY-SA 4.0](https://img.shields.io/badge/İçerik-CC%20BY--SA%204.0-lightgrey)
 
-<img src="docs/demo.gif" alt="Slot demo" width="720" />
+<img src="docs/Demo.gif" alt="Slot demo" width="720" />
 
 </div>
 

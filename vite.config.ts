@@ -38,6 +38,24 @@ const serverOnlyPaths = [/^\/api\//, /^\/oauth2\//, /^\/login\//];
 // uygulama açılırdı. Sondaki / ile ve onsuz: /privacy, /privacy/, /privacy/en…
 const staticPagePaths = [/^\/privacy(\/|$)/];
 
+/*
+  Yalnızca native'de (Capacitor) dinamik import ile yüklenen modüller:
+  dosya deposu ve eklentisi; haptik, yerel bildirim, pano ve paylaşım
+  eklentileri (seçim kodu src/platform/haptics.ts, reminders.ts ve
+  aiHandoff/ web'de de yüklenir, eklentilerin kendisi yüklenmez).
+  Web bu chunk'ları hiç istemez; precache'e
+  girselerdi her PWA kurulumu kullanmayacağı kodu indirirdi. Chunk'ları
+  "native-" önekiyle adlandırılır ve workbox'ın globIgnores'u onları
+  dışarıda bırakır. Önek yalnızca TAMAMI native modüllerden oluşan
+  chunk'a verilir: web koduyla karışan bir chunk precache'te kalır ve
+  precache boyutundaki artış bunu hemen gösterir.
+*/
+const nativeOnlyModules = [
+  /\/node_modules\/@capacitor\/(filesystem|synapse|haptics|local-notifications|clipboard|share)\//,
+  /\/src\/platform\/storage\/(filesystemAdapter|namespaceFile)\.ts$/,
+];
+const isNativeOnlyModule = (id: string) => nativeOnlyModules.some((pattern) => pattern.test(id.replaceAll("\\", "/")));
+
 const pwa = VitePWA({
   /*
     Güncelleme: yeni sürüm arka planda iner ve BEKLER; açık sekmelerin
@@ -46,8 +64,9 @@ const pwa = VitePWA({
     arayüz de bilerek yok — oturum ortasında sayfa asla yenilenmez.
   */
   registerType: "prompt",
-  // Kayıt betiği index.html'e eklenir; uygulama kodu service worker bilmez.
-  injectRegister: "script",
+  // Kaydı eklenti yapmaz: native'de (Capacitor) service worker kapalı
+  // kalsın diye kayıt src/platform/serviceWorker.ts'te, bayrağa bağlı.
+  injectRegister: false,
   // İkonlar zaten globPatterns'te; eklenti ayrıca eklerse listede iki kez çıkıyor.
   includeManifestIcons: false,
   manifest: {
@@ -71,6 +90,7 @@ const pwa = VitePWA({
     // Uygulama kabuğu, JS/CSS (soru içeriği JS'e gömülü), fontlar, ikonlar.
     // Sesler dosya değil, Web Audio ile üretiliyor.
     globPatterns: ["**/*.{html,js,css,woff2,svg,png}"],
+    globIgnores: ["**/native-*.js"],
     navigateFallback: "/index.html",
     navigateFallbackDenylist: [...serverOnlyPaths, ...staticPagePaths],
     runtimeCaching: [
@@ -87,11 +107,12 @@ const pwa = VitePWA({
 });
 
 /*
-  PWA eklentisi kayıt betiğini ve manifest bağlantısını derlenen HTML'lerin
-  hepsine ekliyor. Gizlilik sayfaları JS'siz kalmalı ve kurulabilir bir
-  uygulama değil: ikisi yalnızca o sayfalardan çıkarılır. Eklentinin build
-  parçası enforce: "post" ile en sona sıralanıyor; bu eklenti de "post"
-  ve listede ondan sonra, böylece onun eklediğini görür.
+  PWA eklentisi manifest bağlantısını derlenen HTML'lerin hepsine ekliyor.
+  Gizlilik sayfaları kurulabilir bir uygulama değil: bağlantı yalnızca o
+  sayfalardan çıkarılır. Kayıt betiği eklenmiyor (injectRegister: false),
+  sayfalar JS'siz kalıyor. Eklentinin build parçası enforce: "post" ile en
+  sona sıralanıyor; bu eklenti de "post" ve listede ondan sonra, böylece
+  onun eklediğini görür.
 */
 const staticPagesWithoutPwa: Plugin = {
   name: "static-pages-without-pwa",
@@ -101,19 +122,13 @@ const staticPagesWithoutPwa: Plugin = {
     order: "post",
     handler(html, ctx) {
       if (!ctx.path.startsWith("/privacy/")) return html;
-      return html
-        .replace(/<script id="vite-plugin-pwa:register-sw"[^>]*><\/script>/, "")
-        .replace(/<link rel="manifest"[^>]*>/, "");
+      return html.replace(/<link rel="manifest"[^>]*>/, "");
     },
   },
 };
 
 export default defineConfig({
   plugins: [react(), pwa, staticPagesWithoutPwa],
-  define: {
-    __APP_VERSION__: JSON.stringify(pkg.version),
-    __COMMIT_SHA__: JSON.stringify(commitSha),
-  },
   build: {
     rollupOptions: {
       // Çok sayfalı: uygulama ve iki statik gizlilik sayfası. Gizlilik
@@ -124,7 +139,17 @@ export default defineConfig({
         privacy: fileURLToPath(new URL("./privacy/index.html", import.meta.url)),
         privacyEn: fileURLToPath(new URL("./privacy/en/index.html", import.meta.url)),
       },
+      output: {
+        chunkFileNames: (chunk) =>
+          chunk.moduleIds.length > 0 && chunk.moduleIds.every(isNativeOnlyModule)
+            ? "assets/native-[name]-[hash].js"
+            : "assets/[name]-[hash].js",
+      },
     },
+  },
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __COMMIT_SHA__: JSON.stringify(commitSha),
   },
   server: {
     proxy: {

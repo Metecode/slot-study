@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:background">@null</item>
+        <!-- Pencere zemini uygulamanın zemini. Eski WebView'de (< 140) Capacitor
+             WebView'e padding verir ve çubukların arkasında bu renk görünür;
+             tanımsızken DayNight temasının açık/koyu grisi (#fafafa / #303030)
+             çıkıyordu. -->
+        <item name="android:windowBackground">@color/app_background</item>
+    </style>
+
+
+    <!-- Açılış teması: koyu zemin, ortada ikonun ön katmanı. Eklenti yok,
+         installSplashScreen() çağrılmıyor. Android 12+'da sistem açılış
+         ekranı bu iki özelliği okur; 11 ve öncesinde (API 23+)
+         Theme.SplashScreen'in kendi windowBackground'u aynı ikisinden
+         çizilen bir layer-list. Zemin tanımsızken sistem temanın açık
+         rengine düşüyor, açılışta beyaz flaş oluyordu; şablondaki
+         splash.png'ler bu yüzden kaldırıldı. postSplashScreenTheme yok:
+         BridgeActivity onCreate'te temayı kendisi AppTheme.NoActionBar
+         yapıyor. -->
+    <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/app_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+</resources>

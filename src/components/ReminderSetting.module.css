@@ -1,0 +1,13 @@
+/* Ses anahtarıyla aynı düzen: anahtar üstte, açıklama altında. */
+.root {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  /* Açıklama uzun; dar ekranda satırı taşırmasın. */
+  max-width: 32ch;
+}
+
+.note {
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+}

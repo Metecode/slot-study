@@ -19,11 +19,17 @@
     (viewport-fit=cover). Bileşenler env()'i doğrudan değil bunları okur:
     geliştirmede ?safe=iphone bunları ezip masaüstünde iPhone'u taklit
     ediyor (bkz. src/dev/safeAreaSimulation.ts). Tarayıcıda hepsi 0.
+
+    --safe-area-inset-*: Capacitor'ın SystemBars eklentisi (insetsHandling
+    "css") aynı değerleri <html>'in inline stiline yazıyor. Android
+    WebView'de env() her zaman dolmuyor (Android 14, WebView 143'te 0 kaldı,
+    logo durum çubuğunun altına girdi); max() hangisi doluysa onu alır.
+    Tarayıcıda değişken hiç tanımlı değil, ikisi de 0.
   */
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-top: max(env(safe-area-inset-top, 0px), var(--safe-area-inset-top, 0px));
+  --safe-right: max(env(safe-area-inset-right, 0px), var(--safe-area-inset-right, 0px));
+  --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--safe-area-inset-bottom, 0px));
+  --safe-left: max(env(safe-area-inset-left, 0px), var(--safe-area-inset-left, 0px));
 }
 
 * {
@@ -41,11 +47,59 @@ button {
   appearance: none;
 }
 
+/*
+  Android WebView ve Chrome, dokunulan öğenin üstüne köşeli mavi bir
+  vurgu çiziyor. Her tıklanabilir öğenin kendi :active geri bildirimi
+  var, bu vurgu onun üstüne biniyordu. Özellik kalıtılıyor; kökte bir
+  kez yazmak yeter. Klavye odağı :focus-visible ile ayrı, etkilenmez.
+*/
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
+}
+
+/*
+  Sistem çubuklarının zemini. viewport-fit=cover'da (iOS ana ekran,
+  Android edge-to-edge) durum çubuğu ve gezinme çubuğu saydam, sayfanın
+  üstüne çiziliyor; kaydırınca içerik saatin, pilin ve gezinme
+  tuşlarının arkasından geçiyordu. İki şerit o bölgeleri hep --bg ile
+  örter. Tarayıcıda ve masaüstünde --safe-* 0: şeritler yüksekliksiz,
+  hiçbir şey çizilmez.
+
+  body'nin sözde öğeleri, hiçbir bileşenin değil: sayfanın kök yığın
+  bağlamında dururlar. z-index her katmanın üstünde (üst çubuk 20, oturum
+  paneli onun içinde); showModal diyalogları üst katmanda (top layer),
+  şeritlerin de üstünde kalır.
+
+  Sabit konum yatay taşmaya duyarlı: sayfa viewport'tan genişken mobil
+  tarayıcı layout viewport'u büyütüyor ve kaydırmada şeritler ekran
+  kenarından kopuyordu. Taşmayı npm run scan:layout yakalar.
+*/
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: var(--bg);
+  pointer-events: none;
+}
+
+body::before {
+  top: 0;
+  height: var(--safe-top);
+}
+
+body::after {
+  bottom: 0;
+  height: var(--safe-bottom);
 }
 
 /*

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { platformFeatures } from "../platform";
+
 /* ------------------------------------------------------------------ */
 /* Oturum istemcisi — React bilmez, saf modül                          */
 /* ------------------------------------------------------------------ */
@@ -49,8 +51,16 @@ export type AuthState = {
   reachable: boolean;
 };
 
+/*
+  Native'de (mobil v1) kimlik tamamen kapalı: bu modül hiç istek atmaz.
+  Arayüz giriş alanını zaten çizmiyor; buradaki kontroller, bir kod yolu
+  gözden kaçsa bile ağa çıkılmamasının güvencesi. Durum baştan "anonymous":
+  açılış yenilemesi olmayacağı için "unknown"da beklemenin anlamı yok.
+*/
+const authEnabled = platformFeatures.auth;
+
 let accessToken: string | null = null;
-let state: AuthState = { status: "unknown", user: null, reachable: true };
+let state: AuthState = { status: authEnabled ? "unknown" : "anonymous", user: null, reachable: true };
 
 const listeners = new Set<() => void>();
 
@@ -136,6 +146,7 @@ let inFlight: Promise<boolean> | null = null;
  * Dönen değer "oturum açık mı" sorusunun cevabıdır; hata fırlatmaz.
  */
 export function refresh(): Promise<boolean> {
+  if (!authEnabled) return Promise.resolve(false);
   if (inFlight) return inFlight;
 
   inFlight = runRefresh().finally(() => {
@@ -208,6 +219,10 @@ function withAuth(init: RequestInit): RequestInit {
  * uygulama içinde gövdeler düz metin/JSON.
  */
 export async function apiFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  // Çağıranlar ağ hatasını zaten yakalıyor; kapalı kimlik onlar için
+  // "istek gidemedi" ile aynı.
+  if (!authEnabled) throw new Error("Kimlik doğrulama bu platformda kapalı");
+
   const first = await fetch(input, withAuth(init));
   if (first.status !== 401) return first;
 
@@ -230,6 +245,7 @@ export async function apiFetch(input: RequestInfo | URL, init: RequestInit = {})
  * yolculuğu, tam sayfa geçişi gerekiyor.
  */
 export function login(): void {
+  if (!authEnabled) return;
   window.location.assign(LOGIN_URL);
 }
 
@@ -239,6 +255,11 @@ export function login(): void {
  * ekranda hâlâ girmiş görünmesi kabul edilemez.
  */
 export async function logout(): Promise<void> {
+  if (!authEnabled) {
+    setAnonymous();
+    return;
+  }
+
   try {
     await fetch(LOGOUT_URL, { method: "POST", credentials: "same-origin" });
   } catch (error) {

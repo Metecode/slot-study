@@ -11,14 +11,27 @@
   gap: var(--space-2);
 }
 
-/* Özet düğmesi ve "tümünü seç" aynı satırda, bitişik duruyor — ikisi
-   de aynı seçim durumuyla ilgili, sayfanın iki ucuna dağılmasın diye.
-   Liste kapalıyken bile ikisi de görünür ve erişilebilir kalır. */
+/* Özet düğmesi ve "tümünü seç" sığdıkça aynı satırda, bitişik duruyor —
+   ikisi de aynı seçim durumuyla ilgili, sayfanın iki ucuna dağılmasın
+   diye. Liste kapalıyken bile ikisi de görünür ve erişilebilir kalır.
+   Satır aralığı yalnızca kırılınca devreye girer: 8px'te ikinci satır
+   seçicinin çerçevesine yapışık duruyordu. 12px, "tümünü seç"in dikey
+   padding'iyle birlikte pill'den metne ~20px görünen boşluk veriyor ve
+   büyütülmüş dokunma alanının (aşağıda) seçiciye taşmamasına yetiyor. */
 .header {
+  /*
+    Özet pill'i ve "tümünü seç" aynı kutu ölçülerini paylaşır: kırılınca
+    ikisinin metni aynı sol çizgiden başlasın. Biri değişirse diğeri de
+    değişir; değerler iki yerde ayrı yazılmaz.
+  */
+  --pill-pad-block: var(--space-1);
+  --pill-pad-inline: var(--space-3);
+  --pill-border: 1px;
+
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3) var(--space-2);
 }
 
 /* Kapalıyken tek satır: sayfa nefes alsın diye çipler varsayılan gizli. */
@@ -26,12 +39,12 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
+  padding: var(--pill-pad-block) var(--pill-pad-inline);
   font: inherit;
   font-size: var(--fs-body-sm);
   color: var(--text-dim);
   background: transparent;
-  border: 1px solid var(--line);
+  border: var(--pill-border) solid var(--line);
   border-radius: 999px;
   cursor: pointer;
   transition:
@@ -68,16 +81,43 @@
   transform: translateY(1px);
 }
 
+/*
+  "Tümünü seç/kaldır"ın kabı. Satırın kalanını doldurur: düğme özetin
+  hemen yanında durur. Özetle aynı satıra sığmazsa alt satıra iner.
+  Kırılma breakpoint'e değil içeriğe bağlı: Android WebView sistem yazı
+  boyutunu (textZoom) px'lere de uyguluyor, hangi genişlikte sığmayacağı
+  önceden bilinemez.
+
+  Havuz sayacı eskiden bu grupta, düğmenin yanındaydı (mono, bir basamak
+  küçük); iki font taban çizgisinden hizalanıyordu. Sayaç artık özetin
+  içinde; baseline hizası gruba yeni öğe eklenirse diye kalıyor.
+*/
+.actions {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: baseline;
+}
+
+/*
+  Görünüşte metin düğme, kutuda özet pill'inin eşi: aynı padding ve
+  saydam bir çerçeve. Çıplak metin olsaydı kırılınca pill'in dış kenarında
+  başlar, pill'in metninden 13px (çerçeve + padding) solda kalırdı.
+  Basılınca pill biçimli soluk bir zemin belirir; dokunma vurgusunu
+  kapattığımız için dokunuşun nereye düştüğünü o gösteriyor.
+*/
 .selectAll {
-  padding: 0;
+  padding: var(--pill-pad-block) var(--pill-pad-inline);
+  white-space: nowrap;
   font: inherit;
   font-size: var(--fs-body-sm);
   color: var(--text-dim);
-  background: none;
-  border: 0;
+  background: transparent;
+  border: var(--pill-border) solid transparent;
+  border-radius: 999px;
   cursor: pointer;
   transition:
     color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
     transform var(--dur-fast) var(--ease-out);
 }
 
@@ -89,6 +129,7 @@
 
 .selectAll:active:not(:disabled) {
   color: var(--text);
+  background: var(--surface-raised);
   transform: translateY(1px);
 }
 
@@ -102,32 +143,17 @@
   cursor: not-allowed;
 }
 
-/* Üst çubuktan taşınan havuz etiketi; eski görünüşüyle aynı (mono, soluk).
-   Satırın sağ ucuna yaslanır, dar ekranda sığmazsa alt satıra iner. */
-.pool {
-  margin-left: auto;
-  font-family: var(--mono);
-  font-size: var(--fs-mono);
-  color: var(--text-dim);
-  white-space: nowrap;
-}
-
 /*
-  Dar ekranda etiket "N soru". "Havuzda" display:none ile değil görsel
-  kırpmayla gizlenir: ekran okuyucu tam metni okumaya devam eder. Kırpılan
-  öğe akıştan çıktığı için arkasındaki boşluk satır başında kalır ve
-  kendiliğinden düşer. Sığmazsa etiket alt satıra iner; bu kabul.
+  Düğme alçak (pill padding'iyle 27-35px); index.css'teki genel -8px'lik
+  genişletme her yazı ölçeğinde 44px'e ulaştırmıyor. Dikeyde en az 44px'e
+  tamamlanır; yüzdeler düğmenin kendi yüksekliğine göre. Görünüm ve
+  düzen değişmez, yalnızca görünmez ::after büyür. Yatayda genel -8px
+  kalır: tek satırda seçiciyle arada yalnızca 8px var.
 */
-@media (max-width: 560px) {
-  .poolPrefix {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+@media (pointer: coarse) {
+  .selectAll::after {
+    top: min(-8px, calc((100% - 44px) / 2));
+    bottom: min(-8px, calc((100% - 44px) / 2));
   }
 }
 

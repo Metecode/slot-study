@@ -1,20 +1,39 @@
 /*
-  Kendi yapay zekâna sor. Kavram çiplerinin altında, ikincil bir eylem:
-  çerçeveli ama dolgusuz; accent yok — bu ekranda accent
-  öz-değerlendirmeye ayrılmış.
+  Kendi yapay zekâna sor. Kavram çiplerinin altında, ikincil bir bölüm:
+  düğmeler çerçeveli ama dolgusuz; accent yok — bu ekranda accent
+  öz-değerlendirmeye ayrılmış. Birincil düğme ("Paylaş") SelfRating'in
+  birincil diliyle ayrışır: daha koyu çerçeve ve kalın etiket.
 */
 
 .wrap {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: var(--space-2);
   margin-top: var(--space-4);
   padding-top: var(--space-3);
   border-top: 1px solid var(--line);
 }
 
+.title {
+  margin: 0;
+  font-size: var(--fs-body-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
+}
+
+/* Dar kolonda tek, genişte iki ya da daha çok sütun. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: var(--space-2);
+}
+
 .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 44px;
   padding: var(--space-2) var(--space-4);
   font: inherit;
   font-size: var(--fs-body-sm);
@@ -23,10 +42,24 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   cursor: pointer;
+  touch-action: manipulation;
   transition:
     transform var(--dur-fast) var(--ease-out),
     border-color var(--dur-fast) var(--ease-out),
-    background-color var(--dur-fast) var(--ease-out);
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.button[data-variant="primary"] {
+  font-weight: var(--fw-semibold);
+  border-color: var(--text-dim);
+}
+
+/* Paylaşım öndeyken hedefler: çerçevesiz, soluk metin. */
+.button[data-variant="quiet"] {
+  color: var(--text-dim);
+  border-color: transparent;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
 }
 
 @media (hover: hover) {
@@ -35,23 +68,87 @@
     border-color: var(--text-dim);
     background: color-mix(in srgb, var(--text) 5%, transparent);
   }
+
+  .button[data-variant="primary"]:hover {
+    border-color: var(--text);
+  }
+
+  .button[data-variant="quiet"]:hover {
+    color: var(--text);
+    border-color: var(--line);
+  }
 }
 
 .button:active {
   transform: translateY(1px);
 }
 
-.button:focus-visible {
+.button:focus-visible,
+.toggle:focus-visible,
+.prompt:focus-visible {
   outline: 2px solid var(--text);
   outline-offset: 2px;
 }
 
+.icon {
+  flex-shrink: 0;
+  color: var(--text-faint);
+}
+
 .note,
-.error {
+.message {
   margin: 0;
   font-size: var(--fs-label);
   line-height: var(--lh-snug);
   color: var(--text-dim);
+}
+
+/* Metin boyunda ama dokunma alanı 44px. */
+.toggle {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-1);
+  font: inherit;
+  font-size: var(--fs-label);
+  color: var(--text-dim);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+@media (hover: hover) {
+  .toggle:hover {
+    color: var(--text);
+  }
+}
+
+.chevron {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.toggle[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.prompt {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--space-3);
+  font: inherit;
+  font-size: var(--fs-label);
+  line-height: var(--lh-body);
+  color: var(--text);
+  background: var(--well);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  resize: vertical;
 }
 
 /* Canlı bölge: boşken ya da yalnızca okuyucu içinken görünmez. */

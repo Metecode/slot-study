@@ -1,12 +1,31 @@
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import { NEW_QUESTION_WEIGHT, drawQuestion, weightOf } from "./draw";
+import { FALLBACK_MIN_RATIO, NEW_QUESTION_WEIGHT, drawQuestion, notDueWeightOf, weightOf } from "./draw";
 import type { DrawInput } from "./draw";
+import { isDue } from "./drawTiers";
 import type { Box, QuestionProgress } from "./progress";
 import type { Category, Question } from "./question";
 
+// İstanbul'da 15:00. Anın kendisi saat diliminden bağımsız (ISO, Z).
 const NOW = new Date("2026-02-10T12:00:00.000Z");
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/*
+  Tekrar günü yerel takvime bağlı (studyDay.ts, 04:00). Yerel tarihler
+  her testin İÇİNDE kurulur: modül seviyesinde kurulsa saat dilimi
+  ayarlanmadan önce hesaplanırdı.
+*/
+beforeAll(() => {
+  vi.stubEnv("TZ", "Europe/Istanbul");
+});
+afterAll(() => {
+  vi.unstubAllEnvs();
+});
+
+/** Yerel saat; ay 1'den başlar. */
+function local(year: number, month: number, day: number, hour = 0, minute = 0): Date {
+  return new Date(year, month - 1, day, hour, minute);
+}
 
 function makeQuestion(id: string, category: Category = "sql"): Question {
   return {
@@ -82,11 +101,19 @@ describe("weightOf", () => {
     expect(weightOf(question, makeProgress("q1", 5, 16), NOW)).toBe(1);
   });
 
-  it("günü gelmemiş soruda gecikme katsayısı 1'in altına inmez", () => {
-    // Aralığın yarısı kadar beklenmiş: oran 0.5 ama taban 1.
-    expect(weightOf(question, makeProgress("q1", 3, 2), NOW)).toBe(4);
-    // Aynı gün görülmüş.
-    expect(weightOf(question, makeProgress("q1", 1, 0), NOW)).toBe(16);
+  it("takvimle zamanı gelmiş ama 24 saati dolmamış soru tam kutu ağırlığı alır", () => {
+    // Dün 20:00'da görülen kutu 1 sorusu bugün 15:00'te gelmiştir (04:00'dan
+    // beri); geçen süre 19 saat, oran 0.79 ama taban 1.
+    const entry: QuestionProgress = {
+      questionId: "q1",
+      box: 1,
+      lastSeenAt: local(2026, 2, 9, 20).toISOString(),
+      attempts: [],
+    };
+    const now = local(2026, 2, 10, 15);
+
+    expect(isDue(entry, now)).toBe(true);
+    expect(weightOf(question, entry, now)).toBe(16);
   });
 
   it("gecikme katsayısını 3 ile sınırlar", () => {
@@ -102,9 +129,12 @@ describe("weightOf", () => {
     expect(late).toBeGreaterThan(due);
   });
 
-  it("ileri tarihli kayıtta ağırlığı tabana çeker", () => {
-    // Saat kaymış olabilir; negatif gecikme ağırlığı bozmamalı.
-    expect(weightOf(question, makeProgress("q1", 2, -5), NOW)).toBe(8);
+  it("ileri tarihli kayıt zamanı gelmiş sayılır ve taban ağırlığı alır", () => {
+    // Saat kaymış olabilir: bozuk tarih gibi zamanı gelmiş katmanına girer
+    // (bkz. drawTiers.ts isDue); negatif gecikme ağırlığı bozmaz.
+    const future = makeProgress("q1", 2, -5);
+    expect(isDue(future, NOW)).toBe(true);
+    expect(weightOf(question, future, NOW)).toBe(8);
   });
 
   it("aralık tablosu dışındaki kutuda sonlu sayı döner", () => {
@@ -125,6 +155,35 @@ describe("weightOf", () => {
     };
 
     expect(Number.isFinite(weightOf(question, broken, NOW))).toBe(true);
+  });
+});
+
+describe("notDueWeightOf", () => {
+  const question = makeQuestion("q1");
+
+  it("geçen/aralık oranının karesiyle küçülür: zamanına yakın olan ağır basar", () => {
+    // Kutu 3, aralık 4 gün: 2 gün geçmiş → 4 × 0.5² = 1; 3 gün → 4 × 0.75² = 2.25.
+    expect(notDueWeightOf(question, makeProgress("q1", 3, 2), NOW)).toBe(1);
+    expect(notDueWeightOf(question, makeProgress("q1", 3, 3), NOW)).toBe(2.25);
+  });
+
+  it("oran alt sınırın altına inmez: az önce görülen soru da sıfırdan büyük", () => {
+    expect(FALLBACK_MIN_RATIO).toBe(0.01);
+    // Tam şimdi görülmüş: oran 0, taban 0.01 → kutu ağırlığı × 0.0001.
+    expect(notDueWeightOf(question, makeProgress("q1", 1, 0), NOW)).toBeCloseTo(0.0016, 6);
+    expect(notDueWeightOf(question, makeProgress("q1", 5, 0), NOW)).toBeCloseTo(0.0001, 6);
+    expect(notDueWeightOf(question, makeProgress("q1", 5, 0), NOW)).toBeGreaterThan(0);
+  });
+
+  it("oran 1'i aşmaz", () => {
+    expect(notDueWeightOf(question, makeProgress("q1", 2, 10), NOW)).toBe(8);
+  });
+
+  it("bozuk tarihte sonlu ve sıfırdan büyük", () => {
+    const broken: QuestionProgress = { ...makeProgress("q1", 1, 1), lastSeenAt: "tarih-değil" };
+    const weight = notDueWeightOf(question, broken, NOW);
+    expect(Number.isFinite(weight)).toBe(true);
+    expect(weight).toBeGreaterThan(0);
   });
 });
 
@@ -351,5 +410,186 @@ describe("drawQuestion", () => {
 
     const ratio = box1Hits / SAMPLES;
     expect(Math.abs(ratio - 16 / 17)).toBeLessThan(0.02);
+  });
+});
+
+describe("drawQuestion — öncelik", () => {
+  /** `seenAt`'te görülmüş kayıt; `firstAt` verilirse ilk denemesi o an. */
+  function seen(questionId: string, box: Box, seenAt: Date, firstAt?: Date): QuestionProgress {
+    const attempts = firstAt
+      ? [
+          {
+            at: firstAt.toISOString(),
+            answer: "",
+            hitCount: 0,
+            totalConcepts: 2,
+            selfRating: 1 as const,
+            passed: false,
+          },
+        ]
+      : [];
+    return { questionId, box, lastSeenAt: seenAt.toISOString(), attempts };
+  }
+
+  /** rng'yi [0,1) aralığında eşit adımlarla tarar; soru başına isabet. */
+  function sweep(input: DrawInput, samples = 1000): Record<string, number> {
+    const hits: Record<string, number> = {};
+    for (let i = 0; i < samples; i++) {
+      const id = drawQuestion({ ...input, rng: () => i / samples })?.id ?? "null";
+      hits[id] = (hits[id] ?? 0) + 1;
+    }
+    return hits;
+  }
+
+  it("zamanı gelmiş soru, zamanı gelmemiş sorudan önce gelir", () => {
+    // Eski ağırlıklarda zamanı gelmemiş kutu 1 (16), zamanı gelmiş kutu 5'i
+    // (1.25) %93 oranında geçerdi.
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("notDue"), makeQuestion("due")],
+        progress: {
+          notDue: seen("notDue", 1, local(2026, 2, 10, 9)),
+          due: seen("due", 5, local(2026, 1, 21, 9)),
+        },
+        now,
+      }),
+    );
+    expect(hits).toEqual({ due: 1000 });
+  });
+
+  it("zamanı gelmiş varken bugün yeni soru tanıtılmışsa yenisi gelmez", () => {
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("unseen"), makeQuestion("due"), makeQuestion("today")],
+        progress: {
+          due: seen("due", 1, local(2026, 2, 8, 20), local(2026, 2, 8, 20)),
+          today: seen("today", 1, local(2026, 2, 10, 19), local(2026, 2, 10, 19)),
+        },
+        now,
+      }),
+    );
+    expect(hits).toEqual({ due: 1000 });
+  });
+
+  it("zamanı gelmiş varken bugün yeni tanıtılmadıysa bir yeni soru gelebilir", () => {
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("unseen"), makeQuestion("due"), makeQuestion("yesterday")],
+        progress: {
+          due: seen("due", 1, local(2026, 2, 8, 20), local(2026, 2, 8, 20)),
+          yesterday: seen("yesterday", 1, local(2026, 2, 10, 19), local(2026, 2, 9, 19)),
+        },
+        now,
+      }),
+    );
+    // Yeni 20, zamanı gelmiş kutu 1 (2 gün gecikmeli) 32: 20/52.
+    expect(hits.unseen / 1000).toBeCloseTo(20 / 52, 1);
+    expect(hits.due).toBeGreaterThan(0);
+    expect(hits.yesterday).toBeUndefined();
+  });
+
+  it("zamanı gelmiş yoksa yeni sorularda günlük sınır yok", () => {
+    const now = local(2026, 2, 10, 20);
+    const progress = Object.fromEntries(
+      ["a", "b", "c"].map((id) => [id, seen(id, 1, local(2026, 2, 10, 19), local(2026, 2, 10, 19))]),
+    );
+    const hits = sweep(
+      makeInput({
+        questions: ["a", "b", "c", "unseen"].map((id) => makeQuestion(id)),
+        progress,
+        now,
+      }),
+    );
+    expect(hits).toEqual({ unseen: 1000 });
+  });
+
+  it("hepsi zamanı gelmemişse zamanına en yakın olan ağır basar", () => {
+    // Az önce görülen kutu 1: 16 × 0.01² = 0.0016. Zamanına bir gün kalan
+    // kutu 3: 4 × 0.75² = 2.25. Eski ağırlıklar tam tersini yapardı (16'ya
+    // karşı 4).
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("justSeen"), makeQuestion("nearlyDue")],
+        progress: {
+          justSeen: seen("justSeen", 1, local(2026, 2, 10, 20)),
+          nearlyDue: seen("nearlyDue", 3, local(2026, 2, 7, 20)),
+        },
+        now,
+      }),
+    );
+    expect(hits.nearlyDue / 1000).toBeCloseTo(2.25 / 2.2516, 2);
+  });
+
+  it("bütün adaylar az önce görülmüş olsa da toplam ağırlık sıfır olmaz, her rng'de bir soru döner", () => {
+    const now = local(2026, 2, 10, 20);
+    const ids = ["box1", "box3", "box5"];
+    const boxes: Box[] = [1, 3, 5];
+    const questions = ids.map((id) => makeQuestion(id));
+    const progress = Object.fromEntries(ids.map((id, i) => [id, seen(id, boxes[i], now)]));
+
+    const weights = questions.map((q) => notDueWeightOf(q, progress[q.id], now));
+    for (const weight of weights) expect(weight).toBeGreaterThan(0);
+    expect(weights.reduce((sum, w) => sum + w, 0)).toBeGreaterThan(0);
+
+    for (const value of [0, 0.25, 0.5, 0.75, 0.999999, 1]) {
+      expect(drawQuestion(makeInput({ questions, progress, now, rng: () => value }))).not.toBeNull();
+    }
+
+    // Yalnızca sıfır olmamak yetmez: her aday payı oranında seçilebilmeli.
+    // Ağırlıklar 16 : 4 : 1 (kutu ağırlığı × aynı alt sınır).
+    const hits = sweep(makeInput({ questions, progress, now }), 10_000);
+    expect(Object.keys(hits).sort()).toEqual(ids);
+    expect(hits.box1 / 10_000).toBeCloseTo(16 / 21, 2);
+    expect(hits.box5 / 10_000).toBeCloseTo(1 / 21, 2);
+  });
+
+  it("soğutma katmanlardan önce uygulanır: soğutmadaki zamanı gelmiş soru gelmez", () => {
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("due"), makeQuestion("notDue")],
+        progress: {
+          due: seen("due", 1, local(2026, 2, 8, 20)),
+          notDue: seen("notDue", 1, local(2026, 2, 10, 9)),
+        },
+        recentIds: ["due"],
+        now,
+      }),
+    );
+    expect(hits).toEqual({ notDue: 1000 });
+  });
+
+  it("ileri tarihli kayıt zamanı gelmiş katmanında: zamanı gelmemişin önüne geçer", () => {
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("notDue"), makeQuestion("future")],
+        progress: {
+          notDue: seen("notDue", 1, local(2026, 2, 10, 9)),
+          future: seen("future", 2, local(2026, 2, 15, 9)),
+        },
+        now,
+      }),
+    );
+    expect(hits).toEqual({ future: 1000 });
+  });
+
+  it("bozuk tarihli kayıt zamanı gelmiş katmanında: zamanı gelmemişin önüne geçer", () => {
+    const now = local(2026, 2, 10, 20);
+    const hits = sweep(
+      makeInput({
+        questions: [makeQuestion("notDue"), makeQuestion("broken")],
+        progress: {
+          notDue: seen("notDue", 1, local(2026, 2, 10, 9)),
+          broken: { questionId: "broken", box: 2, lastSeenAt: "bozuk", attempts: [] },
+        },
+        now,
+      }),
+    );
+    expect(hits).toEqual({ broken: 1000 });
   });
 });

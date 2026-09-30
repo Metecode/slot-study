@@ -47,12 +47,11 @@ function boxLine(el: Element | null): string {
   return `padding ${cs.padding} · margin ${cs.margin} · min-height ${cs.minHeight}`;
 }
 
-/** Üst çubuğun durum çubuğu şeridi bir ::before; rect'i yok, stilinden okunur. */
-function pseudoLine(el: Element | null): string {
-  if (!el) return "bulunamadı";
-  const cs = getComputedStyle(el, "::before");
+/** Sistem çubuğu şeritleri body'nin sözde öğeleri (index.css); rect'leri yok, stillerinden okunur. */
+function stripLine(pseudo: "::before" | "::after"): string {
+  const cs = getComputedStyle(document.body, pseudo);
   if (cs.content === "none") return "yok";
-  return `position ${cs.position} · top ${cs.top} · height ${cs.height} · bg ${cs.backgroundColor} · backdrop-filter ${cs.backdropFilter || "yok"}`;
+  return `position ${cs.position} · top ${cs.top} · bottom ${cs.bottom} · height ${cs.height} · z ${cs.zIndex} · bg ${cs.backgroundColor}`;
 }
 
 type Probes = {
@@ -86,6 +85,10 @@ function readLines(probes: Probes): string[] {
     `100vh ${px(probes.vh.getBoundingClientRect().height)}`,
     `100dvh ${px(probes.dvh.getBoundingClientRect().height)}`,
     `scrollY ${px(window.scrollY)} · dpr ${window.devicePixelRatio}`,
+    // Sayfa yana taşarsa mobil tarayıcı layout viewport'u büyütür ve görsel
+    // viewport onun içinde kayar (offsetTop > 0): sabit şeritler ekrandan kopar.
+    `scrollWidth ${px(document.documentElement.scrollWidth)} · clientWidth ${px(document.documentElement.clientWidth)}`,
+    `visualViewport.offsetTop ${px(window.visualViewport?.offsetTop)} · scale ${window.visualViewport?.scale ?? "yok"}`,
     "— display-mode",
     `standalone ${standalone ? "EVET" : "hayır"} · navigator.standalone ${String(iosStandalone)}`,
     "— TopBar (header)",
@@ -93,8 +96,9 @@ function readLines(probes: Probes): string[] {
     paddingLine(header),
     `iç: ${rectLine(header?.firstElementChild ?? null)}`,
     `iç: ${paddingLine(header?.firstElementChild ?? null)}`,
-    "— TopBar arka plan katmanı (header::before)",
-    pseudoLine(header),
+    "— Sistem çubuğu şeritleri (body::before üst, body::after alt)",
+    `üst: ${stripLine("::before")}`,
+    `alt: ${stripLine("::after")}`,
     "— Footer",
     rectLine(footer),
     paddingLine(footer),
