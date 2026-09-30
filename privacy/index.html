@@ -35,7 +35,7 @@
 
     <main class="page">
       <h1>Slot — Gizlilik Politikası</h1>
-      <p class="updated">Son güncelleme: 25 Eylül 2026</p>
+      <p class="updated">Son güncelleme: 30 Eylül 2026</p>
 
       <p>
         Bu politika, Slot'un (slot.meteucar.com ve Slot mobil uygulaması) hangi verileri işlediğini, neden
@@ -55,8 +55,8 @@
         <h2>Kısaca</h2>
         <ul>
           <li>
-            Slot hesap açmadan, tam olarak çalışır. Hesapsız kullanımda ilerlemen ve ayarların yalnızca cihazında
-            saklanır.
+            Slot hesap açmadan, tam olarak çalışır. Hesapsız kullanımda ilerlemen ve ayarların cihazında saklanır
+            ve bize gönderilmez.
           </li>
           <li>
             Reklam, analitik ya da takip aracı kullanmıyoruz. Verini satmıyor, pazarlama amacıyla kimseyle
@@ -64,7 +64,7 @@
           </li>
           <li>
             İsteğe bağlı olarak GitHub ile giriş yaparsan, ilerlemen cihazların arasında senkronlanabilmesi için
-            sunucumuzda saklanır.
+            sunucumuzda saklanır. Giriş yalnızca web sürümünde var.
           </li>
           <li>Hesabını uygulamanın içinden istediğin zaman silebilirsin.</li>
         </ul>
@@ -80,12 +80,39 @@
         </p>
         <p>
           Web sürümünü açtığında tarayıcın sayfayı sunucumuzdan yükler. Bu isteklere ait teknik kayıtlar
-          <a href="#sunucu-kayitlari">4. bölümde</a> anlatılıyor.
+          <a href="#sunucu-kayitlari">5. bölümde</a> anlatılıyor.
         </p>
       </section>
 
+      <section id="mobil-uygulama">
+        <h2>2. Mobil uygulama</h2>
+        <p>Mobil uygulamada hesap ya da giriş yok; uygulama sunucumuza hiçbir istek göndermez.</p>
+        <ul>
+          <li>
+            <strong>İlerleme ve ayarlar:</strong> Cihazında, uygulamanın kendi klasöründeki JSON dosyalarında saklanır
+            ve sunucumuza gönderilmez. Uygulamayı sildiğinde bu dosyalar da silinir. Android yedeklemen açıksa bu
+            dosyalar Google hesabındaki cihaz yedeğine dahil edilebilir; bu yedeğe biz erişemeyiz.
+          </li>
+          <li>
+            <strong>Hatırlatıcı:</strong> Tekrar hatırlatıcısını açarsan bildirim cihazında yerel olarak kurulur;
+            bildirim sunucusu kullanılmaz. Hatırlatıcıyı Ayarlar'dan kapatabilirsin.
+          </li>
+          <li>
+            <strong>Analitik ve reklam yok:</strong> Uygulama analitik, reklam ya da çökme raporlama aracı (SDK)
+            içermez.
+          </li>
+          <li>
+            <strong>Kendi yapay zekâna sor:</strong> Yalnızca sen başlattığında, promptu seçtiğin üçüncü taraf
+            servise iletir; Slot bu veriyi sunucusuna göndermez. ChatGPT, Claude ve Perplexity'ye prompt adresin
+            içinde (<code>?q=</code>) gider ve o servisin geçmişine kendi hesabında düşebilir. Ayrıntılar
+            <a href="#saklama-yeri-ve-paylasim">6. bölümde</a>.
+          </li>
+        </ul>
+        <p>GitHub ile giriş, çerezler ve sunucu kayıtları (3–5. bölümler) yalnızca web sürümü için geçerlidir.</p>
+      </section>
+
       <section id="github-ile-giris">
-        <h2>2. GitHub ile giriş (isteğe bağlı)</h2>
+        <h2>3. GitHub ile giriş (isteğe bağlı)</h2>
         <p>
           Giriş şu an yalnızca web sürümünde sunuluyor. Giriş yaptığında GitHub'dan yalnızca herkese açık profil
           bilgilerini okuma izni (<code>read:user</code>) isteriz ve şunları saklarız:
@@ -108,7 +135,7 @@
       </section>
 
       <section id="cerezler">
-        <h2>3. Çerezler ve cihazda saklananlar</h2>
+        <h2>4. Çerezler ve cihazda saklananlar</h2>
         <p>Takip ya da analitik çerezi kullanmıyoruz. Yalnızca giriş için gereken iki çerez var:</p>
         <ul>
           <li>
@@ -124,7 +151,7 @@
       </section>
 
       <section id="sunucu-kayitlari">
-        <h2>4. Sunucu kayıtları</h2>
+        <h2>5. Sunucu kayıtları</h2>
         <p>
           Web sürümünü kullanırken sunucumuz her istekte şu teknik bilgileri kaydeder: IP adresi, zaman, istenen
           adres, yanıt kodu, yönlendiren sayfa ve tarayıcı bilgisi (User-Agent). Bu kayıtlar güvenlik ve hata
@@ -137,11 +164,10 @@
       </section>
 
       <section id="saklama-yeri-ve-paylasim">
-        <h2>5. Verilerin saklandığı yer ve paylaşım</h2>
+        <h2>6. Verilerin saklandığı yer ve paylaşım</h2>
         <p>
-          Sunucumuz Netcup GmbH'nin Nürnberg'deki (Almanya) veri merkezinde bulunur. Türkiye'den kullanıyorsan bu,
-          kişisel verilerinin yurt dışına aktarılması anlamına gelir (dayanağı için bkz.
-          <a href="#hukuki-dayanak">6. bölüm</a>).
+          Sunucumuz Netcup GmbH'nin Nürnberg'deki (Almanya) veri merkezinde bulunur. Yurt dışına aktarım
+          <a href="#yurt-disina-aktarim">7. bölümde</a> anlatılıyor.
         </p>
         <p>
           Verileri yalnızca şu hizmet sağlayıcılarla ve yalnızca hizmetin çalışması için gereken ölçüde
@@ -156,25 +182,43 @@
         </ul>
         <p>Uygulamayı App Store ya da Google Play'den indirirsen, bu mağazalar kendi politikalarına göre veri işler.</p>
         <p>
-          "Kendi yapay zekâna sor" düğmesi soruyu ve cevabını yalnızca cihazının panosuna kopyalar; bize ya da
-          başka birine göndermez. Metni yapıştırdığın aracın kendi politikası geçerlidir.
+          "Kendi yapay zekâna sor" yalnızca sen bir düğmeye bastığında çalışır. Prompt (soru, yazdığın cevap ve
+          değerlendirme kriterleri) seçtiğin servise (ChatGPT, Claude, Gemini, Perplexity) ya da paylaş menüsünde
+          seçtiğin uygulamaya iletilir ve cihazının panosuna kopyalanır. Slot bu metni sunucusuna göndermez.
+          ChatGPT, Claude ve Perplexity'de prompt adresin içinde (<code>?q=</code>) gider; bu yüzden tarayıcı
+          geçmişine ve o servisin geçmişine, kendi hesabında, düşebilir. Metni ilettiğin servisin kendi gizlilik
+          politikası geçerlidir.
+        </p>
+      </section>
+
+      <section id="yurt-disina-aktarim">
+        <h2>7. Yurt dışına aktarım (KVKK md. 9)</h2>
+        <p>
+          Web sürümünü kullandığında sunucu kayıtların (<a href="#sunucu-kayitlari">5. bölüm</a>), GitHub ile
+          giriş yaptığında hesap ve senkron verilerin, barındırma hizmeti aldığımız Netcup GmbH'nin Nürnberg'deki
+          (Almanya) sunucularında saklanır. Türkiye'den kullanıyorsan bu, kişisel verilerinin yurt dışına
+          aktarılması anlamına gelir.
+        </p>
+        <p>
+          GitHub ile giriş yaptığında giriş işlemi GitHub, Inc.'in (ABD) sunucularında gerçekleşir: tarayıcın
+          doğrudan GitHub'a bağlanır, GitHub kimliğini doğrular ve kullanıcı kimliğini ve kullanıcı adını bize
+          iletir.
         </p>
       </section>
 
       <section id="hukuki-dayanak">
-        <h2>6. Hukuki dayanak</h2>
+        <h2>8. Hukuki dayanak</h2>
         <ul>
           <li>Hesap ve senkron verileri: sözleşmenin kurulması ve ifası (KVKK md. 5/2-c; GDPR md. 6/1-b).</li>
           <li>
             Sunucu kayıtları: hizmetin güvenliğini sağlamaya yönelik meşru menfaat (KVKK md. 5/2-f; GDPR md.
             6/1-f).
           </li>
-          <li>Yurt dışına aktarım: [KVKK md. 9 kapsamındaki aktarım dayanağı buraya yazılacak].</li>
         </ul>
       </section>
 
       <section id="saklama-sureleri">
-        <h2>7. Saklama süreleri</h2>
+        <h2>9. Saklama süreleri</h2>
         <ul>
           <li>Hesap ve senkron verileri: hesabını silene kadar.</li>
           <li>Sunucu erişim kayıtları: en fazla 15 gün.</li>
@@ -186,7 +230,7 @@
       </section>
 
       <section id="hesap-silme">
-        <h2>8. Hesabını silme</h2>
+        <h2>10. Hesabını silme</h2>
         <p>
           Giriş yaptıktan sonra kullanıcı menüsünden <strong>Hesabı sil</strong> seçeneğini kullanabilirsin.
           Sunucudaki hesabın ve senkronlanmış verilerin hemen ve kalıcı olarak silinir, tüm oturumların sonlanır.
@@ -205,7 +249,7 @@
       </section>
 
       <section id="haklar">
-        <h2>9. Hakların</h2>
+        <h2>11. Hakların</h2>
         <p>
           KVKK md. 11 ve GDPR kapsamında verilerinin işlenip işlenmediğini öğrenme, verilerine erişme,
           düzeltilmesini ya da silinmesini isteme, işlemeye itiraz etme ve verilerini taşınabilir biçimde alma
@@ -216,12 +260,12 @@
       </section>
 
       <section id="cocuklar">
-        <h2>10. Çocuklar</h2>
+        <h2>12. Çocuklar</h2>
         <p>Slot 13 yaşından küçükler için tasarlanmamıştır ve bu yaş grubundan bilerek veri toplamayız.</p>
       </section>
 
       <section id="degisiklikler">
-        <h2>11. Değişiklikler</h2>
+        <h2>13. Değişiklikler</h2>
         <p>
           Bu politikayı güncellersek sayfanın başındaki tarihi değiştiririz. Önemli değişiklikleri uygulamada
           ayrıca duyururuz.

@@ -172,7 +172,7 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
           <p className={styles.note}>
             Ayrıntılar:{" "}
             <a href={POLICY_DELETION_URL} target="_blank" rel="noopener" className={styles.link}>
-              Gizlilik politikası, 8. bölüm
+              Gizlilik politikası: Hesabını silme
             </a>
           </p>
 

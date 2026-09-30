@@ -21,9 +21,12 @@ import privacyTrHtml from "../privacy/index.html?raw";
 
 type Structure = { title: string; updated: string; headings: string[] };
 
-/** Markdown'ın iki dili "---" ayırıcısıyla bölünmüş: önce Türkçe, sonra İngilizce. */
+/**
+ * Markdown'ın iki dili "---" ayırıcısıyla bölünmüş: önce Türkçe, sonra İngilizce.
+ * Windows'ta core.autocrlf dosyayı CRLF ile çıkarıyor; ayırıcı ikisinde de bulunur.
+ */
 function markdownParts(markdown: string): { tr: string; en: string } {
-  const [tr, en] = markdown.split(/\n---\n/);
+  const [tr, en] = markdown.split(/\r?\n---\r?\n/);
   return { tr, en };
 }
 
@@ -83,10 +86,11 @@ describe.each(PAGES)("$name", ({ html, source }) => {
 describe("bölüm bağlantıları", () => {
   it("hesap silme diyaloğunun bağlandığı bölüm var", () => {
     // DeleteAccountDialog POLICY_DELETION_URL: /privacy#hesap-silme
-    expect(privacyTrHtml).toMatch(/<section id="hesap-silme">\s*<h2>8\. /);
+    // Numara değil başlık: diyalog metni bölüm numarasına bağlı değil.
+    expect(privacyTrHtml).toMatch(/<section id="hesap-silme">\s*<h2>\d+\. Hesabını silme<\/h2>/);
   });
 
   it("İngilizce sayfada karşılığı var", () => {
-    expect(privacyEnHtml).toMatch(/<section id="account-deletion">\s*<h2>8\. /);
+    expect(privacyEnHtml).toMatch(/<section id="account-deletion">\s*<h2>\d+\. Deleting your account<\/h2>/);
   });
 });
