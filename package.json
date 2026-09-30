@@ -1,7 +1,7 @@
 {
   "name": "slot",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -20,6 +20,8 @@
     "test:watch": "vitest",
     "scan:layout": "node scripts/scan-layout.mjs",
     "icons": "node scripts/generate-icons.mjs",
+    "store:screenshots": "node scripts/store-screenshots.mjs",
+    "feature-graphic": "node scripts/generate-feature-graphic.mjs",
     "merge-questions": "node scripts/merge-questions.ts"
   },
   "dependencies": {
