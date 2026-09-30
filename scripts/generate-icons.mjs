@@ -16,9 +16,8 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import { crc32, deflateSync } from "node:zlib";
 
-import { chromium } from "playwright-core";
+import { encodePng, launchChrome } from "./lib/raster.mjs";
 
 const SOURCE = "design/icon";
 const ANDROID_RES = "android/app/src/main/res";
@@ -73,7 +72,7 @@ const outputs = [
 writeFileSync("public/favicon.svg", `${rounded()}\n`);
 console.log("public/favicon.svg");
 
-const browser = await launchChrome();
+const browser = await launchChrome("icons");
 try {
   const page = await browser.newPage();
   for (const output of outputs) {
@@ -83,7 +82,7 @@ try {
     const rgba = Buffer.from(await page.evaluate(rasterize, { source, size: output.size }), "base64");
     const alpha = output.alpha ?? true;
     mkdirSync(dirname(output.path), { recursive: true });
-    writeFileSync(output.path, encodePng(rgba, output.size, alpha));
+    writeFileSync(output.path, encodePng(rgba, output.size, output.size, alpha));
     console.log(`${output.path} (${output.size}, ${alpha ? "RGBA" : "RGB"})`);
   }
 } finally {
@@ -119,49 +118,3 @@ function svg(origin, extent, body) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${origin} ${origin} ${extent} ${extent}">${body}</svg>`;
 }
 
-/** 8 bit RGBA ya da RGB PNG. Satır filtresi yok; ikonlar küçük, boyut sorun değil. */
-function encodePng(rgba, size, alpha) {
-  const channels = alpha ? 4 : 3;
-  const rows = Buffer.alloc(size * (size * channels + 1));
-  let offset = 0;
-  for (let y = 0; y < size; y++) {
-    rows[offset++] = 0; // filtre: yok
-    for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4;
-      if (!alpha && rgba[i + 3] !== 255) throw new Error("Şeffaflıksız olması gereken görüntüde şeffaf piksel var.");
-      for (let c = 0; c < channels; c++) rows[offset++] = rgba[i + c];
-    }
-  }
-  const header = Buffer.alloc(13);
-  header.writeUInt32BE(size, 0);
-  header.writeUInt32BE(size, 4);
-  header[8] = 8; // bit derinliği
-  header[9] = alpha ? 6 : 2; // renk tipi: RGBA ya da RGB
-  return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
-    chunk("IHDR", header),
-    chunk("IDAT", deflateSync(rows, { level: 9 })),
-    chunk("IEND", Buffer.alloc(0)),
-  ]);
-}
-
-function chunk(type, data) {
-  const length = Buffer.alloc(4);
-  length.writeUInt32BE(data.length);
-  const body = Buffer.concat([Buffer.from(type, "ascii"), data]);
-  const checksum = Buffer.alloc(4);
-  checksum.writeUInt32BE(crc32(body));
-  return Buffer.concat([length, body, checksum]);
-}
-
-/** Sistem Chrome'u yoksa indirmeyi önermek yerine ne yapılacağını söyleyip çıkar. */
-async function launchChrome() {
-  try {
-    return await chromium.launch({ channel: "chrome" });
-  } catch (error) {
-    const firstLine = String(error?.message ?? error).split("\n")[0];
-    console.error("Google Chrome başlatılamadı. icons tarayıcı indirmez, sistemdeki Chrome'u kullanır.");
-    console.error(`  ${firstLine}`);
-    process.exit(1);
-  }
-}
