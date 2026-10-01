@@ -68,6 +68,17 @@ android {
         }
     }
     buildTypes {
+        /*
+          Debug ayrı paket kimliğiyle kurulur ki Play'den gelen release
+          (com.meteucar.slot) ile yan yana dursun; aynı kimlik ve farklı imzayla
+          kurulum çakışıyordu. Ana ekrandaki "Slot Dev" adı src/debug/res'ten gelir.
+          Ayrı paket ayrı veri demek: debug kendi IndexedDB'siyle boş başlar.
+          Manifest'teki authority'ler ${applicationId} ile yazıldığı için suffix'i alır.
+        */
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
         release {
             if (hasReleaseKeystore) {
                 signingConfig = signingConfigs.release

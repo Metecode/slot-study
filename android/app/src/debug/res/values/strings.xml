@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  Debug derlemesinde main/res/values/strings.xml'in üstüne biner; release bu
+  dosyayı görmez. Launcher etiketi MainActivity'nin android:label'ından
+  (title_activity_main) geldiği için app_name ile birlikte o da ezilir.
+-->
+<resources>
+    <string name="app_name">Slot Dev</string>
+    <string name="title_activity_main">Slot Dev</string>
+</resources>
