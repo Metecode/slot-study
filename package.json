@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "cap:sync": "npm run build && cap sync android",
     "android:open": "cap open android",
-    "android:run": "npm run build && cap sync android && cap run android",
+    "android:run": "npm run build && cap sync android && cap run android --no-sync",
     "android:bundle": "npm run cap:sync && cd android && .\\gradlew.bat bundleRelease",
     "test": "vitest run",
     "test:watch": "vitest",
