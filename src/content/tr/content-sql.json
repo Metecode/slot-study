@@ -14,7 +14,13 @@
         {
           "id": "btree-default",
           "label": "B-Tree varsayılan ve genel amaçlı",
-          "aliases": ["b-tree", "varsayılan", "aralık", "sıralama", "range"],
+          "aliases": [
+            "b-tree",
+            "varsayılan",
+            "aralık",
+            "sıralama",
+            "range"
+          ],
           "anchors": [
             "B-Tree varsayılan index türüdür; eşitlik, aralık ve sıralama sorgularının hepsinde çalışır.",
             "Belirtmezsen oluşturulan index B-Tree olur ve çoğu senaryoyu karşılar."
@@ -37,7 +43,13 @@
         {
           "id": "gin-multivalue",
           "label": "GIN çok değerli alanlar için",
-          "aliases": ["gin", "jsonb", "dizi", "tam metin", "array"],
+          "aliases": [
+            "gin",
+            "jsonb",
+            "dizi",
+            "tam metin",
+            "array"
+          ],
           "anchors": [
             "GIN bir satırda birden çok değer tutan alanlar içindir: dizi, JSONB, tam metin arama.",
             "JSONB içinde anahtar aramak ya da dizi elemanı sorgulamak için GIN kullanılır."
@@ -91,7 +103,12 @@
         {
           "id": "junction-table",
           "label": "Bağlantı tablosu",
-          "aliases": ["ara tablo", "junction", "join table", "üçüncü tablo"],
+          "aliases": [
+            "ara tablo",
+            "junction",
+            "join table",
+            "üçüncü tablo"
+          ],
           "anchors": [
             "Çok-a-çok ilişki için araya üçüncü bir bağlantı tablosu konur.",
             "İki tablonun kimliklerini eşleyen ayrı bir tablo oluşturulur."
@@ -114,7 +131,12 @@
         {
           "id": "relationship-attributes",
           "label": "İlişkiye ait alanlar",
-          "aliases": ["rol", "atanma tarihi", "ilişki verisi", "ek alan"],
+          "aliases": [
+            "rol",
+            "atanma tarihi",
+            "ilişki verisi",
+            "ek alan"
+          ],
           "anchors": [
             "Rol ve atanma tarihi gibi alanlar bağlantı tablosunda tutulur.",
             "Bu bilgi ne çalışana ne projeye aittir, ikisinin ilişkisine aittir."
@@ -168,7 +190,12 @@
         {
           "id": "read-committed-solution",
           "label": "Read Committed ile çözüm",
-          "aliases": ["read committed", "varsayılan", "default", "izolasyon"],
+          "aliases": [
+            "read committed",
+            "varsayılan",
+            "default",
+            "izolasyon"
+          ],
           "anchors": [
             "Bu problemi çözmek için en az Read Committed izolasyon seviyesi kullanılmalıdır.",
             "Veritabanlarının çoğunda varsayılan olan Read Committed seviyesi kirli okumayı (dirty read) engeller."
@@ -267,7 +294,13 @@
         {
           "id": "sum-over-window",
           "label": "SUM OVER kullanımı",
-          "aliases": ["window", "over", "sum over", "pencere", "group by sız"],
+          "aliases": [
+            "window",
+            "over",
+            "sum over",
+            "pencere",
+            "group by sız"
+          ],
           "anchors": [
             "Kümülatif toplam için SUM fonksiyonu OVER kelimesiyle birlikte window function olarak kullanılır.",
             "GROUP BY kullanmadan satır bazında ara toplam almak için SUM() OVER() yapısı tercih edilir."
@@ -291,7 +324,13 @@
         {
           "id": "tie-breaker-id",
           "label": "Eşitlik bozucu (tie-breaker) id",
-          "aliases": ["tie-breaker", "id", "aynı tarih", "eşsiz", "kırılım"],
+          "aliases": [
+            "tie-breaker",
+            "id",
+            "aynı tarih",
+            "eşsiz",
+            "kırılım"
+          ],
           "anchors": [
             "Aynı tarihli işlemlerde aynı kümülatif toplamın basılmasını engellemek için sıralamaya eşsiz bir id kolonu (tie-breaker) eklenmelidir.",
             "Eğer sıralama kriteri aynı değere sahip satırlar üretirse, ORDER BY yanına id gibi eşsiz bir kırılım ekleyerek sıra kesinleştirilmelidir."
@@ -302,6 +341,1961 @@
         "Müşterilerin değil de bankanın tüm şubelerinin kümülatif hesap hareketlerini tek sorguda 'şube bazlı' ayrı ayrı göstermek istesek sorguya hangi ifadeyi eklerdik?"
       ],
       "source": "Banka teknik mülakatları genel derlemesi"
+    },
+    {
+      "id": "sql-exception",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Hata yönetimi",
+      "difficulty": 2,
+      "prompt": "SQL exception nedir? Veritabanında bir sorgu hata verdiğinde ne olur ve uygulama tarafında nasıl ele alınır?",
+      "modelAnswer": "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır: kısıt ihlali (unique, foreign key, not null), sözdizimi hatası, tip uyuşmazlığı, deadlock veya bağlantı kopması gibi. Her hata standart bir **SQLSTATE** koduyla gelir; örneğin `23505` unique ihlali, `40P01` deadlock'tur. Java tarafında bu hata JDBC'de `SQLException` olarak yakalanır, Spring bunu `DataAccessException` hiyerarşisine (ör. `DataIntegrityViolationException`) çevirir.\n\nTransaction içinde bir komut hata verirse o transaction bozulur; PostgreSQL'de sonraki komutlar da reddedilir ve işlem **ROLLBACK** ile geri alınmalıdır. Spring'de `@Transactional` metottan RuntimeException fırlarsa rollback otomatik yapılır.\n\nSık atlanan nokta: hatayı yakalayıp yutmak. Exception loglanmadan geçilirse veri tutarsız kalabilir; hata ya anlamlı bir iş hatasına çevrilmeli ya da yukarı fırlatılmalıdır. Deadlock ve serialization hataları ise geçicidir, bu tür hatalarda işlemi yeniden denemek (retry) doğru yaklaşımdır.",
+      "keyConcepts": [
+        {
+          "id": "tanim",
+          "label": "Veritabanının döndürdüğü hata",
+          "aliases": [
+            "hata",
+            "error",
+            "kısıt ihlal",
+            "constraint",
+            "unique",
+            "foreign key",
+            "deadlock"
+          ],
+          "anchors": [
+            "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır."
+          ]
+        },
+        {
+          "id": "sqlstate",
+          "label": "SQLSTATE hata kodu",
+          "aliases": [
+            "sqlstate",
+            "hata kodu",
+            "error code",
+            "23505"
+          ],
+          "anchors": [
+            "Her hata standart bir SQLSTATE koduyla gelir."
+          ]
+        },
+        {
+          "id": "jdbc",
+          "label": "Uygulamada SQLException olarak yakalanır",
+          "aliases": [
+            "sqlexception",
+            "jdbc",
+            "dataaccessexception",
+            "catch",
+            "yakala"
+          ],
+          "anchors": [
+            "Java'da hata JDBC üzerinden SQLException olarak yakalanır, Spring bunu DataAccessException'a çevirir."
+          ]
+        },
+        {
+          "id": "rollback",
+          "label": "Transaction geri alınır",
+          "aliases": [
+            "rollback",
+            "geri al",
+            "@transactional",
+            "transaction bozulur"
+          ],
+          "anchors": [
+            "Hata veren transaction ROLLBACK ile geri alınmalıdır."
+          ]
+        },
+        {
+          "id": "retry",
+          "label": "Geçici hatalarda retry",
+          "aliases": [
+            "retry",
+            "yeniden dene",
+            "tekrar dene",
+            "geçici hata"
+          ],
+          "anchors": [
+            "Deadlock gibi geçici hatalarda işlem yeniden denenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Hatayı yakalayıp logladıktan sonra transaction'a devam etmek isteseydin hangi mekanizmayı kullanırdın?"
+      ],
+      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+    },
+    {
+      "id": "sql-slow-query-explain",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Performans",
+      "difficulty": 2,
+      "prompt": "Bir sorgu yavaş çalışıyor. Sebebini bulmak için hangi komutu kullanırsın ve çıktısında nelere bakarsın?",
+      "modelAnswer": "Sorgunun nasıl çalıştırıldığını görmek için **EXPLAIN**, gerçekten çalıştırıp ölçmek için **EXPLAIN ANALYZE** kullanılır:\n\n```sql\nEXPLAIN (ANALYZE, BUFFERS)\nSELECT * FROM transactions WHERE account_id = 100;\n```\n\nÇıktı bir **execution plan**'dır (sorgu planı). Bakılacak yerler:\n- Büyük tabloda **Seq Scan** (tüm tabloyu tarama) varsa ve az satır dönüyorsa eksik index vardır; Index Scan beklenir.\n- **Tahmini satır sayısı** (rows) ile **gerçek satır sayısı** (actual rows) çok farklıysa istatistikler eskidir, `ANALYZE` ile güncellenir.\n- En çok zamanı alan düğüm (actual time) darboğazdır; pahalı Nested Loop veya disk'e taşan Sort/Hash bunun tipik örnekleridir.\n\nSık atlanan nokta: EXPLAIN ANALYZE sorguyu gerçekten çalıştırır. UPDATE veya DELETE için kullanacaksan bir transaction içinde çalıştırıp ROLLBACK yapmalısın.",
+      "keyConcepts": [
+        {
+          "id": "explain",
+          "label": "EXPLAIN / EXPLAIN ANALYZE",
+          "aliases": [
+            "explain"
+          ],
+          "anchors": [
+            "Yavaş sorgunun planını görmek için EXPLAIN, ölçmek için EXPLAIN ANALYZE kullanılır."
+          ]
+        },
+        {
+          "id": "plan",
+          "label": "Execution plan",
+          "aliases": [
+            "execution plan",
+            "sorgu planı",
+            "query plan",
+            "çalıştırma planı"
+          ],
+          "anchors": [
+            "Çıktı, veritabanının sorguyu nasıl çalıştıracağını gösteren execution plan'dır."
+          ]
+        },
+        {
+          "id": "seq-scan",
+          "label": "Seq Scan ve eksik index",
+          "aliases": [
+            "seq scan",
+            "sequential scan",
+            "full scan",
+            "tüm tabloyu",
+            "index scan",
+            "eksik index"
+          ],
+          "anchors": [
+            "Büyük tabloda Seq Scan görülmesi genelde eksik index'e işaret eder."
+          ]
+        },
+        {
+          "id": "tahmin",
+          "label": "Tahmini ve gerçek satır farkı",
+          "aliases": [
+            "actual rows",
+            "tahmini",
+            "istatistik",
+            "analyze ile güncel",
+            "estimate"
+          ],
+          "anchors": [
+            "Tahmini ve gerçek satır sayısı çok farklıysa istatistikler eskidir."
+          ]
+        },
+        {
+          "id": "gercek-calisir",
+          "label": "ANALYZE sorguyu gerçekten çalıştırır",
+          "aliases": [
+            "gerçekten çalıştırır",
+            "rollback",
+            "transaction içinde"
+          ],
+          "anchors": [
+            "EXPLAIN ANALYZE sorguyu gerçekten çalıştırdığı için yazma sorgularında ROLLBACK ile kullanılmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sorgu planında index olmasına rağmen Seq Scan görüyorsan olası sebepler nelerdir?"
+      ],
+      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+    },
+    {
+      "id": "sql-find-slow-queries",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Performans",
+      "difficulty": 2,
+      "prompt": "Canlı sistemde hangi sorguların yavaş olduğunu, daha hiçbir sorguyu bilmeden nasıl tespit edersin?",
+      "modelAnswer": "Tek tek EXPLAIN çalıştırmadan önce yavaş sorguları bulmak gerekir. PostgreSQL'de iki temel araç vardır:\n\n- **pg_stat_statements** eklentisi: her sorgu kalıbının kaç kez çalıştığını, toplam ve ortalama süresini tutar. Toplam süreye göre sıralamak, sistemi en çok yoran sorguyu verir (tek seferlik yavaş sorgu değil, çok sık çalışan orta hızlı sorgu çoğu zaman asıl suçludur).\n- **log_min_duration_statement** ayarı: belirli bir sürenin (ör. 500 ms) üzerindeki sorguları loga yazar. MySQL'deki karşılığı slow query log'dur.\n\nO anda çalışan ve takılı kalan sorgular için **pg_stat_activity** görünümüne bakılır; kilit bekleyen sorgular da buradan görülür.\n\nYavaş sorgu bulunduktan sonra EXPLAIN ANALYZE ile planı incelenir.",
+      "keyConcepts": [
+        {
+          "id": "pg-stat-statements",
+          "label": "pg_stat_statements",
+          "aliases": [
+            "pg_stat_statements",
+            "sorgu istatistik"
+          ],
+          "anchors": [
+            "pg_stat_statements her sorgu kalıbının çalışma sayısını ve süresini tutar."
+          ]
+        },
+        {
+          "id": "slow-log",
+          "label": "Yavaş sorgu logu",
+          "aliases": [
+            "log_min_duration",
+            "slow query log",
+            "yavaş sorgu log",
+            "süre eşiğ"
+          ],
+          "anchors": [
+            "Belirli sürenin üzerindeki sorgular log_min_duration_statement ile loglanır."
+          ]
+        },
+        {
+          "id": "toplam-sure",
+          "label": "Toplam süreye göre değerlendirme",
+          "aliases": [
+            "toplam süre",
+            "çok sık",
+            "sıklık",
+            "frekans",
+            "total time"
+          ],
+          "anchors": [
+            "Sık çalışan orta hızlı sorgu toplamda en çok yükü getirebilir."
+          ]
+        },
+        {
+          "id": "pg-stat-activity",
+          "label": "Anlık sorgular",
+          "aliases": [
+            "pg_stat_activity",
+            "anlık",
+            "şu an çalışan",
+            "takılı"
+          ],
+          "anchors": [
+            "O anda çalışan ve takılı sorgular pg_stat_activity'de görülür."
+          ]
+        }
+      ],
+      "followUps": [
+        "Uygulama tarafında N+1 problemi olduğunu pg_stat_statements çıktısından nasıl anlarsın?"
+      ],
+      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+    },
+    {
+      "id": "sql-exception-handling-db",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Hata yönetimi",
+      "difficulty": 3,
+      "prompt": "Veritabanı tarafında (stored procedure veya fonksiyon içinde) bir hatayı nasıl yakalar ve ele alırsın?",
+      "modelAnswer": "PostgreSQL'de PL/pgSQL blokları **EXCEPTION** bölümüyle hata yakalar; SQL Server'daki karşılığı **TRY...CATCH**, Oracle'da yine EXCEPTION bloğudur.\n\n```sql\nBEGIN\n  INSERT INTO accounts (id, balance) VALUES (1, 0);\nEXCEPTION\n  WHEN unique_violation THEN\n    RAISE NOTICE 'Hesap zaten var';\nEND;\n```\n\nHata belirli bir türe göre yakalanabilir (`unique_violation`, `division_by_zero`) ya da `WHEN OTHERS` ile genel olarak. Kendi hatanı fırlatmak için **RAISE EXCEPTION** kullanılır; bu, iş kuralı ihlalini (ör. yetersiz bakiye) veritabanında durdurmanın yoludur.\n\nSık atlanan nokta: PostgreSQL'de EXCEPTION bloğu arka planda bir savepoint açar. Hata yakalandığında yalnızca o bloğun içindeki değişiklikler geri alınır, dış transaction devam eder. Bunun maliyeti vardır; döngü içinde EXCEPTION bloğu kullanmak performansı ciddi düşürür.",
+      "keyConcepts": [
+        {
+          "id": "exception-blok",
+          "label": "EXCEPTION / TRY-CATCH bloğu",
+          "aliases": [
+            "exception",
+            "try catch",
+            "try-catch",
+            "catch",
+            "when others"
+          ],
+          "anchors": [
+            "PL/pgSQL'de hata EXCEPTION bloğuyla, SQL Server'da TRY CATCH ile yakalanır."
+          ]
+        },
+        {
+          "id": "hata-turu",
+          "label": "Hata türüne göre yakalama",
+          "aliases": [
+            "unique_violation",
+            "hata türü",
+            "when ",
+            "belirli hata"
+          ],
+          "anchors": [
+            "Hata unique_violation gibi belirli bir türe göre yakalanabilir."
+          ]
+        },
+        {
+          "id": "raise",
+          "label": "RAISE ile hata fırlatma",
+          "aliases": [
+            "raise",
+            "throw",
+            "hata fırlat"
+          ],
+          "anchors": [
+            "Kendi hatanı fırlatmak için RAISE EXCEPTION kullanılır."
+          ]
+        },
+        {
+          "id": "savepoint",
+          "label": "Savepoint ve kısmi geri alma",
+          "aliases": [
+            "savepoint",
+            "sadece o blok",
+            "yalnızca o blo",
+            "dış transaction",
+            "kısmi"
+          ],
+          "anchors": [
+            "EXCEPTION bloğu arka planda savepoint açar ve yalnızca bloğun değişikliklerini geri alır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Uygulama tarafında birden fazla adımlı bir işlemde sadece bir adımı geri almak isteseydin SQL'de hangi komutu kullanırdın?"
+      ],
+      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+    },
+    {
+      "id": "sql-deadlock",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Kilitleme stratejileri",
+      "difficulty": 3,
+      "prompt": "Deadlock nedir, nasıl oluşur ve nasıl önlenir?",
+      "modelAnswer": "Deadlock, iki (veya daha fazla) transaction'ın birbirinin tuttuğu kilidi beklemesiyle oluşan kilitlenmedir. Örneğin A işlemi önce 1 numaralı hesabı, sonra 2'yi kilitlemek ister; B işlemi aynı anda önce 2'yi, sonra 1'i ister. İkisi de diğerini sonsuza kadar bekler.\n\nVeritabanı bunu **tespit eder** ve işlemlerden birini hata ile sonlandırır (PostgreSQL'de SQLSTATE `40P01`); diğeri devam eder. Uygulama, sonlandırılan işlemi yeniden denemelidir.\n\nÖnlemenin temel yolu kilitleri **her zaman aynı sırayla** almaktır: iki hesap arasında transferde önce küçük id'li hesap kilitlenir. Ayrıca transaction'ları kısa tutmak ve kilit tutarken dış servis çağrısı yapmamak riski azaltır. `lock_timeout` ile bekleme süresine sınır konabilir.",
+      "keyConcepts": [
+        {
+          "id": "karsilikli-bekleme",
+          "label": "Karşılıklı kilit bekleme",
+          "aliases": [
+            "birbirini bekle",
+            "karşılıklı",
+            "kilidi bekle",
+            "döngü",
+            "circular"
+          ],
+          "anchors": [
+            "Deadlock iki transaction'ın birbirinin tuttuğu kilidi beklemesidir."
+          ]
+        },
+        {
+          "id": "tespit",
+          "label": "Veritabanı tespit edip birini sonlandırır",
+          "aliases": [
+            "tespit",
+            "birini sonlandır",
+            "biri iptal",
+            "kurban",
+            "victim",
+            "40p01"
+          ],
+          "anchors": [
+            "Veritabanı deadlock'u tespit eder ve işlemlerden birini sonlandırır."
+          ]
+        },
+        {
+          "id": "ayni-sira",
+          "label": "Kilitleri aynı sırayla almak",
+          "aliases": [
+            "aynı sıra",
+            "sırayla kilitle",
+            "küçük id",
+            "lock order"
+          ],
+          "anchors": [
+            "Kilitleri her zaman aynı sırayla almak deadlock'u önler."
+          ]
+        },
+        {
+          "id": "kisa-transaction",
+          "label": "Kısa transaction ve retry",
+          "aliases": [
+            "kısa",
+            "retry",
+            "yeniden dene",
+            "timeout"
+          ],
+          "anchors": [
+            "Transaction'lar kısa tutulmalı ve sonlandırılan işlem yeniden denenmelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Deadlock ile uzun süren kilit beklemesi (lock wait) arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-acid",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 1,
+      "prompt": "ACID nedir? Her harfi bir banka transferi örneğiyle açıkla.",
+      "modelAnswer": "ACID, bir transaction'ın güvenilir olması için gereken dört özelliktir:\n\n- **Atomicity (bölünmezlik):** İşlem ya tamamen yapılır ya hiç yapılmaz. Transferde bir hesaptan para düşüp diğerine eklenmeden hata çıkarsa her şey geri alınır.\n- **Consistency (tutarlılık):** İşlem veritabanını bir geçerli durumdan başka bir geçerli duruma taşır; kısıtlar (bakiye negatif olamaz gibi) ihlal edilemez.\n- **Isolation (izolasyon):** Eşzamanlı işlemler birbirinin yarım kalmış değişikliklerini görmez; derecesi izolasyon seviyesiyle belirlenir.\n- **Durability (kalıcılık):** Commit edilen işlem, sistem çökse bile kaybolmaz; veritabanı bunu önce WAL (write-ahead log) gibi bir loga yazarak sağlar.",
+      "keyConcepts": [
+        {
+          "id": "atomicity",
+          "label": "Atomicity",
+          "aliases": [
+            "atomicity",
+            "bölünmez",
+            "ya hep ya hiç",
+            "tamamen",
+            "atomik"
+          ],
+          "anchors": [
+            "Atomicity, işlemin ya tamamen yapılması ya hiç yapılmamasıdır."
+          ]
+        },
+        {
+          "id": "consistency",
+          "label": "Consistency",
+          "aliases": [
+            "consistency",
+            "tutarlı",
+            "kısıt",
+            "geçerli durum"
+          ],
+          "anchors": [
+            "Consistency, işlemin veritabanını geçerli bir durumdan diğerine taşımasıdır."
+          ]
+        },
+        {
+          "id": "isolation",
+          "label": "Isolation",
+          "aliases": [
+            "isolation",
+            "izolasyon",
+            "eşzamanlı",
+            "birbirini görmez"
+          ],
+          "anchors": [
+            "Isolation, eşzamanlı işlemlerin birbirinin yarım değişikliklerini görmemesidir."
+          ]
+        },
+        {
+          "id": "durability",
+          "label": "Durability",
+          "aliases": [
+            "durability",
+            "kalıcı",
+            "çökse bile",
+            "wal",
+            "commit edilen"
+          ],
+          "anchors": [
+            "Durability, commit edilen verinin sistem çökse bile kaybolmamasıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Durability'yi sağlamak için veritabanı commit anında diske tam olarak ne yazar?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-isolation-levels",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Kirli Okuma ve İzolasyon",
+      "difficulty": 3,
+      "prompt": "Dört izolasyon seviyesini ve her birinin hangi anomalileri engellediğini anlat.",
+      "modelAnswer": "SQL standardı dört seviye tanımlar; yukarı çıktıkça daha az anomali, daha fazla bekleme veya çakışma olur:\n\n- **Read Uncommitted:** Commit edilmemiş veriyi bile okur, **dirty read** mümkündür. (PostgreSQL bunu Read Committed gibi davranır.)\n- **Read Committed:** Yalnızca commit edilmiş veriyi okur, dirty read engellenir. Ama aynı satır iki kez okunduğunda farklı değer gelebilir (**non-repeatable read**). PostgreSQL ve SQL Server'da varsayılandır.\n- **Repeatable Read:** Okunan satırlar transaction boyunca değişmez görünür. Standartta yeni eklenen satırların görünmesi (**phantom read**) mümkündür; PostgreSQL snapshot kullandığı için phantom'u da engeller.\n- **Serializable:** İşlemler sırayla çalışmış gibi sonuç verir, tüm anomaliler engellenir. Bedeli, çakışmada işlemlerden birinin hata alması ve uygulamanın yeniden denemesidir.\n\nMySQL InnoDB'de varsayılan Repeatable Read'dir.",
+      "keyConcepts": [
+        {
+          "id": "dirty",
+          "label": "Dirty read",
+          "aliases": [
+            "dirty read",
+            "kirli okuma",
+            "commit edilmemiş",
+            "read uncommitted"
+          ],
+          "anchors": [
+            "Read Uncommitted'da commit edilmemiş veri okunabilir, buna dirty read denir."
+          ]
+        },
+        {
+          "id": "non-repeatable",
+          "label": "Non-repeatable read",
+          "aliases": [
+            "non-repeatable",
+            "read committed",
+            "iki kez oku",
+            "farklı değer"
+          ],
+          "anchors": [
+            "Read Committed'da aynı satır iki kez okunduğunda farklı değer gelebilir."
+          ]
+        },
+        {
+          "id": "phantom",
+          "label": "Phantom read",
+          "aliases": [
+            "phantom",
+            "hayalet",
+            "yeni eklenen satır",
+            "repeatable read"
+          ],
+          "anchors": [
+            "Repeatable Read'de standart olarak yeni eklenen satırlar görünebilir, buna phantom read denir."
+          ]
+        },
+        {
+          "id": "serializable",
+          "label": "Serializable ve maliyeti",
+          "aliases": [
+            "serializable",
+            "sırayla",
+            "retry",
+            "yeniden dene",
+            "en katı"
+          ],
+          "anchors": [
+            "Serializable tüm anomalileri engeller ama çakışmada yeniden deneme gerektirir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Serializable seviyesinde çalışan bir uygulama serialization failure hatası aldığında ne yapmalıdır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-join-types",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 1,
+      "prompt": "JOIN türleri nelerdir? INNER JOIN ile LEFT JOIN arasındaki farkı örnekle açıkla.",
+      "modelAnswer": "JOIN iki tabloyu ortak bir kolon üzerinden birleştirir:\n\n- **INNER JOIN:** Yalnızca iki tabloda da eşleşen satırları döner. Müşteri–hesap birleştirmesinde hesabı olmayan müşteri sonuçta yer almaz.\n- **LEFT JOIN:** Soldaki tablonun tüm satırlarını döner; sağda eşleşme yoksa sağın kolonları NULL gelir. Hesabı olmayan müşteri de listelenir.\n- **RIGHT JOIN:** LEFT'in tersi; pratikte tablolar yer değiştirilip LEFT JOIN yazılır.\n- **FULL OUTER JOIN:** İki taraftaki tüm satırlar, eşleşmeyenler NULL ile.\n- **CROSS JOIN:** Her satırı her satırla eşler (kartezyen çarpım).\n\nSık atlanan nokta: LEFT JOIN'den sonra WHERE'de sağ tabloya koşul yazmak (`WHERE a.status = 'ACTIVE'`) NULL satırları eler ve sorguyu fiilen INNER JOIN'e çevirir. Sağ tablo koşulu ON içine yazılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "inner",
+          "label": "INNER JOIN yalnızca eşleşenler",
+          "aliases": [
+            "inner join",
+            "inner",
+            "eşleşen",
+            "iki tabloda da"
+          ],
+          "anchors": [
+            "INNER JOIN yalnızca iki tabloda da eşleşen satırları döner."
+          ]
+        },
+        {
+          "id": "left",
+          "label": "LEFT JOIN soldakilerin tamamı",
+          "aliases": [
+            "left join",
+            "left",
+            "soldaki",
+            "tüm satır"
+          ],
+          "anchors": [
+            "LEFT JOIN soldaki tablonun tüm satırlarını döner."
+          ]
+        },
+        {
+          "id": "null",
+          "label": "Eşleşmeyen taraf NULL",
+          "aliases": [
+            "null"
+          ],
+          "anchors": [
+            "Eşleşme olmayan tarafın kolonları NULL gelir."
+          ]
+        },
+        {
+          "id": "diger",
+          "label": "Diğer türler",
+          "aliases": [
+            "full outer",
+            "full join",
+            "cross join",
+            "right join",
+            "kartezyen"
+          ],
+          "anchors": [
+            "FULL OUTER, RIGHT ve CROSS JOIN diğer birleştirme türleridir."
+          ]
+        },
+        {
+          "id": "where-tuzagi",
+          "label": "WHERE koşulu LEFT JOIN'i bozar",
+          "aliases": [
+            "where",
+            "on içine",
+            "on kısmı",
+            "inner join'e çevir"
+          ],
+          "anchors": [
+            "LEFT JOIN sonrası WHERE'de sağ tabloya koşul yazmak sorguyu INNER JOIN'e çevirir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Hiç hesabı olmayan müşterileri bulmak için hangi JOIN'i ve hangi koşulu kullanırsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-where-vs-having",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 1,
+      "prompt": "WHERE ile HAVING arasındaki fark nedir?",
+      "modelAnswer": "**WHERE**, gruplama yapılmadan önce satırları filtreler; tek tek satırlara uygulanır ve aggregate fonksiyon (SUM, COUNT) içeremez. **HAVING** ise **GROUP BY** sonrası oluşan grupları filtreler ve aggregate sonuçları üzerinde koşul koyar.\n\n```sql\nSELECT account_id, SUM(amount)\nFROM transactions\nWHERE status = 'COMPLETED'\nGROUP BY account_id\nHAVING SUM(amount) > 10000;\n```\n\nÇalışma sırası: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY.\n\nSık atlanan nokta: aggregate içermeyen bir koşulu HAVING'e yazmak çalışır ama gereksiz satırların önce gruplanmasına yol açar. Satır bazlı koşullar her zaman WHERE'de olmalıdır, böylece daha az veri gruplanır.",
+      "keyConcepts": [
+        {
+          "id": "where-once",
+          "label": "WHERE gruplamadan önce satırları filtreler",
+          "aliases": [
+            "gruplamadan önce",
+            "satır",
+            "where"
+          ],
+          "anchors": [
+            "WHERE gruplama yapılmadan önce satırları filtreler."
+          ]
+        },
+        {
+          "id": "having-sonra",
+          "label": "HAVING grupları filtreler",
+          "aliases": [
+            "having",
+            "grupları",
+            "group by sonra",
+            "gruplamadan sonra"
+          ],
+          "anchors": [
+            "HAVING GROUP BY sonrası oluşan grupları filtreler."
+          ]
+        },
+        {
+          "id": "aggregate",
+          "label": "Aggregate yalnızca HAVING'de",
+          "aliases": [
+            "aggregate",
+            "sum",
+            "count",
+            "toplama fonksiyon"
+          ],
+          "anchors": [
+            "Aggregate fonksiyonlar WHERE'de kullanılamaz, HAVING'de kullanılır."
+          ]
+        },
+        {
+          "id": "sira",
+          "label": "Çalışma sırası",
+          "aliases": [
+            "çalışma sırası",
+            "from",
+            "sırası"
+          ],
+          "anchors": [
+            "Sorgu FROM, WHERE, GROUP BY, HAVING, SELECT sırasıyla işlenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "SELECT içinde verdiğin bir takma adı (alias) WHERE içinde neden kullanamazsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-primary-foreign-key",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Veri modelleme",
+      "difficulty": 1,
+      "prompt": "Primary key ve foreign key nedir? Foreign key'de ON DELETE seçenekleri ne işe yarar?",
+      "modelAnswer": "**Primary key**, bir tablodaki her satırı benzersiz tanımlayan kolondur (veya kolonlar). Benzersiz (unique) ve NOT NULL olmak zorundadır, tabloda yalnızca bir tane olur ve veritabanı otomatik olarak üzerine index açar.\n\n**Foreign key**, bir tablodaki kolonun başka bir tablonun primary key'ine referans vermesidir. **Referans bütünlüğünü** sağlar: var olmayan bir müşteriye hesap eklenemez.\n\nReferans verilen satır silindiğinde ne olacağını ON DELETE belirler:\n- **RESTRICT / NO ACTION:** Bağlı satır varsa silmeyi engeller (varsayılan).\n- **CASCADE:** Bağlı satırları da siler.\n- **SET NULL:** Bağlı satırlardaki foreign key'i NULL yapar.\n\nSık atlanan nokta: PostgreSQL foreign key kolonuna otomatik index açmaz. Index yoksa üst tablodan silme ve JOIN'ler yavaşlar, bu yüzden foreign key kolonuna genelde elle index eklenir.",
+      "keyConcepts": [
+        {
+          "id": "pk",
+          "label": "Primary key benzersiz tanımlar",
+          "aliases": [
+            "primary key",
+            "benzersiz",
+            "unique",
+            "not null"
+          ],
+          "anchors": [
+            "Primary key her satırı benzersiz tanımlar ve NOT NULL olmak zorundadır."
+          ]
+        },
+        {
+          "id": "fk",
+          "label": "Foreign key başka tabloya referans",
+          "aliases": [
+            "foreign key",
+            "referans",
+            "başka tablo"
+          ],
+          "anchors": [
+            "Foreign key başka bir tablonun primary key'ine referans verir."
+          ]
+        },
+        {
+          "id": "butunluk",
+          "label": "Referans bütünlüğü",
+          "aliases": [
+            "bütünlük",
+            "integrity",
+            "var olmayan",
+            "olmayan bir"
+          ],
+          "anchors": [
+            "Foreign key referans bütünlüğünü sağlar."
+          ]
+        },
+        {
+          "id": "on-delete",
+          "label": "ON DELETE seçenekleri",
+          "aliases": [
+            "on delete",
+            "cascade",
+            "restrict",
+            "set null"
+          ],
+          "anchors": [
+            "ON DELETE, referans verilen satır silindiğinde ne olacağını belirler."
+          ]
+        },
+        {
+          "id": "fk-index",
+          "label": "Foreign key'e otomatik index açılmaz",
+          "aliases": [
+            "otomatik index açmaz",
+            "elle index",
+            "fk index",
+            "index ekle"
+          ],
+          "anchors": [
+            "PostgreSQL foreign key kolonuna otomatik index açmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Natural key yerine surrogate key (yapay id) kullanmanın avantajları nelerdir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-normalization",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Veri modelleme",
+      "difficulty": 2,
+      "prompt": "Normalizasyon nedir? 1NF, 2NF ve 3NF'yi kısaca açıkla.",
+      "modelAnswer": "Normalizasyon, veriyi tekrarı ve güncelleme anomalilerini azaltacak şekilde tablolara bölmektir. Amaç her bilginin tek bir yerde durmasıdır.\n\n- **1NF:** Her hücre tek (atomik) değer tutar; tekrar eden gruplar ve virgülle ayrılmış listeler olmaz.\n- **2NF:** 1NF'ye ek olarak, bileşik anahtarlı tablolarda her kolon anahtarın tamamına bağlıdır, bir parçasına değil (kısmi bağımlılık yok).\n- **3NF:** 2NF'ye ek olarak, anahtar olmayan kolonlar birbirine bağlı değildir (geçişli bağımlılık yok). Örneğin siparişte müşteri id'si yanında müşterinin şehrini tutmak 3NF'yi bozar; şehir müşteri tablosuna aittir.\n\nNormalize edilmemiş tabloda bir bilgiyi güncellemek birçok satırı değiştirmeyi gerektirir ve biri unutulursa veri tutarsızlaşır (update anomaly).\n\nSık atlanan nokta: aşırı normalizasyon okumada çok fazla JOIN gerektirir. Raporlama gibi okuma ağırlıklı yerlerde bilinçli **denormalizasyon** yapılabilir.",
+      "keyConcepts": [
+        {
+          "id": "amac",
+          "label": "Tekrarı ve anomaliyi azaltmak",
+          "aliases": [
+            "tekrar",
+            "anomali",
+            "tek bir yer",
+            "redundancy",
+            "tutarsız"
+          ],
+          "anchors": [
+            "Normalizasyon veri tekrarını ve güncelleme anomalilerini azaltır."
+          ]
+        },
+        {
+          "id": "1nf",
+          "label": "1NF atomik değer",
+          "aliases": [
+            "1nf",
+            "atomik",
+            "tek değer",
+            "atomic"
+          ],
+          "anchors": [
+            "1NF'de her hücre tek ve atomik değer tutar."
+          ]
+        },
+        {
+          "id": "2nf",
+          "label": "2NF kısmi bağımlılık yok",
+          "aliases": [
+            "2nf",
+            "kısmi bağımlılık",
+            "anahtarın tamamı",
+            "partial"
+          ],
+          "anchors": [
+            "2NF'de her kolon bileşik anahtarın tamamına bağlıdır."
+          ]
+        },
+        {
+          "id": "3nf",
+          "label": "3NF geçişli bağımlılık yok",
+          "aliases": [
+            "3nf",
+            "geçişli",
+            "transitive",
+            "birbirine bağlı değil"
+          ],
+          "anchors": [
+            "3NF'de anahtar olmayan kolonlar birbirine bağlı değildir."
+          ]
+        },
+        {
+          "id": "denormalizasyon",
+          "label": "Bilinçli denormalizasyon",
+          "aliases": [
+            "denormaliz",
+            "join",
+            "okuma ağırlıklı",
+            "raporlama"
+          ],
+          "anchors": [
+            "Okuma ağırlıklı sistemlerde bilinçli denormalizasyon yapılabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir bankanın raporlama veritabanında neden bilerek denormalize tablolar kullanılır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-composite-index-order",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Index türleri",
+      "difficulty": 2,
+      "prompt": "(account_id, created_at) üzerinde bileşik bir index var. Hangi sorgular bu index'i kullanabilir, hangileri kullanamaz?",
+      "modelAnswer": "Bileşik index soldan sağa sıralanmış bir yapıdır: önce account_id'ye, aynı account_id içinde created_at'e göre sıralıdır. Buna **leftmost prefix** (en soldaki kolon) kuralı denir.\n\nKullanabilenler:\n- `WHERE account_id = 5`\n- `WHERE account_id = 5 AND created_at > '2026-01-01'`\n- `WHERE account_id = 5 ORDER BY created_at` (sıralama için ek iş gerekmez)\n\nKullanamayan (verimli şekilde):\n- `WHERE created_at > '2026-01-01'` — ilk kolon koşulda yok, index'in sırası işe yaramaz.\n\nKolon sırası seçilirken kural: **eşitlik** koşulu konan kolon önce, **aralık** (>, <, BETWEEN) koşulu konan kolon sonra gelir. Aralık kolonu önde olursa, ondan sonraki kolonlar index'ten verimli yararlanamaz.",
+      "keyConcepts": [
+        {
+          "id": "soldan-saga",
+          "label": "Soldan sağa sıralı yapı",
+          "aliases": [
+            "soldan sağa",
+            "leftmost",
+            "en soldaki",
+            "ilk kolon",
+            "prefix"
+          ],
+          "anchors": [
+            "Bileşik index soldan sağa sıralıdır, sorgu en soldaki kolonu içermelidir."
+          ]
+        },
+        {
+          "id": "ilk-kolon-yok",
+          "label": "İlk kolon yoksa kullanılamaz",
+          "aliases": [
+            "ilk kolon",
+            "kullanamaz",
+            "created_at tek başına",
+            "yalnızca ikinci"
+          ],
+          "anchors": [
+            "Koşulda ilk kolon yoksa index verimli kullanılamaz."
+          ]
+        },
+        {
+          "id": "esitlik-aralik",
+          "label": "Eşitlik önce, aralık sonra",
+          "aliases": [
+            "eşitlik",
+            "aralık",
+            "range",
+            "önce"
+          ],
+          "anchors": [
+            "Eşitlik koşulu konan kolon önce, aralık kolonu sonra gelmelidir."
+          ]
+        },
+        {
+          "id": "siralama",
+          "label": "ORDER BY'a da yarar",
+          "aliases": [
+            "order by",
+            "sıralama",
+            "sort"
+          ],
+          "anchors": [
+            "Doğru sıradaki bileşik index ORDER BY için ek sıralama ihtiyacını kaldırır."
+          ]
+        }
+      ],
+      "followUps": [
+        "created_at tek başına da sık sorgulanıyorsa ne yaparsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-index-not-used",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Index türleri",
+      "difficulty": 3,
+      "prompt": "Kolonda index olmasına rağmen veritabanı neden index'i kullanmayabilir? Örnekler ver.",
+      "modelAnswer": "Index'in var olması kullanılacağı anlamına gelmez. Tipik sebepler:\n\n- **Kolona fonksiyon uygulamak:** `WHERE LOWER(email) = 'a@b.com'` düz email index'ini kullanamaz. Çözüm ifade üzerine index açmaktır (`CREATE INDEX ON users (LOWER(email))`).\n- **Baştan joker ile LIKE:** `LIKE '%ahmet'` B-Tree kullanamaz; `LIKE 'ahmet%'` kullanabilir.\n- **Tip uyuşmazlığı:** Metin kolonunu sayıyla karşılaştırmak dönüşüm gerektirir ve index'i devre dışı bırakır.\n- **Düşük seçicilik:** Sorgu tablonun büyük kısmını döndürecekse (ör. %40'ı) optimizer tüm tabloyu taramayı daha ucuz bulur. Bu bir hata değil, doğru karardır.\n- **Eski istatistikler:** Optimizer satır sayısını yanlış tahmin ediyorsa yanlış plan seçer; ANALYZE ile güncellenir.\n\nHangisi olduğunu EXPLAIN çıktısı gösterir.",
+      "keyConcepts": [
+        {
+          "id": "fonksiyon",
+          "label": "Kolona fonksiyon uygulamak",
+          "aliases": [
+            "fonksiyon",
+            "lower",
+            "upper",
+            "ifade üzerine",
+            "expression index"
+          ],
+          "anchors": [
+            "Kolona fonksiyon uygulamak düz index'in kullanılmasını engeller."
+          ]
+        },
+        {
+          "id": "like",
+          "label": "Baştan joker ile LIKE",
+          "aliases": [
+            "like",
+            "joker",
+            "wildcard"
+          ],
+          "anchors": [
+            "Baştan joker içeren LIKE sorgusu B-Tree index kullanamaz."
+          ]
+        },
+        {
+          "id": "tip",
+          "label": "Tip uyuşmazlığı",
+          "aliases": [
+            "tip uyuşmaz",
+            "dönüşüm",
+            "cast",
+            "tür uyuşmaz"
+          ],
+          "anchors": [
+            "Tip uyuşmazlığı dönüşüm gerektirir ve index'i devre dışı bırakır."
+          ]
+        },
+        {
+          "id": "secicilik",
+          "label": "Düşük seçicilik",
+          "aliases": [
+            "seçicilik",
+            "selectivity",
+            "büyük kısm",
+            "tüm tabloyu",
+            "daha ucuz"
+          ],
+          "anchors": [
+            "Sorgu tablonun büyük kısmını döndürecekse optimizer tam taramayı seçer."
+          ]
+        },
+        {
+          "id": "istatistik",
+          "label": "Eski istatistikler",
+          "aliases": [
+            "istatistik",
+            "analyze",
+            "yanlış tahmin"
+          ],
+          "anchors": [
+            "Eski istatistikler optimizer'ın yanlış plan seçmesine yol açar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Büyük/küçük harf duyarsız email araması için index'i nasıl tasarlarsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-covering-index",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Index türleri",
+      "difficulty": 3,
+      "prompt": "Covering index (kapsayan index) nedir ve index-only scan ne sağlar?",
+      "modelAnswer": "Covering index, bir sorgunun ihtiyaç duyduğu **tüm kolonları** içeren index'tir. Bu durumda veritabanı tabloya hiç gitmeden cevabı index'ten okuyabilir; buna **index-only scan** denir.\n\n```sql\nCREATE INDEX idx_tx_account ON transactions (account_id) INCLUDE (amount, created_at);\n\nSELECT amount, created_at FROM transactions WHERE account_id = 5;\n```\n\n`INCLUDE` ile eklenen kolonlar aramada kullanılmaz, yalnızca index'te taşınır. Böylece tabloya (heap) yapılan rastgele disk erişimleri ortadan kalkar ve sorgu belirgin şekilde hızlanır.\n\nSık atlanan nokta: PostgreSQL'de index-only scan, satırın görünürlüğünü kontrol etmek için **visibility map**'e bakar. Tablo sık güncelleniyor ve VACUUM geride kalıyorsa veritabanı yine tabloya gitmek zorunda kalır. Ayrıca her eklenen kolon index'i büyütür ve yazmayı yavaşlatır.",
+      "keyConcepts": [
+        {
+          "id": "tum-kolonlar",
+          "label": "Sorgunun tüm kolonlarını içerir",
+          "aliases": [
+            "tüm kolon",
+            "gereken kolon",
+            "bütün kolon",
+            "kapsa"
+          ],
+          "anchors": [
+            "Covering index sorgunun ihtiyaç duyduğu tüm kolonları içerir."
+          ]
+        },
+        {
+          "id": "index-only",
+          "label": "Index-only scan",
+          "aliases": [
+            "index-only",
+            "index only",
+            "tabloya gitme",
+            "tabloya hiç"
+          ],
+          "anchors": [
+            "Tüm kolonlar index'te olduğunda index-only scan ile tabloya gidilmez."
+          ]
+        },
+        {
+          "id": "include",
+          "label": "INCLUDE kolonları",
+          "aliases": [
+            "include"
+          ],
+          "anchors": [
+            "INCLUDE ile eklenen kolonlar aramada değil yalnızca okumada kullanılır."
+          ]
+        },
+        {
+          "id": "bedel",
+          "label": "Visibility map ve boyut bedeli",
+          "aliases": [
+            "visibility map",
+            "vacuum",
+            "büyü",
+            "yazma"
+          ],
+          "anchors": [
+            "Index-only scan visibility map'e bağlıdır ve ek kolonlar index'i büyütür."
+          ]
+        }
+      ],
+      "followUps": [
+        "INCLUDE ile kolon eklemek ile o kolonu bileşik index'in parçası yapmak arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-clustered-index",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Index türleri",
+      "difficulty": 2,
+      "prompt": "Clustered ve non-clustered index arasındaki fark nedir?",
+      "modelAnswer": "**Clustered index**, tablodaki satırların diskte fiziksel olarak o index'in sırasına göre saklanmasıdır; yani index ile tablo verisi aynı yapıdır. Fiziksel sıra tek olabileceği için tabloda **yalnızca bir** clustered index olur. SQL Server ve MySQL InnoDB'de primary key varsayılan olarak clustered'dır.\n\n**Non-clustered index** ayrı bir yapıdır: index değerlerini ve gerçek satırın yerini gösteren bir işaretçi tutar. Bir tabloda birden fazla olabilir; arama sonrası satıra ulaşmak için ek bir okuma gerekir.\n\nClustered index aralık sorgularında çok hızlıdır çünkü ardışık değerler diskte yan yanadır.\n\nSık atlanan nokta: PostgreSQL'de kalıcı clustered index yoktur; tüm index'ler non-clustered'dır ve tablo verisi ayrı tutulur. `CLUSTER` komutu tabloyu bir kez fiziksel olarak sıralar ama sonraki eklemelerde bu sıra korunmaz.",
+      "keyConcepts": [
+        {
+          "id": "fiziksel",
+          "label": "Clustered fiziksel sıralama",
+          "aliases": [
+            "fiziksel",
+            "diskte",
+            "satırların sırası",
+            "tablo verisi"
+          ],
+          "anchors": [
+            "Clustered index'te satırlar diskte index sırasına göre fiziksel olarak saklanır."
+          ]
+        },
+        {
+          "id": "tek",
+          "label": "Yalnızca bir clustered index",
+          "aliases": [
+            "yalnızca bir",
+            "tek bir",
+            "sadece bir"
+          ],
+          "anchors": [
+            "Bir tabloda yalnızca bir clustered index olabilir."
+          ]
+        },
+        {
+          "id": "non-clustered",
+          "label": "Non-clustered ayrı yapı",
+          "aliases": [
+            "ayrı yapı",
+            "işaretçi",
+            "pointer",
+            "birden fazla",
+            "ek okuma"
+          ],
+          "anchors": [
+            "Non-clustered index ayrı bir yapıdır ve satıra işaretçi tutar."
+          ]
+        },
+        {
+          "id": "postgres",
+          "label": "PostgreSQL'de clustered yok",
+          "aliases": [
+            "postgresql",
+            "cluster komutu",
+            "korunmaz"
+          ],
+          "anchors": [
+            "PostgreSQL'de kalıcı clustered index yoktur."
+          ]
+        }
+      ],
+      "followUps": [
+        "InnoDB'de primary key olarak rastgele UUID kullanmak neden yazma performansını düşürür?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-cte",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 2,
+      "prompt": "CTE (WITH ifadesi) nedir? Subquery yerine ne zaman tercih edilir, recursive CTE ne işe yarar?",
+      "modelAnswer": "CTE (Common Table Expression), `WITH` ile tanımlanan ve sorgu boyunca bir tablo gibi kullanılan isimli geçici sonuç kümesidir.\n\n```sql\nWITH monthly AS (\n  SELECT account_id, SUM(amount) AS total\n  FROM transactions\n  GROUP BY account_id\n)\nSELECT * FROM monthly WHERE total > 10000;\n```\n\nİç içe subquery'lere göre **okunabilirliği** artırır ve aynı ara sonuca sorguda birden fazla kez başvurmayı sağlar.\n\n**Recursive CTE** kendine başvurarak hiyerarşik veriyi dolaşır: organizasyon şeması (yönetici–çalışan), kategori ağacı veya hesap hiyerarşisi gibi.\n\nSık atlanan nokta: PostgreSQL 12 öncesinde CTE her zaman ayrı hesaplanırdı ve optimizer dışarıdaki koşulları içeri taşıyamazdı (optimization fence). 12'den itibaren tek kez kullanılan CTE'ler sorguya gömülür; eski davranış `MATERIALIZED` ile istenir.",
+      "keyConcepts": [
+        {
+          "id": "with",
+          "label": "WITH ile isimli geçici sonuç",
+          "aliases": [
+            "with",
+            "isimli",
+            "geçici sonuç",
+            "geçici tablo"
+          ],
+          "anchors": [
+            "CTE WITH ile tanımlanan isimli geçici sonuç kümesidir."
+          ]
+        },
+        {
+          "id": "okunabilirlik",
+          "label": "Okunabilirlik ve yeniden kullanım",
+          "aliases": [
+            "okunabil",
+            "iç içe",
+            "birden fazla kez",
+            "tekrar kullan"
+          ],
+          "anchors": [
+            "CTE iç içe subquery'lere göre okunabilirliği artırır."
+          ]
+        },
+        {
+          "id": "recursive",
+          "label": "Recursive CTE ve hiyerarşi",
+          "aliases": [
+            "recursive",
+            "hiyerarşi",
+            "ağaç",
+            "yönetici",
+            "kendine başvur"
+          ],
+          "anchors": [
+            "Recursive CTE hiyerarşik veriyi dolaşmak için kullanılır."
+          ]
+        },
+        {
+          "id": "materialized",
+          "label": "Optimization fence / MATERIALIZED",
+          "aliases": [
+            "materialized",
+            "fence",
+            "postgresql 12",
+            "gömülür"
+          ],
+          "anchors": [
+            "Eski PostgreSQL sürümlerinde CTE optimizer için bir engel oluşturuyordu."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir çalışanın en üst yöneticiye kadar tüm yönetici zincirini recursive CTE ile nasıl yazarsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-subquery-vs-join",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 2,
+      "prompt": "Subquery ile JOIN arasındaki fark nedir? EXISTS ile IN ne zaman tercih edilir?",
+      "modelAnswer": "**Subquery**, başka bir sorgunun içinde çalışan sorgudur; **JOIN** ise tabloları satır bazında birleştirir. Birçok subquery JOIN olarak yeniden yazılabilir ve modern optimizer'lar bu dönüşümü çoğu zaman kendisi yapar.\n\nSubquery türleri:\n- **Bağımsız (non-correlated):** Bir kez çalışır, sonucu dış sorguya verilir.\n- **Correlated (ilişkili):** Dış sorgunun kolonuna başvurur, mantıksal olarak her satır için yeniden değerlendirilir ve yanlış yazılırsa yavaştır.\n\n**EXISTS** bir eşleşme bulduğu anda durur, yalnızca varlık sorgular. **IN** ise listeyle karşılaştırır.\n\nSık atlanan nokta: `NOT IN` alt sorgusu tek bir **NULL** değer döndürürse sonuç tamamen boş gelir, çünkü NULL ile karşılaştırma bilinmeyen (unknown) üretir. Bu yüzden \"olmayanları bul\" sorgularında `NOT EXISTS` daha güvenlidir.",
+      "keyConcepts": [
+        {
+          "id": "tanim",
+          "label": "Subquery iç sorgu, JOIN birleştirme",
+          "aliases": [
+            "iç sorgu",
+            "içinde çalışan",
+            "join",
+            "birleştir"
+          ],
+          "anchors": [
+            "Subquery başka bir sorgunun içinde çalışır, JOIN ise tabloları birleştirir."
+          ]
+        },
+        {
+          "id": "correlated",
+          "label": "Correlated subquery",
+          "aliases": [
+            "correlated",
+            "ilişkili",
+            "her satır için",
+            "dış sorgu"
+          ],
+          "anchors": [
+            "Correlated subquery dış sorgunun kolonuna başvurur ve her satır için değerlendirilir."
+          ]
+        },
+        {
+          "id": "exists",
+          "label": "EXISTS ilk eşleşmede durur",
+          "aliases": [
+            "exists",
+            "varlık",
+            "ilk eşleşme",
+            "durur"
+          ],
+          "anchors": [
+            "EXISTS bir eşleşme bulduğu anda durur."
+          ]
+        },
+        {
+          "id": "not-in-null",
+          "label": "NOT IN ve NULL tuzağı",
+          "aliases": [
+            "not in",
+            "null",
+            "not exists",
+            "boş gelir"
+          ],
+          "anchors": [
+            "NOT IN alt sorgusu NULL döndürürse sonuç boş gelir, NOT EXISTS daha güvenlidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Hiç işlem yapmamış hesapları bulmak için LEFT JOIN ve NOT EXISTS çözümlerini karşılaştır."
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-rank-functions",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Pencere Fonksiyonu",
+      "difficulty": 2,
+      "prompt": "ROW_NUMBER, RANK ve DENSE_RANK arasındaki fark nedir? Her müşterinin en büyük işlemini nasıl bulursun?",
+      "modelAnswer": "Üçü de pencere fonksiyonudur ve sıralamaya göre numara verir; fark eşit değerlerde ortaya çıkar. Değerler 100, 90, 90, 80 olsun:\n\n- **ROW_NUMBER:** 1, 2, 3, 4. Eşitlerde bile benzersiz numara verir.\n- **RANK:** 1, 2, 2, 4. Eşitler aynı sırayı alır, sonrasında **boşluk** bırakılır.\n- **DENSE_RANK:** 1, 2, 2, 3. Eşitler aynı sırayı alır, boşluk bırakılmaz.\n\nGrup bazında \"ilk N\" için **PARTITION BY** kullanılır:\n\n```sql\nSELECT * FROM (\n  SELECT t.*, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY amount DESC) AS rn\n  FROM transactions t\n) x\nWHERE rn = 1;\n```\n\nPencere fonksiyonu WHERE'de doğrudan kullanılamaz, çünkü WHERE pencere fonksiyonlarından önce çalışır; bu yüzden sorgu dış bir katmana (subquery veya CTE) alınır.",
+      "keyConcepts": [
+        {
+          "id": "row-number",
+          "label": "ROW_NUMBER benzersiz numara",
+          "aliases": [
+            "row_number",
+            "benzersiz numara"
+          ],
+          "anchors": [
+            "ROW_NUMBER eşit değerlerde bile benzersiz numara verir."
+          ]
+        },
+        {
+          "id": "rank",
+          "label": "RANK boşluk bırakır",
+          "aliases": [
+            "rank",
+            "boşluk",
+            "atlar"
+          ],
+          "anchors": [
+            "RANK eşit değerlere aynı sırayı verir ve sonrasında boşluk bırakır."
+          ]
+        },
+        {
+          "id": "dense-rank",
+          "label": "DENSE_RANK boşluksuz",
+          "aliases": [
+            "dense_rank",
+            "boşluk bırakmaz",
+            "boşluksuz",
+            "ardışık"
+          ],
+          "anchors": [
+            "DENSE_RANK eşitlere aynı sırayı verir ama boşluk bırakmaz."
+          ]
+        },
+        {
+          "id": "partition",
+          "label": "PARTITION BY ile grup bazlı",
+          "aliases": [
+            "partition by",
+            "partition",
+            "grup bazında",
+            "her müşteri"
+          ],
+          "anchors": [
+            "Grup bazında sıralama için PARTITION BY kullanılır."
+          ]
+        },
+        {
+          "id": "dis-katman",
+          "label": "WHERE'de kullanılamaz, dış katman gerekir",
+          "aliases": [
+            "dış katman",
+            "subquery",
+            "cte",
+            "where'de kullanılamaz",
+            "dışarı al"
+          ],
+          "anchors": [
+            "Pencere fonksiyonu WHERE'de kullanılamadığı için sorgu dış katmana alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Her şubenin en yüksek bakiyeli 3 müşterisini, eşitlik durumunda hepsini gösterecek şekilde nasıl listelersin?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-delete-truncate-drop",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 1,
+      "prompt": "DELETE, TRUNCATE ve DROP arasındaki fark nedir?",
+      "modelAnswer": "- **DELETE:** Satırları siler, **WHERE** ile koşul alabilir. Satır satır çalışır, trigger'ları tetikler ve transaction içinde geri alınabilir. Büyük tablolarda yavaştır.\n- **TRUNCATE:** Tablodaki **tüm satırları** tek seferde siler, WHERE almaz. Satır satır işlem yapmadığı için çok hızlıdır; satır bazlı trigger'ları tetiklemez.\n- **DROP:** Tablonun kendisini, yapısıyla (kolonlar, index'ler, kısıtlar) birlikte tamamen kaldırır.\n\nDELETE bir DML, TRUNCATE ve DROP ise DDL komutudur.\n\nSık atlanan nokta: \"TRUNCATE geri alınamaz\" bilgisi her veritabanı için doğru değildir. PostgreSQL'de TRUNCATE transaction içinde ROLLBACK ile geri alınabilir; Oracle ve MySQL'de ise örtük commit yapar. Ayrıca başka tablonun foreign key ile referans verdiği bir tablo, CASCADE belirtilmeden TRUNCATE edilemez.",
+      "keyConcepts": [
+        {
+          "id": "delete",
+          "label": "DELETE koşullu, satır satır",
+          "aliases": [
+            "delete",
+            "where",
+            "satır satır",
+            "koşul"
+          ],
+          "anchors": [
+            "DELETE WHERE ile koşullu olarak satır satır siler."
+          ]
+        },
+        {
+          "id": "truncate",
+          "label": "TRUNCATE tüm satırlar, hızlı",
+          "aliases": [
+            "truncate",
+            "tüm satır",
+            "hızlı",
+            "tek seferde"
+          ],
+          "anchors": [
+            "TRUNCATE tablodaki tüm satırları tek seferde ve hızlı siler."
+          ]
+        },
+        {
+          "id": "drop",
+          "label": "DROP tabloyu yapısıyla kaldırır",
+          "aliases": [
+            "drop",
+            "yapısıyla",
+            "tablonun kendisi",
+            "tamamen kaldır"
+          ],
+          "anchors": [
+            "DROP tabloyu yapısıyla birlikte tamamen kaldırır."
+          ]
+        },
+        {
+          "id": "geri-alma",
+          "label": "Geri alma ve trigger farkı",
+          "aliases": [
+            "rollback",
+            "geri al",
+            "trigger",
+            "dml",
+            "ddl"
+          ],
+          "anchors": [
+            "DELETE trigger tetikler ve geri alınabilir, TRUNCATE'in davranışı veritabanına göre değişir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Milyonlarca satırlık bir tablodan eski kayıtları silmen gerekiyor; tek bir DELETE çalıştırmak neden risklidir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-union-vs-union-all",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 1,
+      "prompt": "UNION ile UNION ALL arasındaki fark nedir?",
+      "modelAnswer": "İkisi de iki sorgunun sonucunu alt alta birleştirir. **UNION** sonuçtaki **tekrar eden satırları kaldırır**; **UNION ALL** tüm satırları olduğu gibi döner.\n\nUNION, tekrarları bulmak için sonucu sıralar veya hash'ler; bu ek bir maliyettir. Bu yüzden tekrar olmayacağı biliniyorsa ya da tekrarlar isteniyorsa **UNION ALL daha hızlıdır** ve tercih edilmelidir.\n\nHer iki sorgunun **kolon sayısı ve tipleri uyumlu** olmalıdır; sonuç kolon isimleri ilk sorgudan alınır.\n\nSık atlanan nokta: \"emin olmak için\" alışkanlıkla UNION yazmak büyük veri setlerinde gereksiz sıralamaya yol açar. Örneğin farklı yıllara ait arşiv tablolarını birleştirirken satırlar zaten çakışmayacağı için UNION ALL doğru seçimdir.",
+      "keyConcepts": [
+        {
+          "id": "tekrar",
+          "label": "UNION tekrarları kaldırır",
+          "aliases": [
+            "tekrar",
+            "duplicate",
+            "distinct",
+            "kaldırır"
+          ],
+          "anchors": [
+            "UNION sonuçtaki tekrar eden satırları kaldırır."
+          ]
+        },
+        {
+          "id": "all",
+          "label": "UNION ALL hepsini döner",
+          "aliases": [
+            "union all",
+            "hepsini",
+            "olduğu gibi",
+            "tüm satır"
+          ],
+          "anchors": [
+            "UNION ALL tüm satırları olduğu gibi döner."
+          ]
+        },
+        {
+          "id": "maliyet",
+          "label": "UNION ALL daha hızlı",
+          "aliases": [
+            "hızlı",
+            "maliyet",
+            "sıralama",
+            "hash"
+          ],
+          "anchors": [
+            "UNION tekrarları bulmak için ek iş yaptığından UNION ALL daha hızlıdır."
+          ]
+        },
+        {
+          "id": "uyum",
+          "label": "Kolon sayısı ve tip uyumu",
+          "aliases": [
+            "kolon sayısı",
+            "tipleri",
+            "tip uyum",
+            "veri tipi",
+            "uyumlu",
+            "aynı sayıda"
+          ],
+          "anchors": [
+            "Birleştirilen sorguların kolon sayısı ve tipleri uyumlu olmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "UNION ile INTERSECT ve EXCEPT arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-null-handling",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Sorgu temelleri",
+      "difficulty": 2,
+      "prompt": "SQL'de NULL nasıl davranır? NULL = NULL neden doğru dönmez?",
+      "modelAnswer": "NULL bir değer değil, **bilinmeyen** veya eksik değer anlamına gelir. Bu yüzden NULL ile yapılan her karşılaştırma TRUE ya da FALSE değil **UNKNOWN** döner; `NULL = NULL` bile doğru değildir. SQL bu üç değerli mantıkla çalışır.\n\n- NULL kontrolü `= NULL` ile değil **IS NULL / IS NOT NULL** ile yapılır.\n- **COALESCE** ilk NULL olmayan değeri döner: `COALESCE(phone, 'yok')`.\n- Aggregate fonksiyonlar NULL'ları **yok sayar**: `COUNT(phone)` NULL olmayanları sayar, `COUNT(*)` tüm satırları. `AVG` da yalnızca dolu değerlerin ortalamasını alır.\n- `WHERE status <> 'CLOSED'` koşulu status'u NULL olan satırları da dışarıda bırakır.\n\nSık atlanan nokta: NULL ile yapılan aritmetik işlemin sonucu da NULL'dır. `balance + bonus` ifadesinde bonus NULL ise sonuç NULL olur; bunu önlemek için `balance + COALESCE(bonus, 0)` yazılır.",
+      "keyConcepts": [
+        {
+          "id": "bilinmeyen",
+          "label": "NULL bilinmeyen anlamına gelir",
+          "aliases": [
+            "bilinmeyen",
+            "eksik değer",
+            "unknown",
+            "değer değil"
+          ],
+          "anchors": [
+            "NULL bir değer değil, bilinmeyen anlamına gelir."
+          ]
+        },
+        {
+          "id": "is-null",
+          "label": "IS NULL ile kontrol",
+          "aliases": [
+            "is null",
+            "is not null"
+          ],
+          "anchors": [
+            "NULL kontrolü eşittir yerine IS NULL ile yapılır."
+          ]
+        },
+        {
+          "id": "coalesce",
+          "label": "COALESCE",
+          "aliases": [
+            "coalesce",
+            "ifnull",
+            "nvl"
+          ],
+          "anchors": [
+            "COALESCE ilk NULL olmayan değeri döner."
+          ]
+        },
+        {
+          "id": "aggregate",
+          "label": "Aggregate NULL'ları yok sayar",
+          "aliases": [
+            "yok say",
+            "count(*)",
+            "count",
+            "avg"
+          ],
+          "anchors": [
+            "Aggregate fonksiyonlar NULL değerleri yok sayar."
+          ]
+        },
+        {
+          "id": "aritmetik",
+          "label": "NULL ile aritmetik NULL verir",
+          "aliases": [
+            "aritmetik",
+            "sonuç null",
+            "toplama"
+          ],
+          "anchors": [
+            "NULL ile yapılan aritmetik işlemin sonucu NULL olur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kolonun UNIQUE kısıtı varken iki satırda NULL değer olabilir mi? Neden?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-n-plus-one",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Performans",
+      "difficulty": 2,
+      "prompt": "N+1 sorgu problemi nedir, nasıl fark edilir ve nasıl çözülür?",
+      "modelAnswer": "N+1 problemi, bir liste için **1 sorgu** atıldıktan sonra listedeki **her eleman için ayrı bir sorgu** daha atılmasıdır. 100 müşteri listelenip her müşterinin hesapları ayrı ayrı çekilirse toplamda 101 sorgu çalışır. Her biri hızlı olsa da toplam ağ gidiş-dönüşü sistemi yavaşlatır.\n\nGenelde ORM'lerdeki **lazy loading** yüzünden fark edilmeden oluşur: JPA'da `@OneToMany` ilişkiye döngü içinde erişmek her seferinde yeni sorgu tetikler.\n\nFark etmenin yolu SQL loglarını açmak (`spring.jpa.show-sql`) veya Hibernate statistics ile tek bir istekte çalışan sorgu sayısına bakmaktır.\n\nÇözümler:\n- **JOIN FETCH** veya `@EntityGraph` ile ilişkiyi tek sorguda çekmek.\n- `@BatchSize` ile ilişkileri tek tek değil, `IN (...)` ile toplu yüklemek.\n- Yalnızca gereken alanlar için DTO projection kullanmak.\n\nSık atlanan nokta: koleksiyonlarda JOIN FETCH ile sayfalama birlikte kullanılırsa Hibernate sayfalamayı bellekte yapar; bu durumda batch fetching daha uygundur.",
+      "keyConcepts": [
+        {
+          "id": "tanim",
+          "label": "1 + N sorgu",
+          "aliases": [
+            "her eleman için",
+            "her biri için",
+            "ayrı sorgu",
+            "101",
+            "1 sorgu"
+          ],
+          "anchors": [
+            "N+1, liste için bir sorgu ve her eleman için ayrı bir sorgu atılmasıdır."
+          ]
+        },
+        {
+          "id": "lazy",
+          "label": "Lazy loading kaynaklı",
+          "aliases": [
+            "lazy",
+            "hibernate",
+            "jpa"
+          ],
+          "anchors": [
+            "N+1 genelde ORM'lerdeki lazy loading yüzünden oluşur."
+          ]
+        },
+        {
+          "id": "tespit",
+          "label": "SQL loglarıyla tespit",
+          "aliases": [
+            "logları",
+            "sql log",
+            "show-sql",
+            "statistics",
+            "sorgu sayısı"
+          ],
+          "anchors": [
+            "SQL logları açılarak bir istekte çalışan sorgu sayısına bakılır."
+          ]
+        },
+        {
+          "id": "join-fetch",
+          "label": "JOIN FETCH / EntityGraph",
+          "aliases": [
+            "join fetch",
+            "entitygraph",
+            "tek sorgu"
+          ],
+          "anchors": [
+            "JOIN FETCH veya EntityGraph ilişkiyi tek sorguda çeker."
+          ]
+        },
+        {
+          "id": "batch",
+          "label": "Batch fetching",
+          "aliases": [
+            "batchsize",
+            "batch",
+            "toplu yükle",
+            "in ("
+          ],
+          "anchors": [
+            "BatchSize ilişkileri IN ile toplu yükler."
+          ]
+        }
+      ],
+      "followUps": [
+        "JOIN FETCH ile iki farklı koleksiyonu aynı anda çekmeye çalışırsan ne olur?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-injection",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Güvenlik",
+      "difficulty": 2,
+      "prompt": "SQL injection nedir ve nasıl önlenir?",
+      "modelAnswer": "SQL injection, kullanıcı girdisinin sorgu metnine doğrudan eklenmesi sonucu saldırganın sorgunun **yapısını değiştirmesidir**:\n\n```java\nString sql = \"SELECT * FROM users WHERE name = '\" + input + \"'\";\n// input: ' OR '1'='1  → tüm kullanıcılar döner\n```\n\nTemel çözüm **parametreli sorgu** (prepared statement) kullanmaktır. Değer sorgu metnine eklenmez, ayrı bir parametre olarak gönderilir; veritabanı onu her zaman veri olarak işler, komut olarak değil:\n\n```java\nPreparedStatement ps = conn.prepareStatement(\"SELECT * FROM users WHERE name = ?\");\nps.setString(1, input);\n```\n\nJPA'da `:name` gibi named parametreler aynı korumayı sağlar.\n\nEk önlemler: uygulamanın veritabanı kullanıcısına yalnızca gereken yetkileri vermek (**least privilege**) ve hata mesajlarında SQL detayını kullanıcıya göstermemek.\n\nSık atlanan nokta: tablo veya kolon adı ve ORDER BY yönü parametre olarak verilemez. Bunlar kullanıcıdan geliyorsa izin verilen değerler listesiyle (**whitelist**) doğrulanmalıdır; elle kaçış (escape) yapmak güvenilir değildir.",
+      "keyConcepts": [
+        {
+          "id": "tanim",
+          "label": "Girdinin sorgu yapısını değiştirmesi",
+          "aliases": [
+            "girdi",
+            "yapısını değiştir",
+            "sorgu metnine",
+            "or '1'='1",
+            "birleştir"
+          ],
+          "anchors": [
+            "SQL injection, kullanıcı girdisinin sorgunun yapısını değiştirmesidir."
+          ]
+        },
+        {
+          "id": "prepared",
+          "label": "Parametreli sorgu",
+          "aliases": [
+            "prepared",
+            "parametreli",
+            "parametre",
+            "bind"
+          ],
+          "anchors": [
+            "Parametreli sorguda değer ayrı gönderilir ve veri olarak işlenir."
+          ]
+        },
+        {
+          "id": "least-privilege",
+          "label": "En az yetki",
+          "aliases": [
+            "least privilege",
+            "en az yetki",
+            "gereken yetki",
+            "yetki"
+          ],
+          "anchors": [
+            "Veritabanı kullanıcısına yalnızca gereken yetkiler verilmelidir."
+          ]
+        },
+        {
+          "id": "whitelist",
+          "label": "Kolon adı ve sıralama için whitelist",
+          "aliases": [
+            "whitelist",
+            "izin verilen",
+            "order by",
+            "kolon adı"
+          ],
+          "anchors": [
+            "Parametre olamayan kolon adı ve sıralama yönü whitelist ile doğrulanmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "JPA kullanıyorsan SQL injection'dan tamamen korunmuş olur musun? Hangi durumda hâlâ risk vardır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-view-vs-materialized",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Veritabanı nesneleri",
+      "difficulty": 2,
+      "prompt": "View ile materialized view arasındaki fark nedir? Hangisi ne zaman kullanılır?",
+      "modelAnswer": "**View**, kaydedilmiş bir sorgudur; veri tutmaz. Her sorgulandığında arkasındaki SQL **yeniden çalışır**, dolayısıyla her zaman güncel veriyi gösterir. Karmaşık JOIN'leri gizlemek ve kullanıcılara tablonun yalnızca belirli kolonlarını göstermek (güvenlik) için kullanılır.\n\n**Materialized view** sorgunun sonucunu **diskte saklar**. Sorgulandığında hesaplama yapılmaz, bu yüzden pahalı raporlarda çok hızlıdır. Bedeli, verinin **eski (stale)** olabilmesidir; güncel hâli için **REFRESH** çalıştırılması gerekir:\n\n```sql\nREFRESH MATERIALIZED VIEW CONCURRENTLY daily_summary;\n```\n\n`CONCURRENTLY` yenileme sırasında okumaları engellemez ama view üzerinde unique index ister.\n\nSeçim: veri sürekli güncel olmalıysa view; ağır, sık okunan ve birkaç dakika/saat gecikmeyi tolere eden raporlar için materialized view.",
+      "keyConcepts": [
+        {
+          "id": "view",
+          "label": "View kayıtlı sorgu, veri tutmaz",
+          "aliases": [
+            "kayıtlı sorgu",
+            "kaydedilmiş",
+            "veri tutmaz",
+            "yeniden çalış"
+          ],
+          "anchors": [
+            "View veri tutmayan, her sorgulandığında yeniden çalışan kayıtlı bir sorgudur."
+          ]
+        },
+        {
+          "id": "materialized",
+          "label": "Materialized view sonucu saklar",
+          "aliases": [
+            "diskte",
+            "saklar",
+            "sonucu tutar",
+            "önceden hesap"
+          ],
+          "anchors": [
+            "Materialized view sorgunun sonucunu diskte saklar."
+          ]
+        },
+        {
+          "id": "refresh",
+          "label": "REFRESH ve eski veri",
+          "aliases": [
+            "refresh",
+            "stale",
+            "eski",
+            "güncel değil",
+            "yenile"
+          ],
+          "anchors": [
+            "Materialized view'in verisi eski olabilir ve REFRESH ile yenilenir."
+          ]
+        },
+        {
+          "id": "secim",
+          "label": "Kullanım senaryosu",
+          "aliases": [
+            "rapor",
+            "güvenlik",
+            "gecikme",
+            "güncel"
+          ],
+          "anchors": [
+            "Güncel veri gerekiyorsa view, ağır raporlar için materialized view seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir view üzerinden INSERT veya UPDATE yapılabilir mi?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-procedure-vs-function",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Veritabanı nesneleri",
+      "difficulty": 2,
+      "prompt": "Stored procedure ile function arasındaki fark nedir? İş mantığını veritabanına koymanın artıları ve eksileri neler?",
+      "modelAnswer": "**Function** bir değer (veya tablo) **döndürür** ve SELECT içinde kullanılabilir: `SELECT calculate_interest(balance) FROM accounts`. **Stored procedure** ise `CALL` ile çağrılır, bir işlem dizisini çalıştırır ve SELECT içinde kullanılamaz. PostgreSQL'de procedure'lerin farkı içeride **COMMIT/ROLLBACK** ile transaction kontrolü yapabilmeleridir; function'lar çağıranın transaction'ı içinde çalışır.\n\nİş mantığını veritabanına koymanın artıları: veri yanında çalıştığı için ağ trafiği azalır, birden fazla uygulama aynı kuralı paylaşır.\n\nEksileri: **test etmesi ve versiyonlaması** zordur, hata ayıklama araçları sınırlıdır, mantık uygulama ve veritabanı arasında bölünür ve belirli bir veritabanına **bağımlılık** (vendor lock-in) oluşur.\n\nBankalarda yoğun kullanılmasının sebebi genelde eski sistemler ve toplu (batch) işlemlerde veri yanında çalışmanın sağladığı performanstır.",
+      "keyConcepts": [
+        {
+          "id": "function-deger",
+          "label": "Function değer döndürür",
+          "aliases": [
+            "değer döndür",
+            "döndürür",
+            "select içinde",
+            "return"
+          ],
+          "anchors": [
+            "Function değer döndürür ve SELECT içinde kullanılabilir."
+          ]
+        },
+        {
+          "id": "procedure-call",
+          "label": "Procedure CALL ile çalışır",
+          "aliases": [
+            "call",
+            "işlem dizisi",
+            "select içinde kullanılamaz"
+          ],
+          "anchors": [
+            "Stored procedure CALL ile çağrılır ve SELECT içinde kullanılamaz."
+          ]
+        },
+        {
+          "id": "transaction",
+          "label": "Procedure'de transaction kontrolü",
+          "aliases": [
+            "commit",
+            "rollback",
+            "transaction kontrol"
+          ],
+          "anchors": [
+            "PostgreSQL'de procedure içinde COMMIT ve ROLLBACK yapılabilir."
+          ]
+        },
+        {
+          "id": "arti",
+          "label": "Artı: ağ trafiği ve paylaşım",
+          "aliases": [
+            "ağ trafiği",
+            "veri yanında",
+            "paylaş"
+          ],
+          "anchors": [
+            "Veri yanında çalışmak ağ trafiğini azaltır."
+          ]
+        },
+        {
+          "id": "eksi",
+          "label": "Eksi: test ve bağımlılık",
+          "aliases": [
+            "test",
+            "versiyon",
+            "bağımlılık",
+            "lock-in",
+            "hata ayıkla"
+          ],
+          "anchors": [
+            "Veritabanındaki mantığı test etmek ve versiyonlamak zordur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Uygulamada mı yoksa stored procedure'de mi faiz hesaplaması yapardın? Neden?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-trigger",
+      "category": "sql",
+      "kind": "definition",
+      "topic": "Veritabanı nesneleri",
+      "difficulty": 2,
+      "prompt": "Trigger nedir, ne için kullanılır ve riskleri nelerdir?",
+      "modelAnswer": "Trigger, bir tabloda **INSERT, UPDATE veya DELETE** gerçekleştiğinde **otomatik olarak çalışan** fonksiyondur. İşlemden önce (**BEFORE**) veya sonra (**AFTER**), her satır için ya da komut başına bir kez çalışabilir.\n\nTipik kullanımlar:\n- **Audit log:** Hesap bakiyesi değiştiğinde eski ve yeni değeri bir log tablosuna yazmak.\n- `updated_at` kolonunu otomatik güncellemek.\n- Uygulama kodunu atlayan değişikliklerde bile bir kuralı zorlamak.\n\nRiskleri:\n- **Gizli davranış:** Kodu okuyan kişi bir UPDATE'in arka planda başka tablolara yazdığını görmez; hata ayıklama zorlaşır.\n- **Performans:** Her satırda çalıştığı için toplu işlemleri ciddi yavaşlatabilir.\n- **Zincirleme:** Bir trigger'ın başka bir trigger'ı tetiklemesi öngörülemeyen sonuçlar doğurur.\n\nBu yüzden trigger'lar dar ve iyi belgelenmiş işler için kullanılmalı, iş mantığının ana yeri olmamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "otomatik",
+          "label": "Olaya bağlı otomatik çalışır",
+          "aliases": [
+            "otomatik",
+            "insert",
+            "update",
+            "delete",
+            "olay"
+          ],
+          "anchors": [
+            "Trigger bir tabloda veri değiştiğinde otomatik çalışan fonksiyondur."
+          ]
+        },
+        {
+          "id": "before-after",
+          "label": "BEFORE / AFTER",
+          "aliases": [
+            "before",
+            "after",
+            "önce",
+            "sonra"
+          ],
+          "anchors": [
+            "Trigger işlemden önce veya sonra çalışabilir."
+          ]
+        },
+        {
+          "id": "audit",
+          "label": "Audit log kullanımı",
+          "aliases": [
+            "audit",
+            "log tablosu",
+            "eski ve yeni",
+            "denetim"
+          ],
+          "anchors": [
+            "Trigger'lar değişiklikleri log tablosuna yazmak için kullanılır."
+          ]
+        },
+        {
+          "id": "risk",
+          "label": "Gizli davranış ve performans",
+          "aliases": [
+            "gizli",
+            "hata ayıkla",
+            "performansı düş",
+            "zincirleme",
+            "yavaşlat"
+          ],
+          "anchors": [
+            "Trigger'lar gizli davranış yaratır ve toplu işlemleri yavaşlatabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Audit log'u trigger yerine uygulama katmanında tutmanın avantajı ve dezavantajı nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "sql-pagination",
+      "category": "sql",
+      "kind": "applied",
+      "topic": "Performans",
+      "difficulty": 3,
+      "prompt": "Büyük bir tabloda sayfalama yaparken OFFSET kullanmanın sorunu nedir? Alternatifi nedir?",
+      "modelAnswer": "`LIMIT 20 OFFSET 100000` sorgusunda veritabanı ilk 100.000 satırı **okuyup atar**, sonra 20 tanesini döner. Sayfa ilerledikçe sorgu **yavaşlar**.\n\nİkinci sorun **tutarsızlıktır**: kullanıcı sayfalar arasında gezinirken araya yeni kayıt eklenirse satırlar kayar; aynı kayıt iki sayfada görünebilir veya bir kayıt hiç görünmeyebilir.\n\nAlternatif **keyset (cursor) pagination**'dır. Son görülen kaydın değeri hatırlanır ve bir sonraki sayfa ondan başlatılır:\n\n```sql\nSELECT * FROM transactions\nWHERE (created_at, id) < (:lastCreatedAt, :lastId)\nORDER BY created_at DESC, id DESC\nLIMIT 20;\n```\n\nIndex'li kolon üzerinden doğrudan konuma atladığı için **her sayfa aynı hızdadır**. Sıralamaya `id` eklenmesi, aynı zaman damgasına sahip kayıtlarda sıranın kesin olmasını sağlar.\n\nDezavantajı: \"47. sayfaya git\" gibi rastgele bir sayfaya atlanamaz; yalnızca önceki/sonraki gezinmesi yapılır. Bu yüzden sonsuz kaydırma ve hesap hareketleri listesi için uygundur.",
+      "keyConcepts": [
+        {
+          "id": "offset-yavas",
+          "label": "OFFSET satırları okuyup atar",
+          "aliases": [
+            "okuyup atar",
+            "okur ve atar",
+            "atlanan satır",
+            "yavaşlar",
+            "offset"
+          ],
+          "anchors": [
+            "OFFSET atlanan satırları okuyup atar, sayfa ilerledikçe yavaşlar."
+          ]
+        },
+        {
+          "id": "kayma",
+          "label": "Araya kayıt girince kayma",
+          "aliases": [
+            "kayar",
+            "kayma",
+            "iki sayfada",
+            "tutarsız"
+          ],
+          "anchors": [
+            "Araya kayıt eklenirse OFFSET sayfalamasında satırlar kayar."
+          ]
+        },
+        {
+          "id": "keyset",
+          "label": "Keyset / cursor pagination",
+          "aliases": [
+            "keyset",
+            "cursor",
+            "son görülen",
+            "son kayıt"
+          ],
+          "anchors": [
+            "Keyset pagination son görülen kaydın değerinden devam eder."
+          ]
+        },
+        {
+          "id": "sabit-hiz",
+          "label": "Index ile sabit hız",
+          "aliases": [
+            "aynı hız",
+            "sabit",
+            "index",
+            "doğrudan"
+          ],
+          "anchors": [
+            "Keyset pagination index sayesinde her sayfada aynı hızda çalışır."
+          ]
+        },
+        {
+          "id": "rastgele-sayfa",
+          "label": "Rastgele sayfaya atlanamaz",
+          "aliases": [
+            "rastgele",
+            "atlanamaz",
+            "sayfa numara",
+            "önceki/sonraki",
+            "sonraki"
+          ],
+          "anchors": [
+            "Keyset pagination'da belirli bir sayfa numarasına atlanamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Keyset pagination'da geri (önceki sayfa) gitmeyi nasıl uygularsın?"
+      ],
+      "source": "Kendi derleme"
     }
   ]
 }
