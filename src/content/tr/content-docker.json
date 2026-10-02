@@ -14,7 +14,13 @@
         {
           "id": "shared-user-network",
           "label": "Aynı kullanıcı tanımlı ağ",
-          "aliases": ["network create", "custom network", "özel ağ", "aynı ağ", "user-defined bridge"],
+          "aliases": [
+            "network create",
+            "custom network",
+            "özel ağ",
+            "aynı ağ",
+            "user-defined bridge"
+          ],
           "anchors": [
             "İki konteyner aynı kullanıcı tanımlı ağa bağlanır ve birbirine adıyla erişir.",
             "docker network create ile bir ağ açılıp her iki konteyner o ağa katılır."
@@ -23,7 +29,12 @@
         {
           "id": "default-bridge-no-dns",
           "label": "Varsayılan bridge'te DNS yok",
-          "aliases": ["varsayılan bridge", "default bridge", "isim çözülmez", "sadece ip"],
+          "aliases": [
+            "varsayılan bridge",
+            "default bridge",
+            "isim çözülmez",
+            "sadece ip"
+          ],
           "anchors": [
             "Varsayılan bridge ağında ad çözümleme çalışmaz, yalnızca IP ile erişilir.",
             "Docker'ın gömülü DNS'i varsayılan köprü ağında devrede değildir."
@@ -32,7 +43,13 @@
         {
           "id": "publish-not-required",
           "label": "Port yayınlamaya gerek yok",
-          "aliases": ["-p", "publish", "port aç", "expose", "dışarı açma"],
+          "aliases": [
+            "-p",
+            "publish",
+            "port aç",
+            "expose",
+            "dışarı açma"
+          ],
           "anchors": [
             "Konteynerler arası erişim için portu dışarıya yayınlamaya gerek yoktur.",
             "-p bayrağı servisi host makineye açar, aynı ağdaki konteynerler zaten erişebilir."
@@ -44,6 +61,1439 @@
         "Konteyner içinden host makinedeki bir servise nasıl erişirsin?"
       ],
       "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+    },
+    {
+      "id": "docker-image-vs-container",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Image ile container arasındaki fark nedir?",
+      "modelAnswer": "**Image**, uygulamayı çalıştırmak için gereken her şeyi (dosya sistemi, bağımlılıklar, çalıştırılacak komut) içeren **salt okunur** bir şablondur. **Container** ise o image'dan başlatılmış **çalışan bir örnektir**.\n\nBenzetmeyle: image bir sınıf, container o sınıftan oluşturulmuş bir nesne gibidir. Aynı image'dan istediğin kadar container başlatabilirsin, her biri birbirinden yalıtılmış çalışır.\n\nImage **katmanlardan** oluşur ve değişmez. Container başlatılırken bu katmanların üstüne **yazılabilir ince bir katman** eklenir; container'ın çalışırken yaptığı tüm değişiklikler oraya yazılır.\n\nSık atlanan nokta: container silindiğinde bu yazılabilir katman da silinir. Kalıcı olması gereken veri (veritabanı dosyaları gibi) container içinde değil, **volume**'da tutulmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "image-sablon",
+          "label": "Image salt okunur şablon",
+          "aliases": [
+            "şablon",
+            "salt okunur",
+            "read-only",
+            "template",
+            "değişmez"
+          ],
+          "anchors": [
+            "Image uygulamayı çalıştırmak için gereken her şeyi içeren salt okunur bir şablondur."
+          ]
+        },
+        {
+          "id": "container-ornek",
+          "label": "Container çalışan örnek",
+          "aliases": [
+            "çalışan örnek",
+            "çalışan bir",
+            "instance",
+            "örneği"
+          ],
+          "anchors": [
+            "Container bir image'dan başlatılmış çalışan bir örnektir."
+          ]
+        },
+        {
+          "id": "katman",
+          "label": "Katmanlar ve yazılabilir katman",
+          "aliases": [
+            "katman",
+            "layer",
+            "yazılabilir"
+          ],
+          "anchors": [
+            "Container başlatılırken image katmanlarının üstüne yazılabilir bir katman eklenir."
+          ]
+        },
+        {
+          "id": "volume",
+          "label": "Kalıcı veri volume'da",
+          "aliases": [
+            "volume",
+            "kalıcı",
+            "silinir",
+            "kaybolur"
+          ],
+          "anchors": [
+            "Container silindiğinde yazılabilir katman da silinir, kalıcı veri volume'da tutulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Çalışan bir container'da yaptığın değişikliği yeni bir image'a nasıl dönüştürürsün ve bu neden önerilmez?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-vs-vm",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Docker container ile sanal makine (VM) arasındaki fark nedir?",
+      "modelAnswer": "**Sanal makine**, hypervisor üzerinde çalışan ve **kendi tam işletim sistemini** (kendi kernel'i dahil) barındıran bir bilgisayar sanallaştırmasıdır. **Container** ise host'un **kernel'ini paylaşır**; yalnızca uygulamayı ve bağımlılıklarını yalıtır.\n\nBu farkın sonuçları:\n- **Boyut:** VM imajları gigabaytlarca, container imajları genelde megabaytlarca.\n- **Başlama süresi:** VM dakikalar içinde açılır, container saniyeler hatta milisaniyeler içinde başlar.\n- **Yoğunluk:** Aynı sunucuda çok daha fazla container çalıştırılabilir.\n\nYalıtım Linux kernel özellikleriyle sağlanır: **namespace**'ler (container'ın göreceği süreçleri, ağı, dosya sistemini ayırır) ve **cgroup**'lar (CPU ve bellek kullanımını sınırlar).\n\nSık atlanan nokta: kernel paylaşıldığı için container yalıtımı VM kadar güçlü değildir. Kernel'deki bir açık tüm container'ları etkileyebilir; güvenlik sınırının kritik olduğu yerlerde VM tercih edilir. Ayrıca Linux container'ları Windows/Mac'te doğrudan değil, arka planda çalışan hafif bir Linux VM içinde çalışır.",
+      "keyConcepts": [
+        {
+          "id": "tam-os",
+          "label": "VM kendi işletim sistemini çalıştırır",
+          "aliases": [
+            "kendi işletim",
+            "tam işletim",
+            "kendi kernel",
+            "hypervisor",
+            "misafir"
+          ],
+          "anchors": [
+            "Sanal makine kendi kernel'i dahil tam bir işletim sistemi çalıştırır."
+          ]
+        },
+        {
+          "id": "kernel-paylasim",
+          "label": "Container host kernel'ini paylaşır",
+          "aliases": [
+            "kernel'ini paylaş",
+            "kerneli paylaş",
+            "kernel paylaş",
+            "aynı kernel",
+            "host'un kernel"
+          ],
+          "anchors": [
+            "Container host'un kernel'ini paylaşır."
+          ]
+        },
+        {
+          "id": "hafif",
+          "label": "Daha hafif ve hızlı",
+          "aliases": [
+            "saniye",
+            "hafif",
+            "boyut",
+            "hızlı başla",
+            "başlama süre"
+          ],
+          "anchors": [
+            "Container'lar VM'lere göre çok daha hafiftir ve saniyeler içinde başlar."
+          ]
+        },
+        {
+          "id": "namespace-cgroup",
+          "label": "Namespace ve cgroup",
+          "aliases": [
+            "namespace",
+            "cgroup"
+          ],
+          "anchors": [
+            "Yalıtım namespace ve cgroup'larla sağlanır."
+          ]
+        },
+        {
+          "id": "yalitim-zayif",
+          "label": "Yalıtım VM kadar güçlü değil",
+          "aliases": [
+            "yalıtım",
+            "güvenlik sınırı",
+            "kernel'deki bir açık",
+            "daha zayıf"
+          ],
+          "anchors": [
+            "Kernel paylaşıldığı için container yalıtımı VM kadar güçlü değildir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Docker Desktop Windows'ta Linux container'larını nasıl çalıştırır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-layer-cache",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Dockerfile",
+      "difficulty": 2,
+      "prompt": "Dockerfile'da katman önbelleği (layer cache) nasıl çalışır? Talimatların sırası build süresini neden etkiler?",
+      "modelAnswer": "Dockerfile'daki dosya sistemini değiştiren her talimat (RUN, COPY, ADD) bir **katman** üretir. Docker bir talimatı tekrar çalıştırmadan önce **önbellekte** aynı sonucu arar; talimat ve girdileri değişmediyse katmanı yeniden kullanır.\n\nKritik kural: bir katmanın önbelleği **bozulursa, ondan sonraki tüm katmanlar** da yeniden oluşturulur. Bu yüzden sık değişen şeyler en sona, nadiren değişenler başa konur.\n\n```dockerfile\n# Kötü: her kod değişikliği npm install'u tekrar çalıştırır\nCOPY . .\nRUN npm ci\n\n# İyi: bağımlılıklar yalnızca package dosyaları değişince kurulur\nCOPY package.json package-lock.json ./\nRUN npm ci\nCOPY . .\n```\n\nJava'da aynı mantık `pom.xml` kopyalanıp `mvn dependency:go-offline` çalıştırılarak, sonra kaynak kodu kopyalanarak uygulanır.\n\nSık atlanan nokta: `RUN apt-get update` tek başına bir katmanda kalırsa eski önbellekle eski paket listesi kullanılabilir. `apt-get update && apt-get install ...` aynı RUN içinde yazılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "talimat-katman",
+          "label": "Her talimat bir katman",
+          "aliases": [
+            "katman",
+            "layer",
+            "talimat"
+          ],
+          "anchors": [
+            "Dosya sistemini değiştiren her Dockerfile talimatı bir katman üretir."
+          ]
+        },
+        {
+          "id": "onbellek",
+          "label": "Değişmeyen katman yeniden kullanılır",
+          "aliases": [
+            "önbellek",
+            "cache",
+            "yeniden kullan"
+          ],
+          "anchors": [
+            "Değişmeyen talimatların katmanı önbellekten yeniden kullanılır."
+          ]
+        },
+        {
+          "id": "zincir",
+          "label": "Bozulan katmandan sonrası yeniden oluşur",
+          "aliases": [
+            "sonraki tüm",
+            "sonrakiler",
+            "ondan sonra",
+            "zincir"
+          ],
+          "anchors": [
+            "Bir katmanın önbelleği bozulursa sonraki tüm katmanlar yeniden oluşturulur."
+          ]
+        },
+        {
+          "id": "bagimlilik-once",
+          "label": "Bağımlılıklar koddan önce",
+          "aliases": [
+            "package.json",
+            "pom.xml",
+            "bağımlılık",
+            "önce kopyala",
+            "npm ci"
+          ],
+          "anchors": [
+            "Bağımlılık dosyaları kaynak koddan önce kopyalanıp kurulmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Önbelleği tamamen yok sayarak build almak için ne yaparsın, ne zaman gerekir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-multi-stage",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Dockerfile",
+      "difficulty": 2,
+      "prompt": "Multi-stage build nedir ve ne işe yarar? Bir Spring Boot uygulaması için örnek ver.",
+      "modelAnswer": "Multi-stage build, tek Dockerfile içinde **birden fazla FROM** kullanarak derleme ve çalıştırma ortamlarını ayırmaktır. İlk aşamada derleme araçlarıyla uygulama derlenir, son aşamaya yalnızca **çıktı (artifact)** kopyalanır.\n\n```dockerfile\nFROM maven:3.9-eclipse-temurin-21 AS build\nWORKDIR /app\nCOPY pom.xml .\nRUN mvn dependency:go-offline\nCOPY src ./src\nRUN mvn package -DskipTests\n\nFROM eclipse-temurin:21-jre\nWORKDIR /app\nCOPY --from=build /app/target/app.jar app.jar\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\n```\n\nFaydaları:\n- **Küçük image:** Son image'da Maven, JDK ve kaynak kod yoktur, yalnızca JRE ve jar vardır.\n- **Güvenlik:** Derleme araçları canlı image'da olmadığı için saldırı yüzeyi küçülür.\n- **Tek Dockerfile:** Derleme için ayrı bir script veya CI adımı gerekmez.\n\nSık atlanan nokta: ara aşamaların katmanları son image'a girmez, ama build sırasında önbellek için tutulur. Build'i hızlı tutmak için katman sırası kuralı ara aşamalarda da geçerlidir.",
+      "keyConcepts": [
+        {
+          "id": "birden-fazla-from",
+          "label": "Birden fazla FROM",
+          "aliases": [
+            "birden fazla from",
+            "from",
+            "aşama",
+            "stage"
+          ],
+          "anchors": [
+            "Multi-stage build tek Dockerfile'da birden fazla FROM aşaması kullanır."
+          ]
+        },
+        {
+          "id": "artifact",
+          "label": "Yalnızca çıktı kopyalanır",
+          "aliases": [
+            "copy --from",
+            "çıktı",
+            "artifact",
+            "jar"
+          ],
+          "anchors": [
+            "Son aşamaya yalnızca derlenmiş çıktı kopyalanır."
+          ]
+        },
+        {
+          "id": "kucuk-image",
+          "label": "Küçük image",
+          "aliases": [
+            "küçük",
+            "boyut",
+            "jdk yok",
+            "maven yok",
+            "jre"
+          ],
+          "anchors": [
+            "Derleme araçları son image'a girmediği için image küçülür."
+          ]
+        },
+        {
+          "id": "guvenlik",
+          "label": "Daha küçük saldırı yüzeyi",
+          "aliases": [
+            "güvenlik",
+            "saldırı yüzey",
+            "attack surface"
+          ],
+          "anchors": [
+            "Derleme araçları canlı image'da olmadığı için saldırı yüzeyi küçülür."
+          ]
+        }
+      ],
+      "followUps": [
+        "Son aşamada distroless image kullanmanın artısı ve eksisi nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-cmd-vs-entrypoint",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Dockerfile",
+      "difficulty": 2,
+      "prompt": "CMD ile ENTRYPOINT arasındaki fark nedir? Exec form ile shell form farkı neden önemlidir?",
+      "modelAnswer": "**ENTRYPOINT** container başladığında çalışacak **ana komutu** belirler. **CMD** ise varsayılan komutu ya da ENTRYPOINT'e verilecek **varsayılan argümanları** belirler.\n\nFark `docker run` sırasında ortaya çıkar: `docker run image <argümanlar>` yazıldığında **CMD tamamen değiştirilir**, ENTRYPOINT ise korunur ve argümanlar ona eklenir. ENTRYPOINT'i değiştirmek için `--entrypoint` bayrağı gerekir.\n\n```dockerfile\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\nCMD [\"--spring.profiles.active=prod\"]\n```\n\nBurada `docker run image --spring.profiles.active=dev` yalnızca profili değiştirir.\n\nİki yazım biçimi vardır:\n- **Exec form** `[\"java\", \"-jar\", \"app.jar\"]`: komut doğrudan **PID 1** olarak çalışır.\n- **Shell form** `java -jar app.jar`: komut `/bin/sh -c` üzerinden çalışır; PID 1 shell olur.\n\nSık atlanan nokta: shell formda shell, `docker stop`'un gönderdiği **SIGTERM** sinyalini uygulamaya iletmez. Uygulama düzgün kapanamaz, 10 saniye sonra SIGKILL ile öldürülür. Bu yüzden exec form tercih edilmelidir.",
+      "keyConcepts": [
+        {
+          "id": "entrypoint-ana",
+          "label": "ENTRYPOINT ana komut",
+          "aliases": [
+            "entrypoint",
+            "ana komut",
+            "ana süreç"
+          ],
+          "anchors": [
+            "ENTRYPOINT container başladığında çalışacak ana komutu belirler."
+          ]
+        },
+        {
+          "id": "cmd-varsayilan",
+          "label": "CMD varsayılan komut/argüman",
+          "aliases": [
+            "varsayılan",
+            "default",
+            "argüman"
+          ],
+          "anchors": [
+            "CMD varsayılan komutu veya ENTRYPOINT'e verilecek varsayılan argümanları belirler."
+          ]
+        },
+        {
+          "id": "override",
+          "label": "docker run CMD'yi değiştirir",
+          "aliases": [
+            "değiştirilir",
+            "override",
+            "ezilir",
+            "--entrypoint"
+          ],
+          "anchors": [
+            "docker run'a verilen argümanlar CMD'yi değiştirir, ENTRYPOINT korunur."
+          ]
+        },
+        {
+          "id": "exec-form",
+          "label": "Exec form ve sinyaller",
+          "aliases": [
+            "exec form",
+            "sigterm",
+            "sinyal",
+            "pid 1",
+            "shell form"
+          ],
+          "anchors": [
+            "Shell formda shell SIGTERM'i uygulamaya iletmez, bu yüzden exec form tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Container başlarken önce bir hazırlık script'i çalıştırıp sonra uygulamayı başlatmak istersen ENTRYPOINT'i nasıl yazarsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-copy-vs-add",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Dockerfile",
+      "difficulty": 1,
+      "prompt": "COPY ile ADD arasındaki fark nedir? Hangisini tercih edersin?",
+      "modelAnswer": "İkisi de dosyaları build context'inden image'a kopyalar. **ADD** iki ek özelliğe sahiptir:\n- Yerel bir **tar arşivini otomatik olarak açar**.\n- **URL**'den dosya indirebilir.\n\n**COPY** ise yalnızca kopyalar, başka bir şey yapmaz.\n\nTercih edilen **COPY**'dir, çünkü davranışı açık ve öngörülebilirdir. ADD ile bir `.tar.gz` kopyalandığında beklenmedik şekilde açılması gibi sürprizler olur.\n\nURL'den indirme için de ADD yerine `RUN curl` (veya `wget`) daha iyidir: indirme, doğrulama ve gereksiz dosyaları silme aynı RUN içinde yapılabilir ve fazladan katman oluşmaz.\n\nADD'i yalnızca yerel bir arşivin açılmasını özellikle istediğin durumda kullanırsın.",
+      "keyConcepts": [
+        {
+          "id": "ikisi-kopyalar",
+          "label": "İkisi de dosya kopyalar",
+          "aliases": [
+            "kopyala",
+            "build context"
+          ],
+          "anchors": [
+            "COPY ve ADD dosyaları build context'inden image'a kopyalar."
+          ]
+        },
+        {
+          "id": "add-tar",
+          "label": "ADD arşiv açar",
+          "aliases": [
+            ".tar",
+            "tar arşiv",
+            "arşiv",
+            "açar",
+            "extract"
+          ],
+          "anchors": [
+            "ADD yerel tar arşivlerini otomatik olarak açar."
+          ]
+        },
+        {
+          "id": "add-url",
+          "label": "ADD URL'den indirir",
+          "aliases": [
+            "url",
+            "indir",
+            "download"
+          ],
+          "anchors": [
+            "ADD bir URL'den dosya indirebilir."
+          ]
+        },
+        {
+          "id": "copy-tercih",
+          "label": "COPY tercih edilir",
+          "aliases": [
+            "öngörülebilir",
+            "açık",
+            "tercih",
+            "sürpriz"
+          ],
+          "anchors": [
+            "Davranışı açık ve öngörülebilir olduğu için COPY tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Build context nedir ve .dockerignore build'i nasıl etkiler?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-volume-vs-bind",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Veri ve depolama",
+      "difficulty": 2,
+      "prompt": "Volume ile bind mount arasındaki fark nedir? Bir veritabanı container'ı için hangisini kullanırsın?",
+      "modelAnswer": "Container'ın yazılabilir katmanı container silinince kaybolduğu için kalıcı veri dışarıda tutulur. İki ana yol vardır:\n\n- **Volume:** Docker tarafından yönetilen depolamadır (Linux'ta `/var/lib/docker/volumes` altında). İsimle oluşturulur ve yönetilir (`docker volume create`, `docker volume ls`). Host'un klasör yapısından bağımsızdır.\n- **Bind mount:** Host'taki **belirli bir klasörü** container'a bağlar (`-v /home/mete/app:/app`). Host'taki değişiklik container'da anında görünür.\n\n**Veritabanı için volume** kullanılır: Docker yönetir, yedeklemesi ve taşınması kolaydır, host'un dosya izinleriyle uğraşmak gerekmez ve Docker Desktop'ta performansı bind mount'tan iyidir.\n\n**Bind mount** ise geliştirmede kaynak kodu container'a bağlayıp anında yansıtmak (hot reload) veya bir konfigürasyon dosyasını vermek için uygundur.\n\nSık atlanan nokta: `docker compose down -v` veya `docker volume prune` volume'ları da siler. Veritabanı volume'u yanlışlıkla silinirse veri gider; canlıda volume yedeklemesi ayrıca planlanmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "kalici",
+          "label": "Kalıcı veri dışarıda tutulur",
+          "aliases": [
+            "kalıcı",
+            "container silin",
+            "kaybol",
+            "persist"
+          ],
+          "anchors": [
+            "Container silinince veri kaybolduğu için kalıcı veri dışarıda tutulur."
+          ]
+        },
+        {
+          "id": "volume-docker",
+          "label": "Volume Docker tarafından yönetilir",
+          "aliases": [
+            "docker tarafından yönet",
+            "docker yönet",
+            "volume create",
+            "/var/lib/docker"
+          ],
+          "anchors": [
+            "Volume Docker tarafından yönetilen depolamadır."
+          ]
+        },
+        {
+          "id": "bind-host",
+          "label": "Bind mount host klasörünü bağlar",
+          "aliases": [
+            "host'taki",
+            "host klasör",
+            "belirli bir klasör",
+            "bind mount"
+          ],
+          "anchors": [
+            "Bind mount host'taki belirli bir klasörü container'a bağlar."
+          ]
+        },
+        {
+          "id": "db-volume",
+          "label": "Veritabanı için volume",
+          "aliases": [
+            "veritabanı",
+            "yedek",
+            "taşın"
+          ],
+          "anchors": [
+            "Veritabanı verisi için volume kullanılır."
+          ]
+        },
+        {
+          "id": "silme-riski",
+          "label": "down -v ve prune riski",
+          "aliases": [
+            "down -v",
+            "prune",
+            "yanlışlıkla sil"
+          ],
+          "anchors": [
+            "docker compose down -v ve volume prune volume'ları da siler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir PostgreSQL volume'unun yedeğini nasıl alırsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-expose-vs-publish",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Ağ",
+      "difficulty": 1,
+      "prompt": "Dockerfile'daki EXPOSE ile docker run'daki port yayınlama (-p) arasındaki fark nedir?",
+      "modelAnswer": "**EXPOSE** yalnızca **belgeleme** amaçlıdır: image'ın hangi portu dinlediğini bildirir ama portu dışarıya açmaz. Tek başına hiçbir erişim sağlamaz.\n\n**Port yayınlama** (`-p 8080:80`) ise host'un bir portunu container'ın bir portuna **gerçekten bağlar**. Soldaki host portu, sağdaki container portudur; host'ta 8080'e gelen istek container'ın 80 portuna gider.\n\nÖnemli ayrıntı: `-p 8080:80` varsayılan olarak host'un **tüm arayüzlerinde** (0.0.0.0) dinler, yani servis internete açılabilir. Yalnızca sunucunun kendisinden (ör. önündeki nginx'ten) erişilmesi isteniyorsa `-p 127.0.0.1:8080:80` yazılır.\n\nSık atlanan nokta: Linux'ta Docker yayınlanan portlar için kendi iptables kurallarını ekler ve bu kurallar **UFW gibi güvenlik duvarlarını atlar**. \"UFW'de portu kapattım\" diye düşünülen bir veritabanı portu internete açık kalabilir. Çözüm, portu yalnızca 127.0.0.1'e bağlamak veya hiç yayınlamamaktır.",
+      "keyConcepts": [
+        {
+          "id": "expose-belge",
+          "label": "EXPOSE belgeleme amaçlı",
+          "aliases": [
+            "belgele",
+            "documentation",
+            "bildirir",
+            "açmaz"
+          ],
+          "anchors": [
+            "EXPOSE yalnızca belgeleme amaçlıdır, portu dışarıya açmaz."
+          ]
+        },
+        {
+          "id": "publish-baglar",
+          "label": "-p host portunu bağlar",
+          "aliases": [
+            "host port",
+            "bağlar",
+            "8080:80",
+            "yayınla",
+            "publish"
+          ],
+          "anchors": [
+            "Port yayınlama host'un portunu container'ın portuna bağlar."
+          ]
+        },
+        {
+          "id": "tum-arayuz",
+          "label": "Varsayılan tüm arayüzler",
+          "aliases": [
+            "0.0.0.0",
+            "tüm arayüz",
+            "127.0.0.1",
+            "internete açı"
+          ],
+          "anchors": [
+            "Yayınlanan port varsayılan olarak tüm arayüzlerde dinler, 127.0.0.1 ile sınırlanabilir."
+          ]
+        },
+        {
+          "id": "ufw",
+          "label": "Docker UFW'yi atlar",
+          "aliases": [
+            "ufw",
+            "iptables",
+            "güvenlik duvar",
+            "firewall"
+          ],
+          "anchors": [
+            "Docker'ın iptables kuralları UFW gibi güvenlik duvarlarını atlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Container'ın yayınlanmış portlarını hangi komutla görürsün?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-compose",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Compose",
+      "difficulty": 1,
+      "prompt": "Docker Compose nedir ve ne işe yarar?",
+      "modelAnswer": "Docker Compose, birden fazla container'dan oluşan bir uygulamayı **tek bir YAML dosyasında** (`compose.yaml` / `docker-compose.yml`) tanımlayıp **tek komutla** yönetmeyi sağlayan araçtır.\n\n```yaml\nservices:\n  backend:\n    build: ./backend\n    ports: [\"127.0.0.1:8080:8080\"]\n    environment:\n      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/app\n    depends_on: [db]\n  db:\n    image: postgres:16\n    volumes: [\"pgdata:/var/lib/postgresql/data\"]\nvolumes:\n  pgdata:\n```\n\nTemel komutlar: `docker compose up -d` (hepsini başlat), `docker compose down` (durdur ve sil), `docker compose logs -f backend` (logları izle).\n\nCompose tüm servisleri **ortak bir ağa** koyar; servisler birbirine **servis adıyla** erişir. Yukarıdaki örnekte backend veritabanına `db` hostname'i ile bağlanır.\n\nSık atlanan nokta: Compose tek bir sunucu içindir. Birden fazla sunucuya yayılma, otomatik ölçekleme ve kendini iyileştirme gerekiyorsa Kubernetes gibi bir orkestrasyon aracı gerekir.",
+      "keyConcepts": [
+        {
+          "id": "yaml",
+          "label": "Tek YAML dosyası",
+          "aliases": [
+            "yaml",
+            "compose.yaml",
+            "docker-compose.yml",
+            "tek dosya"
+          ],
+          "anchors": [
+            "Compose çoklu container uygulamasını tek bir YAML dosyasında tanımlar."
+          ]
+        },
+        {
+          "id": "tek-komut",
+          "label": "Tek komutla yönetim",
+          "aliases": [
+            "compose up",
+            "tek komut",
+            "compose down"
+          ],
+          "anchors": [
+            "Tüm servisler tek komutla başlatılıp durdurulur."
+          ]
+        },
+        {
+          "id": "servis-adi",
+          "label": "Servis adıyla erişim",
+          "aliases": [
+            "servis adı",
+            "ortak ağ",
+            "hostname",
+            "db"
+          ],
+          "anchors": [
+            "Compose servisleri ortak ağa koyar ve servisler birbirine adıyla erişir."
+          ]
+        },
+        {
+          "id": "tek-sunucu",
+          "label": "Tek sunucu için",
+          "aliases": [
+            "tek sunucu",
+            "kubernetes",
+            "orkestrasyon",
+            "ölçekleme"
+          ],
+          "anchors": [
+            "Compose tek sunucu içindir, çoklu sunucu için Kubernetes gibi araçlar gerekir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Compose'ta up ile up --build arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-depends-on-healthcheck",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Compose",
+      "difficulty": 2,
+      "prompt": "Compose'ta backend, veritabanından önce ayağa kalkıp bağlanamıyor. depends_on bunu neden çözmez ve doğru çözüm nedir?",
+      "modelAnswer": "Varsayılan `depends_on` yalnızca **başlatma sırasını** belirler: db container'ı **başlatıldıktan** sonra backend başlatılır. Ama container'ın başlamış olması, içindeki PostgreSQL'in bağlantı **kabul etmeye hazır** olduğu anlamına gelmez; veritabanının açılması birkaç saniye sürebilir.\n\nDoğru çözüm, veritabanına bir **healthcheck** tanımlayıp backend'i onun **sağlıklı** olmasına bağlamaktır:\n\n```yaml\nservices:\n  db:\n    image: postgres:16\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U app\"]\n      interval: 5s\n      retries: 10\n  backend:\n    depends_on:\n      db:\n        condition: service_healthy\n```\n\nEk olarak uygulamanın kendisi de bağlantı hatasına dayanıklı olmalıdır (bağlantı havuzunun yeniden denemesi gibi). Veritabanı sonradan yeniden başlarsa depends_on işe yaramaz; o anda uygulamanın yeniden bağlanabilmesi gerekir.",
+      "keyConcepts": [
+        {
+          "id": "sadece-sira",
+          "label": "depends_on yalnızca sırayı belirler",
+          "aliases": [
+            "başlatma sıra",
+            "sadece sıra",
+            "yalnızca sıra",
+            "başlatıldıktan"
+          ],
+          "anchors": [
+            "Varsayılan depends_on yalnızca başlatma sırasını belirler."
+          ]
+        },
+        {
+          "id": "hazir-degil",
+          "label": "Başlamış olmak hazır olmak değil",
+          "aliases": [
+            "hazır",
+            "bağlantı kabul",
+            "ready"
+          ],
+          "anchors": [
+            "Container'ın başlamış olması içindeki servisin hazır olduğu anlamına gelmez."
+          ]
+        },
+        {
+          "id": "healthcheck",
+          "label": "Healthcheck tanımı",
+          "aliases": [
+            "healthcheck",
+            "pg_isready",
+            "sağlık kontrol"
+          ],
+          "anchors": [
+            "Veritabanına bir healthcheck tanımlanır."
+          ]
+        },
+        {
+          "id": "service-healthy",
+          "label": "condition: service_healthy",
+          "aliases": [
+            "service_healthy",
+            "condition",
+            "sağlıklı"
+          ],
+          "anchors": [
+            "Backend condition service_healthy ile veritabanının sağlıklı olmasını bekler."
+          ]
+        },
+        {
+          "id": "dayaniklilik",
+          "label": "Uygulama tarafında yeniden deneme",
+          "aliases": [
+            "yeniden dene",
+            "retry",
+            "yeniden bağlan",
+            "dayanıklı"
+          ],
+          "anchors": [
+            "Uygulamanın kendisi de bağlantı hatasında yeniden denemelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spring Boot uygulaması için healthcheck'i neyle yazarsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-env-secrets",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Güvenlik",
+      "difficulty": 2,
+      "prompt": "Veritabanı şifresi gibi gizli bilgileri bir container'a nasıl verirsin? Neler yapılmamalıdır?",
+      "modelAnswer": "Yapılmaması gerekenler:\n- Şifreyi **Dockerfile'a** (`ENV DB_PASSWORD=...`) veya image'a kopyalanan bir dosyaya yazmak. Image'ı çeken herkes `docker history` veya `docker inspect` ile görür; image katmanlarından silinmiş gibi görünse bile önceki katmanda durur.\n- Şifreyi **git reposuna** commit etmek.\n\nDoğru yollar:\n- **Çalışma anında environment variable** vermek: `docker run -e` veya Compose'ta `env_file: .env`. `.env` dosyası `.gitignore`'a eklenir ve sunucuda tutulur.\n- **Docker secrets** (Swarm/Compose): şifre container'a `/run/secrets/` altında dosya olarak bağlanır, environment'ta görünmez.\n- Büyük sistemlerde **Vault** veya bulut sağlayıcının secret manager'ı.\n\nSık atlanan nokta: environment variable'lar da tamamen gizli değildir; `docker inspect` çıktısında ve bazen hata loglarında görünür. Yüksek güvenlik gereken yerlerde dosya tabanlı secret tercih edilir. Build sırasında gizli bilgi gerekiyorsa (özel bir paket deposu gibi) `RUN --mount=type=secret` kullanılır, böylece katmana yazılmaz.",
+      "keyConcepts": [
+        {
+          "id": "dockerfile-yok",
+          "label": "Dockerfile'a yazılmaz",
+          "aliases": [
+            "dockerfile'a",
+            "image'a",
+            "env db_password",
+            "docker history",
+            "katman"
+          ],
+          "anchors": [
+            "Şifre Dockerfile'a veya image'a yazılmamalıdır, katmanlardan okunabilir."
+          ]
+        },
+        {
+          "id": "env-runtime",
+          "label": "Çalışma anında env",
+          "aliases": [
+            "environment",
+            "env_file",
+            ".env",
+            "-e "
+          ],
+          "anchors": [
+            "Gizli bilgi çalışma anında environment variable olarak verilir."
+          ]
+        },
+        {
+          "id": "secrets",
+          "label": "Docker secrets / dosya",
+          "aliases": [
+            "secret",
+            "/run/secrets",
+            "vault"
+          ],
+          "anchors": [
+            "Docker secrets şifreyi container'a dosya olarak bağlar."
+          ]
+        },
+        {
+          "id": "git",
+          "label": "Git'e girmez",
+          "aliases": [
+            "git repo",
+            "gitignore",
+            "commit"
+          ],
+          "anchors": [
+            "Şifreler git reposuna commit edilmemelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Environment variable'ların docker inspect çıktısında görünmesi neden risklidir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-image-size",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Dockerfile",
+      "difficulty": 2,
+      "prompt": "Bir Docker image'ının boyutunu nasıl küçültürsün?",
+      "modelAnswer": "Image küçüldükçe çekme (pull) ve deploy hızlanır, depolama azalır ve saldırı yüzeyi küçülür. Yöntemler:\n\n- **Küçük base image:** `eclipse-temurin:21` yerine `eclipse-temurin:21-jre` veya **alpine**/**distroless** varyantları. JDK yerine yalnızca JRE yeterlidir.\n- **Multi-stage build:** Derleme araçları ve kaynak kod son image'a girmez.\n- **RUN komutlarını birleştirmek ve aynı katmanda temizlemek:** Temizlik ayrı bir RUN'da yapılırsa dosyalar önceki katmanda kalır ve boyut düşmez.\n- **.dockerignore:** `node_modules`, `.git`, `target` gibi klasörlerin build context'e girmesini engeller.\n\nPaket kurulumu ve temizlik aynı RUN içinde:\n\n```dockerfile\nRUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*\n```\n\nBoyutun nereden geldiğini görmek için `docker history <image>` her katmanın boyutunu gösterir.\n\nSık atlanan nokta: alpine **musl libc** kullanır; bazı native kütüphanelerle (bazı Python paketleri, bazı JVM araçları) uyumsuzluk çıkarabilir. Küçük olması her zaman doğru seçim olduğu anlamına gelmez.",
+      "keyConcepts": [
+        {
+          "id": "base",
+          "label": "Küçük base image",
+          "aliases": [
+            "base image",
+            "alpine",
+            "distroless",
+            "jre",
+            "slim"
+          ],
+          "anchors": [
+            "Küçük bir base image seçmek boyutu ciddi azaltır."
+          ]
+        },
+        {
+          "id": "multi-stage",
+          "label": "Multi-stage build",
+          "aliases": [
+            "multi-stage",
+            "aşama"
+          ],
+          "anchors": [
+            "Multi-stage build ile derleme araçları son image'a girmez."
+          ]
+        },
+        {
+          "id": "ayni-katman",
+          "label": "Aynı katmanda temizlik",
+          "aliases": [
+            "aynı katman",
+            "aynı run",
+            "rm -rf",
+            "birleştir",
+            "temizl"
+          ],
+          "anchors": [
+            "Temizlik aynı RUN içinde yapılmalıdır, ayrı katmanda boyut düşmez."
+          ]
+        },
+        {
+          "id": "dockerignore",
+          "label": "dockerignore",
+          "aliases": [
+            ".dockerignore",
+            "dockerignore",
+            "node_modules"
+          ],
+          "anchors": [
+            ".dockerignore gereksiz dosyaların build context'e girmesini engeller."
+          ]
+        },
+        {
+          "id": "history",
+          "label": "docker history ile analiz",
+          "aliases": [
+            "docker history",
+            "katman boyut"
+          ],
+          "anchors": [
+            "docker history her katmanın boyutunu gösterir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Distroless image kullanan bir container'da hata ayıklamak neden zordur?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-debug-container",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Hata ayıklama",
+      "difficulty": 1,
+      "prompt": "Bir container hata veriyor veya beklenmedik davranıyor. Sorunu bulmak için hangi komutları kullanırsın?",
+      "modelAnswer": "Adım adım:\n\n1. **`docker ps -a`**: Container çalışıyor mu, durduysa **exit code** ne? `-a` durmuş container'ları da gösterir.\n2. **`docker logs <container>`**: Uygulamanın stdout/stderr çıktısı. `-f` ile canlı izlenir, `--tail 100` ile son satırlar alınır. Çoğu sorun burada görünür.\n3. **`docker exec -it <container> sh`**: Çalışan container'ın içine girip dosyalara, ortam değişkenlerine, ağa bakmak. (bash olmayan imajlarda `sh`.)\n4. **`docker inspect <container>`**: Ayrıntılı yapılandırma; environment variable'lar, mount'lar, ağ ve IP, restart sayısı, son çıkış nedeni.\n5. **`docker stats`**: Anlık CPU ve bellek kullanımı; bellek sınırına dayanıyor mu?\n\nExit code ipucu verir: **137** genelde bellek yetmediği için kernel tarafından öldürüldüğünü (**OOMKilled**, `docker inspect`'te görünür) ya da SIGKILL aldığını, **1** uygulama hatasını, **0** normal bitişi gösterir.\n\nCompose kullanılıyorsa aynı komutların karşılıkları: `docker compose ps`, `docker compose logs -f backend`, `docker compose exec backend sh`.",
+      "keyConcepts": [
+        {
+          "id": "ps",
+          "label": "docker ps -a ve exit code",
+          "aliases": [
+            "docker ps",
+            "ps -a",
+            "exit code",
+            "çıkış kodu"
+          ],
+          "anchors": [
+            "docker ps -a durmuş container'ları ve çıkış kodlarını gösterir."
+          ]
+        },
+        {
+          "id": "logs",
+          "label": "docker logs",
+          "aliases": [
+            "docker logs",
+            "logs -f",
+            "loglar"
+          ],
+          "anchors": [
+            "docker logs uygulamanın çıktısını gösterir."
+          ]
+        },
+        {
+          "id": "exec",
+          "label": "docker exec ile içeri girmek",
+          "aliases": [
+            "docker exec",
+            "exec -it",
+            "içine gir"
+          ],
+          "anchors": [
+            "docker exec ile çalışan container'ın içine girilir."
+          ]
+        },
+        {
+          "id": "inspect",
+          "label": "docker inspect",
+          "aliases": [
+            "docker inspect",
+            "inspect",
+            "yapılandırma"
+          ],
+          "anchors": [
+            "docker inspect container'ın ayrıntılı yapılandırmasını gösterir."
+          ]
+        },
+        {
+          "id": "oom",
+          "label": "137 ve OOMKilled",
+          "aliases": [
+            "137",
+            "oomkilled",
+            "oom",
+            "bellek yetme"
+          ],
+          "anchors": [
+            "Exit code 137 genelde bellek yetersizliğinden öldürüldüğünü gösterir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Container içinde shell yoksa (distroless) nasıl hata ayıklarsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-exits-immediately",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Hata ayıklama",
+      "difficulty": 2,
+      "prompt": "Bir container başlatıldıktan hemen sonra kapanıyor. Olası sebepler nelerdir?",
+      "modelAnswer": "Container, **ana süreci (PID 1) çalıştığı sürece** yaşar. Ana süreç biterse container da durur. Bu yüzden \"hemen kapanıyor\" sorununun sebepleri şunlardır:\n\n- **Ana komut ön planda çalışmıyor:** Servis arka plana (daemon) geçiyorsa ana süreç hemen biter. Örneğin nginx `daemon off;` ile, diğer servisler kendi foreground seçenekleriyle çalıştırılmalıdır.\n- **Komut işini bitirip çıkıyor:** `ubuntu` image'ı varsayılan olarak `bash` çalıştırır; `-it` verilmezse girdi olmadığı için bash hemen çıkar. Bu bir hata değil, beklenen davranıştır.\n- **Uygulama hata verip çöküyor:** Eksik environment variable, bağlanamayan veritabanı, bulunamayan dosya. Exit code 1 olur ve sebep loglardadır.\n- **Yanlış ENTRYPOINT/CMD:** Dosya bulunamıyor, script çalıştırılabilir değil (`chmod +x` unutulmuş) veya Windows'ta yazılmış script'te CRLF satır sonu yüzünden `/bin/sh^M` hatası.\n\nTanı için önce `docker ps -a` ile exit code'a, sonra `docker logs` ile çıktıya bakılır. Log boşsa container'ı komutu ezerek başlatıp içeriden denemek işe yarar: `docker run -it --entrypoint sh <image>`.",
+      "keyConcepts": [
+        {
+          "id": "pid1",
+          "label": "Ana süreç bitince container durur",
+          "aliases": [
+            "ana süreç",
+            "pid 1",
+            "süreç biter",
+            "ana komut"
+          ],
+          "anchors": [
+            "Container ana süreci çalıştığı sürece yaşar, ana süreç bitince durur."
+          ]
+        },
+        {
+          "id": "foreground",
+          "label": "Ön planda çalışmalı",
+          "aliases": [
+            "ön plan",
+            "foreground",
+            "daemon",
+            "arka plan"
+          ],
+          "anchors": [
+            "Servis arka plana geçerse ana süreç biter, ön planda çalışmalıdır."
+          ]
+        },
+        {
+          "id": "hata",
+          "label": "Uygulama çöküyor",
+          "aliases": [
+            "çöküyor",
+            "çöker",
+            "crash",
+            "exit code 1",
+            "environment",
+            "bağlanamayan",
+            "hata"
+          ],
+          "anchors": [
+            "Uygulama başlarken hata verip çöküyor olabilir."
+          ]
+        },
+        {
+          "id": "crlf",
+          "label": "Yanlış entrypoint, izin, CRLF",
+          "aliases": [
+            "crlf",
+            "chmod",
+            "çalıştırılabilir",
+            "satır sonu"
+          ],
+          "anchors": [
+            "Script'in çalıştırılabilir olmaması veya CRLF satır sonu container'ı durdurabilir."
+          ]
+        },
+        {
+          "id": "tani",
+          "label": "Logs ve entrypoint override ile tanı",
+          "aliases": [
+            "docker logs",
+            "--entrypoint",
+            "docker ps -a"
+          ],
+          "anchors": [
+            "Tanı için exit code'a ve loglara bakılır, gerekirse entrypoint ezilerek içeriden denenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Windows'ta geliştirip Linux container'ında çalıştırılan script'lerde CRLF sorununu kalıcı olarak nasıl önlersin?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-restart-policy",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Çalıştırma",
+      "difficulty": 1,
+      "prompt": "Restart policy nedir? Seçenekleri nelerdir ve canlıda hangisini kullanırsın?",
+      "modelAnswer": "Restart policy, container durduğunda Docker'ın onu **otomatik olarak yeniden başlatıp başlatmayacağını** belirler:\n\n- **no** (varsayılan): Hiç yeniden başlatma.\n- **on-failure[:N]**: Yalnızca **hata ile** (sıfır olmayan exit code) çıkarsa yeniden başlat; isteğe bağlı en fazla N kez.\n- **always**: Her durumda yeniden başlat; elle durdurulsa bile Docker servisi yeniden başladığında container da başlar.\n- **unless-stopped**: always gibi, ama **elle durdurulmuşsa** Docker yeniden başladığında başlatmaz.\n\nCanlıda genelde **unless-stopped** kullanılır: sunucu yeniden başlarsa veya uygulama çökerse container geri gelir, ama bakım için bilerek durdurulan bir container kendiliğinden açılmaz.\n\n```yaml\nservices:\n  backend:\n    restart: unless-stopped\n```\n\nSık atlanan nokta: restart policy sorunu gizleyebilir. Sürekli çöküp yeniden başlayan bir container dışarıdan çalışıyor gibi görünür; `docker ps` çıktısındaki \"Restarting\" durumu ve `docker inspect`'teki RestartCount kontrol edilmelidir.",
+      "keyConcepts": [
+        {
+          "id": "otomatik",
+          "label": "Otomatik yeniden başlatma",
+          "aliases": [
+            "otomatik",
+            "yeniden başlat",
+            "restart"
+          ],
+          "anchors": [
+            "Restart policy durdurulan container'ın otomatik yeniden başlatılmasını belirler."
+          ]
+        },
+        {
+          "id": "on-failure",
+          "label": "on-failure",
+          "aliases": [
+            "on-failure",
+            "hata ile",
+            "sıfır olmayan"
+          ],
+          "anchors": [
+            "on-failure yalnızca hata ile çıkıldığında yeniden başlatır."
+          ]
+        },
+        {
+          "id": "always-unless",
+          "label": "always ve unless-stopped",
+          "aliases": [
+            "always",
+            "unless-stopped"
+          ],
+          "anchors": [
+            "always her durumda, unless-stopped elle durdurulmadıkça yeniden başlatır."
+          ]
+        },
+        {
+          "id": "gizler",
+          "label": "Sorunu gizleyebilir",
+          "aliases": [
+            "gizle",
+            "restartcount",
+            "restarting",
+            "sürekli çök"
+          ],
+          "anchors": [
+            "Sürekli yeniden başlayan container sorunu gizleyebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Docker servisinin kendisi sunucu açılışında başlamazsa restart policy işe yarar mı?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-resource-limits",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Çalıştırma",
+      "difficulty": 3,
+      "prompt": "Bir container'ın bellek ve CPU kullanımını nasıl sınırlarsın? Java uygulamalarında nelere dikkat etmek gerekir?",
+      "modelAnswer": "Varsayılan olarak bir container host'un **tüm belleğini ve CPU'sunu** kullanabilir; bir container'daki bellek sızıntısı tüm sunucuyu etkiler. Sınırlar cgroup'lar üzerinden konur:\n\n```bash\ndocker run --memory=512m --cpus=1.5 myapp\n```\n\nCompose'ta `deploy.resources.limits` altında `memory` ve `cpus` olarak verilir.\n\nBellek sınırı aşılırsa kernel container'ı **OOM killer** ile öldürür; exit code **137** olur ve `docker inspect`'te `OOMKilled: true` görünür. CPU sınırı aşıldığında ise container öldürülmez, **yavaşlatılır** (throttling).\n\nJava'da dikkat edilecekler:\n- Modern JVM'ler (JDK 10+) **container farkındadır**; heap boyutunu host belleğine değil container sınırına göre hesaplar.\n- Varsayılan maksimum heap sınırın yalnızca **%25**'idir. Bu çoğu zaman azdır; `-XX:MaxRAMPercentage=75` ile artırılır.\n- Heap'i sınırın tamamına eşitlemek hatadır: JVM heap dışında da bellek kullanır (metaspace, thread stack'leri, direct buffer). Heap sınıra çok yakınsa container yine OOM ile öldürülür.",
+      "keyConcepts": [
+        {
+          "id": "varsayilan",
+          "label": "Varsayılan sınırsız",
+          "aliases": [
+            "sınırsız",
+            "tüm bellek",
+            "tüm belleğini",
+            "sınır yok"
+          ],
+          "anchors": [
+            "Varsayılan olarak container host'un tüm kaynaklarını kullanabilir."
+          ]
+        },
+        {
+          "id": "flag",
+          "label": "--memory ve --cpus",
+          "aliases": [
+            "--memory",
+            "--cpus",
+            "limits",
+            "cgroup"
+          ],
+          "anchors": [
+            "Sınırlar --memory ve --cpus ile konur."
+          ]
+        },
+        {
+          "id": "oom",
+          "label": "Bellek aşımı OOM ile öldürür",
+          "aliases": [
+            "oom",
+            "137",
+            "öldür"
+          ],
+          "anchors": [
+            "Bellek sınırı aşılınca container OOM killer ile öldürülür."
+          ]
+        },
+        {
+          "id": "throttle",
+          "label": "CPU aşımı yavaşlatır",
+          "aliases": [
+            "throttl",
+            "yavaşlat"
+          ],
+          "anchors": [
+            "CPU sınırında container öldürülmez, yavaşlatılır."
+          ]
+        },
+        {
+          "id": "jvm",
+          "label": "JVM container farkındalığı ve heap",
+          "aliases": [
+            "maxrampercentage",
+            "container farkında",
+            "heap",
+            "%25",
+            "metaspace"
+          ],
+          "anchors": [
+            "JVM heap'i container sınırına göre hesaplar, varsayılan oran düşüktür ve heap dışı bellek de hesaba katılmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Container'ın bellek kullanımını anlık olarak nasıl izlersin?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-non-root",
+      "category": "docker",
+      "kind": "applied",
+      "topic": "Güvenlik",
+      "difficulty": 2,
+      "prompt": "Container içinde uygulamayı neden root kullanıcısıyla çalıştırmamalısın? Nasıl önlersin?",
+      "modelAnswer": "Docker image'ları varsayılan olarak **root** kullanıcısıyla çalışır. Container yalıtılmış olsa da kernel paylaşıldığı için, uygulamadaki bir açıktan container'a giren saldırgan root yetkisiyle **container'dan kaçma** (container escape) açıklarını kullanabilir veya bağlı volume'lardaki dosyalara tam yetkiyle erişebilir.\n\nÇözüm Dockerfile'da yetkisiz bir kullanıcı oluşturup ona geçmektir:\n\n```dockerfile\nFROM eclipse-temurin:21-jre\nRUN useradd --system --uid 1001 app\nWORKDIR /app\nCOPY --chown=app:app app.jar .\nUSER app\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\n```\n\nBu, **en az yetki** (least privilege) ilkesinin uygulamasıdır.\n\nEk önlemler: `--read-only` ile container dosya sistemini salt okunur yapmak, `--cap-drop ALL` ile gereksiz Linux yetkilerini kaldırmak ve `--privileged` bayrağını gerçekten gerekmedikçe kullanmamak.\n\nSık atlanan nokta: root olmayan kullanıcı 1024'ün altındaki portları dinleyemez. Uygulama 80 yerine 8080 gibi bir portu dinlemeli, dışarıya port eşlemesiyle 80 olarak sunulmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "varsayilan-root",
+          "label": "Varsayılan root",
+          "aliases": [
+            "varsayılan",
+            "root"
+          ],
+          "anchors": [
+            "Docker image'ları varsayılan olarak root kullanıcısıyla çalışır."
+          ]
+        },
+        {
+          "id": "risk",
+          "label": "Kaçış ve yetki riski",
+          "aliases": [
+            "kaçma",
+            "escape",
+            "saldırgan",
+            "tam yetki"
+          ],
+          "anchors": [
+            "Root ile çalışan uygulamadaki açık container'dan kaçmaya veya geniş yetkiye yol açabilir."
+          ]
+        },
+        {
+          "id": "user",
+          "label": "USER talimatı",
+          "aliases": [
+            "user ",
+            "useradd",
+            "yetkisiz kullanıcı",
+            "adduser"
+          ],
+          "anchors": [
+            "Dockerfile'da yetkisiz bir kullanıcı oluşturulup USER ile ona geçilir."
+          ]
+        },
+        {
+          "id": "least-privilege",
+          "label": "En az yetki ve ek önlemler",
+          "aliases": [
+            "en az yetki",
+            "least privilege",
+            "read-only",
+            "cap-drop",
+            "privileged"
+          ],
+          "anchors": [
+            "En az yetki ilkesi read-only ve cap-drop gibi önlemlerle desteklenir."
+          ]
+        },
+        {
+          "id": "port",
+          "label": "1024 altı port",
+          "aliases": [
+            "1024",
+            "8080",
+            "port"
+          ],
+          "anchors": [
+            "Root olmayan kullanıcı 1024 altındaki portları dinleyemez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bind mount edilmiş bir klasöre root olmayan kullanıcı yazamıyorsa sorunu nasıl çözersin?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-image-tags",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Registry ve image",
+      "difficulty": 2,
+      "prompt": "Image tag'leri nasıl çalışır? Canlıda latest tag'ini kullanmak neden risklidir?",
+      "modelAnswer": "Bir image `repo:tag` biçiminde adlandırılır (`postgres:16.4`). Tag, image'ın belirli bir sürümüne işaret eden **değiştirilebilir bir etikettir**. Tag verilmezse varsayılan olarak **latest** kullanılır.\n\nlatest'ın sorunları:\n- **\"En yeni\" anlamına gelmez**, yalnızca tag verilmeden push edilen image'ın adıdır.\n- **Değişkendir:** Aynı `latest` bugün bir sürüme, yarın başka bir sürüme işaret eder. Sunucu image'ı yeniden çektiğinde habersiz bir major sürüm yükseltmesi olabilir (PostgreSQL 16'dan 17'ye geçip mevcut veriyi açamamak gibi).\n- **Geri dönüşü zorlaştırır:** Hangi sürümün çalıştığı belli olmadığı için önceki sürüme dönmek güçleşir.\n\nCanlıda **sabit sürüm tag'i** kullanılır: `postgres:16.4`, kendi uygulaman için semver (`1.4.2`) veya git commit hash'i.\n\nSık atlanan nokta: sabit tag bile teorik olarak üzerine yeniden push edilebilir. Tam garanti için image **digest**'iyle (`postgres@sha256:...`) çekilir; digest içeriğin hash'idir ve değiştirilemez.",
+      "keyConcepts": [
+        {
+          "id": "format",
+          "label": "repo:tag ve varsayılan latest",
+          "aliases": [
+            "repo:tag",
+            "varsayılan",
+            "tag verilmezse"
+          ],
+          "anchors": [
+            "Image repo:tag biçiminde adlandırılır, tag verilmezse latest kullanılır."
+          ]
+        },
+        {
+          "id": "degisken",
+          "label": "latest değişkendir",
+          "aliases": [
+            "değişken",
+            "değiştirilebilir",
+            "en yeni değil",
+            "işaret eder"
+          ],
+          "anchors": [
+            "latest değişken bir etikettir ve en yeni anlamına gelmez."
+          ]
+        },
+        {
+          "id": "risk",
+          "label": "Habersiz yükseltme ve geri dönüş",
+          "aliases": [
+            "habersiz",
+            "major",
+            "geri dön",
+            "rollback",
+            "yükseltme"
+          ],
+          "anchors": [
+            "latest habersiz sürüm yükseltmesine yol açar ve geri dönüşü zorlaştırır."
+          ]
+        },
+        {
+          "id": "sabit",
+          "label": "Sabit sürüm veya digest",
+          "aliases": [
+            "sabit",
+            "sürüm tag",
+            "digest",
+            "sha256",
+            "commit hash"
+          ],
+          "anchors": [
+            "Canlıda sabit sürüm tag'i veya digest kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kendi uygulamanın image'ını CI'da nasıl tag'lersin?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-network-drivers",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Ağ",
+      "difficulty": 2,
+      "prompt": "Docker'daki ağ sürücüleri (bridge, host, none) arasındaki fark nedir?",
+      "modelAnswer": "- **bridge** (varsayılan): Container'lar host içinde sanal bir ağa bağlanır ve kendi IP'lerini alır. Dışarıdan erişim için port yayınlama gerekir. **Kullanıcı tanımlı** bridge ağlarında container'lar birbirini adıyla bulur; varsayılan bridge'te bu çalışmaz.\n- **host**: Container **host'un ağını doğrudan kullanır**, ayrı bir ağ yalıtımı yoktur. Container 8080'i dinlerse host'un 8080'i doğrudan açılır, port eşlemesi gerekmez ve ağ katmanı ek yükü olmaz. Bedeli yalıtımın kaybolması ve port çakışmalarıdır. Docker Desktop'ta (Windows/Mac) beklendiği gibi çalışmaz.\n- **none**: Container'ın hiç ağı yoktur, yalnızca loopback vardır. Ağa ihtiyaç duymayan toplu işler veya güvenlik gereği tamamen yalıtılması gereken süreçler için.\n\nBunların yanında birden fazla host'a yayılan **overlay** ağı (Swarm/Kubernetes) vardır.\n\nPratikte çoğu uygulama için doğru seçim, her uygulama grubu için **kullanıcı tanımlı bir bridge** ağıdır; Compose bunu otomatik yapar.",
+      "keyConcepts": [
+        {
+          "id": "bridge",
+          "label": "bridge varsayılan sanal ağ",
+          "aliases": [
+            "bridge",
+            "sanal ağ",
+            "kendi ip"
+          ],
+          "anchors": [
+            "bridge varsayılan sürücüdür, container'lar sanal ağa bağlanır."
+          ]
+        },
+        {
+          "id": "host",
+          "label": "host doğrudan host ağı",
+          "aliases": [
+            "host ağ",
+            "host'un ağ",
+            "port eşleme gerekmez",
+            "doğrudan"
+          ],
+          "anchors": [
+            "host sürücüsünde container host'un ağını doğrudan kullanır."
+          ]
+        },
+        {
+          "id": "none",
+          "label": "none ağsız",
+          "aliases": [
+            "none",
+            "ağı yok",
+            "loopback"
+          ],
+          "anchors": [
+            "none sürücüsünde container'ın ağı yoktur."
+          ]
+        },
+        {
+          "id": "kullanici-tanimli",
+          "label": "Kullanıcı tanımlı bridge önerilir",
+          "aliases": [
+            "kullanıcı tanımlı",
+            "adıyla",
+            "compose"
+          ],
+          "anchors": [
+            "Pratikte kullanıcı tanımlı bridge ağı önerilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "host ağ modu Docker Desktop'ta neden beklendiği gibi çalışmaz?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "docker-registry",
+      "category": "docker",
+      "kind": "definition",
+      "topic": "Registry ve image",
+      "difficulty": 1,
+      "prompt": "Docker registry nedir? Bir image'ı registry'ye nasıl gönderir ve sunucuda nasıl kullanırsın?",
+      "modelAnswer": "Registry, Docker image'larının **saklandığı ve paylaşıldığı sunucudur**. En bilineni **Docker Hub**'dır; GitHub Container Registry (ghcr.io), AWS ECR, GitLab Registry veya kendi kurduğun özel bir registry de kullanılabilir.\n\nAkış:\n\n```bash\ndocker build -t ghcr.io/kullanici/app:1.4.2 .\ndocker login ghcr.io\ndocker push ghcr.io/kullanici/app:1.4.2\n\n# sunucuda:\ndocker pull ghcr.io/kullanici/app:1.4.2\ndocker run -d ghcr.io/kullanici/app:1.4.2\n```\n\nImage adının başındaki kısım (`ghcr.io/kullanici`) hangi registry'ye gideceğini belirler; registry yazılmazsa Docker Hub varsayılır.\n\nBu akışın faydası: image **bir kez CI'da build edilir**, test edilen aynı image tüm ortamlara (test, canlı) gönderilir. Sunucuda kaynak koddan yeniden build etmek gerekmez ve \"test ettiğim image ile canlıdaki farklı\" riski ortadan kalkar.\n\nSık atlanan nokta: kurumsal ortamlarda (bankalar gibi) internete açık Docker Hub'a erişim genelde kapalıdır; image'lar Nexus veya Artifactory gibi **kurum içi bir registry** üzerinden çekilir.",
+      "keyConcepts": [
+        {
+          "id": "tanim",
+          "label": "Image saklama ve paylaşma",
+          "aliases": [
+            "sakla",
+            "paylaş",
+            "depo",
+            "repository"
+          ],
+          "anchors": [
+            "Registry Docker image'larının saklandığı ve paylaşıldığı sunucudur."
+          ]
+        },
+        {
+          "id": "ornekler",
+          "label": "Docker Hub ve diğerleri",
+          "aliases": [
+            "docker hub",
+            "ghcr",
+            "ecr",
+            "nexus",
+            "artifactory"
+          ],
+          "anchors": [
+            "Docker Hub, GHCR, ECR gibi registry'ler vardır."
+          ]
+        },
+        {
+          "id": "push-pull",
+          "label": "push ve pull",
+          "aliases": [
+            "push",
+            "pull",
+            "docker login"
+          ],
+          "anchors": [
+            "Image registry'ye push edilir, sunucuda pull ile çekilir."
+          ]
+        },
+        {
+          "id": "bir-kez",
+          "label": "Bir kez build, her yere aynı image",
+          "aliases": [
+            "bir kez",
+            "aynı image",
+            "pipeline",
+            "yeniden build"
+          ],
+          "anchors": [
+            "Image bir kez CI'da build edilir ve aynı image tüm ortamlara gönderilir."
+          ]
+        },
+        {
+          "id": "kurum-ici",
+          "label": "Kurum içi registry",
+          "aliases": [
+            "kurum içi",
+            "özel registry",
+            "private"
+          ],
+          "anchors": [
+            "Kurumsal ortamlarda image'lar kurum içi bir registry üzerinden çekilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucunun özel bir registry'den image çekebilmesi için kimlik doğrulamayı nasıl yaparsın?"
+      ],
+      "source": "Kendi derleme"
     }
   ]
 }
