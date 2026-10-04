@@ -1,8 +1,8 @@
+import { hydrateCategories } from "./categoryHydration";
 import { drawQuestion } from "./draw";
 import { applyAttempt } from "./leitner";
 import { SCHEMA_VERSION } from "./progress";
 import type { Attempt, QuestionProgress, SelfRating, Store } from "./progress";
-import { CATEGORIES } from "./question";
 import type { Category, Evaluation, Question } from "./question";
 
 /* ------------------------------------------------------------------ */
@@ -26,6 +26,11 @@ export type SessionState = {
   /** Son sorulanlar, eskiden yeniye. Çekilişte soğutma için kullanılır. */
   recentIds: string[];
   activeCategories: Category[];
+  /**
+   * Kullanıcının gördüğü kategoriler. Yalnızca HYDRATE yazar; oturum
+   * boyunca değişmez, diske aynen geri yazılır.
+   */
+  knownCategories: Category[];
 };
 
 export type SessionAction =
@@ -33,6 +38,8 @@ export type SessionAction =
       type: "HYDRATE";
       progress: Record<string, QuestionProgress>;
       settings: Store["settings"];
+      /** İçinde soru olan kategoriler (AVAILABLE_CATEGORIES). */
+      contentCategories: readonly Category[];
     }
   | {
       /**
@@ -68,6 +75,7 @@ export function initialSessionState(): SessionState {
     progress: {},
     recentIds: [],
     activeCategories: [],
+    knownCategories: [],
   };
 }
 
@@ -91,22 +99,18 @@ export function sessionReducer(
       // ekrandakini ezerse kullanıcı yazdığı cevabı kaybeder.
       if (state.phase !== "idle") return state;
 
-      // İlk açılışta (initialized false) kullanıcı henüz hiçbir seçim
-      // yapmadı — hepsi açık gelsin. Sonraki açılışlarda dizi ne ise o
-      // kalır: kullanıcı hepsini kapatmışsa bu bilinçli bir seçim,
-      // boş diye tekrar hepsini açmak o seçimi geri alır.
-      const activeCategories = !action.settings.initialized
-        ? [...CATEGORIES]
-        : // Diskteki kategori adı içerikten kalkmış ya da yeniden adlandırılmış
-          // olabilir; tanınmayan ad çekiliş havuzunu sessizce boşaltmasın.
-          action.settings.activeCategories.filter(
-            (name): name is Category => (CATEGORIES as readonly string[]).includes(name),
-          );
+      // İlk açılış, eski kayıt ve sonradan gelen kategoriler:
+      // bkz. categoryHydration.ts.
+      const { activeCategories, knownCategories } = hydrateCategories(
+        action.settings,
+        action.contentCategories,
+      );
 
       return {
         ...state,
         progress: action.progress,
         activeCategories,
+        knownCategories,
       };
     }
 
@@ -233,7 +237,7 @@ export function sessionReducer(
  * state, reducer'ın işi değil.
  */
 export function toStore(
-  state: Pick<SessionState, "progress" | "activeCategories">,
+  state: Pick<SessionState, "progress" | "activeCategories" | "knownCategories">,
   settings: Pick<
     Store["settings"],
     | "fastMode"
@@ -257,6 +261,7 @@ export function toStore(
       // Dil seçimi henüz hiçbir yerde tutulmuyor; şema varsayılanı kalıyor.
       lang: "tr",
       activeCategories: state.activeCategories,
+      knownCategories: state.knownCategories,
       // Oturum bir kez HYDRATE olduysa artık "ilk açılış" değildir; boş
       // seçim de dahil, kullanıcının seçimi olduğu gibi diske yazılır.
       initialized: true,

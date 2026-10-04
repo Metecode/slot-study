@@ -22,14 +22,15 @@ import type { ProgressMap } from "../sync/progressSync";
  * sorununu tamamen kaldırıyor: efekt sırası yüzünden kayıt, hidrasyondan
  * önceki boş state'i diske basamıyor.
  *
- * İlk açılışta (initialized false) hangi kategorilerin açık geleceğine
- * reducer kendisi karar veriyor — bkz. session.ts HYDRATE dalı.
+ * Hangi kategorilerin açık geleceğine (ilk açılış, sonradan gelen
+ * kategori) reducer karar veriyor — bkz. domain/categoryHydration.ts.
  */
 function initState(store: Store): SessionState {
   return sessionReducer(initialSessionState(), {
     type: "HYDRATE",
     progress: store.progress,
     settings: store.settings,
+    contentCategories: AVAILABLE_CATEGORIES,
   });
 }
 

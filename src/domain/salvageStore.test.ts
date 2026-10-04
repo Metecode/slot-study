@@ -55,6 +55,26 @@ describe("salvageStore", () => {
     expect(result.resetSettings).toEqual(["soundEnabled", "hapticsEnabled", "reminderEnabled", "lang"]);
   });
 
+  it("geçerli knownCategories'i korur, geçersizini yok sayar", () => {
+    const settings = { ...emptyStore().settings, initialized: true };
+
+    const kept = salvageStore({
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { ...settings, knownCategories: ["sql"], fastMode: "bozuk" },
+    });
+    expect(kept.store.settings.knownCategories).toEqual(["sql"]);
+
+    const dropped = salvageStore({
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { ...settings, knownCategories: "sql" },
+    });
+    // Alan yok sayılınca kayıt eski kayıt gibi geçişten geçer (bkz. categoryHydration.ts).
+    expect(dropped.store.settings.knownCategories).toBeUndefined();
+    expect(dropped.resetSettings).toEqual(["knownCategories"]);
+  });
+
   it("nesne olmayan settings'in tüm alanlarını sıfırlanmış sayar", () => {
     const result = salvageStore({ schemaVersion: SCHEMA_VERSION, progress: {}, settings: 42 });
     expect(result.store.settings).toEqual(emptyStore().settings);

@@ -492,6 +492,7 @@ describe("HYDRATE", () => {
       type: "HYDRATE",
       progress: { q1: saved },
       settings: makeSettings({ activeCategories: ["sql", "react"] }),
+      contentCategories: [],
     });
 
     expect(next.progress).toEqual({ q1: saved });
@@ -504,6 +505,7 @@ describe("HYDRATE", () => {
       progress: {},
       // "cobol" şemada string olarak geçerli ama Category değil.
       settings: makeSettings({ activeCategories: ["sql", "cobol"] }),
+      contentCategories: [],
     });
 
     expect(next.activeCategories).toEqual(["sql"]);
@@ -514,6 +516,7 @@ describe("HYDRATE", () => {
       type: "HYDRATE",
       progress: {},
       settings: makeSettings({ initialized: false, activeCategories: [] }),
+      contentCategories: [],
     });
 
     expect(next.activeCategories).toEqual([...CATEGORIES]);
@@ -525,9 +528,23 @@ describe("HYDRATE", () => {
       type: "HYDRATE",
       progress: {},
       settings: makeSettings({ initialized: true, activeCategories: [] }),
+      contentCategories: [],
     });
 
     expect(next.activeCategories).toEqual([]);
+  });
+
+  it("sonradan gelen kategoriyi açar ve bilinenleri state'e yazar", () => {
+    // Ayrıntılı kurallar categoryHydration.test.ts'te; burada bağlantı.
+    const next = sessionReducer(makeState(), {
+      type: "HYDRATE",
+      progress: {},
+      settings: makeSettings({ activeCategories: ["sql"], knownCategories: ["sql", "react"] }),
+      contentCategories: ["java", "sql", "react"],
+    });
+
+    expect(next.activeCategories).toEqual(["sql", "java"]);
+    expect(next.knownCategories).toEqual(["java", "sql", "react"]);
   });
 
   it("idle dışında state'i değiştirmez", () => {
@@ -538,6 +555,7 @@ describe("HYDRATE", () => {
       type: "HYDRATE",
       progress: { q1: saved },
       settings: makeSettings(),
+      contentCategories: [],
     });
 
     expect(next).toBe(state);
@@ -556,6 +574,7 @@ describe("toStore", () => {
       passed: true,
       recentIds: ["q1"],
       activeCategories: ["sql"],
+      knownCategories: ["sql", "react"],
       progress,
     });
 
@@ -580,6 +599,7 @@ describe("toStore", () => {
         reminderOfferShown: true,
         lang: "tr",
         activeCategories: ["sql"],
+        knownCategories: ["sql", "react"],
         initialized: true,
       },
     });

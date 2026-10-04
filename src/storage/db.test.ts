@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { emptyStore } from "../domain/progress";
 import type { Store } from "../domain/progress";
-import type { Question } from "../domain/question";
+import type { Category, Question } from "../domain/question";
 import { initialSessionState, sessionReducer, toStore } from "../domain/session";
 import type { SessionState } from "../domain/session";
 import { fakeFs } from "../platform/storage/fakeFilesystem";
@@ -36,11 +36,12 @@ const QUESTION: Question = {
 };
 
 /** Diskten gelen store'la kurulan oturum; App.initState ile aynı yol. */
-function hydrate(store: Store): SessionState {
+function hydrate(store: Store, contentCategories: readonly Category[] = []): SessionState {
   return sessionReducer(initialSessionState(), {
     type: "HYDRATE",
     progress: store.progress,
     settings: store.settings,
+    contentCategories,
   });
 }
 
@@ -98,6 +99,28 @@ describe.each(TEST_ADAPTERS)("%s", (_name, create) => {
       expect(progress.box).toBe(3);
       expect(progress.lastSeenAt).toBe("2026-04-03T10:00:00.000Z");
       expect(progress.attempts.map((attempt) => attempt.answer)).toEqual(["birinci", "birinci"]);
+    });
+  });
+
+  describe("bilinen kategoriler depoda kalıcı", () => {
+    it("eski kayıtta açılan yeni kategori kapatılınca sonraki açılışta kapalı kalır", async () => {
+      const storage = create();
+      // knownCategories'ten önceki sürümün kaydı: alan yok.
+      await storage.set(STORE_NS, STORE_KEY, {
+        ...emptyStore(),
+        settings: { ...emptyStore().settings, activeCategories: ["sql"], initialized: true },
+      });
+      const content: Category[] = ["java", "sql", "react"];
+
+      const first = hydrate((await loadStore(storage)).store, content);
+      expect(first.activeCategories).toEqual(["sql", "java"]);
+
+      // Alan şemada olmasaydı saveStore onu atar, Java her açılışta yeniden açılırdı.
+      const closed = sessionReducer(first, { type: "TOGGLE_CATEGORY", category: "java" });
+      await saveStore(storage, persisted(closed));
+
+      const second = hydrate((await loadStore(storage)).store, content);
+      expect(second.activeCategories).toEqual(["sql"]);
     });
   });
 
