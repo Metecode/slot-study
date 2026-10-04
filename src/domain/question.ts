@@ -5,7 +5,7 @@ import { z } from "zod";
 /* ------------------------------------------------------------------ */
 
 export const CATEGORIES = [
-  "java-spring",
+  "java",
   "javascript",
   "sql",
   "react",

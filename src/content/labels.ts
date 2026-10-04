@@ -5,7 +5,7 @@ import type { Category } from "../domain/question";
 /* ------------------------------------------------------------------ */
 
 export const CATEGORY_LABELS: Record<Category, string> = {
-  "java-spring": "Java/Spring",
+  java: "Java",
   javascript: "JavaScript",
   sql: "SQL",
   react: "React",
