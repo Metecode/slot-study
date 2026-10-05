@@ -1,0 +1,1579 @@
+{
+  "lang": "tr",
+  "category": "java",
+  "questions": [
+    {
+      "id": "java-equals-hashcode",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "equals ve hashCode arasındaki sözleşme nedir? Birini override edip diğerini etmezsen ne olur?",
+      "modelAnswer": "Sözleşme şudur: **equals ile eşit olan iki nesnenin hashCode'u da eşit olmalıdır.** Tersi gerekmez; hashCode'u aynı olan iki nesne eşit olmayabilir (bu bir **çakışma**dır ve normaldir).\n\nHashMap ve HashSet bu sözleşmeye dayanır. Bir anahtar ararken önce **hashCode** ile doğru kovaya (bucket) gider, sonra kovadaki elemanları **equals** ile karşılaştırır.\n\nYalnızca equals override edilirse, mantıksal olarak eşit iki nesne `Object`'in varsayılan hashCode'u yüzünden farklı kovalara düşer:\n\n```java\nSet<Account> set = new HashSet<>();\nset.add(new Account(\"TR01\"));\nset.contains(new Account(\"TR01\")); // false döner\n```\n\nAynı nesne iki kez eklenebilir, map'te koyduğun değeri bulamazsın.\n\nSık atlanan nokta: hashCode'da kullanılan alanlar **değiştirilebilirse** sorun çıkar. Nesne bir HashSet'e eklendikten sonra o alan değişirse hashCode da değişir ve nesne artık bulunamaz. Bu yüzden map anahtarları değişmez (immutable) olmalıdır; Java 16+ record'ları equals ve hashCode'u otomatik ve doğru üretir.",
+      "keyConcepts": [
+        {
+          "id": "sozlesme",
+          "label": "Eşit nesnelerin hashCode'u eşit",
+          "aliases": [
+            "eşit olan",
+            "hashcode'u da eşit",
+            "aynı hashcode",
+            "sözleşme",
+            "contract"
+          ],
+          "anchors": [
+            "equals ile eşit olan iki nesnenin hashCode'u da eşit olmalıdır."
+          ]
+        },
+        {
+          "id": "cakisma",
+          "label": "Tersi gerekmez, çakışma normal",
+          "aliases": [
+            "çakışma",
+            "collision",
+            "tersi gerekmez"
+          ],
+          "anchors": [
+            "hashCode'u aynı olan iki nesne eşit olmayabilir, bu bir çakışmadır."
+          ]
+        },
+        {
+          "id": "hashmap",
+          "label": "HashMap önce hashCode sonra equals kullanır",
+          "aliases": [
+            "kova",
+            "bucket",
+            "hashmap",
+            "hashset"
+          ],
+          "anchors": [
+            "HashMap önce hashCode ile kovayı bulur, sonra equals ile karşılaştırır."
+          ]
+        },
+        {
+          "id": "bulunamaz",
+          "label": "Override edilmezse nesne bulunamaz",
+          "aliases": [
+            "bulunamaz",
+            "false döner",
+            "iki kez ekle",
+            "bulamazsın"
+          ],
+          "anchors": [
+            "Yalnızca equals override edilirse eşit nesneler farklı kovalara düşer ve bulunamaz."
+          ]
+        },
+        {
+          "id": "immutable",
+          "label": "Anahtarlar değişmez olmalı",
+          "aliases": [
+            "değişmez",
+            "immutable",
+            "record",
+            "alan değiş"
+          ],
+          "anchors": [
+            "hashCode'da kullanılan alanlar değişirse nesne kayboluyor, anahtarlar değişmez olmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "== ile equals arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-string-immutable",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Java'da String neden immutable'dır? String pool nedir?",
+      "modelAnswer": "String bir kez oluşturulduktan sonra **içeriği değiştirilemez**. `concat`, `replace` veya `+` gibi işlemler mevcut String'i değiştirmez, **yeni bir String nesnesi** döndürür.\n\nImmutable olmasının sebepleri:\n- **String pool:** Aynı literal'ler bellekte tek kopya olarak paylaşılır. Paylaşılan bir değer değiştirilebilseydi, onu kullanan herkes etkilenirdi.\n- **Güvenlik:** Dosya yolları, URL'ler ve veritabanı bağlantı bilgileri String olarak taşınır; doğrulandıktan sonra değiştirilememeleri gerekir.\n- **Thread safety:** Değişmediği için senkronizasyon gerekmeden thread'ler arasında paylaşılabilir.\n- **hashCode önbelleği:** hashCode bir kez hesaplanıp saklanır; HashMap anahtarı olarak çok verimlidir.\n\n**String pool**, heap içinde literal String'lerin tutulduğu özel bir alandır:\n\n```java\nString a = \"slot\";\nString b = \"slot\";\nString c = new String(\"slot\");\na == b      // true, ikisi de pool'daki aynı nesne\na == c      // false, new her zaman yeni nesne oluşturur\na.equals(c) // true\n```\n\nSık atlanan nokta: içerik karşılaştırması her zaman `equals` ile yapılmalıdır. `==` literal'lerde tesadüfen çalışır ve bu, hatayı gizler.",
+      "keyConcepts": [
+        {
+          "id": "degistirilemez",
+          "label": "İçerik değiştirilemez",
+          "aliases": [
+            "değiştirilemez",
+            "immutable",
+            "değişmez"
+          ],
+          "anchors": [
+            "String oluşturulduktan sonra içeriği değiştirilemez."
+          ]
+        },
+        {
+          "id": "yeni-nesne",
+          "label": "İşlemler yeni nesne döndürür",
+          "aliases": [
+            "yeni bir string",
+            "yeni nesne",
+            "yeni string"
+          ],
+          "anchors": [
+            "String üzerindeki işlemler yeni bir nesne döndürür."
+          ]
+        },
+        {
+          "id": "pool",
+          "label": "String pool",
+          "aliases": [
+            "string pool",
+            "pool",
+            "literal",
+            "havuz"
+          ],
+          "anchors": [
+            "Aynı literal'ler String pool'da tek kopya olarak paylaşılır."
+          ]
+        },
+        {
+          "id": "sebepler",
+          "label": "Güvenlik, thread safety, hashCode",
+          "aliases": [
+            "güvenlik",
+            "thread",
+            "hashcode"
+          ],
+          "anchors": [
+            "Immutability güvenlik, thread safety ve hashCode önbelleği sağlar."
+          ]
+        },
+        {
+          "id": "equals",
+          "label": "Karşılaştırma equals ile",
+          "aliases": [
+            "equals",
+            "=="
+          ],
+          "anchors": [
+            "İçerik karşılaştırması == ile değil equals ile yapılmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Döngü içinde String birleştirmek neden yavaştır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-stringbuilder",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "String, StringBuilder ve StringBuffer arasındaki fark nedir?",
+      "modelAnswer": "- **String:** Immutable. Her değişiklik yeni bir nesne oluşturur.\n- **StringBuilder:** **Değiştirilebilir** (mutable). `append` aynı nesnenin iç dizisine yazar, yeni nesne oluşturmaz. **Thread-safe değildir.**\n- **StringBuffer:** StringBuilder ile aynı API, ama metotları **synchronized** olduğu için thread-safe ve bu yüzden daha yavaştır.\n\nDöngü içinde birleştirme yapılacaksa StringBuilder kullanılır:\n\n```java\nStringBuilder sb = new StringBuilder();\nfor (String line : lines) {\n    sb.append(line).append('\\n');\n}\nString result = sb.toString();\n```\n\nAynı döngüyü `result += line` ile yazmak her turda yeni bir String ve kopyalama demektir; çok sayıda satırda **O(n²)** maliyete çıkar.\n\nStringBuffer bugün nadiren kullanılır, çünkü bir String'i birden fazla thread'in aynı anda doldurması pek gerekmez; gerekirse bile senkronizasyon genelde daha üst seviyede yapılır.\n\nSık atlanan nokta: tek satırlık `\"a\" + b + \"c\"` birleştirmesinde StringBuilder'a gerek yoktur; derleyici bunu zaten verimli koda çevirir. Sorun yalnızca **döngü** içindeki birleştirmededir.",
+      "keyConcepts": [
+        {
+          "id": "string-immutable",
+          "label": "String immutable",
+          "aliases": [
+            "immutable",
+            "yeni bir nesne",
+            "değişmez"
+          ],
+          "anchors": [
+            "String immutable'dır ve her değişiklik yeni nesne oluşturur."
+          ]
+        },
+        {
+          "id": "builder-mutable",
+          "label": "StringBuilder mutable",
+          "aliases": [
+            "mutable",
+            "değiştirilebilir",
+            "append",
+            "aynı nesne"
+          ],
+          "anchors": [
+            "StringBuilder değiştirilebilirdir ve aynı nesneye yazar."
+          ]
+        },
+        {
+          "id": "buffer-sync",
+          "label": "StringBuffer synchronized",
+          "aliases": [
+            "synchronized",
+            "thread-safe",
+            "stringbuffer"
+          ],
+          "anchors": [
+            "StringBuffer synchronized olduğu için thread-safe ama daha yavaştır."
+          ]
+        },
+        {
+          "id": "dongu",
+          "label": "Döngüde StringBuilder",
+          "aliases": [
+            "döngü",
+            "loop",
+            "o(n²)",
+            "n kare"
+          ],
+          "anchors": [
+            "Döngü içinde birleştirme için StringBuilder kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "StringBuilder'ın başlangıç kapasitesini vermek neden performansa yardımcı olabilir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-hashmap-internals",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 3,
+      "prompt": "HashMap içeride nasıl çalışır? Çakışmalar nasıl çözülür, yeniden boyutlandırma ne zaman olur?",
+      "modelAnswer": "HashMap içeride bir **dizi** (bucket dizisi) tutar. `put(key, value)` çağrıldığında:\n\n1. Anahtarın `hashCode()`'u alınır ve bitleri karıştırılarak **dizi indeksi** hesaplanır.\n2. O indeksteki kova boşsa eleman oraya konur.\n3. Doluysa bu bir **çakışma**dır; kovadaki elemanlar `equals` ile karşılaştırılır. Aynı anahtar varsa değer güncellenir, yoksa eleman kovaya eklenir.\n\nÇakışan elemanlar kovada **bağlı liste** olarak tutulur. Java 8'den itibaren bir kovadaki eleman sayısı **8'i geçerse** (ve dizi yeterince büyükse) liste **kırmızı-siyah ağaca** (treeify) dönüştürülür; kötü bir hashCode durumunda arama O(n) yerine **O(log n)** olur.\n\n**Yeniden boyutlandırma (resize):** Eleman sayısı `kapasite × load factor`'ü geçince dizi **iki katına** çıkarılır ve tüm elemanlar yeni dizideki yerlerine taşınır. Varsayılan kapasite 16, **load factor 0.75**'tir. Resize pahalı bir işlemdir; eleman sayısı önceden biliniyorsa kapasite baştan verilir.\n\nSık atlanan nokta: HashMap **thread-safe değildir**. Birden fazla thread aynı anda yazarsa veri kaybolabilir; eşzamanlı kullanım için ConcurrentHashMap kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "dizi-indeks",
+          "label": "Bucket dizisi ve hashCode'dan indeks",
+          "aliases": [
+            "dizi",
+            "bucket",
+            "kova",
+            "indeks"
+          ],
+          "anchors": [
+            "HashMap bir bucket dizisi tutar ve hashCode'dan dizi indeksi hesaplar."
+          ]
+        },
+        {
+          "id": "cakisma-equals",
+          "label": "Çakışmada equals",
+          "aliases": [
+            "çakışma",
+            "collision",
+            "equals"
+          ],
+          "anchors": [
+            "Aynı kovaya düşen elemanlar equals ile karşılaştırılır."
+          ]
+        },
+        {
+          "id": "liste-agac",
+          "label": "Bağlı liste ve ağaca dönüşüm",
+          "aliases": [
+            "bağlı liste",
+            "linked list",
+            "kırmızı-siyah",
+            "ağaç",
+            "treeify",
+            "log n"
+          ],
+          "anchors": [
+            "Çakışan elemanlar bağlı listede tutulur, 8'i geçince ağaca dönüştürülür."
+          ]
+        },
+        {
+          "id": "resize",
+          "label": "Load factor ve resize",
+          "aliases": [
+            "load factor",
+            "0.75",
+            "iki kat",
+            "resize",
+            "yeniden boyut"
+          ],
+          "anchors": [
+            "Eleman sayısı kapasite çarpı load factor'ü geçince dizi iki katına çıkar."
+          ]
+        },
+        {
+          "id": "thread-safe",
+          "label": "Thread-safe değil",
+          "aliases": [
+            "thread-safe değil",
+            "concurrenthashmap",
+            "eşzamanlı"
+          ],
+          "anchors": [
+            "HashMap thread-safe değildir, eşzamanlı kullanım için ConcurrentHashMap kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "HashMap null anahtar kabul eder mi? Hashtable ve ConcurrentHashMap'te durum nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-arraylist-vs-linkedlist",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 1,
+      "prompt": "ArrayList ile LinkedList arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
+      "modelAnswer": "**ArrayList** içeride **dinamik bir dizi** kullanır:\n- İndeksle erişim (`get(i)`) **O(1)**.\n- Sona ekleme ortalama O(1); dizi dolunca daha büyük bir diziye kopyalanır.\n- Ortaya ekleme veya silme **O(n)**, çünkü sonraki elemanlar kaydırılır.\n\n**LinkedList** **çift yönlü bağlı liste**dir:\n- İndeksle erişim **O(n)**, çünkü baştan veya sondan tek tek gidilir.\n- Başa ve sona ekleme/silme O(1).\n- Her eleman için ayrı bir düğüm nesnesi ve iki işaretçi tutar; **bellek yükü** fazladır.\n\nPratikte **neredeyse her durumda ArrayList** tercih edilir. Teoride LinkedList'in avantajlı olduğu \"ortaya ekleme\" bile, o konuma ulaşmak O(n) sürdüğü için kazanç sağlamaz. Ayrıca ArrayList'in elemanları bellekte **ardışık** durduğu için işlemci önbelleğini çok daha iyi kullanır.\n\nSık atlanan nokta: kuyruk veya yığın (stack) gerekiyorsa LinkedList yerine **ArrayDeque** daha hızlıdır.",
+      "keyConcepts": [
+        {
+          "id": "arraylist-dizi",
+          "label": "ArrayList dinamik dizi",
+          "aliases": [
+            "dinamik dizi",
+            "dizi",
+            "array"
+          ],
+          "anchors": [
+            "ArrayList içeride dinamik bir dizi kullanır."
+          ]
+        },
+        {
+          "id": "get-o1",
+          "label": "İndeksle erişim farkı",
+          "aliases": [
+            "o(1)",
+            "indeksle erişim",
+            "get(i)"
+          ],
+          "anchors": [
+            "ArrayList'te indeksle erişim O(1), LinkedList'te O(n)'dir."
+          ]
+        },
+        {
+          "id": "linkedlist",
+          "label": "LinkedList bağlı liste",
+          "aliases": [
+            "bağlı liste",
+            "düğüm",
+            "node",
+            "işaretçi"
+          ],
+          "anchors": [
+            "LinkedList çift yönlü bağlı listedir ve her eleman için düğüm tutar."
+          ]
+        },
+        {
+          "id": "tercih",
+          "label": "Pratikte ArrayList",
+          "aliases": [
+            "arraylist tercih",
+            "her durumda arraylist",
+            "önbellek",
+            "cache",
+            "ardışık"
+          ],
+          "anchors": [
+            "Pratikte bellek düzeni sayesinde neredeyse her durumda ArrayList tercih edilir."
+          ]
+        },
+        {
+          "id": "arraydeque",
+          "label": "Kuyruk için ArrayDeque",
+          "aliases": [
+            "arraydeque",
+            "kuyruk",
+            "queue",
+            "stack"
+          ],
+          "anchors": [
+            "Kuyruk veya yığın için ArrayDeque daha hızlıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "ArrayList'in kapasitesi dolduğunda içeride tam olarak ne olur?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-checked-unchecked",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Exception",
+      "difficulty": 1,
+      "prompt": "Checked ve unchecked exception arasındaki fark nedir?",
+      "modelAnswer": "**Checked exception**, `Exception` sınıfından türeyen ama `RuntimeException`'dan türemeyen exception'lardır (`IOException`, `SQLException`). Derleyici bunları **zorunlu kılar**: metot ya `try-catch` ile yakalamalı ya da `throws` ile bildirmelidir; aksi hâlde kod derlenmez.\n\n**Unchecked exception**, `RuntimeException`'dan türeyenlerdir (`NullPointerException`, `IllegalArgumentException`, `IndexOutOfBoundsException`). Derleyici yakalamayı zorunlu tutmaz. Genelde **programlama hatalarını** temsil eder.\n\nHiyerarşinin en üstünde `Throwable` vardır; altında `Exception` ve `Error` bulunur. **Error** (`OutOfMemoryError`, `StackOverflowError`) JVM düzeyindeki ciddi sorunlardır ve normalde yakalanmaz.\n\nGenel yaklaşım: çağıranın **makul şekilde toparlanabileceği** durumlar (dosya bulunamadı) için checked, programlama hatası veya geçersiz girdi için unchecked kullanılır.\n\nSık atlanan nokta: Spring'in `@Transactional`'ı varsayılan olarak yalnızca **unchecked** exception'larda rollback yapar. Checked exception fırlatılırsa transaction commit edilir; bunu değiştirmek için `rollbackFor` belirtilir.",
+      "keyConcepts": [
+        {
+          "id": "checked-zorunlu",
+          "label": "Checked: derleyici zorunlu kılar",
+          "aliases": [
+            "derleyici",
+            "zorunlu",
+            "throws",
+            "derlenmez",
+            "ioexception"
+          ],
+          "anchors": [
+            "Checked exception'ları derleyici yakalamaya veya throws ile bildirmeye zorlar."
+          ]
+        },
+        {
+          "id": "unchecked-runtime",
+          "label": "Unchecked: RuntimeException",
+          "aliases": [
+            "runtimeexception",
+            "nullpointer",
+            "illegalargument",
+            "zorunlu değil"
+          ],
+          "anchors": [
+            "Unchecked exception'lar RuntimeException'dan türer ve yakalamak zorunlu değildir."
+          ]
+        },
+        {
+          "id": "error",
+          "label": "Error ve Throwable",
+          "aliases": [
+            "error",
+            "throwable",
+            "outofmemory",
+            "stackoverflow"
+          ],
+          "anchors": [
+            "Error JVM düzeyindeki ciddi sorunlardır ve normalde yakalanmaz."
+          ]
+        },
+        {
+          "id": "transactional",
+          "label": "@Transactional yalnızca unchecked'te rollback",
+          "aliases": [
+            "@transactional",
+            "rollback",
+            "rollbackfor",
+            "commit edilir"
+          ],
+          "anchors": [
+            "Spring'in @Transactional'ı varsayılan olarak yalnızca unchecked exception'larda rollback yapar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir checked exception'ı yakalayıp RuntimeException'a sarmak ne zaman doğru bir yaklaşımdır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-final-finally-finalize",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "final, finally ve finalize arasındaki fark nedir?",
+      "modelAnswer": "İsimleri benzer ama tamamen farklı kavramlardır:\n\n- **final** bir anahtar kelimedir:\n  - Değişkende: bir kez atanır, **yeniden atanamaz**.\n  - Metotta: alt sınıfta **override edilemez**.\n  - Sınıfta: **kalıtılamaz** (`String` final'dır).\n- **finally** bir `try` bloğunun parçasıdır: exception fırlasa da fırlamasa da **her zaman çalışır**. Kaynakları serbest bırakmak için kullanılır. (Bugün bunun yerine genelde try-with-resources tercih edilir.)\n- **finalize** `Object`'in bir metodudur; garbage collector nesneyi toplamadan önce çağırabilir. Ne zaman, hatta çalışıp çalışmayacağı garanti değildir. Java 9'da **deprecated** edilmiştir ve kullanılmamalıdır.\n\nSık atlanan nokta: `final` bir referans değişkeni nesneyi değiştirilemez yapmaz. `final List<String> list` başka bir listeye atanamaz, ama `list.add(...)` ile içeriği değiştirilebilir.",
+      "keyConcepts": [
+        {
+          "id": "final",
+          "label": "final: değiştirilemez/override/kalıtım",
+          "aliases": [
+            "yeniden atanamaz",
+            "override edilemez",
+            "kalıtılamaz",
+            "final"
+          ],
+          "anchors": [
+            "final değişkeni yeniden atanamaz, metodu override edilemez, sınıfı kalıtılamaz yapar."
+          ]
+        },
+        {
+          "id": "finally",
+          "label": "finally her zaman çalışır",
+          "aliases": [
+            "finally",
+            "her zaman çalışır",
+            "try"
+          ],
+          "anchors": [
+            "finally bloğu exception olsa da olmasa da her zaman çalışır."
+          ]
+        },
+        {
+          "id": "finalize",
+          "label": "finalize deprecated",
+          "aliases": [
+            "finalize",
+            "garbage collector",
+            "deprecated",
+            "garanti değil"
+          ],
+          "anchors": [
+            "finalize garbage collector'dan önce çağrılabilen, garantisi olmayan ve deprecated bir metottur."
+          ]
+        },
+        {
+          "id": "referans",
+          "label": "final referans içerik değiştirmeyi engellemez",
+          "aliases": [
+            "içeriği değiştiril",
+            "list.add",
+            "referans",
+            "nesneyi değiştirilemez yapmaz"
+          ],
+          "anchors": [
+            "final referans başka nesneye atanamaz ama nesnenin içeriği değişebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "finally bloğunun çalışmadığı bir durum var mıdır?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-interface-vs-abstract",
+      "category": "java",
+      "kind": "definition",
+      "topic": "OOP",
+      "difficulty": 1,
+      "prompt": "Interface ile abstract class arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
+      "modelAnswer": "**Abstract class**:\n- Hem soyut hem gövdeli metotlar içerebilir.\n- **State** (instance alanları) ve constructor tutabilir.\n- Bir sınıf yalnızca **bir** abstract class'ı genişletebilir (`extends`).\n\n**Interface**:\n- Bir **sözleşme** tanımlar. Java 8'den itibaren `default` ve `static` metotlar, Java 9'dan itibaren `private` metotlar içerebilir.\n- Instance state tutamaz; alanları yalnızca `public static final` sabitlerdir.\n- Bir sınıf **birden fazla** interface'i uygulayabilir (`implements`).\n\nSeçim:\n- Farklı sınıfların ortak bir **yeteneği** varsa (Comparable, Serializable gibi) veya birden fazla tür birleştirilecekse **interface**.\n- Yakından ilişkili sınıflar ortak **state ve kod** paylaşıyorsa (bir şablon algoritma gibi) **abstract class**.\n\nGenel tercih interface'tir; daha esnektir ve test sırasında kolayca taklit edilebilir (mock). Spring'deki servis katmanlarının interface ile tanımlanmasının bir sebebi de budur.",
+      "keyConcepts": [
+        {
+          "id": "abstract-state",
+          "label": "Abstract class state tutar",
+          "aliases": [
+            "state",
+            "constructor",
+            "instance alan",
+            "alanları"
+          ],
+          "anchors": [
+            "Abstract class state ve constructor tutabilir."
+          ]
+        },
+        {
+          "id": "tek-extends",
+          "label": "Tek extends, çoklu implements",
+          "aliases": [
+            "bir tane",
+            "yalnızca bir",
+            "birden fazla interface",
+            "extends",
+            "implements"
+          ],
+          "anchors": [
+            "Bir sınıf tek bir abstract class'ı genişletir ama birden fazla interface uygular."
+          ]
+        },
+        {
+          "id": "default",
+          "label": "Interface default metotları",
+          "aliases": [
+            "default",
+            "java 8",
+            "sözleşme"
+          ],
+          "anchors": [
+            "Interface bir sözleşmedir ve Java 8'den itibaren default metot içerebilir."
+          ]
+        },
+        {
+          "id": "secim",
+          "label": "Yetenek için interface, ortak kod için abstract",
+          "aliases": [
+            "yetenek",
+            "ortak kod",
+            "şablon",
+            "esnek",
+            "mock"
+          ],
+          "anchors": [
+            "Ortak yetenek için interface, ortak state ve kod için abstract class seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sınıf aynı imzalı default metoda sahip iki interface'i uygularsa ne olur?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-oop-principles",
+      "category": "java",
+      "kind": "definition",
+      "topic": "OOP",
+      "difficulty": 1,
+      "prompt": "Nesne yönelimli programlamanın dört temel prensibini Java örnekleriyle açıkla.",
+      "modelAnswer": "- **Encapsulation (kapsülleme):** Bir nesnenin verisini dışarıdan doğrudan erişime kapatıp yalnızca kontrollü metotlarla açmaktır. `private` alanlar ve doğrulama yapan metotlar: bakiye alanına doğrudan yazılamaz, `withdraw()` yetersiz bakiyede hata verir.\n- **Inheritance (kalıtım):** Bir sınıfın başka bir sınıfın özelliklerini ve davranışlarını devralmasıdır (`extends`). `SavingsAccount extends Account`.\n- **Polymorphism (çok biçimlilik):** Aynı arayüzün farklı nesnelerde farklı davranmasıdır. `Account` türünde bir referans, çalışma anında hangi alt sınıfı gösteriyorsa onun `calculateInterest()` metodunu çağırır (**runtime**, override). Aynı isimli metodun farklı parametrelerle tanımlanması ise **compile-time** polimorfizmdir (overload).\n- **Abstraction (soyutlama):** Karmaşık ayrıntıları gizleyip yalnızca gerekli olanı göstermektir; interface ve abstract class ile yapılır. `PaymentService` arayüzünü kullanan kod, ödemenin kart mı havale mi ile yapıldığını bilmez.\n\nSık atlanan nokta: kalıtım güçlü bir bağımlılık yaratır. Davranış paylaşmak için çoğu zaman **composition over inheritance** (kalıtım yerine bileşim) daha esnek bir tasarımdır.",
+      "keyConcepts": [
+        {
+          "id": "encapsulation",
+          "label": "Encapsulation",
+          "aliases": [
+            "encapsulation",
+            "kapsülleme",
+            "private"
+          ],
+          "anchors": [
+            "Encapsulation verinin dışarıya kapatılıp kontrollü metotlarla açılmasıdır."
+          ]
+        },
+        {
+          "id": "inheritance",
+          "label": "Inheritance",
+          "aliases": [
+            "inheritance",
+            "kalıtım",
+            "extends",
+            "miras"
+          ],
+          "anchors": [
+            "Inheritance bir sınıfın başka bir sınıfın özelliklerini devralmasıdır."
+          ]
+        },
+        {
+          "id": "polymorphism",
+          "label": "Polymorphism (override/overload)",
+          "aliases": [
+            "polymorphism",
+            "çok biçimlilik",
+            "polimorfizm",
+            "override",
+            "overload"
+          ],
+          "anchors": [
+            "Polymorphism aynı arayüzün farklı nesnelerde farklı davranmasıdır."
+          ]
+        },
+        {
+          "id": "abstraction",
+          "label": "Abstraction",
+          "aliases": [
+            "abstraction",
+            "soyutlama",
+            "ayrıntıları gizle"
+          ],
+          "anchors": [
+            "Abstraction karmaşık ayrıntıları gizleyip gerekli olanı göstermektir."
+          ]
+        },
+        {
+          "id": "composition",
+          "label": "Composition over inheritance",
+          "aliases": [
+            "composition",
+            "bileşim"
+          ],
+          "anchors": [
+            "Davranış paylaşımı için kalıtım yerine bileşim çoğu zaman daha esnektir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Overloading ile overriding arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-pass-by-value",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Java pass-by-value mı yoksa pass-by-reference mı? Bir nesneyi metoda verip içinde değiştirdiğinde ne olur?",
+      "modelAnswer": "Java **her zaman pass-by-value**'dur. Fark, neyin kopyalandığındadır:\n\n- Primitive tiplerde (`int`, `double`) **değerin kendisi** kopyalanır. Metot içindeki değişiklik dışarıyı etkilemez.\n- Nesnelerde **referansın değeri** (nesnenin adresi) kopyalanır. Metot aynı nesneyi gösteren **kopya bir referans** alır.\n\nBu yüzden:\n\n```java\nvoid update(Account acc) {\n    acc.setBalance(100);     // dışarıdaki nesne değişir\n    acc = new Account();     // dışarıdaki referans etkilenmez\n    acc.setBalance(999);     // yeni nesneyi değiştirir, dışarıyı değil\n}\n```\n\nMetot nesnenin **içeriğini** değiştirebilir, çünkü iki referans aynı nesneyi gösterir. Ama referansı **başka bir nesneye atamak** yalnızca yerel kopyayı değiştirir; çağıranın değişkeni hâlâ eski nesneyi gösterir.\n\n\"Nesneler referansla geçer\" ifadesi bu yüzden yanlıştır: gerçek pass-by-reference'ta (C++'taki `&` gibi) metot içinde yapılan atama çağıranın değişkenini de değiştirirdi.",
+      "keyConcepts": [
+        {
+          "id": "her-zaman",
+          "label": "Her zaman pass-by-value",
+          "aliases": [
+            "her zaman pass-by-value",
+            "pass-by-value",
+            "değer ile"
+          ],
+          "anchors": [
+            "Java her zaman pass-by-value'dur."
+          ]
+        },
+        {
+          "id": "primitive",
+          "label": "Primitive'de değer kopyalanır",
+          "aliases": [
+            "primitive",
+            "değerin kendisi",
+            "int "
+          ],
+          "anchors": [
+            "Primitive tiplerde değerin kendisi kopyalanır."
+          ]
+        },
+        {
+          "id": "referans-kopya",
+          "label": "Nesnede referansın kopyası",
+          "aliases": [
+            "referansın değeri",
+            "kopya bir referans",
+            "referans kopyalan",
+            "adres"
+          ],
+          "anchors": [
+            "Nesnelerde referansın değeri kopyalanır."
+          ]
+        },
+        {
+          "id": "icerik-vs-atama",
+          "label": "İçerik değişir, atama dışarıyı etkilemez",
+          "aliases": [
+            "içeriğini değiştir",
+            "başka bir nesneye ata",
+            "yerel kopya",
+            "etkilenmez"
+          ],
+          "anchors": [
+            "Metot nesnenin içeriğini değiştirebilir ama referansı yeniden atamak dışarıyı etkilemez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir metodun iki Integer'ın değerini değiştiren bir swap metodu yazılabilir mi?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-memory-gc",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 2,
+      "prompt": "JVM'de stack ve heap arasındaki fark nedir? Garbage collector nasıl çalışır?",
+      "modelAnswer": "**Stack**, her thread'e ait bir bellek alanıdır. Metot çağrıları, **yerel değişkenler** ve primitive değerler ile nesne **referansları** burada tutulur. Metot bitince ilgili alan otomatik olarak boşalır; erişimi çok hızlıdır ama boyutu sınırlıdır (sonsuz özyineleme `StackOverflowError` verir).\n\n**Heap**, tüm thread'lerin paylaştığı alandır. `new` ile oluşturulan **tüm nesneler** burada yaşar. Heap'teki nesneleri **garbage collector (GC)** yönetir.\n\nGC, artık hiçbir canlı referansın ulaşamadığı nesneleri bulup belleklerini geri alır. Kök noktalardan (stack'teki referanslar, static alanlar) başlayıp ulaşılabilen nesneleri işaretler, ulaşılamayanları temizler.\n\nHeap **nesillere** ayrılır: çoğu nesne kısa ömürlüdür ve **young generation**'da doğup orada ölür; orada yapılan toplama hızlıdır. Uzun yaşayanlar **old generation**'a taşınır. Modern JVM'lerde varsayılan collector **G1**'dir; düşük gecikme gereken büyük heap'ler için ZGC de seçilebilir.\n\nSık atlanan nokta: GC olan bir dilde de **bellek sızıntısı** olur. Bir nesneye artık ihtiyaç olmasa bile ona referans tutulmaya devam edilirse (sürekli büyüyen static bir Map gibi) GC onu toplayamaz.",
+      "keyConcepts": [
+        {
+          "id": "stack",
+          "label": "Stack: thread'e özel, yerel değişkenler",
+          "aliases": [
+            "stack",
+            "yerel değişken",
+            "thread'e ait",
+            "metot çağrı"
+          ],
+          "anchors": [
+            "Stack her thread'e aittir ve yerel değişkenleri ile referansları tutar."
+          ]
+        },
+        {
+          "id": "heap",
+          "label": "Heap: paylaşılan, nesneler",
+          "aliases": [
+            "heap",
+            "new ile",
+            "nesneler",
+            "paylaş"
+          ],
+          "anchors": [
+            "Heap tüm thread'lerin paylaştığı ve nesnelerin yaşadığı alandır."
+          ]
+        },
+        {
+          "id": "gc-ulasilabilir",
+          "label": "GC ulaşılamayan nesneleri toplar",
+          "aliases": [
+            "ulaşılamayan",
+            "referans",
+            "garbage collector",
+            "gc"
+          ],
+          "anchors": [
+            "GC artık hiçbir referansın ulaşamadığı nesneleri toplar."
+          ]
+        },
+        {
+          "id": "nesiller",
+          "label": "Young ve old generation",
+          "aliases": [
+            "young",
+            "old generation",
+            "nesil",
+            "g1",
+            "zgc"
+          ],
+          "anchors": [
+            "Heap nesillere ayrılır, kısa ömürlü nesneler young generation'da toplanır."
+          ]
+        },
+        {
+          "id": "sizinti",
+          "label": "GC'li dilde de bellek sızıntısı",
+          "aliases": [
+            "sızıntı",
+            "leak",
+            "static map"
+          ],
+          "anchors": [
+            "Gereksiz referanslar tutulmaya devam ederse GC'li dilde de bellek sızıntısı olur."
+          ]
+        }
+      ],
+      "followUps": [
+        "OutOfMemoryError aldığında sebebini bulmak için ne yaparsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-synchronized-volatile",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 3,
+      "prompt": "synchronized ve volatile arasındaki fark nedir? Race condition nasıl oluşur?",
+      "modelAnswer": "**Race condition**, birden fazla thread'in paylaşılan veriye aynı anda erişip sonucun çalışma sırasına bağlı olmasıdır. Klasik örnek `count++`: bu tek bir işlem gibi görünse de **oku, artır, yaz** adımlarından oluşur. İki thread aynı değeri okuyup ikisi de yazarsa bir artış kaybolur.\n\n**synchronized** iki garanti verir:\n- **Karşılıklı dışlama (mutual exclusion):** Aynı kilit üzerinde aynı anda yalnızca bir thread bloğa girer; bileşik işlemleri **atomik** yapar.\n- **Görünürlük (visibility):** Bloktan çıkan thread'in değişiklikleri, sonra giren thread tarafından görülür.\n\n**volatile** yalnızca **görünürlük** garantisi verir: değişkene her yazma, diğer thread'lere hemen görünür; thread'ler eski değeri işlemci önbelleğinden okumaz. Ama **atomiklik sağlamaz**; `volatile int count` için `count++` hâlâ güvensizdir.\n\nvolatile, tek bir thread'in yazıp diğerlerinin okuduğu durum bayrakları için uygundur (`volatile boolean running`).\n\nBasit sayaçlar için en iyi çözüm genelde **AtomicInteger**'dır: `incrementAndGet()` kilit kullanmadan (CAS ile) atomik artış yapar.",
+      "keyConcepts": [
+        {
+          "id": "race",
+          "label": "Race condition",
+          "aliases": [
+            "race condition",
+            "yarış",
+            "aynı anda",
+            "oku, artır, yaz",
+            "count++"
+          ],
+          "anchors": [
+            "Race condition birden fazla thread'in paylaşılan veriye aynı anda erişmesiyle oluşur."
+          ]
+        },
+        {
+          "id": "sync-dislama",
+          "label": "synchronized karşılıklı dışlama ve atomiklik",
+          "aliases": [
+            "synchronized",
+            "karşılıklı dışlama",
+            "mutual exclusion",
+            "kilit",
+            "atomik"
+          ],
+          "anchors": [
+            "synchronized aynı anda tek thread'in girmesini sağlayarak işlemi atomik yapar."
+          ]
+        },
+        {
+          "id": "gorunurluk",
+          "label": "Görünürlük",
+          "aliases": [
+            "görünürlük",
+            "visibility",
+            "önbellek",
+            "görülür"
+          ],
+          "anchors": [
+            "Görünürlük, bir thread'in yazdığı değerin diğerlerince görülmesidir."
+          ]
+        },
+        {
+          "id": "volatile",
+          "label": "volatile atomiklik sağlamaz",
+          "aliases": [
+            "volatile",
+            "atomiklik sağlamaz",
+            "bayrak"
+          ],
+          "anchors": [
+            "volatile yalnızca görünürlük sağlar, atomiklik sağlamaz."
+          ]
+        },
+        {
+          "id": "atomic",
+          "label": "AtomicInteger",
+          "aliases": [
+            "atomicinteger",
+            "cas",
+            "incrementandget"
+          ],
+          "anchors": [
+            "Basit sayaçlar için AtomicInteger kilitsiz atomik işlem sağlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "synchronized metot ile synchronized blok arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-concurrenthashmap",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 3,
+      "prompt": "ConcurrentHashMap, Collections.synchronizedMap ve Hashtable arasındaki fark nedir?",
+      "modelAnswer": "Üçü de thread-safe bir map sağlar, ama farklı yöntemlerle:\n\n- **Hashtable** ve **Collections.synchronizedMap**: Tüm map için **tek bir kilit** kullanır. Herhangi bir okuma veya yazma sırasında tüm map kilitlenir; yoğun eşzamanlı erişimde thread'ler sırayla bekler.\n- **ConcurrentHashMap**: Kilitleme çok daha **ince taneli**dir. **Okumalar kilit almaz.** Yazmalar yalnızca ilgili **kovayı** kilitler (boş kovaya eklemede CAS kullanılır); farklı kovalara yazan thread'ler birbirini beklemez. Bu yüzden eşzamanlı ortamda çok daha iyi ölçeklenir.\n\nConcurrentHashMap ayrıca **atomik bileşik işlemler** sunar: `putIfAbsent`, `computeIfAbsent`, `merge`. Bunlar \"kontrol et sonra yaz\" desenini güvenli yapar:\n\n```java\n// Güvensiz: iki thread de null görüp ikisi de yazabilir\nif (!map.containsKey(key)) map.put(key, value);\n\n// Güvenli\nmap.putIfAbsent(key, value);\ncounts.merge(word, 1, Integer::sum);\n```\n\nSık atlanan nokta: ConcurrentHashMap **null anahtar veya null değer kabul etmez**. Sebebi, `get()` null döndüğünde bunun \"anahtar yok\" mu yoksa \"değer null\" mu olduğunun eşzamanlı ortamda ayırt edilememesidir.",
+      "keyConcepts": [
+        {
+          "id": "tek-kilit",
+          "label": "Hashtable ve synchronizedMap tek kilit",
+          "aliases": [
+            "tek bir kilit",
+            "tek kilit",
+            "tüm map",
+            "hashtable",
+            "synchronizedmap"
+          ],
+          "anchors": [
+            "Hashtable ve synchronizedMap tüm map için tek bir kilit kullanır."
+          ]
+        },
+        {
+          "id": "ince-taneli",
+          "label": "ConcurrentHashMap ince taneli kilit",
+          "aliases": [
+            "ince taneli",
+            "kovayı kilitle",
+            "okumalar kilit almaz",
+            "cas",
+            "fine-grained"
+          ],
+          "anchors": [
+            "ConcurrentHashMap okumada kilit almaz, yazmada yalnızca ilgili kovayı kilitler."
+          ]
+        },
+        {
+          "id": "olcek",
+          "label": "Eşzamanlı ortamda ölçeklenir",
+          "aliases": [
+            "ölçeklen",
+            "birbirini beklemez"
+          ],
+          "anchors": [
+            "Farklı kovalara yazan thread'ler birbirini beklemediği için daha iyi ölçeklenir."
+          ]
+        },
+        {
+          "id": "atomik",
+          "label": "Atomik bileşik işlemler",
+          "aliases": [
+            "putifabsent",
+            "computeifabsent",
+            "merge",
+            "kontrol et sonra yaz"
+          ],
+          "anchors": [
+            "putIfAbsent ve merge gibi metotlar bileşik işlemleri atomik yapar."
+          ]
+        },
+        {
+          "id": "null",
+          "label": "Null kabul etmez",
+          "aliases": [
+            "null"
+          ],
+          "anchors": [
+            "ConcurrentHashMap null anahtar veya değer kabul etmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "ConcurrentHashMap üzerinde iterasyon yaparken başka bir thread eleman eklerse ne olur?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-executor-service",
+      "category": "java",
+      "kind": "applied",
+      "topic": "Concurrency",
+      "difficulty": 2,
+      "prompt": "Thread'leri doğrudan new Thread() ile oluşturmak yerine neden ExecutorService kullanırsın?",
+      "modelAnswer": "Her iş için `new Thread()` oluşturmak pahalıdır: thread oluşturmak işletim sistemi kaynağı ve bellek gerektirir, ve gelen iş sayısı kadar thread açılırsa yük altında sistem çöker.\n\n**ExecutorService** bir **thread havuzu** yönetir. Thread'ler bir kez oluşturulur ve işler bittikçe **yeniden kullanılır**; fazla işler bir **kuyrukta** bekler. Böylece eşzamanlı thread sayısı sınırlanır.\n\n```java\nExecutorService pool = Executors.newFixedThreadPool(4);\nFuture<BigDecimal> future = pool.submit(() -> calculateRisk(account));\nBigDecimal risk = future.get(); // sonuç hazır olana kadar bekler\npool.shutdown();\n```\n\nFaydaları: kaynak kontrolü, `Future` ile sonuç ve exception alma, iş kuyruğu yönetimi. Daha esnek asenkron akışlar için **CompletableFuture** (`thenApply`, `thenCombine`) kullanılır.\n\nSık atlanan noktalar:\n- `shutdown()` çağrılmazsa havuzdaki thread'ler JVM'in kapanmasını engelleyebilir.\n- `newCachedThreadPool` sınırsız thread açabilir, `newFixedThreadPool` ise sınırsız kuyruk kullanır; ikisi de yük altında belleği tüketebilir. Canlıda genelde sınırları açıkça verilen bir `ThreadPoolExecutor` tercih edilir. Spring'de bunun karşılığı `ThreadPoolTaskExecutor`'dır.",
+      "keyConcepts": [
+        {
+          "id": "pahali",
+          "label": "Thread oluşturmak pahalı",
+          "aliases": [
+            "pahalı",
+            "kaynak",
+            "çöker",
+            "her iş için"
+          ],
+          "anchors": [
+            "Her iş için yeni thread oluşturmak pahalıdır ve yük altında sistemi çökertebilir."
+          ]
+        },
+        {
+          "id": "havuz",
+          "label": "Thread havuzu ve yeniden kullanım",
+          "aliases": [
+            "havuz",
+            "pool",
+            "yeniden kullan"
+          ],
+          "anchors": [
+            "ExecutorService thread'leri bir havuzda tutup yeniden kullanır."
+          ]
+        },
+        {
+          "id": "kuyruk",
+          "label": "İş kuyruğu",
+          "aliases": [
+            "kuyruk",
+            "queue",
+            "bekler"
+          ],
+          "anchors": [
+            "Fazla işler bir kuyrukta bekler."
+          ]
+        },
+        {
+          "id": "future",
+          "label": "Future ve CompletableFuture",
+          "aliases": [
+            "future",
+            "completablefuture",
+            "submit"
+          ],
+          "anchors": [
+            "Future ile işin sonucu ve exception'ı alınır."
+          ]
+        },
+        {
+          "id": "shutdown-sinir",
+          "label": "shutdown ve sınırlar",
+          "aliases": [
+            "shutdown",
+            "sınırsız",
+            "threadpoolexecutor",
+            "threadpooltaskexecutor"
+          ],
+          "anchors": [
+            "Havuz shutdown edilmeli ve canlıda sınırları açık bir executor kullanılmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Java 21'deki virtual thread'ler thread havuzu ihtiyacını nasıl değiştirir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-stream-api",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 2,
+      "prompt": "Stream API nedir? Intermediate ve terminal operasyonlar arasındaki fark ve lazy evaluation ne demektir?",
+      "modelAnswer": "Stream API, koleksiyonlar üzerinde **deklaratif** ve zincirlenebilir veri işleme sağlar: \"nasıl\" yerine \"ne\" yapılacağı yazılır.\n\n```java\nBigDecimal total = transactions.stream()\n    .filter(t -> t.status() == Status.COMPLETED)\n    .map(Transaction::amount)\n    .reduce(BigDecimal.ZERO, BigDecimal::add);\n```\n\n- **Intermediate operasyonlar** (`filter`, `map`, `sorted`, `distinct`) yeni bir stream döndürür ve zincirlenir.\n- **Terminal operasyonlar** (`collect`, `reduce`, `forEach`, `count`, `findFirst`) sonucu üretir ve stream'i **tüketir**.\n\n**Lazy evaluation:** Intermediate operasyonlar terminal operasyon çağrılana kadar **hiç çalışmaz**. Terminal çağrıldığında elemanlar zincirden tek tek geçer; `findFirst` gibi kısa devre yapan bir terminal varsa ilk eşleşmede durulur ve geri kalan elemanlar işlenmez.\n\nSık atlanan noktalar:\n- Bir stream **yalnızca bir kez** kullanılabilir; ikinci terminal operasyon `IllegalStateException` verir.\n- `parallelStream()` her zaman hızlandırmaz; küçük veri setlerinde ve paylaşılan değişken duruma yazan kodda hem yavaşlatır hem hata üretir.\n- Lambda içinde dış değişkeni değiştirmek (yan etki) stream'in amacına aykırıdır.",
+      "keyConcepts": [
+        {
+          "id": "deklaratif",
+          "label": "Deklaratif veri işleme",
+          "aliases": [
+            "deklaratif",
+            "declarative",
+            "zincir",
+            "ne yapılacağı"
+          ],
+          "anchors": [
+            "Stream API koleksiyonlar üzerinde deklaratif ve zincirlenebilir işleme sağlar."
+          ]
+        },
+        {
+          "id": "intermediate",
+          "label": "Intermediate operasyonlar",
+          "aliases": [
+            "intermediate",
+            "ara operasyon",
+            "filter",
+            "map"
+          ],
+          "anchors": [
+            "Intermediate operasyonlar yeni bir stream döndürür ve zincirlenir."
+          ]
+        },
+        {
+          "id": "terminal",
+          "label": "Terminal operasyonlar",
+          "aliases": [
+            "terminal",
+            "collect",
+            "reduce",
+            "tüketir"
+          ],
+          "anchors": [
+            "Terminal operasyonlar sonucu üretir ve stream'i tüketir."
+          ]
+        },
+        {
+          "id": "lazy",
+          "label": "Lazy evaluation",
+          "aliases": [
+            "lazy",
+            "tembel",
+            "terminal çağrılana kadar",
+            "hiç çalışmaz",
+            "kısa devre"
+          ],
+          "anchors": [
+            "Intermediate operasyonlar terminal çağrılana kadar çalışmaz."
+          ]
+        },
+        {
+          "id": "bir-kez",
+          "label": "Tek kullanımlık ve parallel tuzağı",
+          "aliases": [
+            "bir kez",
+            "illegalstateexception",
+            "parallelstream",
+            "tek kullanım"
+          ],
+          "anchors": [
+            "Stream yalnızca bir kez kullanılabilir ve parallelStream her zaman hızlandırmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Stream'de map ile flatMap arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-optional",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 1,
+      "prompt": "Optional nedir ve nasıl doğru kullanılır?",
+      "modelAnswer": "Optional, bir değerin **olabileceğini veya olmayabileceğini** açıkça ifade eden bir kapsayıcıdır. Amacı, \"sonuç bulunamayabilir\" durumunu metot imzasında görünür yapmak ve **NullPointerException** riskini azaltmaktır.\n\n```java\nOptional<Account> acc = repository.findById(id);\nString iban = acc.map(Account::iban).orElse(\"bilinmiyor\");\nAccount a = acc.orElseThrow(() -> new AccountNotFoundException(id));\n```\n\nDoğru kullanım:\n- **Dönüş tipi** olarak kullanılır; özellikle bulunamayabilecek tek bir sonuç için (Spring Data'nın `findById`'si gibi).\n- Değere `map`, `filter`, `orElse`, `orElseGet`, `orElseThrow` ile ulaşılır.\n\nYanlış kullanım:\n- Doğrudan `get()` çağırmak: değer yoksa `NoSuchElementException` fırlatır, yani null kontrolünden farkı kalmaz.\n- Optional'ı **alan** (field), **metot parametresi** veya koleksiyon elemanı olarak kullanmak. Serializable değildir ve gereksiz karmaşıklık katar.\n- Koleksiyon dönen metotlarda Optional döndürmek; bunun yerine **boş koleksiyon** döndürülür.\n\nSık atlanan nokta: `orElse(x)` içindeki ifade değer olsa da **her zaman çalışır**. Pahalı bir hesaplama veya veritabanı çağrısıysa `orElseGet(() -> x)` kullanılır, böylece yalnızca değer yoksa çalışır.",
+      "keyConcepts": [
+        {
+          "id": "tanim",
+          "label": "Olabilir/olmayabilir kapsayıcısı",
+          "aliases": [
+            "olmayabilir",
+            "kapsayıcı",
+            "container",
+            "değer yok"
+          ],
+          "anchors": [
+            "Optional bir değerin olabileceğini veya olmayabileceğini ifade eden kapsayıcıdır."
+          ]
+        },
+        {
+          "id": "npe",
+          "label": "NullPointerException riskini azaltır",
+          "aliases": [
+            "nullpointer",
+            "npe",
+            "null"
+          ],
+          "anchors": [
+            "Optional NullPointerException riskini azaltır."
+          ]
+        },
+        {
+          "id": "donus-tipi",
+          "label": "Dönüş tipi olarak kullanılır",
+          "aliases": [
+            "dönüş tipi",
+            "return",
+            "findbyid"
+          ],
+          "anchors": [
+            "Optional dönüş tipi olarak kullanılır."
+          ]
+        },
+        {
+          "id": "yanlis",
+          "label": "get(), alan ve parametre olarak yanlış",
+          "aliases": [
+            "get()",
+            "alan olarak",
+            "field",
+            "parametre",
+            "nosuchelement"
+          ],
+          "anchors": [
+            "Doğrudan get() çağırmak ve Optional'ı alan veya parametre yapmak yanlıştır."
+          ]
+        },
+        {
+          "id": "orelseget",
+          "label": "orElse ve orElseGet farkı",
+          "aliases": [
+            "orelseget",
+            "her zaman çalışır",
+            "orelse"
+          ],
+          "anchors": [
+            "orElse içindeki ifade her zaman çalışır, pahalı işlem için orElseGet kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Optional.of ile Optional.ofNullable arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-record",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 1,
+      "prompt": "Java record nedir? Normal bir sınıftan farkı ne, ne zaman kullanılır?",
+      "modelAnswer": "Record (Java 16), **değişmez veri taşıyan** sınıfları kısa yoldan tanımlamayı sağlar:\n\n```java\npublic record TransferRequest(String fromIban, String toIban, BigDecimal amount) {}\n```\n\nBu tek satır için derleyici otomatik olarak üretir: `private final` alanlar, tüm alanları alan **constructor**, erişim metotları (`fromIban()`, `get` öneki olmadan), ve tüm alanlara dayanan **equals, hashCode, toString**.\n\nÖzellikleri:\n- Alanlar **final**'dır, setter yoktur; nesne oluşturulduktan sonra değiştirilemez.\n- Record **final**'dır, başka bir sınıfı genişletemez (ama interface uygulayabilir).\n- **Compact constructor** ile doğrulama eklenebilir:\n\n```java\npublic record TransferRequest(String fromIban, String toIban, BigDecimal amount) {\n    public TransferRequest {\n        if (amount.signum() <= 0) throw new IllegalArgumentException(\"Tutar pozitif olmalı\");\n    }\n}\n```\n\nKullanım yerleri: **DTO**'lar, API istek/yanıt nesneleri, değer nesneleri, map anahtarları. Lombok'un `@Value` anotasyonunun dil içindeki karşılığıdır.\n\nSık atlanan nokta: record **JPA entity olarak uygun değildir**; JPA değiştirilebilir alanlar, parametresiz constructor ve proxy için final olmayan sınıflar ister. Record'lar entity'den DTO'ya dönüşümde kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "degismez",
+          "label": "Değişmez veri taşıyıcı",
+          "aliases": [
+            "değişmez",
+            "immutable",
+            "veri taşı",
+            "final"
+          ],
+          "anchors": [
+            "Record değişmez veri taşıyan sınıfları kısa yoldan tanımlar."
+          ]
+        },
+        {
+          "id": "otomatik",
+          "label": "Otomatik equals, hashCode, toString",
+          "aliases": [
+            "equals",
+            "hashcode",
+            "tostring",
+            "constructor",
+            "otomatik"
+          ],
+          "anchors": [
+            "Record için constructor, equals, hashCode ve toString otomatik üretilir."
+          ]
+        },
+        {
+          "id": "compact",
+          "label": "Compact constructor ile doğrulama",
+          "aliases": [
+            "compact constructor",
+            "compact",
+            "doğrulama"
+          ],
+          "anchors": [
+            "Compact constructor ile record'a doğrulama eklenir."
+          ]
+        },
+        {
+          "id": "dto",
+          "label": "DTO kullanımı",
+          "aliases": [
+            "dto",
+            "istek",
+            "yanıt",
+            "değer nesne"
+          ],
+          "anchors": [
+            "Record'lar DTO ve değer nesneleri için kullanılır."
+          ]
+        },
+        {
+          "id": "jpa",
+          "label": "JPA entity için uygun değil",
+          "aliases": [
+            "jpa",
+            "entity",
+            "proxy"
+          ],
+          "anchors": [
+            "Record JPA entity olarak uygun değildir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Record'ın içine bir List alanı koyarsan record gerçekten immutable olur mu?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-try-with-resources",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Exception",
+      "difficulty": 1,
+      "prompt": "try-with-resources nedir ve neden finally bloğunda kaynak kapatmaktan daha iyidir?",
+      "modelAnswer": "try-with-resources (Java 7), `AutoCloseable` arayüzünü uygulayan kaynakların blok bitince **otomatik olarak kapatılmasını** sağlar:\n\n```java\ntry (Connection conn = dataSource.getConnection();\n     PreparedStatement ps = conn.prepareStatement(sql)) {\n    // kullan\n} // ps ve conn burada otomatik kapanır\n```\n\nKaynaklar **açıldıkları sıranın tersine** kapatılır: önce `ps`, sonra `conn`.\n\nElle `finally` ile kapatmaya göre üstünlükleri:\n- **Daha az ve güvenli kod:** Null kontrolü ve iç içe try-catch gerekmez; kapatmayı unutmak mümkün olmaz.\n- **Suppressed exception:** Blokta bir exception fırladıktan sonra `close()` da exception fırlatırsa, finally yaklaşımında asıl exception kaybolur ve yerine close hatası görünür. try-with-resources **asıl exception'ı korur**, close hatasını ona `getSuppressed()` ile ekler.\n\nKapatılmayan veritabanı bağlantıları **bağlantı havuzunu tüketir**; havuz dolunca uygulama yeni istekleri karşılayamaz hâle gelir. Bu yüzden JDBC, dosya ve stream kaynaklarında try-with-resources kullanılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "otomatik",
+          "label": "Otomatik kapatma",
+          "aliases": [
+            "otomatik",
+            "kapatıl",
+            "autocloseable"
+          ],
+          "anchors": [
+            "try-with-resources AutoCloseable kaynakları otomatik kapatır."
+          ]
+        },
+        {
+          "id": "ters-sira",
+          "label": "Ters sırada kapatma",
+          "aliases": [
+            "ters",
+            "tersine"
+          ],
+          "anchors": [
+            "Kaynaklar açıldıkları sıranın tersine kapatılır."
+          ]
+        },
+        {
+          "id": "suppressed",
+          "label": "Suppressed exception",
+          "aliases": [
+            "suppressed",
+            "asıl exception",
+            "getsuppressed",
+            "kaybolur"
+          ],
+          "anchors": [
+            "try-with-resources asıl exception'ı korur, close hatasını suppressed olarak ekler."
+          ]
+        },
+        {
+          "id": "havuz",
+          "label": "Kapatılmayan bağlantı havuzu tüketir",
+          "aliases": [
+            "havuz",
+            "pool",
+            "bağlantı"
+          ],
+          "anchors": [
+            "Kapatılmayan bağlantılar bağlantı havuzunu tüketir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kendi sınıfını try-with-resources ile kullanılabilir yapmak için ne yaparsın?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-generics-erasure",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 3,
+      "prompt": "Generics nedir? Type erasure ne demektir ve hangi kısıtlara yol açar?",
+      "modelAnswer": "Generics, sınıf ve metotların **tür parametresi** almasını sağlar (`List<Account>`). Faydası **derleme zamanı tür güvenliğidir**: listeye yanlış tür eklemek derleme hatası verir ve okurken cast gerekmez.\n\n**Type erasure:** Generic tür bilgisi **yalnızca derleme zamanında** vardır. Derleyici kontrolleri yaptıktan sonra tür parametrelerini **siler**; çalışma anında `List<Account>` ile `List<String>` aynı `List` sınıfıdır. Bu, generics öncesi kodla geriye uyumluluk için yapılmıştır.\n\nYol açtığı kısıtlar:\n- `new T()` yazılamaz ve `T.class` kullanılamaz.\n- `obj instanceof List<String>` yazılamaz.\n- `List<String>` ve `List<Integer>` alan iki metot **overload** edilemez; silindikten sonra imzaları aynıdır.\n- Primitive tür parametresi kullanılamaz (`List<int>` yok, `List<Integer>` var).\n\nWildcard'lar esneklik sağlar ve **PECS** kuralıyla seçilir (Producer Extends, Consumer Super): yalnızca okunan bir koleksiyon için `? extends Number`, yalnızca yazılan için `? super Integer`.\n\nSık atlanan nokta: tür bilgisi çalışma anında gerekiyorsa (Jackson'ın generic bir listeyi deserialize etmesi gibi) `Class<T>` veya `TypeReference` ile açıkça verilmesi gerekir.",
+      "keyConcepts": [
+        {
+          "id": "tur-guvenligi",
+          "label": "Derleme zamanı tür güvenliği",
+          "aliases": [
+            "tür güvenli",
+            "type safety",
+            "derleme zaman",
+            "cast gerekmez"
+          ],
+          "anchors": [
+            "Generics derleme zamanında tür güvenliği sağlar."
+          ]
+        },
+        {
+          "id": "erasure",
+          "label": "Type erasure: tür bilgisi silinir",
+          "aliases": [
+            "erasure",
+            "silin",
+            "çalışma anında",
+            "runtime"
+          ],
+          "anchors": [
+            "Type erasure ile generic tür bilgisi derlemeden sonra silinir."
+          ]
+        },
+        {
+          "id": "geriye-uyum",
+          "label": "Geriye uyumluluk",
+          "aliases": [
+            "geriye uyum",
+            "backward"
+          ],
+          "anchors": [
+            "Erasure generics öncesi kodla geriye uyumluluk için yapılmıştır."
+          ]
+        },
+        {
+          "id": "kisitlar",
+          "label": "Kısıtlar: new T, instanceof, overload",
+          "aliases": [
+            "new t()",
+            "instanceof",
+            "overload",
+            "primitive"
+          ],
+          "anchors": [
+            "Erasure yüzünden new T yazılamaz, instanceof ve overload kısıtları vardır."
+          ]
+        },
+        {
+          "id": "pecs",
+          "label": "Wildcard ve PECS",
+          "aliases": [
+            "pecs",
+            "wildcard",
+            "? extends",
+            "? super"
+          ],
+          "anchors": [
+            "Wildcard'lar PECS kuralıyla seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "List<Object> türündeki bir parametreye neden List<String> veremezsin?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-comparable-comparator",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 1,
+      "prompt": "Comparable ile Comparator arasındaki fark nedir?",
+      "modelAnswer": "İkisi de nesnelerin sıralanmasını sağlar:\n\n- **Comparable**, sınıfın kendi içinde `compareTo(T other)` metodunu uygulamasıdır. Nesnenin **doğal sıralamasını** tanımlar ve **tek bir** sıralama olabilir. `String`, `Integer`, `LocalDate` Comparable'dır.\n- **Comparator**, sıralama mantığını **sınıfın dışında** tanımlar. Aynı sınıf için **birden fazla** sıralama yazılabilir ve kaynak koduna erişimin olmayan sınıflar da sıralanabilir.\n\n```java\naccounts.sort(Comparator.comparing(Account::balance).reversed()\n                        .thenComparing(Account::iban));\n```\n\nJava 8'den itibaren `Comparator.comparing`, `thenComparing`, `reversed` ve `nullsFirst` ile okunaklı zincirler kurulur.\n\nHer ikisinde de dönüş değeri sözleşmesi aynıdır: **negatif** (önce gelir), **sıfır** (eşit), **pozitif** (sonra gelir).\n\nSık atlanan nokta: `compareTo` içinde `return this.balance - other.balance` gibi çıkarma yapmak **taşma (overflow)** nedeniyle büyük sayılarda yanlış sonuç verir. `Integer.compare` veya `Comparator.comparing` kullanılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "comparable",
+          "label": "Comparable doğal sıralama, sınıf içinde",
+          "aliases": [
+            "comparable",
+            "compareto",
+            "doğal sıra",
+            "sınıfın kendi"
+          ],
+          "anchors": [
+            "Comparable sınıfın içinde doğal sıralamayı tanımlar."
+          ]
+        },
+        {
+          "id": "comparator",
+          "label": "Comparator dışarıda, birden fazla",
+          "aliases": [
+            "comparator",
+            "dışında",
+            "birden fazla sıra"
+          ],
+          "anchors": [
+            "Comparator sıralamayı sınıf dışında tanımlar ve birden fazla olabilir."
+          ]
+        },
+        {
+          "id": "zincir",
+          "label": "comparing/thenComparing zinciri",
+          "aliases": [
+            "comparator.comparing",
+            "thencomparing",
+            "reversed"
+          ],
+          "anchors": [
+            "Comparator.comparing ve thenComparing ile okunaklı zincirler kurulur."
+          ]
+        },
+        {
+          "id": "sozlesme",
+          "label": "Negatif/sıfır/pozitif",
+          "aliases": [
+            "negatif",
+            "sıfır",
+            "pozitif"
+          ],
+          "anchors": [
+            "Dönüş değeri negatif, sıfır veya pozitiftir."
+          ]
+        },
+        {
+          "id": "tasma",
+          "label": "Çıkarma ile taşma tuzağı",
+          "aliases": [
+            "taşma",
+            "overflow",
+            "integer.compare",
+            "çıkarma"
+          ],
+          "anchors": [
+            "compareTo içinde çıkarma yapmak taşma nedeniyle yanlış sonuç verebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "TreeMap'e Comparable olmayan bir nesne anahtar olarak verirsen ne olur?"
+      ],
+      "source": "Kendi derleme"
+    },
+    {
+      "id": "java-virtual-threads",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 3,
+      "prompt": "Java 21'deki virtual thread'ler nedir? Platform thread'lerden farkı ve sınırlamaları nelerdir?",
+      "modelAnswer": "**Platform thread**, işletim sistemi thread'ine birebir karşılık gelir. Oluşturması pahalıdır ve her biri megabaytlarca stack belleği ayırır; bu yüzden bir uygulama pratikte birkaç bin taneyle sınırlıdır.\n\n**Virtual thread** (Java 21), JVM tarafından yönetilen **hafif** bir thread'dir. Az sayıda platform thread'in (**carrier thread**) üzerinde çalışır. Bir virtual thread veritabanı sorgusu, HTTP çağrısı gibi **bloklayan bir I/O** işleminde beklerken carrier thread'den **ayrılır** (unmount); carrier o sırada başka bir virtual thread'i çalıştırır. Böylece **milyonlarca** virtual thread oluşturulabilir.\n\n```java\ntry (var executor = Executors.newVirtualThreadPerTaskExecutor()) {\n    executor.submit(() -> callExternalService());\n}\n```\n\nFaydası, **I/O yoğun** uygulamalarda (çok sayıda eşzamanlı istek bekleyen web servisleri) reaktif programlamaya geçmeden, düz bloklayan kodla yüksek eşzamanlılık elde etmektir. Spring Boot'ta `spring.threads.virtual.enabled=true` ile açılır.\n\nSınırlamalar:\n- **CPU yoğun** işlerde kazanç sağlamaz; çekirdek sayısı değişmez.\n- Virtual thread'ler **havuzlanmaz**; her iş için yenisi oluşturulur.\n- Eşzamanlılığı sınırlamak (ör. bir veritabanına en fazla 20 bağlantı) havuz boyutuyla değil, **Semaphore** veya bağlantı havuzu ile yapılır.\n- `synchronized` blok içinde bloklayan bir işlem, virtual thread'i carrier'a **sabitleyebilir** (pinning). Java 24'te bu sorun büyük ölçüde giderilmiştir; daha eski sürümlerde `ReentrantLock` tercih edilir.",
+      "keyConcepts": [
+        {
+          "id": "platform",
+          "label": "Platform thread OS thread'ine karşılık gelir",
+          "aliases": [
+            "işletim sistemi thread",
+            "os thread",
+            "platform thread",
+            "pahalı"
+          ],
+          "anchors": [
+            "Platform thread işletim sistemi thread'ine birebir karşılık gelir ve pahalıdır."
+          ]
+        },
+        {
+          "id": "hafif",
+          "label": "Virtual thread hafif, JVM yönetir",
+          "aliases": [
+            "hafif",
+            "jvm tarafından",
+            "milyon"
+          ],
+          "anchors": [
+            "Virtual thread JVM tarafından yönetilen hafif bir thread'dir."
+          ]
+        },
+        {
+          "id": "unmount",
+          "label": "Bloklayan I/O'da carrier'dan ayrılır",
+          "aliases": [
+            "carrier",
+            "ayrılır",
+            "unmount",
+            "bloklayan"
+          ],
+          "anchors": [
+            "Virtual thread bloklayan I/O sırasında carrier thread'den ayrılır."
+          ]
+        },
+        {
+          "id": "io-yogun",
+          "label": "I/O yoğun işlerde fayda, CPU'da değil",
+          "aliases": [
+            "i/o yoğun",
+            "cpu yoğun",
+            "reaktif"
+          ],
+          "anchors": [
+            "Virtual thread I/O yoğun işlerde fayda sağlar, CPU yoğun işlerde sağlamaz."
+          ]
+        },
+        {
+          "id": "pinning",
+          "label": "Havuzlanmaz, pinning ve semaphore",
+          "aliases": [
+            "havuzlanmaz",
+            "pinning",
+            "sabitle",
+            "semaphore",
+            "reentrantlock"
+          ],
+          "anchors": [
+            "Virtual thread'ler havuzlanmaz, synchronized içinde pinning olabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Virtual thread kullanan bir uygulamada ThreadLocal kullanmanın riski nedir?"
+      ],
+      "source": "Kendi derleme"
+    }
+  ]
+}
