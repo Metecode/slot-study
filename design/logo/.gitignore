@@ -1,3 +1,4 @@
 # Keşif ve kontrol çıktıları; build_logo.py / build_presentation.py yeniden üretir.
 concepts/
 renders/
+__pycache__/
