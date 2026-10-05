@@ -47,6 +47,21 @@ cevabını yazar, kavram bazlı geri bildirim alır.
   yan etki yok. Test edilebilirliği ve ileride paylaşılabilirliği buna bağlı.
 - **İçerik ve ilerleme ayrı.** Sorular repo'dan gelir ve değişir;
   ilerleme kullanıcınındır ve kalır. Tek tipte birleştirme.
+- **Yeni kategori ekleme.** `CATEGORIES` (`domain/question.ts`; sıra
+  seçicideki sıra), `content/labels.ts`, `content/index.ts`'te import +
+  `FILES` satırı. Backend değişiklik istemez: kategori serbest metin,
+  seeder `tr/*.json`'un hepsini okur. Import unutulursa sorular arayüze
+  girmez ama sunucuya girer.
+- **Sonradan gelen kategori mevcut kullanıcıda açık gelir**
+  (`domain/categoryHydration.ts`). `knownCategories` kullanıcının gördüğü
+  kategoriler: orada olmayan açılır, orada olup seçimde olmayan bilinçli
+  kapatılmıştır, kapalı kalır. İçerikten kalkan bilinenlerden düşmez
+  (geri döndüğünde kapatılmışsa açılmasın), `CATEGORIES`'ten kalkan düşer.
+  Alanın yokluğu "eski kayıt" demek; şemaya default konmaz.
+- **`LEGACY_KNOWN_CATEGORIES` dondurulmuş bir listedir.** 1.0.1'de içeriği
+  olan kategoriler; alanı olmayan eski kayıt bunları görmüş sayılır. Yeni
+  kategori ASLA buraya eklenmez — eklenirse mevcut kullanıcılarda kapalı
+  gelir.
 
 ## Stack
 

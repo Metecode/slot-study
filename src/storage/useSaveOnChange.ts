@@ -18,7 +18,7 @@ type SaveSettings = Parameters<typeof toStore>[1];
  */
 export function useSaveOnChange(
   save: (store: Store) => void,
-  { progress, activeCategories }: SaveInput,
+  { progress, activeCategories, knownCategories }: SaveInput,
   {
     fastMode,
     soundEnabled,
@@ -31,13 +31,14 @@ export function useSaveOnChange(
   useEffect(() => {
     save(
       toStore(
-        { progress, activeCategories },
+        { progress, activeCategories, knownCategories },
         { fastMode, soundEnabled, soundHintShown, hapticsEnabled, reminderEnabled, reminderOfferShown },
       ),
     );
   }, [
     progress,
     activeCategories,
+    knownCategories,
     fastMode,
     soundEnabled,
     soundHintShown,

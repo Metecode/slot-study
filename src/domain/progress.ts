@@ -92,6 +92,15 @@ export const storeSchema = z.object({
     lang: z.enum(["tr", "en"]).default("tr"),
     activeCategories: z.array(z.string()).default([]),
     /**
+     * Kullanıcının daha önce gördüğü kategoriler; içeriğe sonradan gelen
+     * kategori bununla tanınıp açık başlar (bkz. domain/categoryHydration.ts).
+     * default YOK, bilerek: alanın olmaması "bu alandan önceki sürümün
+     * kaydı" demek ve geçiş ona göre yapılıyor. Boş dizi varsayılsaydı
+     * kullanıcının kapattığı her kategori bir kez açılırdı. Kırıcı değil,
+     * schemaVersion artmıyor.
+     */
+    knownCategories: z.array(z.string()).optional(),
+    /**
      * İlk açılışta kategori seçimi hiç yapılmamış mı? Eski kayıtlarda alan
      * yok, default false gelir — bu da "henüz seçim yapılmadı" ile aynı
      * anlama geliyor, tesadüf değil: schemaVersion artmadan geriye dönük

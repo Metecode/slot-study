@@ -20,6 +20,7 @@ function firstRenderValue(store: Store): Store {
     type: "HYDRATE",
     progress: store.progress,
     settings: store.settings,
+    contentCategories: [],
   });
   return toStore(state, store.settings);
 }

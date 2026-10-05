@@ -66,6 +66,20 @@ describe("readStore", () => {
     expect(store.settings.hapticsEnabled).toBe(false);
   });
 
+  it("knownCategories alanı olmayan eski kayıt kırılmaz, alan boş diziye dönmez", () => {
+    const old = {
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { activeCategories: ["sql"], initialized: true },
+    };
+
+    const { store, recovered } = readStore(old);
+
+    expect(recovered).toBe(false);
+    // Boş dizi "hiçbir kategori görülmedi" olurdu; geçiş alanın yokluğuna bakıyor.
+    expect(store.settings.knownCategories).toBeUndefined();
+  });
+
   it("açılmış hatırlatıcıyı ve gösterilmiş öneriyi korur", () => {
     const saved = {
       schemaVersion: SCHEMA_VERSION,

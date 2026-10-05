@@ -107,6 +107,8 @@ function salvageSettings(value: unknown): { value: Store["settings"]; reset: str
       reminderOfferShown: pick("reminderOfferShown", shape.reminderOfferShown, defaults.reminderOfferShown),
       lang: pick("lang", shape.lang, defaults.lang),
       activeCategories: pick("activeCategories", shape.activeCategories, defaults.activeCategories),
+      // Geçersizse yok sayılır: eski kayıt gibi geçişten geçer.
+      knownCategories: pick("knownCategories", shape.knownCategories, undefined),
       initialized: pick("initialized", shape.initialized, defaults.initialized),
     },
     reset,
