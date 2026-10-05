@@ -1,20 +1,18 @@
 /* ------------------------------------------------------------------ */
 /* İkon üretimi — design/icon/ kaynaklarından PNG ve favicon            */
 /*                                                                     */
+/*   python design/logo/build_icons.py   (geometri değiştiyse)         */
 /*   npm run icons                                                     */
 /*                                                                     */
-/* Kaynak değiştiğinde çalıştırılır; çıktılar repoya girer. Tarayıcı     */
-/* indirmez, sistemdeki Google Chrome'da canvas'a çizer. PNG kodlaması   */
-/* Node'da: alfa kanalı dosya başına seçilsin (apple-touch şeffaflıksız). */
-/*                                                                     */
-/* Üretmediği, elle aktarılanlar (kaynak değişirse onlar da güncellenir): */
-/*   android/.../drawable/ic_launcher_foreground.xml  ← slot_foreground  */
-/*   android/.../drawable/ic_launcher_monochrome.xml  ← slot_monochrome  */
-/*   android/.../drawable/ic_stat_slot.xml  ← slot_notification_24      */
-/*   android/.../values/ic_launcher_background.xml  ← slot_background   */
+/* Kaynak SVG'ler ve Android vektörleri (drawable/ic_launcher_*.xml,     */
+/* ic_stat_slot.xml) build_icons.py'nin çıktısı: yerleşim, maskelenen    */
+/* ikonların güvenli alan oranları ve renkler orada. Bu betik yalnızca   */
+/* rasterler. Çıktılar repoya girer. Tarayıcı indirmez, sistemdeki       */
+/* Google Chrome'da canvas'a çizer. PNG kodlaması Node'da: alfa kanalı   */
+/* dosya başına seçilsin (apple-touch şeffaflıksız).                    */
 /* ------------------------------------------------------------------ */
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 import { encodePng, launchChrome } from "./lib/raster.mjs";
@@ -22,63 +20,34 @@ import { encodePng, launchChrome } from "./lib/raster.mjs";
 const SOURCE = "design/icon";
 const ANDROID_RES = "android/app/src/main/res";
 
-const foreground = innerSvg(readFileSync(`${SOURCE}/slot_foreground.svg`, "utf-8"));
-const background = readFileSync(`${SOURCE}/slot_background.svg`, "utf-8").match(/fill="(#[0-9a-f]{6})"/i)[1];
-const iosPng = readFileSync(`${SOURCE}/slot_ios_1024.png`).toString("base64");
-
-/*
-  Kırpmalar 108'lik uyarlanabilir tuval üzerinden. Android maskesinin
-  görünür alanı ortadaki 72 (18..90); çizim onun içindeki 66'lık güvenli
-  alanda. Her çıktı bu 72'yi kendi kurallarına göre yerleştirir.
-*/
-
-/** Yuvarlatılmış kare, köşeler şeffaf: favicon ve manifest "any" ikonları. */
-const rounded = (pad = 0) =>
-  svg(18 - pad, 72 + 2 * pad, `<rect x="18" y="18" width="72" height="72" rx="16" fill="${background}"/>${foreground}`);
-
-/** Daire: Android 7.1 round ikonu. */
-const circle = (pad = 0) =>
-  svg(18 - pad, 72 + 2 * pad, `<circle cx="54" cy="54" r="36" fill="${background}"/>${foreground}`);
-
-/*
-  Maskable: zemin kenara kadar. Güvenli bölge merkezde çapı %80 olan daire;
-  viewBox 90 seçildi ki Android'in 72'lik dairesi tam o daireye denk gelsin
-  (72 / 90 = 0.8). İkon her iki platformda aynı büyüklükte görünür.
-*/
-const maskable = svg(9, 90, `<rect x="9" y="9" width="90" height="90" fill="${background}"/>${foreground}`);
-
-/*
-  Android 7.1 ve öncesi (minSdk 24, uyarlanabilir ikon 26'da geldi):
-  kenardan 2/76 pay, launcher'ın gölgesine yer kalsın.
-*/
-const LEGACY_PAD = 2;
 const DENSITIES = { mdpi: 48, hdpi: 72, xhdpi: 96, xxhdpi: 144, xxxhdpi: 192 };
 
 const outputs = [
-  { path: "public/pwa-192x192.png", size: 192, svg: rounded() },
-  { path: "public/pwa-512x512.png", size: 512, svg: rounded() },
-  { path: "public/maskable-icon-512x512.png", size: 512, svg: maskable },
+  // Manifest "any": köşeleri şeffaf karo. Maskable: zemin kenara kadar.
+  { path: "public/pwa-192x192.png", size: 192, source: "slot_any.svg" },
+  { path: "public/pwa-512x512.png", size: 512, source: "slot_any.svg" },
+  { path: "public/maskable-icon-512x512.png", size: 512, source: "slot_maskable.svg" },
   // iOS köşeleri kendisi yuvarlar ve şeffaf pikseli siyaha boyar: RGB.
-  { path: "public/apple-touch-icon-180x180.png", size: 180, png: iosPng, alpha: false },
+  { path: "public/apple-touch-icon-180x180.png", size: 180, source: "slot_ios.svg", alpha: false },
   // Play Console: 512, 32-bit. Köşeleri Play yuvarlar; zemin kenara kadar.
-  { path: `${SOURCE}/store/slot_play_512.png`, size: 512, png: iosPng },
+  { path: `${SOURCE}/store/slot_play_512.png`, size: 512, source: "slot_ios.svg" },
+  // Android 7.1 ve öncesi (minSdk 24, uyarlanabilir ikon 26'da geldi).
   ...Object.entries(DENSITIES).flatMap(([density, size]) => [
-    { path: `${ANDROID_RES}/mipmap-${density}/ic_launcher.png`, size, svg: rounded(LEGACY_PAD) },
-    { path: `${ANDROID_RES}/mipmap-${density}/ic_launcher_round.png`, size, svg: circle(LEGACY_PAD) },
+    { path: `${ANDROID_RES}/mipmap-${density}/ic_launcher.png`, size, source: "slot_legacy.svg" },
+    { path: `${ANDROID_RES}/mipmap-${density}/ic_launcher_round.png`, size, source: "slot_legacy_round.svg" },
   ]),
 ];
 
 // Favicon vektör kalır: her boyutta keskin, dosya birkaç yüz bayt.
-writeFileSync("public/favicon.svg", `${rounded()}\n`);
+copyFileSync(`${SOURCE}/slot_favicon.svg`, "public/favicon.svg");
 console.log("public/favicon.svg");
 
 const browser = await launchChrome("icons");
 try {
   const page = await browser.newPage();
   for (const output of outputs) {
-    const source = output.svg
-      ? `data:image/svg+xml;base64,${Buffer.from(output.svg).toString("base64")}`
-      : `data:image/png;base64,${output.png}`;
+    const svg = readFileSync(`${SOURCE}/${output.source}`);
+    const source = `data:image/svg+xml;base64,${svg.toString("base64")}`;
     const rgba = Buffer.from(await page.evaluate(rasterize, { source, size: output.size }), "base64");
     const alpha = output.alpha ?? true;
     mkdirSync(dirname(output.path), { recursive: true });
@@ -107,14 +76,3 @@ async function rasterize({ source, size }) {
   }
   return btoa(binary);
 }
-
-/** SVG'nin kök etiketi dışındaki içeriği. */
-function innerSvg(text) {
-  return text.slice(text.indexOf(">", text.indexOf("<svg")) + 1, text.lastIndexOf("</svg>")).trim();
-}
-
-/** Kare viewBox'lı SVG; boyut vermeden de ölçeklenir (favicon), canvas'a çizerken hedef boyuta. */
-function svg(origin, extent, body) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${origin} ${origin} ${extent} ${extent}">${body}</svg>`;
-}
-
