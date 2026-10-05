@@ -1,4 +1,5 @@
-"""Platform ikonlarının kaynaklarını üretir: design/icon/*.svg ve Android vektörleri.
+"""Platform ikonlarının kaynaklarını üretir: design/icon/*.svg, Android vektörleri
+ve üst çubuğun logosu (src/components/LogoMark.tsx).
 
 Geometri build_logo.py'den gelir; burada yalnızca yerleşim var: sembol hangi
 tuvalde, kenarı tuvalin yüzde kaçı, zemin ne. PNG'leri `npm run icons` üretir.
@@ -134,7 +135,61 @@ def drawables():
     }
 
 
+# --- Arayüzdeki logo (üst çubuk) ------------------------------------------------
+COMPONENTS = ROOT / "src" / "components"
+CARET_MARK = "CARET"  # imlecin path'ini ayırt etmek için geçici renk
+
+
+def logo_mark_tsx():
+    """Üst çubuğun logosu. ~28 px'te çiziliyor: okların büyük olduğu 32 px kesimi."""
+    lines = []
+    for attrs in PATH_RE.findall(L.symbol_32(caret=CARET_MARK)):
+        a = dict(ATTR_RE.findall(attrs))
+        extra = ' fillRule="evenodd"' if a.get("fill-rule") == "evenodd" else ""
+        if a.get("fill") == CARET_MARK:
+            extra += ' fill="var(--accent)"'
+        lines.append(f'        <path{extra} d="{a["d"]}" />')
+    paths = "\n".join(lines)
+    box = f"{L.O0} {L.O0} {SYMBOL_EDGE} {SYMBOL_EDGE}"
+    return f"""/* ------------------------------------------------------------------ */
+/* Logo işareti — üst çubukta                                           */
+/*                                                                     */
+/* ÜRETİLDİ: design/logo/build_icons.py. Elle düzenleme; geometri        */
+/* değişince betiği çalıştır, ikonlarla birlikte bu da yenilenir.         */
+/* ------------------------------------------------------------------ */
+
+type LogoMarkProps = {{
+  className?: string;
+  /** Kenar, px. Sembol kare; viewBox çizimin dış sınırına kırpılmış. */
+  size?: number;
+}};
+
+/**
+ * Makinenin penceresi; iki ödeme oku imleci gösteriyor. 32 px kesimi:
+ * ~28 px'te tam versiyonun okları kayboluyor. Vurgu yalnız imleçte.
+ */
+export function LogoMark({{ className, size = 28 }}: LogoMarkProps) {{
+  return (
+    <svg
+      className={{className}}
+      width={{size}}
+      height={{size}}
+      viewBox="{box}"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <g fill="var(--text)">
+{paths}
+      </g>
+    </svg>
+  );
+}}
+"""
+
+
 if __name__ == "__main__":
+    (COMPONENTS / "LogoMark.tsx").write_text(logo_mark_tsx(), encoding="utf-8")
+    print("src/components/LogoMark.tsx")
     for name, text in sources().items():
         (ICON_DIR / name).write_text(text, encoding="utf-8")
         print("design/icon/" + name)
