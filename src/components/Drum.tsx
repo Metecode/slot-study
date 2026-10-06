@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef } fro
 
 import { paylineRowIndex, parseTranslateY } from "../audio/reelTicks";
 import styles from "./Drum.module.css";
-import { stripTransform } from "./drumStrip";
+import { buildStrip, CENTER, stripTransform } from "./drumStrip";
 
 /* ------------------------------------------------------------------ */
 /* Tambur — dikey kayan şerit                                          */
@@ -17,20 +17,11 @@ import { stripTransform } from "./drumStrip";
 /* karartma gradyanından geliyor.                                      */
 /* ------------------------------------------------------------------ */
 
-/** Machine'in kaç farklı etiket sağlayacağı. */
-export const FACES = 16;
-
 const OVERSHOOT_ROWS = 0.3;
 const OVERSHOOT_AT = 0.9;
 const EASE_SPIN = "cubic-bezier(.26,.84,.34,1)";
 const EASE_SETTLE = "cubic-bezier(.2,.72,.3,1)";
 
-/**
- * Şeritte ortaya gelen yüzün indeksi. Pencere üç satır gösterir;
- * 0 üstte, 1 ortada, 2 altta. Şerit hiç kaydırılmadığında ortada
- * duran yüz budur.
- */
-const CENTER = 1;
 
 export type DrumHandle = {
   /** Çalışan dönüşü sona atar; onSettle yine bir kez çağrılır. */
@@ -38,14 +29,19 @@ export type DrumHandle = {
 };
 
 export type DrumProps = {
-  /** Havuzdaki etiketler. Şerit bunlardan doldurulur. */
+  /**
+   * Havuzdaki etiketler. Şerit bunlardan doldurulur. Yeni bir dizi
+   * (kimlik değişimi) şeridi dönmeden yeniden kurar: filtre değişince
+   * tambur yeni düzeni hemen göstersin. Machine diziyi yalnızca yeni
+   * dönüşte ya da boştayken yeniden üretir; dönüş sırasında değişmez.
+   */
   labels: string[];
   /** Duracağı etiketin labels içindeki indeksi. */
   targetIndex: number;
   /** Her artışında yeni bir dönüş tetiklenir. */
   spinKey: number;
   durationMs: number;
-  /** Hedefe varmadan kaç tur atılacağı. Tur = FACES satır. */
+  /** Hedefe varmadan kaç tur atılacağı. Tur = FACES satır (domain/reels.ts). */
   turns: number;
   /**
    * Havuzda tek değer varsa o değer; yoksa null.
@@ -55,10 +51,9 @@ export type DrumProps = {
    * Oturma bildirimi de hiç gelmez: turu açma işini Machine gerçekten
    * dönen tambura veriyor.
    *
-   * Etiket ayrı bir alan olarak geliyor, `labels` üzerinden değil:
-   * `labels` dönüş başına bir kez üretiliyor ve turlar arasında bilerek
-   * eskimiş kalıyor. Kategori seçimi değiştiğinde donmuş tambur o eski
-   * diziden okusaydı boş ya da yanlış bir satır gösterirdi.
+   * Etiket `labels` ile aynı düzenden gelir (domain/reels.ts): iki
+   * tamburdan biri canlı filtreden, öteki eski şeritten okursa ödeme
+   * çizgisinde var olmayan bir kategori–konu çifti oluşuyordu.
    */
   frozenLabel?: string | null;
   onSettle?: () => void;
@@ -72,60 +67,6 @@ export type DrumProps = {
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
-/**
- * Pencerede aynı anda görünen üç satırdan ortadaki ile komşularının aynı
- * olmasını engeller. Havuzda başka bir değer yoksa dokunmaz.
- */
-function separateNeighbors(
-  items: string[],
-  center: number,
-  pool: readonly string[],
-): void {
-  const label = items[center];
-  const other = pool.find((value) => value !== label);
-  if (other === undefined) return;
-
-  for (const index of [center - 1, center + 1]) {
-    if (index >= 0 && index < items.length && items[index] === label) {
-      items[index] = other;
-    }
-  }
-}
-
-/**
- * Şeridi kurar. Dinlenme etiketi CENTER'a konur ki dönüş başlarken
- * ekrandaki yazı değişmesin; kazanan, turların sonundaki konuma yazılır.
- *
- * Her iki konumun komşuları ayrıca ayrıştırılıyor. buildFaces yüz halkası
- * içinde tekrarı zaten engelliyor ama şerit halkayı sarmalıyor: kazananın
- * şeritteki komşuları faces[w±1] değil, faces[0] ve faces[2] oluyor.
- * İki değerli bir havuzda bu üçü zorunlu olarak aynı değere düşüyordu —
- * tambur durduğunda üç satır da aynı yazıyordu.
- */
-function buildStrip(
-  labels: string[],
-  targetIndex: number,
-  turns: number,
-  restLabel: string,
-): { items: string[]; winnerPos: number } {
-  const pool = labels.length > 0 ? labels : [""];
-  const winnerPos = CENTER + Math.max(1, turns) * FACES;
-  const items: string[] = [];
-
-  // Altta bir satır fazlası olsun, kayarken boşluk görünmesin.
-  for (let i = 0; i <= winnerPos + 1; i++) {
-    items.push(pool[i % pool.length] ?? "");
-  }
-
-  items[CENTER] = restLabel;
-  items[winnerPos] = pool[targetIndex] ?? "";
-
-  separateNeighbors(items, CENTER, pool);
-  separateNeighbors(items, winnerPos, pool);
-
-  return { items, winnerPos };
 }
 
 /**
@@ -160,23 +101,28 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
   const restLabelRef = useRef<string>(labels[targetIndex] ?? "");
   const lastSpunKeyRef = useRef<number | null>(null);
 
-  const latest = useRef({ targetIndex, durationMs, turns, onSettle, onRowPass, labels });
-  latest.current = { targetIndex, durationMs, turns, onSettle, onRowPass, labels };
+  const latest = useRef({ targetIndex, durationMs, turns, onSettle, onRowPass });
+  latest.current = { targetIndex, durationMs, turns, onSettle, onRowPass };
 
   /**
-   * Şerit yalnızca spinKey değişince yeniden kurulur. Dönüş bittikten
+   * Şerit spinKey ya da labels değişince yeniden kurulur. Dönüş bittikten
    * sonra yerinde bırakılır — sıfırlamak, kazananın bir kare boyunca
-   * kaybolmasına yol açardı.
+   * kaybolmasına yol açardı. turns bilerek bağımlılık değil: dönüş
+   * sürerken hızlı mod açılırsa şerit yeniden kurulup animasyon iptal
+   * olur, tur hiç kapanmazdı.
    */
   const { items, winnerPos } = useMemo(
     () =>
       buildStrip(
-        latest.current.labels,
+        labels,
         latest.current.targetIndex,
         latest.current.turns,
         restLabelRef.current,
       ),
-    [spinKey],
+    // spinKey gövdede okunmuyor ama bilerek bağımlılık: aynı etiketlerle
+    // gelen yeni dönüş de şeridi ekrandaki dinlenme etiketinden kurmalı.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [spinKey, labels],
   );
 
   useImperativeHandle(
@@ -218,7 +164,8 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
     lastSpunKeyRef.current = spinKey;
 
     // İlk bağlanışta dönüş yok: kazanan doğrudan ortada durur.
-    // Aynı spinKey ile efekt tekrar çalışırsa (StrictMode) da dönüş tekrarlanmaz.
+    // Aynı spinKey ile efekt tekrar çalışırsa (StrictMode, ya da boştayken
+    // filtre değişip şerit yeniden kurulduysa) dönüş tekrarlanmaz.
     if (isFirstMount || alreadySpun) {
       strip.style.transform = end;
       restLabelRef.current = items[winnerPos] ?? "";
