@@ -2,6 +2,7 @@ import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef } fro
 
 import { paylineRowIndex, parseTranslateY } from "../audio/reelTicks";
 import styles from "./Drum.module.css";
+import { stripTransform } from "./drumStrip";
 
 /* ------------------------------------------------------------------ */
 /* Tambur — dikey kayan şerit                                          */
@@ -127,7 +128,11 @@ function buildStrip(
   return { items, winnerPos };
 }
 
-/** Tek satır yüksekliğini piksel olarak okur. --row doğrudan okunamaz, çözülmemiş metin döner. */
+/**
+ * Tek satır yüksekliğini piksel olarak okur. --row doğrudan okunamaz,
+ * çözülmemiş metin döner. Yalnızca tık izleme kullanıyor; şeridin konumu
+ * ölçüme bağlı değil (bkz. drumStrip.ts).
+ */
 function readRowHeight(el: HTMLElement): number {
   const h = Number.parseFloat(getComputedStyle(el).height);
   return Number.isFinite(h) && h > 0 ? h : 0;
@@ -203,10 +208,11 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
     const face = faceRef.current;
     if (!strip || !face) return;
 
-    const row = readRowHeight(face);
-    if (row === 0) return;
-
-    const end = -(winnerPos - CENTER) * row;
+    // Konum satır cinsinden; pikseli tarayıcı o anki satır yüksekliğiyle
+    // çözer. Boyut değişince (döndürme, pencere) dönüş sırasında bile doğru.
+    const total = items.length;
+    const endRows = winnerPos - CENTER;
+    const end = stripTransform(endRows, total);
     const isFirstMount = lastSpunKeyRef.current === null;
     const alreadySpun = lastSpunKeyRef.current === spinKey;
     lastSpunKeyRef.current = spinKey;
@@ -214,7 +220,7 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
     // İlk bağlanışta dönüş yok: kazanan doğrudan ortada durur.
     // Aynı spinKey ile efekt tekrar çalışırsa (StrictMode) da dönüş tekrarlanmaz.
     if (isFirstMount || alreadySpun) {
-      strip.style.transform = `translateY(${end}px)`;
+      strip.style.transform = end;
       restLabelRef.current = items[winnerPos] ?? "";
       return;
     }
@@ -235,20 +241,20 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
     };
 
     if (prefersReducedMotion()) {
-      strip.style.transform = `translateY(${end}px)`;
+      strip.style.transform = end;
       settle();
       return;
     }
 
     const animation = strip.animate(
       [
-        { transform: "translateY(0px)", easing: EASE_SPIN, offset: 0 },
+        { transform: stripTransform(0, total), easing: EASE_SPIN, offset: 0 },
         {
-          transform: `translateY(${end - OVERSHOOT_ROWS * row}px)`,
+          transform: stripTransform(endRows + OVERSHOOT_ROWS, total),
           easing: EASE_SETTLE,
           offset: OVERSHOOT_AT,
         },
-        { transform: `translateY(${end}px)`, offset: 1 },
+        { transform: end, offset: 1 },
       ],
       { duration: latest.current.durationMs, fill: "forwards" },
     );
@@ -265,10 +271,12 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
       dinleyen varken ve dönüş sürerken çalıştığı için kabul edilebilir.
     */
     if (latest.current.onRowPass) {
-      let lastRow = paylineRowIndex(0, row, CENTER);
+      let lastRow = CENTER;
       const watch = () => {
+        // Satır yüksekliği her karede okunur: dönüş sırasında boyut
+        // değişirse tık hesabı eski yükseklikle kalmasın.
         const y = parseTranslateY(getComputedStyle(strip).transform);
-        const current = paylineRowIndex(y, row, CENTER);
+        const current = paylineRowIndex(y, readRowHeight(face), CENTER);
         if (current !== lastRow) {
           lastRow = current;
           latest.current.onRowPass?.();
@@ -283,7 +291,7 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
       animation.cancel();
       if (animationRef.current === animation) animationRef.current = null;
       // İptal edilse bile şerit hedefte kalsın, pencere boş görünmesin.
-      strip.style.transform = `translateY(${end}px)`;
+      strip.style.transform = end;
     };
   }, [spinKey, items, winnerPos, frozen, frozenLabel]);
 
