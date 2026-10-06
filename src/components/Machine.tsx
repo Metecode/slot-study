@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef } from "react";
+import type { CSSProperties } from "react";
 
 import { Drum, FACES } from "./Drum";
 import type { DrumHandle } from "./Drum";
 import { Lever } from "./Lever";
+import { ARROW, SYMBOL_EDGE } from "./logoGeometry";
+import { PaylineArrow } from "./PaylineArrow";
 import { SoundHint } from "./SoundHint";
 import { SoundToggle } from "./SoundToggle";
 import { useMachineSound } from "../hooks/useMachineSound";
@@ -32,6 +35,17 @@ const NORMAL_TIMING = {
   first: { durationMs: 1300, turns: 3 },
   second: { durationMs: 1600, turns: 4 },
 };
+
+/**
+ * Ödeme okunun boyu. Bant (üst ve alt kenarı çizili orta satır) logodaki
+ * çerçeveye karşılık geliyor: ok satıra, logodaki ok çerçeveye ne oranla
+ * duruyorsa öyle durur. Satır 64 px'te ~17×23 px, dar ekranda ~15×20 px.
+ * Yuvaya konur: hem ok hem tamburun dış kenar boşluğu bunu okuyor.
+ */
+const PAYLINE_ARROW_VARS = {
+  "--payline-arrow-h": `calc(var(--row) * ${ARROW.height / SYMBOL_EDGE})`,
+  "--payline-arrow-w": `calc(var(--row) * ${ARROW.width / SYMBOL_EDGE})`,
+} as CSSProperties;
 
 const FAST_TIMING = {
   first: { durationMs: 300, turns: 1 },
@@ -266,8 +280,13 @@ export function Machine({
             <span className={styles.reelLabel}>KONU</span>
           </div>
 
-          <div className={styles.bay} data-rows={bayRows} onClick={handleBayClick}>
-            <div ref={leftSlotRef} className={styles.drumSlot}>
+          <div
+            className={styles.bay}
+            style={PAYLINE_ARROW_VARS}
+            data-rows={bayRows}
+            onClick={handleBayClick}
+          >
+            <div ref={leftSlotRef} className={`${styles.drumSlot} ${styles.drumSlotLeft}`}>
               <Drum
                 ref={leftDrumRef}
                 labels={leftFaces}
@@ -285,7 +304,7 @@ export function Machine({
                 }}
               />
             </div>
-            <div ref={rightSlotRef} className={styles.drumSlot}>
+            <div ref={rightSlotRef} className={`${styles.drumSlot} ${styles.drumSlotRight}`}>
               <Drum
                 ref={rightDrumRef}
                 labels={rightFaces}
@@ -304,7 +323,7 @@ export function Machine({
               />
             </div>
 
-            {/* Yalnızca duruşta görünür; üçgenler CSS geçişiyle dışarıdan içeri kayar. */}
+            {/* Yalnızca duruşta görünür; oklar CSS geçişiyle dışarıdan içeri kayar. */}
             <div
               className={
                 paylineSettled ? `${styles.payline} ${styles.paylineSettled}` : styles.payline
@@ -312,8 +331,14 @@ export function Machine({
               aria-hidden="true"
             >
               <span className={styles.paylineFill} />
-              <span className={`${styles.paylineTriangle} ${styles.paylineTriangleLeft}`} />
-              <span className={`${styles.paylineTriangle} ${styles.paylineTriangleRight}`} />
+              <PaylineArrow
+                side="left"
+                className={`${styles.paylineArrow} ${styles.paylineArrowLeft}`}
+              />
+              <PaylineArrow
+                side="right"
+                className={`${styles.paylineArrow} ${styles.paylineArrowRight}`}
+              />
             </div>
           </div>
         </div>

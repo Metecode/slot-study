@@ -40,8 +40,10 @@
   min-width: 0;
 }
 
+/* Logo SVG'leri renk taşımaz: gövde currentColor, imleç --accent. */
 .logo {
   flex-shrink: 0;
+  color: var(--text);
 }
 
 .brandText {
@@ -51,10 +53,13 @@
   min-width: 0;
 }
 
-.name {
-  font-size: var(--fs-heading);
-  font-weight: var(--fw-semibold);
+/* Kelime markası tek renk. Alt boşluk: SVG taban çizgisinde bitiyor,
+   metindeki satır aralığı payı yok; alt başlık ona yapışmasın. */
+.wordmark {
+  display: block;
+  flex-shrink: 0;
   color: var(--text);
+  margin-bottom: var(--space-1);
 }
 
 .tagline {
@@ -71,7 +76,7 @@
 }
 
 /*
-  Dar ekranda tek satır: [logo] Slot ...... [senkron] [avatar]. Kırılma
+  Dar ekranda tek satır: [logo] slot ...... [senkron] [avatar]. Kırılma
   kapalı; sağ grup daralmaz, marka gerekirse kısalır. Kullanıcı adı ve
   senkron metni bu genişlikte kendi modüllerinde gizleniyor.
 */

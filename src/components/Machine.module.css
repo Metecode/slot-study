@@ -119,6 +119,19 @@
   background: var(--well);
 }
 
+/*
+  Ödeme oku tamburun dış kenarına biniyor; dar ekranda yazının ilk
+  harflerini örtüyordu. Dış kenarın boşluğu okun boyu kadar açılır
+  (Drum.module.css, .face). Bütün satırlarda: sütun hizası bozulmasın.
+*/
+.drumSlotLeft {
+  --face-pad-start: calc(var(--payline-arrow-w) + var(--space-1));
+}
+
+.drumSlotRight {
+  --face-pad-end: calc(var(--payline-arrow-w) + var(--space-1));
+}
+
 /* Etiket satırı + yuva dikey olarak burada birlikte durur; .machine'in
    yatay sıralamasında bay'in eski yerini bu sütun alır. */
 .reelsColumn {
@@ -212,29 +225,28 @@
   border-bottom: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
-.paylineTriangle {
+/* Logodaki ok (PaylineArrow); ölçü .bay'e konan değişkenlerden. */
+.paylineArrow {
   position: relative;
   z-index: 1;
-  width: 0;
-  height: 0;
-  border-top: 7px solid transparent;
-  border-bottom: 7px solid transparent;
+  flex-shrink: 0;
+  width: var(--payline-arrow-w);
+  height: var(--payline-arrow-h);
+  color: var(--accent);
   transition: transform var(--dur-base) var(--ease-out);
 }
 
-/* Dinlenirken dışarıda bekler, duruşta içeri kayar. */
-.paylineTriangleLeft {
-  border-left: 9px solid var(--accent);
-  transform: translateX(-14px);
+/* Dinlenirken boyu kadar dışarıda bekler, duruşta içeri kayar. */
+.paylineArrowLeft {
+  transform: translateX(calc(-1 * var(--payline-arrow-w)));
 }
 
-.paylineTriangleRight {
-  border-right: 9px solid var(--accent);
-  transform: translateX(14px);
+.paylineArrowRight {
+  transform: translateX(var(--payline-arrow-w));
 }
 
-.paylineSettled .paylineTriangleLeft,
-.paylineSettled .paylineTriangleRight {
+.paylineSettled .paylineArrowLeft,
+.paylineSettled .paylineArrowRight {
   transform: translateX(0);
 }
 
@@ -291,7 +303,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .payline,
-  .paylineTriangle {
+  .paylineArrow {
     transition: none;
   }
 }

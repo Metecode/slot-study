@@ -1,22 +1,28 @@
 import { platformFeatures } from "../platform";
 import { AuthArea } from "./AuthArea";
+import { WORDMARK_TO_SYMBOL } from "./logoGeometry";
 import { LogoMark } from "./LogoMark";
 import { SyncIndicator } from "./SyncIndicator";
 import styles from "./TopBar.module.css";
+import { Wordmark } from "./Wordmark";
 
 /* ------------------------------------------------------------------ */
 /* Üst çubuk — marka, senkron ve oturum                                */
 /* Sürüm alt bilgide (bkz. Footer); havuz büyüklüğü kategori seçicide. */
 /* ------------------------------------------------------------------ */
 
+/** Sembolün kenarı, px. 32 px kesimi bu boyut için çizildi (bkz. LogoMark). */
+const LOGO_SIZE = 28;
+
 export function TopBar() {
   return (
     <header className={styles.bar}>
       <div className={styles.inner}>
         <div className={styles.brand}>
-          <LogoMark className={styles.logo} />
+          <LogoMark className={styles.logo} size={LOGO_SIZE} />
           <div className={styles.brandText}>
-            <span className={styles.name}>Slot</span>
+            {/* Lockup'taki ölçek: kelime ile sembolün çizgi kalınlığı aynı. */}
+            <Wordmark className={styles.wordmark} height={LOGO_SIZE * WORDMARK_TO_SYMBOL} />
             <span className={styles.tagline}>Teorik soru pratiği</span>
           </div>
         </div>
