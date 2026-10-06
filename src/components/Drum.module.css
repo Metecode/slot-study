@@ -62,7 +62,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 var(--space-2);
+  /* Dış kenar boşluğunu makine açabilir: ödeme oku oraya biniyor
+     (Machine.module.css, .drumSlotLeft/.drumSlotRight). */
+  padding: 0 var(--face-pad-end, var(--space-2)) 0 var(--face-pad-start, var(--space-2));
   font-family: var(--mono);
   /* Pasif satır: --text-faint zemine göre en az 4.5:1 kontrast verir. */
   color: var(--text-faint);
