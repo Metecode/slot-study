@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
-import { Drum, FACES } from "./Drum";
+import { Drum } from "./Drum";
 import type { DrumHandle } from "./Drum";
 import { Lever } from "./Lever";
 import { ARROW, SYMBOL_EDGE } from "./logoGeometry";
@@ -12,16 +12,14 @@ import { useMachineSound } from "../hooks/useMachineSound";
 import { haptics } from "../platform/haptics";
 import { CATEGORY_LABELS } from "../content/labels";
 import type { Category, Question } from "../domain/question";
+import { buildReelLayout, pairOf, restingPair, WINNING_FACE } from "../domain/reels";
+import type { ReelColumn, ReelLayout } from "../domain/reels";
 import styles from "./Machine.module.css";
 
 /* ------------------------------------------------------------------ */
 /* Makine — kasa, iki tambur ve kolu birleştirir.                      */
 /* Reducer'a bağlanmaz: prop alır, olay yayar.                         */
 /* ------------------------------------------------------------------ */
-
-/** Kazanan yüzün indeksi. Ağırlıklı çekiliş domain/draw.ts'te yapılır;   */
-/** burada yalnızca duruşta ortaya oturacak yüz sabittir.                */
-const WINNING_INDEX = 6;
 
 /**
  * Hiç kategori seçili değilken tamburda duran yer tutucu. Boş dize
@@ -79,57 +77,52 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/**
- * Havuzdan rastgele bir değer seçer. Önce tam yasak listesi denenir;
- * havuz buna yetmiyorsa yalnızca bitişik komşular korunur, o da
- * yetmiyorsa ne varsa alınır. Kural üç kademede gevşediği için küçük
- * havuzlarda bile tek geçişte biter, sonsuz döngü olmaz.
- */
-function pickFace(
-  pool: readonly string[],
-  banned: ReadonlySet<string>,
-  adjacent: ReadonlySet<string>,
-): string {
-  const strict = pool.filter((value) => !banned.has(value));
-  const loose = strict.length > 0 ? strict : pool.filter((value) => !adjacent.has(value));
-  const source = loose.length > 0 ? loose : pool;
-  return source[Math.floor(Math.random() * source.length)];
+/** Donmuş tamburun şeridi kurulmuyor; dizi kimliği sabit kalsın diye tek örnek. */
+const NO_FACES: string[] = [];
+
+/** Seçim sırası düzeni etkilemez; yalnızca hangi kategorilerin açık olduğu. */
+function filterKeyOf(categories: readonly Category[]): string {
+  return [...categories].sort().join("|");
 }
 
-/**
- * FACES uzunluğunda etiket dizisi üretir. Kazanan yüz sabittir; diğer 15 yüz
- * havuzdan, art arda tekrarı ve kazanan komşuluğunu engelleyerek doldurulur.
- * Havuzda 3'ten az farklı değer varsa yasak listesi kendiliğinden boşa
- * düşer (pickFace tek geçişte çalışır, sonsuz döngü riski yoktur).
- */
-function buildFaces(pool: readonly string[], winnerLabel: string): string[] {
-  const effectivePool = pool.length > 0 ? pool : [winnerLabel];
-  const faces = new Array<string>(FACES);
-  faces[WINNING_INDEX] = winnerLabel;
+/** Tamburun alacağı etiketler: dönüyorsa yüzler, donmuşsa tek etiket. */
+type DrumLabels = { faces: string[]; frozen: string | null };
 
-  for (let step = 1; step < FACES; step++) {
-    const idx = (WINNING_INDEX + step) % FACES;
-
-    // İki komşuluk mesafesindeki dolu yüzlerin hiçbiri seçilemez: pencerede
-    // aynı anda üç satır göründüğü için tekrar ancak böyle engellenir.
-    // Doldurma kazananın etrafını dolandığından yalnızca geriye bakmak
-    // yetmez — son yüzün komşusu zaten dolu olan ilk yüzdür.
-    // Kazanan da bu komşulardan biri olduğu için hemen öncesi ve sonrası
-    // kendiliğinden ondan farklı kalır.
-    const banned = new Set<string>();
-    const adjacent = new Set<string>();
-    for (const offset of [-2, -1, 1, 2]) {
-      const neighbor = faces[(idx + offset + FACES) % FACES];
-      if (neighbor === undefined) continue;
-      banned.add(neighbor);
-      // Yan yana iki aynı etiket en göze batanı; havuz daralırsa en son bu verilir.
-      if (offset === -1 || offset === 1) adjacent.add(neighbor);
-    }
-
-    faces[idx] = pickFace(effectivePool, banned, adjacent);
+function drumLabels<T>(column: ReelColumn<T>, toLabel: (value: T) => string): DrumLabels {
+  if (column.kind === "frozen") {
+    return {
+      faces: NO_FACES,
+      frozen: column.value === null ? EMPTY_FACE : toLabel(column.value),
+    };
   }
+  return { faces: column.faces.map(toLabel), frozen: null };
+}
 
-  return faces;
+type BuiltLayout = {
+  spinKey: number;
+  filterKey: string;
+  layout: ReelLayout;
+  left: DrumLabels;
+  right: DrumLabels;
+};
+
+function buildLayout(
+  pool: readonly Question[],
+  question: Question | null,
+  previous: ReelLayout | null,
+  spinKey: number,
+  filterKey: string,
+): BuiltLayout {
+  // Soru varsa tambur onu gösterir; yoksa ekrandaki çift havuzda kaldıysa o.
+  const pair = question ? pairOf(question) : restingPair(pool, previous?.pair ?? null);
+  const layout = buildReelLayout(pool, pair, Math.random);
+  return {
+    spinKey,
+    filterKey,
+    layout,
+    left: drumLabels(layout.category, (category) => CATEGORY_LABELS[category]),
+    right: drumLabels(layout.topic, (topic) => topic),
+  };
 }
 
 export function Machine({
@@ -162,43 +155,42 @@ export function Machine({
     [allQuestions, activeCategories],
   );
 
-  // Tek kategori seçiliyse leftPool tek değere iner; aynı şey tek soruluk
-  // bir havuzda rightPool için olur. O tambur donduruluyor (aşağıya bkz.):
-  // hepsi aynı yazan üç satırı kaydırmak dönüş gibi görünmüyor.
-  const leftPool = useMemo(
-    () =>
-      Array.from(new Set(pool.map((q) => q.category))).map(
-        (category) => CATEGORY_LABELS[category],
-      ),
-    [pool],
+  /*
+    Tamburların her şeyi — yüzler, donmuş etiketler — tek düzenden gelir
+    (domain/reels.ts). Düzen iki anda yeniden kurulur:
+    - yeni dönüş (spinKey): kazanan çekilen soru;
+    - dönmüyorken filtre değişimi: tambur filtre dışı bir şey göstermesin
+      (cevap ekranındaki soru yine gösterilir, komşuları filtreden gelir);
+    - tur kapandığında ekrandaki çift artık havuzda değilse.
+    Dönüş sırasında hiç kurulmaz. SPIN ile spinKey ayrı render'larda
+    geliyor (spinKey App'te efektle artıyor); arada kurulsaydı şerit
+    kazanana animasyonsuz atlar, sonra kendinden kendine dönerdi.
+    Önceki düzenin çiftine ihtiyaç olduğu için türetilmiş durum
+    render sırasında güncelleniyor (React'in önerdiği kalıp).
+  */
+  const filterKey = filterKeyOf(activeCategories);
+  const [built, setBuilt] = useState(() =>
+    buildLayout(pool, question, null, spinKey, filterKey),
   );
-  const rightPool = useMemo(() => Array.from(new Set(pool.map((q) => q.topic))), [pool]);
+  let current = built;
+  const spinChanged = built.spinKey !== spinKey;
+  const filterChanged = built.filterKey !== filterKey && !spinning;
+  // Cevap ekranında filtre soruyu dışarıda bıraktıysa tur kapanınca
+  // tambur o soruda kalmasın. Çift havuzdaysa dokunulmaz: yeniden
+  // kurulsa komşu satırlar boşuna değişirdi.
+  const pairLeftPool =
+    !spinning &&
+    question === null &&
+    restingPair(pool, built.layout.pair) !== built.layout.pair;
+  if (spinChanged || filterChanged || pairLeftPool) {
+    current = buildLayout(pool, question, built.layout, spinKey, filterKey);
+    setBuilt(current);
+  }
 
-  // question null iken tamburlar son durumlarını korur; o an için bir
-  // kazanan etiketi gerekmez ama dizi yine de FACES uzunluğunda olmalı,
-  // bu yüzden havuzdan bir yedek seçilir.
-  const winnerLeft = question ? CATEGORY_LABELS[question.category] : (leftPool[0] ?? "");
-  const winnerRight = question ? question.topic : (rightPool[0] ?? "");
-
-  // Yüzlerin rastgele dağılımı yalnızca dönüş başına bir kez üretilir;
-  // bağımlılık bilerek yalnızca spinKey — havuz ve kazanan aynı dönüş
-  // içinde zaten sabit kalır.
-  const leftFaces = useMemo(
-    () => buildFaces(leftPool, winnerLeft),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [spinKey],
-  );
-  const rightFaces = useMemo(
-    () => buildFaces(rightPool, winnerRight),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [spinKey],
-  );
-
-  // Havuzda tek değer varsa o tambur dönmez, o değeri sabit gösterir.
-  // Etiket havuzdan okunuyor: yüz dizileri dönüş başına üretildiği için
-  // kategori seçimi değişince eskimiş kalıyorlar.
-  const frozenLeft = leftPool.length <= 1 ? (leftPool[0] ?? EMPTY_FACE) : null;
-  const frozenRight = rightPool.length <= 1 ? (rightPool[0] ?? EMPTY_FACE) : null;
+  const leftFaces = current.left.faces;
+  const rightFaces = current.right.faces;
+  const frozenLeft = current.left.frozen;
+  const frozenRight = current.right.frozen;
   const leftFrozen = frozenLeft !== null;
   const rightFrozen = frozenRight !== null;
 
@@ -290,7 +282,7 @@ export function Machine({
               <Drum
                 ref={leftDrumRef}
                 labels={leftFaces}
-                targetIndex={WINNING_INDEX}
+                targetIndex={WINNING_FACE}
                 spinKey={spinKey}
                 durationMs={timing.first.durationMs}
                 turns={timing.first.turns}
@@ -308,7 +300,7 @@ export function Machine({
               <Drum
                 ref={rightDrumRef}
                 labels={rightFaces}
-                targetIndex={WINNING_INDEX}
+                targetIndex={WINNING_FACE}
                 spinKey={spinKey}
                 durationMs={timing.second.durationMs}
                 turns={timing.second.turns}

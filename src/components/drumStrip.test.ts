@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { stripTransform } from "./drumStrip";
+import { FACES, WINNING_FACE } from "../domain/reels";
+import { buildStrip, CENTER, stripTransform } from "./drumStrip";
 
 /**
  * Tarayıcının yaptığını taklit eder: translateY(%) şeridin kendi
@@ -47,5 +48,26 @@ describe("stripTransform", () => {
   it("öteleme yoksa ya da şerit boşsa 0", () => {
     expect(stripTransform(0, TOTAL)).toBe("translateY(0%)");
     expect(stripTransform(5, 0)).toBe("translateY(0%)");
+  });
+});
+
+describe("buildStrip", () => {
+  const labels = Array.from({ length: FACES }, (_, i) => `y${i}`);
+
+  it("kazananı ve halkadaki komşularını duruş satırlarına koyar", () => {
+    for (const turns of [1, 3, 4]) {
+      const { items, winnerPos } = buildStrip(labels, WINNING_FACE, turns, "dinlenme");
+
+      expect(items[winnerPos]).toBe(labels[WINNING_FACE]);
+      expect(items[winnerPos - 1]).toBe(labels[WINNING_FACE - 1]);
+      expect(items[winnerPos + 1]).toBe(labels[WINNING_FACE + 1]);
+    }
+  });
+
+  it("dönüş ekrandaki dinlenme etiketinden başlar", () => {
+    const { items } = buildStrip(labels, WINNING_FACE, 3, "dinlenme");
+    expect(items[CENTER]).toBe("dinlenme");
+    expect(items[CENTER - 1]).not.toBe("dinlenme");
+    expect(items[CENTER + 1]).not.toBe("dinlenme");
   });
 });
