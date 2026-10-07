@@ -39,3 +39,10 @@ HELP.md
 *.jks
 *.keystore
 keystore.properties
+
+# iOS imza dosyaları ve App Store Connect API anahtarı — asla repoya girmez,
+# Codemagic'te saklanır (bkz. docs/ios-release.md)
+*.p8
+*.p12
+*.cer
+*.mobileprovision

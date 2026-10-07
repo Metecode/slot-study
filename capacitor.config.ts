@@ -26,8 +26,22 @@ const config: CapacitorConfig = {
       Değişirse kullanıcının cihazdaki ilerlemesi görünmez olur.
       server.url BİLEREK yok: uygulama paketlenmiş varlıklarla çalışır,
       uzak bir adresten yüklenmez.
+      iosScheme yok: iOS'ta origin capacitor://localhost. "https" verilemez,
+      WKWebView kendi işlediği şemayı kabul etmiyor ve Capacitor varsayılana
+      düşüyor. Native'de depo dosya sistemi olduğu için origin ilerlemeyi
+      etkilemiyor.
     */
     androidScheme: "https",
+  },
+  ios: {
+    /*
+      Varsayılan zaten "never"; açıkça yazıldı çünkü kenar boşlukları buna
+      bağlı. WebView çentiğin ve ev göstergesinin altına uzanır, env(safe-area-*)
+      dolu gelir ve index.css --safe-* değişkenleriyle boşluğu kendisi verir.
+      "automatic" olsaydı iOS kaydırma alanına ayrıca inset ekler, boşluk iki
+      kez verilirdi.
+    */
+    contentInset: "never",
   },
   plugins: {
     SystemBars: {
@@ -48,6 +62,12 @@ const config: CapacitorConfig = {
       */
       smallIcon: "ic_stat_slot",
       iconColor: "#22d3ee",
+      /*
+        Yalnızca iOS okur: uygulama öndeyken hatırlatma banner ve ses
+        olmadan Bildirim Merkezi'ne düşer; kullanıcı zaten çalışıyor.
+        Eklentinin varsayılanı banner + ses + rozet + liste.
+      */
+      presentationOptions: ["list"],
     },
   },
 };

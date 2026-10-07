@@ -19,6 +19,14 @@ import { encodePng, launchChrome } from "./lib/raster.mjs";
 
 const SOURCE = "design/icon";
 const ANDROID_RES = "android/app/src/main/res";
+const IOS_ASSETS = "ios/App/App/Assets.xcassets";
+
+/*
+  iOS açılış ekranındaki ikon (LaunchScreen.storyboard'da 192×192 pt,
+  ortada). Kaynak Android'in açılışındaki ön katman: zemin şeffaf, logo
+  kutunun ~%62'si (~118 pt). Zemin storyboard'da #0b0f14.
+*/
+const IOS_LAUNCH_ICON_PT = 192;
 
 const DENSITIES = { mdpi: 48, hdpi: 72, xhdpi: 96, xxhdpi: 144, xxxhdpi: 192 };
 
@@ -31,6 +39,13 @@ const outputs = [
   { path: "public/apple-touch-icon-180x180.png", size: 180, source: "slot_ios.svg", alpha: false },
   // Play Console: 512, 32-bit. Köşeleri Play yuvarlar; zemin kenara kadar.
   { path: `${SOURCE}/store/slot_play_512.png`, size: 512, source: "slot_ios.svg" },
+  // iOS: tek 1024 ikon, sistem küçültür. Şeffaflık kabul edilmez: RGB.
+  { path: `${IOS_ASSETS}/AppIcon.appiconset/AppIcon-512@2x.png`, size: 1024, source: "slot_ios.svg", alpha: false },
+  ...[1, 2, 3].map((scale) => ({
+    path: `${IOS_ASSETS}/LaunchIcon.imageset/LaunchIcon${scale === 1 ? "" : `@${scale}x`}.png`,
+    size: IOS_LAUNCH_ICON_PT * scale,
+    source: "slot_foreground.svg",
+  })),
   // Android 7.1 ve öncesi (minSdk 24, uyarlanabilir ikon 26'da geldi).
   ...Object.entries(DENSITIES).flatMap(([density, size]) => [
     { path: `${ANDROID_RES}/mipmap-${density}/ic_launcher.png`, size, source: "slot_legacy.svg" },

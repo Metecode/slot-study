@@ -4,3 +4,13 @@ android/gradlew text eol=lf
 # her sync'ten sonra içerik farkı olmadan değişmiş görünüyorlardı.
 android/capacitor.settings.gradle text eol=lf
 android/app/capacitor.build.gradle text eol=lf
+# iOS: Package.swift her sync'te LF ile yeniden yazılıyor (aynı sebep). Xcode
+# dosyaları Mac'te LF'le yazılıyor ve derleme yalnızca orada (Codemagic).
+ios/App/CapApp-SPM/Package.swift text eol=lf
+ios/**/*.pbxproj text eol=lf
+ios/**/*.plist text eol=lf
+ios/**/*.xcprivacy text eol=lf
+ios/**/*.storyboard text eol=lf
+ios/**/*.xcconfig text eol=lf
+ios/**/*.swift text eol=lf
+ios/**/Contents.json text eol=lf

@@ -29,9 +29,10 @@ const android = Capacitor.getPlatform() === "android";
  * Platforma göre açık/kapalı özellikler. Modül yüklenirken bir kez
  * hesaplanır; çalışma sırasında platform değişmez.
  *
- * - auth: Mobil v1 tamamen çevrimdışı. Native'de origin https://localhost
- *   ve /api yolları paketlenmiş varlıklara düşer; giriş, oturum yenileme
- *   ve senkron hiç denenmez.
+ * - auth: Mobil v1 tamamen çevrimdışı. Native'de origin yerel
+ *   (Android https://localhost, iOS capacitor://localhost) ve /api yolları
+ *   paketlenmiş varlıklara düşer; giriş, oturum yenileme ve senkron hiç
+ *   denenmez.
  * - serviceWorker: Native'de varlıklar zaten paketin içinde; önbellek
  *   katmanı gereksiz ve güncellemeyi uygulama mağazası yapıyor.
  * - haptics: Native'de @capacitor/haptics ile titreşim ve Ayarlar'da
@@ -44,10 +45,10 @@ const android = Capacitor.getPlatform() === "android";
  *   kurulmadan zamanlamaya geçilmediği için iOS'ta hatırlatıcı hiç
  *   kurulmuyordu.
  * - sameOriginPages: Sitenin statik sayfaları (/privacy) uygulamayla aynı
- *   origin'de mi. Native'de origin https://localhost; göreli /privacy
+ *   origin'de mi. Native'de origin yerel (yukarıda); göreli /privacy
  *   paketteki kopyaya ya da uygulamanın kendisine düşerdi. Bağlantı orada
  *   canlı sitenin mutlak adresine gider, Capacitor onu sistem tarayıcısına
- *   verir.
+ *   (iOS'ta Safari) verir.
  */
 export const platformFeatures = {
   auth: !native,
