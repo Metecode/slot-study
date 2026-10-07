@@ -42,10 +42,12 @@ const LocalNotifications = {
 };
 const pluginFactory = vi.fn(() => ({ LocalNotifications }));
 
-async function loadReminders(native: boolean) {
+type Platform = "web" | "android" | "ios";
+
+async function loadReminders(platform: Platform) {
   vi.resetModules();
   vi.doMock("@capacitor/core", () => ({
-    Capacitor: { isNativePlatform: () => native },
+    Capacitor: { isNativePlatform: () => platform !== "web", getPlatform: () => platform },
   }));
   vi.doMock("@capacitor/local-notifications", pluginFactory);
   const { reminders } = await import("./reminders");
@@ -76,7 +78,7 @@ afterEach(() => {
 
 describe("web", () => {
   it("hiçbir şey yapmaz, eklentiyi yüklemez", async () => {
-    const reminders = await loadReminders(false);
+    const reminders = await loadReminders("web");
 
     await reminders.sync(new Date("2026-03-11T16:00:00.000Z"));
     await reminders.sync(null);
@@ -87,9 +89,9 @@ describe("web", () => {
   });
 });
 
-describe("native — kurulum", () => {
+describe("native — kurulum (Android)", () => {
   it("eklenti modül yüklenirken değil ilk çağrıda yüklenir", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
     expect(pluginFactory).not.toHaveBeenCalled();
 
     await reminders.sync(null);
@@ -97,7 +99,7 @@ describe("native — kurulum", () => {
   });
 
   it("önce panelden kaldırır ve iptal eder, sonra kanalı kurup zamanlar", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
     const at = new Date("2026-03-11T16:00:00.000Z");
 
     await reminders.sync(at);
@@ -108,7 +110,7 @@ describe("native — kurulum", () => {
   });
 
   it("kesin alarm istemez, doze'da çalabilir, kendi kanalıyla kurar", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
     const at = new Date("2026-03-11T16:00:00.000Z");
 
     await reminders.sync(at);
@@ -125,7 +127,7 @@ describe("native — kurulum", () => {
   });
 
   it("kanal Türkçe adıyla ve önem 3 ile bir kez kurulur", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     await reminders.sync(new Date("2026-03-11T16:00:00.000Z"));
     await reminders.sync(new Date("2026-03-12T16:00:00.000Z"));
@@ -139,7 +141,7 @@ describe("native — kurulum", () => {
   });
 
   it("null (ayar kapalı ya da hatırlatacak soru yok) yalnızca iptal eder", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     await reminders.sync(null);
 
@@ -148,7 +150,7 @@ describe("native — kurulum", () => {
   });
 
   it("art arda çağrılarda yalnızca sonuncusu uygulanır", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
     const last = new Date("2026-03-13T16:00:00.000Z");
 
     void reminders.sync(new Date("2026-03-11T16:00:00.000Z"));
@@ -162,7 +164,7 @@ describe("native — kurulum", () => {
   it("eklenti hatası fırlatmaz, sonraki kurulumu engellemez", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     LocalNotifications.schedule.mockRejectedValueOnce(new Error("OS-PLUG-LNOT-0005"));
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     await expect(reminders.sync(new Date("2026-03-11T16:00:00.000Z"))).resolves.toBeUndefined();
     expect(warn).toHaveBeenCalledWith("[reminders]", expect.any(Error));
@@ -176,7 +178,7 @@ describe("native — kurulum", () => {
     pluginFactory.mockImplementationOnce(() => {
       throw new Error("chunk yüklenemedi");
     });
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     await expect(reminders.sync(null)).resolves.toBeUndefined();
     expect(LocalNotifications.cancel).not.toHaveBeenCalled();
@@ -186,9 +188,78 @@ describe("native — kurulum", () => {
   });
 });
 
+describe("native — kurulum (iOS)", () => {
+  // iOS eklentisi createChannel'ı "unimplemented" ile reddediyor.
+  it("kanal kurmadan zamanlar", async () => {
+    const reminders = await loadReminders("ios");
+    const at = new Date("2026-03-11T16:00:00.000Z");
+
+    await reminders.sync(at);
+
+    expect(calls).toEqual(["removeDelivered", "cancel", "schedule"]);
+    expect(LocalNotifications.createChannel).not.toHaveBeenCalled();
+    expect(scheduledNotification().schedule).toEqual({ at, allowWhileIdle: true });
+  });
+});
+
+describe("native — kurulumdan önce izin kontrolü", () => {
+  const at = new Date("2026-03-11T16:00:00.000Z");
+
+  it("izin hiç sorulmamışsa (ör. yedekten dönen açık ayar) kurmaz ve izin istemez", async () => {
+    display = "prompt";
+    const reminders = await loadReminders("ios");
+
+    await reminders.sync(at);
+
+    expect(calls).toEqual(["removeDelivered", "cancel"]);
+    expect(LocalNotifications.schedule).not.toHaveBeenCalled();
+    expect(LocalNotifications.requestPermissions).not.toHaveBeenCalled();
+  });
+
+  it("izin reddedilmişse kurmaz", async () => {
+    display = "denied";
+    const reminders = await loadReminders("android");
+
+    await reminders.sync(at);
+
+    expect(calls).toEqual(["removeDelivered", "cancel"]);
+    expect(LocalNotifications.requestPermissions).not.toHaveBeenCalled();
+  });
+
+  it("izin var ama sistemde bildirimler kapalıysa kurmaz", async () => {
+    enabled = false;
+    const reminders = await loadReminders("android");
+
+    await reminders.sync(at);
+
+    expect(calls).toEqual(["removeDelivered", "cancel"]);
+  });
+
+  it("izin sonradan verilirse bir sonraki kurulum zamanlar", async () => {
+    display = "prompt";
+    const reminders = await loadReminders("ios");
+    await reminders.sync(at);
+
+    display = "granted";
+    await reminders.sync(at);
+
+    expect(LocalNotifications.schedule).toHaveBeenCalledTimes(1);
+  });
+
+  it("iptal için izne bakmaz", async () => {
+    display = "prompt";
+    const reminders = await loadReminders("android");
+
+    await reminders.sync(null);
+
+    expect(calls).toEqual(["removeDelivered", "cancel"]);
+    expect(LocalNotifications.checkPermissions).not.toHaveBeenCalled();
+  });
+});
+
 describe("native — izin", () => {
   it("izin zaten varsa sormadan granted döner", async () => {
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     expect(await reminders.requestPermission()).toBe("granted");
     expect(LocalNotifications.requestPermissions).not.toHaveBeenCalled();
@@ -196,7 +267,7 @@ describe("native — izin", () => {
 
   it("izin yoksa sorar; verilirse granted", async () => {
     display = "prompt";
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     expect(await reminders.requestPermission()).toBe("granted");
     expect(LocalNotifications.requestPermissions).toHaveBeenCalledTimes(1);
@@ -205,7 +276,7 @@ describe("native — izin", () => {
   it("kullanıcı reddederse denied döner ve hiçbir şey zamanlamaz", async () => {
     display = "prompt";
     requestResult = "denied";
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     expect(await reminders.requestPermission()).toBe("denied");
     expect(LocalNotifications.schedule).not.toHaveBeenCalled();
@@ -213,7 +284,7 @@ describe("native — izin", () => {
 
   it("izin var ama sistemde bildirimler kapalıysa denied", async () => {
     enabled = false;
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     expect(await reminders.checkPermission()).toBe("denied");
     expect(await reminders.requestPermission()).toBe("denied");
@@ -221,7 +292,7 @@ describe("native — izin", () => {
 
   it("checkPermission hiç sormaz", async () => {
     display = "prompt";
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     expect(await reminders.checkPermission()).toBe("denied");
     expect(LocalNotifications.requestPermissions).not.toHaveBeenCalled();
@@ -230,7 +301,7 @@ describe("native — izin", () => {
   it("eklenti hatasında izin denied sayılır, fırlatmaz", async () => {
     vi.spyOn(console, "warn").mockImplementation(() => {});
     LocalNotifications.checkPermissions.mockRejectedValueOnce(new Error("bridge"));
-    const reminders = await loadReminders(true);
+    const reminders = await loadReminders("android");
 
     expect(await reminders.requestPermission()).toBe("denied");
   });

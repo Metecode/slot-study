@@ -22,6 +22,9 @@ function isNativePlatform(): boolean {
 
 const native = isNativePlatform();
 
+/** Yalnızca Android'e özgü bayraklar için; o da dışa aktarılmaz. */
+const android = Capacitor.getPlatform() === "android";
+
 /**
  * Platforma göre açık/kapalı özellikler. Modül yüklenirken bir kez
  * hesaplanır; çalışma sırasında platform değişmez.
@@ -36,6 +39,10 @@ const native = isNativePlatform();
  *   navigator.vibrate koşulsuz kalır (bkz. haptics.ts).
  * - reminders: Native'de yerel bildirimle tekrar hatırlatıcısı, Ayarlar'da
  *   anahtarı ve öneri kartı. Web'de hiçbiri yok (bkz. reminders.ts).
+ * - notificationChannels: Bildirim kanalı yalnızca Android'de var. iOS
+ *   eklentisi createChannel'ı "unimplemented" ile reddediyor; kanal
+ *   kurulmadan zamanlamaya geçilmediği için iOS'ta hatırlatıcı hiç
+ *   kurulmuyordu.
  * - sameOriginPages: Sitenin statik sayfaları (/privacy) uygulamayla aynı
  *   origin'de mi. Native'de origin https://localhost; göreli /privacy
  *   paketteki kopyaya ya da uygulamanın kendisine düşerdi. Bağlantı orada
@@ -47,6 +54,7 @@ export const platformFeatures = {
   serviceWorker: !native,
   haptics: native,
   reminders: native,
+  notificationChannels: android,
   sameOriginPages: !native,
 } as const;
 
@@ -73,6 +81,18 @@ export const storage: StorageAdapter = native
   aiHandoff/nativeAiHandoff.ts); sıralama aiHandoff/handoff.ts'te.
 */
 export const aiHandoff: AiHandoffAdapter = native ? createNativeAiHandoff() : webAiHandoff;
+
+/**
+ * Uygulamanın her yerindeki pano yazımı buradan geçer; navigator.clipboard
+ * doğrudan çağrılmaz. Native'de @capacitor/clipboard: iOS'ta origin
+ * capacitor://localhost ve WKWebView'in onu güvenli bağlam saydığı
+ * belgelenmemiş, saymazsa navigator.clipboard hiç yok. Web'de Clipboard
+ * API, olmazsa execCommand yedeği (bkz. aiHandoff/webAiHandoff.ts).
+ * Hata fırlatmaz; yazılamadıysa false.
+ */
+export function copyToClipboard(text: string): Promise<boolean> {
+  return aiHandoff.copy(text);
+}
 
 export type { AiHandoffAdapter, ShareResult } from "./aiHandoff/AiHandoffAdapter";
 export type { StorageAdapter } from "./storage/StorageAdapter";

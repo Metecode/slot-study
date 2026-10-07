@@ -56,7 +56,10 @@ function loadPlugin(): Promise<LocalNotificationsModule> {
   return pluginPromise;
 }
 
-/** Kanal oturum başına bir kez kurulur; Android'de aynı id ile tekrar kurmak zararsız. */
+/**
+ * Kanal oturum başına bir kez kurulur; Android'de aynı id ile tekrar kurmak
+ * zararsız. Yalnızca Android (bkz. platformFeatures.notificationChannels).
+ */
 function ensureChannel({ LocalNotifications }: LocalNotificationsModule): Promise<void> {
   channelPromise ??= LocalNotifications.createChannel({ ...CHANNEL }).catch((error: unknown) => {
     channelPromise = null;
@@ -88,7 +91,17 @@ async function apply(at: Date | null): Promise<void> {
   await LocalNotifications.cancel({ notifications: [{ id: REMINDER_ID }] });
   if (at === null) return;
 
-  await ensureChannel(plugin);
+  /*
+    Ayar açık ama izin yoksa kurulmaz, izin de istenmez: izni yalnızca
+    kullanıcının açtığı anahtar ister. Örnek: iCloud ya da cihaz
+    yedeğinden dönen ayarlar açık gelir, yeni kurulumda izin hiç
+    sorulmamıştır. Kurulsa da gösterilmezdi. Bayat ayarı kapatmak
+    açılıştaki ve öne gelişteki izin kontrolünün işi
+    (hooks/useReviewReminder.ts).
+  */
+  if (!(await isGranted(plugin))) return;
+
+  if (platformFeatures.notificationChannels) await ensureChannel(plugin);
   await LocalNotifications.schedule({
     notifications: [
       {
