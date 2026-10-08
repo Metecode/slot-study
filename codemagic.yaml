@@ -24,7 +24,7 @@ workflows:
       vars:
         # App Store Connect → uygulama → App Information → Apple ID (sayısal).
         # Gizli değil; uygulama oluşturulunca buraya yazılır.
-        APP_STORE_APPLE_ID: "BURAYA_APPLE_ID"
+        APP_STORE_APPLE_ID: "6820660636"
     scripts:
       - name: Xcode sürümü
         script: |
