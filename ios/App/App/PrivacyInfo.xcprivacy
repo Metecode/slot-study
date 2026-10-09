@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Uygulamanın gizlilik manifesti. Takip yok, cihazdan veri çıkmıyor:
+  mobil sürüm çevrimdışı, giriş ve senkron kapalı.
+
+  Gerekçe isteyen API'ler: Capacitor çekirdeği ve eklentiler kendi
+  manifestlerini getirmiyor (çekirdeğinki boş), hepsi uygulamaya statik
+  bağlandığı için beyan burada. Tek kullanım dosya zaman damgası:
+  depo (src/platform/storage/namespaceFile.ts) Filesystem.readdir
+  çağırıyor; eklenti her dosya için IONFilesystemLib'in
+  attributesOfItem'ını (creationDate, modificationDate) okuyor.
+  C617.1: uygulama kabındaki dosyaların zaman damgası/meta verisi.
+
+  Yeni bir eklenti ya da native kod eklenince Apple'ın "required reason
+  API" listesine karşı yeniden kontrol edilir.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

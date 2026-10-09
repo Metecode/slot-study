@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
+import { copyToClipboard } from "../../platform";
 import { CheckIcon, CopyIcon } from "./icons";
 import styles from "./ModelAnswer.module.css";
 
@@ -36,13 +37,9 @@ export function CodeBlock({ lang, code }: CodeBlockProps) {
   useEffect(() => clearTimers, []);
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(code);
-    } catch {
-      // Güvenli olmayan bağlamda pano yok. Yanlış geri bildirim vermektense
-      // hiç vermemek doğru: kullanıcı metni elle seçebilir.
-      return;
-    }
+    // Yazılamadıysa yanlış geri bildirim vermektense hiç vermemek doğru:
+    // kullanıcı metni elle seçebilir.
+    if (!(await copyToClipboard(code))) return;
 
     // Arka arkaya tıklamada eski sayaçlar yenisini erken söndürmesin.
     clearTimers();

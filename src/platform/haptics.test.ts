@@ -20,7 +20,7 @@ const vibrate = vi.fn<(ms: number) => boolean>(() => true);
 async function loadHaptics(native: boolean) {
   vi.resetModules();
   vi.doMock("@capacitor/core", () => ({
-    Capacitor: { isNativePlatform: () => native },
+    Capacitor: { isNativePlatform: () => native, getPlatform: () => (native ? "android" : "web") },
   }));
   vi.doMock("@capacitor/haptics", pluginFactory);
   const { haptics } = await import("./haptics");

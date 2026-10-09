@@ -8,10 +8,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
   Bayraklar modül yüklenirken bir kez hesaplanıyor; her test Capacitor'ı
   kendi değeriyle taklit edip modülleri yeniden yükler.
 */
-function mockCapacitor(native: boolean): void {
+function mockCapacitor(platform: "web" | "android" | "ios"): void {
   vi.resetModules();
   vi.doMock("@capacitor/core", () => ({
-    Capacitor: { isNativePlatform: () => native },
+    Capacitor: { isNativePlatform: () => platform !== "web", getPlatform: () => platform },
   }));
 }
 
@@ -32,7 +32,7 @@ afterEach(() => {
 
 describe("platformFeatures", () => {
   it("web'de auth, service worker ve aynı origin sayfalar açık, haptik ve hatırlatıcı kapalı", async () => {
-    mockCapacitor(false);
+    mockCapacitor("web");
     const { platformFeatures } = await import("./index");
 
     expect(platformFeatures).toEqual({
@@ -40,12 +40,13 @@ describe("platformFeatures", () => {
       serviceWorker: true,
       haptics: false,
       reminders: false,
+      notificationChannels: false,
       sameOriginPages: true,
     });
   });
 
-  it("native'de auth, service worker ve aynı origin sayfalar kapalı, haptik ve hatırlatıcı açık", async () => {
-    mockCapacitor(true);
+  it("Android'de auth, service worker ve aynı origin sayfalar kapalı, haptik, hatırlatıcı ve kanal açık", async () => {
+    mockCapacitor("android");
     const { platformFeatures } = await import("./index");
 
     expect(platformFeatures).toEqual({
@@ -53,6 +54,21 @@ describe("platformFeatures", () => {
       serviceWorker: false,
       haptics: true,
       reminders: true,
+      notificationChannels: true,
+      sameOriginPages: false,
+    });
+  });
+
+  it("iOS'ta Android ile aynı, yalnızca bildirim kanalı yok", async () => {
+    mockCapacitor("ios");
+    const { platformFeatures } = await import("./index");
+
+    expect(platformFeatures).toEqual({
+      auth: false,
+      serviceWorker: false,
+      haptics: true,
+      reminders: true,
+      notificationChannels: false,
       sameOriginPages: false,
     });
   });
@@ -64,7 +80,7 @@ describe("storage seçimi", () => {
   });
 
   it("web'de IndexedDB adapter'ı", async () => {
-    mockCapacitor(false);
+    mockCapacitor("web");
     const { storage } = await import("./index");
     const { indexedDbAdapter } = await import("./storage/indexedDbAdapter");
 
@@ -72,7 +88,7 @@ describe("storage seçimi", () => {
   });
 
   it("native'de dosya adapter'ı, modül yüklenirken değil ilk çağrıda yüklenir", async () => {
-    mockCapacitor(true);
+    mockCapacitor("android");
     const { createMemoryAdapter } = await import("./storage/memoryAdapter");
     const createFilesystemAdapter = vi.fn(createMemoryAdapter);
     vi.doMock("./storage/filesystemAdapter", () => ({ createFilesystemAdapter }));
@@ -94,7 +110,7 @@ describe("aiHandoff seçimi", () => {
   });
 
   it("web'de web adapter'ı", async () => {
-    mockCapacitor(false);
+    mockCapacitor("web");
     const { aiHandoff } = await import("./index");
     const { webAiHandoff } = await import("./aiHandoff/webAiHandoff");
 
@@ -102,7 +118,7 @@ describe("aiHandoff seçimi", () => {
   });
 
   it("native'de native adapter'ı, modül yüklenirken oluşturulur", async () => {
-    mockCapacitor(true);
+    mockCapacitor("android");
     const nativeAdapter = { copy: vi.fn(), canShare: vi.fn(), share: vi.fn(), open: vi.fn() };
     const createNativeAiHandoff = vi.fn(() => nativeAdapter);
     vi.doMock("./aiHandoff/nativeAiHandoff", () => ({ createNativeAiHandoff }));
@@ -112,11 +128,26 @@ describe("aiHandoff seçimi", () => {
     expect(aiHandoff).toBe(nativeAdapter);
     expect(createNativeAiHandoff).toHaveBeenCalledOnce();
   });
+
+  it("copyToClipboard native'de eklentili adapter'dan geçer, navigator.clipboard'a gitmez", async () => {
+    mockCapacitor("ios");
+    const writeText = vi.fn(() => Promise.resolve());
+    vi.stubGlobal("navigator", { clipboard: { writeText } });
+    const copy = vi.fn(() => Promise.resolve(true));
+    const nativeAdapter = { copy, canShare: vi.fn(), share: vi.fn(), open: vi.fn() };
+    vi.doMock("./aiHandoff/nativeAiHandoff", () => ({ createNativeAiHandoff: () => nativeAdapter }));
+
+    const { copyToClipboard } = await import("./index");
+
+    await expect(copyToClipboard("SELECT 1;")).resolves.toBe(true);
+    expect(copy).toHaveBeenCalledExactlyOnceWith("SELECT 1;");
+    expect(writeText).not.toHaveBeenCalled();
+  });
 });
 
 describe("registerServiceWorker", () => {
   it("web'de /sw.js'i kök kapsamla kaydeder", async () => {
-    mockCapacitor(false);
+    mockCapacitor("web");
     const register = stubBrowser();
     const { registerServiceWorker } = await import("./serviceWorker");
 
@@ -126,7 +157,7 @@ describe("registerServiceWorker", () => {
   });
 
   it("native'de kayıt yapmaz", async () => {
-    mockCapacitor(true);
+    mockCapacitor("android");
     const register = stubBrowser();
     const { registerServiceWorker } = await import("./serviceWorker");
 

@@ -1,0 +1,110 @@
+# iOS derlemesi ve TestFlight yüklemesi. Geliştirme Windows'ta; iOS yalnızca
+# burada derlenir. Bir kerelik kurulum ve her yüklemenin adımları:
+# docs/ios-release.md.
+#
+# Tetik yok: iş akışı Codemagic arayüzünden elle başlatılır. Her push'ta
+# derlemek macOS dakikası harcardı ve TestFlight'a istenmeyen build düşerdi.
+
+workflows:
+  ios-testflight:
+    name: iOS → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    integrations:
+      # Codemagic → Team settings → Team integrations → Developer Portal'da
+      # App Store Connect API anahtarının adı. Anahtar repoda değil, orada.
+      app_store_connect: slot-app-store-connect
+    environment:
+      # Capacitor 8 Xcode 26+ istiyor; "Xcode sürümü" adımı bunu doğrular.
+      xcode: latest
+      node: 22
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.meteucar.slot
+      vars:
+        # App Store Connect → uygulama → App Information → Apple ID (sayısal).
+        # Gizli değil; uygulama oluşturulunca buraya yazılır.
+        APP_STORE_APPLE_ID: "6820660636"
+    scripts:
+      - name: Xcode sürümü
+        script: |
+          set -euo pipefail
+          xcodebuild -version
+          # head yerine sed: pipefail altında erken kapanan boru adımı düşürmesin.
+          XCODE_MAJOR=$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]+).*/\1/p')
+          if [ -z "$XCODE_MAJOR" ] || [ "$XCODE_MAJOR" -lt 26 ]; then
+            echo "Capacitor 8 Xcode 26 ya da üstünü istiyor."
+            exit 1
+          fi
+
+      - name: Bağımlılıklar
+        script: npm ci
+
+      - name: Testler
+        script: npm test
+
+      - name: Web derlemesi
+        script: npm run build
+
+      - name: Native projeyi eşitle
+        # Varlıkları ios/App/App/public'e kopyalar, Package.swift'i yeniden yazar.
+        script: npx cap sync ios
+
+      - name: Sürüm ve build numarası
+        # Sürüm package.json'dan; build numarası TestFlight'taki en yüksek
+        # build + 1. Android'deki versionCode şeması (major*10000 + ...) burada
+        # kullanılmaz: aynı sürümün ikinci yüklemesi aynı sayıyı alır ve Apple
+        # reddeder. Değerler pbxproj'a yazılmaz, archive'a derleme ayarı olarak
+        # verilir (Info.plist $(MARKETING_VERSION) ve $(CURRENT_PROJECT_VERSION)
+        # okuyor). Adlar Xcode ayar adlarından farklı: ortam değişkenleri
+        # xcodebuild'e ayar olarak sızabiliyor.
+        script: |
+          set -euo pipefail
+          APP_VERSION=$(node -p "require('./package.json').version")
+          if ! [[ "$APP_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "package.json sürümü \"$APP_VERSION\" X.Y.Z biçiminde değil."
+            exit 1
+          fi
+          if ! [[ "$APP_STORE_APPLE_ID" =~ ^[0-9]+$ ]]; then
+            echo "codemagic.yaml'da APP_STORE_APPLE_ID ayarlanmamış (sayısal Apple ID)."
+            exit 1
+          fi
+          LATEST=$(app-store-connect get-latest-testflight-build-number "$APP_STORE_APPLE_ID")
+          # İlk yüklemede hiç build yok, komut boş döner.
+          LATEST=${LATEST:-0}
+          if ! [[ "$LATEST" =~ ^[0-9]+$ ]]; then
+            echo "TestFlight'taki son build numarası tam sayı değil: \"$LATEST\""
+            exit 1
+          fi
+          APP_BUILD_NUMBER=$((LATEST + 1))
+          echo "Sürüm $APP_VERSION, build $APP_BUILD_NUMBER"
+          echo "APP_VERSION=$APP_VERSION" >> "$CM_ENV"
+          echo "APP_BUILD_NUMBER=$APP_BUILD_NUMBER" >> "$CM_ENV"
+
+      - name: İmza profilleri
+        script: xcode-project use-profiles
+
+      - name: IPA
+        # SPM projesi: workspace yok, doğrudan .xcodeproj. --archive-xcargs
+        # aracın varsayılanını (COMPILER_INDEX_STORE_ENABLE=NO) ezdiği için o da
+        # yazılı.
+        script: |
+          set -euo pipefail
+          xcode-project build-ipa \
+            --project ios/App/App.xcodeproj \
+            --scheme App \
+            --archive-xcargs "COMPILER_INDEX_STORE_ENABLE=NO MARKETING_VERSION=$APP_VERSION CURRENT_PROJECT_VERSION=$APP_BUILD_NUMBER"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Yükleme yeterli: işlenen build dahili test grubuna kendiliğinden
+        # düşer (grupta "Automatic Distribution" açık olmalı). true, build'i
+        # harici test için Apple'ın beta incelemesine gönderir; o gerektiğinde
+        # açılır, beta_groups ve Test Information ile birlikte.
+        submit_to_testflight: false

@@ -22,13 +22,17 @@ function isNativePlatform(): boolean {
 
 const native = isNativePlatform();
 
+/** Yalnızca Android'e özgü bayraklar için; o da dışa aktarılmaz. */
+const android = Capacitor.getPlatform() === "android";
+
 /**
  * Platforma göre açık/kapalı özellikler. Modül yüklenirken bir kez
  * hesaplanır; çalışma sırasında platform değişmez.
  *
- * - auth: Mobil v1 tamamen çevrimdışı. Native'de origin https://localhost
- *   ve /api yolları paketlenmiş varlıklara düşer; giriş, oturum yenileme
- *   ve senkron hiç denenmez.
+ * - auth: Mobil v1 tamamen çevrimdışı. Native'de origin yerel
+ *   (Android https://localhost, iOS capacitor://localhost) ve /api yolları
+ *   paketlenmiş varlıklara düşer; giriş, oturum yenileme ve senkron hiç
+ *   denenmez.
  * - serviceWorker: Native'de varlıklar zaten paketin içinde; önbellek
  *   katmanı gereksiz ve güncellemeyi uygulama mağazası yapıyor.
  * - haptics: Native'de @capacitor/haptics ile titreşim ve Ayarlar'da
@@ -36,17 +40,22 @@ const native = isNativePlatform();
  *   navigator.vibrate koşulsuz kalır (bkz. haptics.ts).
  * - reminders: Native'de yerel bildirimle tekrar hatırlatıcısı, Ayarlar'da
  *   anahtarı ve öneri kartı. Web'de hiçbiri yok (bkz. reminders.ts).
+ * - notificationChannels: Bildirim kanalı yalnızca Android'de var. iOS
+ *   eklentisi createChannel'ı "unimplemented" ile reddediyor; kanal
+ *   kurulmadan zamanlamaya geçilmediği için iOS'ta hatırlatıcı hiç
+ *   kurulmuyordu.
  * - sameOriginPages: Sitenin statik sayfaları (/privacy) uygulamayla aynı
- *   origin'de mi. Native'de origin https://localhost; göreli /privacy
+ *   origin'de mi. Native'de origin yerel (yukarıda); göreli /privacy
  *   paketteki kopyaya ya da uygulamanın kendisine düşerdi. Bağlantı orada
  *   canlı sitenin mutlak adresine gider, Capacitor onu sistem tarayıcısına
- *   verir.
+ *   (iOS'ta Safari) verir.
  */
 export const platformFeatures = {
   auth: !native,
   serviceWorker: !native,
   haptics: native,
   reminders: native,
+  notificationChannels: android,
   sameOriginPages: !native,
 } as const;
 
@@ -73,6 +82,18 @@ export const storage: StorageAdapter = native
   aiHandoff/nativeAiHandoff.ts); sıralama aiHandoff/handoff.ts'te.
 */
 export const aiHandoff: AiHandoffAdapter = native ? createNativeAiHandoff() : webAiHandoff;
+
+/**
+ * Uygulamanın her yerindeki pano yazımı buradan geçer; navigator.clipboard
+ * doğrudan çağrılmaz. Native'de @capacitor/clipboard: iOS'ta origin
+ * capacitor://localhost ve WKWebView'in onu güvenli bağlam saydığı
+ * belgelenmemiş, saymazsa navigator.clipboard hiç yok. Web'de Clipboard
+ * API, olmazsa execCommand yedeği (bkz. aiHandoff/webAiHandoff.ts).
+ * Hata fırlatmaz; yazılamadıysa false.
+ */
+export function copyToClipboard(text: string): Promise<boolean> {
+  return aiHandoff.copy(text);
+}
 
 export type { AiHandoffAdapter, ShareResult } from "./aiHandoff/AiHandoffAdapter";
 export type { StorageAdapter } from "./storage/StorageAdapter";

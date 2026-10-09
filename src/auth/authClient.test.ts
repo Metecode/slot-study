@@ -359,7 +359,7 @@ describe("native platform (kimlik kapalı)", () => {
   async function loadNativeClient(): Promise<AuthModule> {
     vi.resetModules();
     vi.doMock("@capacitor/core", () => ({
-      Capacitor: { isNativePlatform: () => true },
+      Capacitor: { isNativePlatform: () => true, getPlatform: () => "android" },
     }));
     return import("./authClient");
   }

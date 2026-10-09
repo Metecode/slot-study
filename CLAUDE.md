@@ -474,6 +474,70 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - minor ya da patch 99'u aşarsa ya da sürüm `X.Y.Z` değilse (ön sürüm
   etiketi dahil) derleme durur: 1.0.100 → 10100, 1.1.0 ile aynı kod olurdu.
 
+## iOS sürümü
+
+Kurulum ve yükleme adımları `docs/ios-release.md`'de; burada kararlar.
+
+- **Derleme yalnızca Codemagic'te** (`codemagic.yaml`, elle tetiklenir).
+  Geliştirme Windows'ta; Mac yok. Proje SPM (Capacitor 8'in varsayılanı):
+  `cap add/sync ios` yalnızca dosya üretir, Windows'ta çalışır
+  (`npm run ios:sync`). Capacitor 8 Xcode 26+ ister, CI ilk adımda
+  doğrular.
+- **Sürüm package.json'dan, build numarası TestFlight'taki son build + 1.**
+  İkisi de CI'da archive'a derleme ayarı (`MARKETING_VERSION`,
+  `CURRENT_PROJECT_VERSION`) olarak verilir; pbxproj'daki değerler
+  kullanılmaz, elle yazılmaz. Android'in versionCode şeması burada yok:
+  aynı sürümün ikinci test build'i aynı sayıyı alır ve Apple reddeder.
+- **Ana ekranda "Slot", mağazada "Slot: Teknik Soru Pratiği".**
+  `CFBundleDisplayName` "Slot" kalır; mağaza adı App Store Connect'te.
+- **En düşük iOS 16.4.** Vite 8'in varsayılan hedefi `safari16.4`/`ios16.4`,
+  Tailwind v4 de Safari 16.4+ istiyor; daha eski iOS'ta uygulama kurulur
+  ama arayüz bozuk açılırdı. Düşürmek için önce `build.target` ve
+  Tailwind'in desteği. Capacitor `Package.swift`'e deployment target'ın
+  ana sürümünü yazar (`.v16`).
+- **Yalnızca iPhone** (`TARGETED_DEVICE_FAMILY = 1`). iPad açılsa iPad
+  ekran görüntüleri ve iPad çoklu görevi için her yön zorunlu olurdu.
+  Yön Android'deki gibi serbest (dikey + iki yatay).
+- **Gizlilik manifesti uygulama hedefinde** (`ios/App/App/PrivacyInfo.xcprivacy`).
+  Capacitor çekirdeğinin manifesti boş; kullanılan eklentiler ve
+  `ion-ios-filesystem` manifest getirmiyor, hepsi statik bağlandığı için
+  beyan burada. Tek gerekçeli API dosya zaman damgası (`C617.1`): depo
+  `Filesystem.readdir` çağırıyor, eklenti her dosyada `attributesOfItem`
+  okuyor. **Yeni eklenti ya da native kod eklenince** Apple'ın "required
+  reason API" listesine karşı kaynak yeniden taranır; eksik beyan yüklemeyi
+  reddettirir.
+- **`ITSAppUsesNonExemptEncryption = false`.** Uygulama yalnızca sistemin
+  HTTPS'ini kullanıyor; kendi şifrelemesi olan bir kütüphane (SQLCipher
+  vb.) gelirse bu beyan yeniden değerlendirilir.
+- **Açılış ekranı storyboard, eklenti yok.** Zemin `#0b0f14`, ortada
+  `LaunchIcon` (`npm run icons` üretir). Bu renk artık dört yerde:
+  tokens.css `--bg`, `android/.../values/colors.xml`, capacitor.config.ts
+  `backgroundColor`, `LaunchScreen.storyboard`. Şablonun beyaz zeminli
+  Splash görselleri kaldırıldı.
+- **Origin `capacitor://localhost`.** `server.iosScheme` "https"
+  olamaz (WKWebView kendi şemasını bırakmıyor, Capacitor varsayılana
+  düşüyor). Native'de depo dosya sistemi olduğu için origin ilerlemeyi
+  etkilemez: `Directory.Library` → `Library/Application Support/com.meteucar.slot`;
+  sistem burayı temizlemez, iCloud/cihaz yedeğine girer.
+- **Pano yazımı `copyToClipboard`'dan** (`platform/index.ts`);
+  `navigator.clipboard` doğrudan çağrılmaz. iOS'ta `capacitor://` güvenli
+  bağlam sayılmayabilir, native'de `@capacitor/clipboard` kullanılır.
+- **Bildirim kanalı yalnızca Android'de**
+  (`platformFeatures.notificationChannels`). iOS eklentisi `createChannel`'ı
+  reddediyor; kanal kurulmadan zamanlamaya geçilmediği için iOS'ta
+  hatırlatıcı hiç kurulmuyordu. Kurmadan önce izne bakılır, izin istenmez:
+  yedekten dönen açık ayar izin sorulmamış bir kurulumda bildirim kurmaz.
+  Uygulama öndeyken iOS'ta hatırlatma yalnızca Bildirim Merkezi'ne düşer
+  (`presentationOptions: ["list"]`).
+- **Dış bağlantılar Safari'de.** `window.open` ve `target="_blank"`
+  Capacitor'da `UIApplication.open`'a gider. Adres bir uygulamanın
+  universal link'iyse (chatgpt.com, claude.ai) o uygulama açılabilir ve
+  sorgu parametresi düşebilir; istem bu yüzden her durumda panoya da
+  kopyalanıyor.
+- **iOS dosyaları LF** (`.gitattributes`). `Package.swift` her sync'te LF
+  ile yeniden yazılıyor; `autocrlf` CRLF çıkarsaydı içerik farkı olmadan
+  değişmiş görünürdü (Android'deki gradle dosyalarında yaşanan sorun).
+
 ## Çalışma bölümü
 
 Mimari ve yeni modüller sohbette yazılır. Claude Code mekanik işleri
