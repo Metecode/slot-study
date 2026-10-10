@@ -2852,6 +2852,987 @@
         "Bir metottan iç listeyi döndürürken List.copyOf ile unmodifiableList arasında nasıl seçim yaparsın?"
       ],
       "source": "Kendi derleme — Java SE 21 API: List.of, Collections.unmodifiableList, Arrays.asList"
+    },
+    {
+      "id": "java-deadlock",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 2,
+      "prompt": "Java'da thread'ler arasında deadlock nasıl oluşur? Nasıl önlenir ve tespit edilir?",
+      "modelAnswer": "**Deadlock**, iki ya da daha fazla thread'in her birinin diğerinin tuttuğu kilidi beklemesidir; A thread'i `lock1`'i alıp `lock2`'yi, B thread'i `lock2`'yi alıp `lock1`'i beklerse ikisi de sonsuza kadar bekler. Oluşması için karşılıklı dışlama, kilidi tutarken başka kilit bekleme, kilidin zorla alınamaması ve **döngüsel bekleme** koşullarının hepsi gerekir. En etkili önlem bütün kodda kilitleri hep **aynı sırayla** almaktır; ayrıca `ReentrantLock.tryLock` ile zaman aşımlı deneme yapılabilir ve kilitli tutulan alan küçük tutulur. Tespit için **thread dump** alınır (`jstack <pid>` ya da `jcmd <pid> Thread.print`); JVM kilit döngüsünü bulup \"Found one Java-level deadlock\" diye raporlar.",
+      "keyConcepts": [
+        {
+          "id": "karsilikli-bekleme",
+          "label": "Birbirinin tuttuğu kilidi bekler",
+          "aliases": [
+            "birbirinin",
+            "karşılıklı bekle",
+            "diğerinin tuttu",
+            "kilidi bekle",
+            "sonsuza kadar"
+          ],
+          "anchors": [
+            "Deadlock'ta her thread diğerinin tuttuğu kilidi bekler ve hiçbiri ilerleyemez."
+          ]
+        },
+        {
+          "id": "kosullar",
+          "label": "Dört koşul, döngüsel bekleme",
+          "aliases": [
+            "döngüsel",
+            "circular",
+            "coffman",
+            "dört koşul",
+            "hold and wait",
+            "karşılıklı dışlama"
+          ],
+          "anchors": [
+            "Deadlock için karşılıklı dışlama, tutup bekleme, zorla alınamama ve döngüsel bekleme gerekir."
+          ]
+        },
+        {
+          "id": "ayni-sira",
+          "label": "Kilitleri hep aynı sırayla al",
+          "aliases": [
+            "aynı sıra",
+            "sırayla al",
+            "kilit sırası",
+            "lock ordering",
+            "sabit sıra"
+          ],
+          "anchors": [
+            "Kilitleri bütün kodda hep aynı sırayla almak döngüsel beklemeyi önler."
+          ]
+        },
+        {
+          "id": "trylock",
+          "label": "tryLock ile zaman aşımlı deneme",
+          "aliases": [
+            "trylock",
+            "zaman aşım",
+            "timeout",
+            "süre sınırı"
+          ],
+          "anchors": [
+            "ReentrantLock.tryLock ile kilit süre sınırıyla denenebilir."
+          ]
+        },
+        {
+          "id": "thread-dump",
+          "label": "Thread dump ile tespit",
+          "aliases": [
+            "thread dump",
+            "jstack",
+            "thread.print",
+            "jconsole",
+            "visualvm",
+            "threadmxbean"
+          ],
+          "anchors": [
+            "Deadlock thread dump alınarak tespit edilir; JVM kilit döngüsünü raporlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Deadlock ile livelock ve starvation arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — Java Concurrency in Practice, Bölüm 10; JDK araçları: jstack, jcmd"
+    },
+    {
+      "id": "java-completablefuture",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 3,
+      "prompt": "CompletableFuture nedir? Future'dan farkı ne, zincirleme nasıl yapılır?",
+      "modelAnswer": "`Future` sonucu yalnızca **bloklayarak** almayı (`get`) sağlar; işlemleri birbirine bağlamak ya da hatayı akış içinde ele almak mümkün değildir. `CompletableFuture` ise **bloklamadan** geri çağrılarla zincir kurar; `thenApply` sonucu dönüştürür, `thenCompose` sonucu başka bir asenkron işe bağlar (iç içe future'ı düzleştirir), `thenCombine` iki bağımsız işi birleştirir, `allOf` birden fazla işi bekler. Hatalar `exceptionally` ya da `handle` ile zincirin içinde ele alınır, `orTimeout` ile süre sınırı konur. `supplyAsync` gibi `...Async` metotları executor verilmezse ortak `ForkJoinPool.commonPool()`'u kullanır; bloklayan I/O işleri için ayrı bir executor (ya da virtual thread executor'ı) verilmelidir.",
+      "keyConcepts": [
+        {
+          "id": "bloklama",
+          "label": "Future bloklar, CompletableFuture bloklamaz",
+          "aliases": [
+            "blokla",
+            "blocking",
+            "non-blocking",
+            "get()",
+            "geri çağır",
+            "callback"
+          ],
+          "anchors": [
+            "Future sonucu get ile bloklayarak verir, CompletableFuture bloklamadan geri çağrılarla çalışır."
+          ]
+        },
+        {
+          "id": "zincir-metotlari",
+          "label": "thenApply, thenCompose, thenCombine",
+          "aliases": [
+            "thenapply",
+            "thencompose",
+            "thencombine",
+            "thenaccept",
+            "allof",
+            "anyof"
+          ],
+          "anchors": [
+            "thenApply dönüştürür, thenCompose başka bir asenkron işe bağlar, thenCombine iki işi birleştirir."
+          ]
+        },
+        {
+          "id": "hata",
+          "label": "exceptionally ve handle ile hata",
+          "aliases": [
+            "exceptionally",
+            "handle",
+            "whencomplete",
+            "hata yönetimi"
+          ],
+          "anchors": [
+            "Hatalar zincirin içinde exceptionally ya da handle ile ele alınır."
+          ]
+        },
+        {
+          "id": "executor",
+          "label": "Varsayılan commonPool, I/O için ayrı executor",
+          "aliases": [
+            "commonpool",
+            "forkjoinpool",
+            "executor",
+            "thread havuzu",
+            "supplyasync",
+            "runasync"
+          ],
+          "anchors": [
+            "Async metotlar varsayılan olarak ForkJoinPool.commonPool kullanır; I/O için ayrı executor verilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "thenApply ile thenApplyAsync arasındaki fark nedir; callback hangi thread'de çalışır?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: CompletableFuture, CompletionStage"
+    },
+    {
+      "id": "java-runnable-vs-callable",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 1,
+      "prompt": "Runnable ile Callable arasındaki fark nedir?",
+      "modelAnswer": "`Runnable`'ın `run()` metodu **değer döndürmez** (`void`) ve checked exception fırlatamaz. `Callable<V>`'nin `call()` metodu ise bir **sonuç döndürür** ve `throws Exception` imzası sayesinde checked exception fırlatabilir. `ExecutorService.submit` ikisini de kabul eder ve bir `Future` döner; `Callable`'da `Future.get()` sonucu verir, iş exception fırlattıysa `get()` onu `ExecutionException` içine sarılı olarak iletir. `Thread` constructor'ı ise yalnızca `Runnable` alır.",
+      "keyConcepts": [
+        {
+          "id": "deger",
+          "label": "Callable değer döndürür, Runnable void",
+          "aliases": [
+            "void",
+            "döndürmez",
+            "değer döndür",
+            "sonuç döndür",
+            "return"
+          ],
+          "anchors": [
+            "Callable bir sonuç döndürür, Runnable'ın run metodu void'dir."
+          ]
+        },
+        {
+          "id": "checked",
+          "label": "Callable checked exception fırlatabilir",
+          "aliases": [
+            "checked",
+            "throws exception",
+            "exception fırlatabil",
+            "exception fırlatamaz"
+          ],
+          "anchors": [
+            "Callable'ın call metodu checked exception fırlatabilir, Runnable'ın run metodu fırlatamaz."
+          ]
+        },
+        {
+          "id": "future",
+          "label": "submit Future döner",
+          "aliases": [
+            "future",
+            "submit",
+            "get()",
+            "executionexception"
+          ],
+          "anchors": [
+            "ExecutorService.submit bir Future döner, sonuç get ile alınır."
+          ]
+        },
+        {
+          "id": "thread",
+          "label": "Thread yalnızca Runnable alır",
+          "aliases": [
+            "new thread",
+            "thread constructor",
+            "constructor",
+            "yalnızca runnable",
+            "sadece runnable"
+          ],
+          "anchors": [
+            "Thread sınıfının constructor'ı yalnızca Runnable kabul eder."
+          ]
+        }
+      ],
+      "followUps": [
+        "submit(() -> ...) yazdığında derleyici lambdayı Runnable mı Callable mı sayar, neye göre karar verir?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: Runnable, Callable, ExecutorService"
+    },
+    {
+      "id": "java-reentrantlock",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 3,
+      "prompt": "ReentrantLock, synchronized'a göre neler sunar? Hangisini ne zaman kullanırsın?",
+      "modelAnswer": "İkisi de aynı thread'in kilidi tekrar alabildiği (reentrant) karşılıklı dışlama sağlar ve aynı bellek görünürlüğü garantilerini verir; fark esneklikte. `ReentrantLock`, `tryLock` ile kilidi beklemeden ya da süre sınırıyla denemeyi, `lockInterruptibly` ile beklerken **kesilebilmeyi**, `new ReentrantLock(true)` ile **adil** (fair) sırayı ve birden fazla `Condition` ile ayrı bekleme kuyruklarını sunar. Bedeli, kilidin `finally` bloğunda `unlock()` ile **elle bırakılması** zorunluluğudur; unutulursa kilit sonsuza kadar tutulur, `synchronized` ise bloktan çıkışta kilidi otomatik bırakır. Bu esnekliğe ihtiyaç yoksa daha sade olan `synchronized` tercih edilir; Java 21'de virtual thread'lerin `synchronized` içinde carrier'a sabitlenmesi (pinning) `ReentrantLock` için ek bir sebepti, Java 24'te bu sorun giderildi.",
+      "keyConcepts": [
+        {
+          "id": "trylock",
+          "label": "tryLock ve süre sınırı",
+          "aliases": [
+            "trylock",
+            "zaman aşım",
+            "timeout",
+            "beklemeden",
+            "süre sınırı"
+          ],
+          "anchors": [
+            "ReentrantLock tryLock ile kilidi beklemeden ya da süre sınırıyla denemeyi sağlar."
+          ]
+        },
+        {
+          "id": "kesilebilir-fair",
+          "label": "Kesilebilir bekleme, fair, Condition",
+          "aliases": [
+            "lockinterruptibly",
+            "kesilebil",
+            "interrupt",
+            "fair",
+            "adil",
+            "condition"
+          ],
+          "anchors": [
+            "ReentrantLock kesilebilir bekleme, adil sıra ve birden fazla Condition sunar."
+          ]
+        },
+        {
+          "id": "unlock-finally",
+          "label": "finally'de elle unlock",
+          "aliases": [
+            "unlock",
+            "finally",
+            "elle bırak",
+            "manuel"
+          ],
+          "anchors": [
+            "ReentrantLock finally bloğunda unlock ile elle bırakılmalıdır."
+          ]
+        },
+        {
+          "id": "sade-synchronized",
+          "label": "Gerek yoksa synchronized, otomatik bırakır",
+          "aliases": [
+            "otomatik bırak",
+            "daha sade",
+            "daha basit",
+            "otomatik serbest",
+            "kendiliğinden bırak"
+          ],
+          "anchors": [
+            "synchronized kilidi bloktan çıkışta otomatik bırakır; esneklik gerekmiyorsa tercih edilir."
+          ]
+        },
+        {
+          "id": "pinning",
+          "label": "Virtual thread pinning (Java 21)",
+          "aliases": [
+            "pinning",
+            "sabitlen",
+            "virtual thread",
+            "carrier"
+          ],
+          "anchors": [
+            "Java 21'de synchronized virtual thread'i carrier'a sabitleyebiliyordu, Java 24'te giderildi."
+          ]
+        }
+      ],
+      "followUps": [
+        "ReadWriteLock ne zaman ReentrantLock'tan daha uygundur?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: java.util.concurrent.locks; JEP 491"
+    },
+    {
+      "id": "java-threadlocal",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 3,
+      "prompt": "ThreadLocal nedir? Thread havuzunda kullanmak neden risklidir?",
+      "modelAnswer": "`ThreadLocal`, her thread'e aynı değişkenin **kendine ait bir kopyasını** verir; bir thread'in yazdığı değeri diğerleri görmez. Tipik kullanımı, kullanıcı, transaction ya da istek kimliği gibi bağlam bilgisini metotlara parametre olarak taşımadan aynı thread boyunca erişilebilir kılmaktır; Spring'in `SecurityContextHolder`'ı ve transaction yönetimi varsayılan olarak bunu kullanır. Havuzdaki thread'ler işten sonra ölmeyip yeniden kullanıldığı için değer `remove()` ile temizlenmezse bir sonraki işe **sızar**; başka bir isteğin kullanıcı bilgisi görünebilir ve değerler bellekte birikir. Bu yüzden değer `try` bloğunda ayarlanır ve `finally`'de `remove()` çağrılır; milyonlarca virtual thread'le ağır nesneleri `ThreadLocal`'da tutmak da bellek açısından pahalıdır.",
+      "keyConcepts": [
+        {
+          "id": "kendi-kopyasi",
+          "label": "Her thread'in kendi kopyası",
+          "aliases": [
+            "kendine ait",
+            "kendi kopya",
+            "her thread'in kendi",
+            "thread'e özel",
+            "per-thread",
+            "izole"
+          ],
+          "anchors": [
+            "ThreadLocal her thread'e değişkenin kendine ait bir kopyasını verir."
+          ]
+        },
+        {
+          "id": "baglam",
+          "label": "Bağlam taşıma (SecurityContext, transaction)",
+          "aliases": [
+            "bağlam",
+            "context",
+            "securitycontext",
+            "kullanıcı bilgisi",
+            "istek kimliği",
+            "request id"
+          ],
+          "anchors": [
+            "ThreadLocal bağlam bilgisini parametre taşımadan thread boyunca erişilebilir kılar."
+          ]
+        },
+        {
+          "id": "sizinti",
+          "label": "Havuzda thread yeniden kullanılır, değer sızar",
+          "aliases": [
+            "yeniden kullan",
+            "reuse",
+            "sızar",
+            "sızıntı",
+            "leak",
+            "başka bir istek"
+          ],
+          "anchors": [
+            "Havuzdaki thread yeniden kullanıldığı için temizlenmeyen değer sonraki işe sızar."
+          ]
+        },
+        {
+          "id": "remove",
+          "label": "finally'de remove",
+          "aliases": [
+            "remove",
+            "finally",
+            "temizle",
+            "clear"
+          ],
+          "anchors": [
+            "Değer finally bloğunda remove ile temizlenmelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "ScopedValue, ThreadLocal'ın hangi sorunlarını çözmeyi hedefler?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: ThreadLocal; Spring Security belgeleri: SecurityContextHolder"
+    },
+    {
+      "id": "java-wait-vs-sleep",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Concurrency",
+      "difficulty": 2,
+      "prompt": "wait() ile sleep() arasındaki fark nedir?",
+      "modelAnswer": "`Thread.sleep` mevcut thread'i belirtilen süre boyunca uyutur ve tuttuğu **kilitleri bırakmaz**; her yerden çağrılabilen statik bir metottur. `Object.wait` ise yalnızca o nesnenin monitörü tutulurken, yani `synchronized` blok içinden çağrılabilir, aksi hâlde `IllegalMonitorStateException` fırlar. `wait` çağrıldığında thread **kilidi bırakır** ve başka bir thread aynı nesnede `notify` ya da `notifyAll` çağırana (ya da süre dolana) kadar bekler. `wait` kendiliğinden de uyanabildiği (spurious wakeup) için koşul her zaman bir `while` döngüsünde yeniden kontrol edilir; yeni kodda bunun yerine genelde `BlockingQueue` ya da `CountDownLatch` gibi `java.util.concurrent` araçları kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "kilit",
+          "label": "sleep kilidi bırakmaz, wait bırakır",
+          "aliases": [
+            "kilidi bırak",
+            "kilit bırak",
+            "kilitleri bırak",
+            "monitörü bırak",
+            "release"
+          ],
+          "anchors": [
+            "sleep tuttuğu kilitleri bırakmaz, wait çağrıldığında kilit bırakılır."
+          ]
+        },
+        {
+          "id": "synchronized",
+          "label": "wait synchronized içinden çağrılır",
+          "aliases": [
+            "synchronized",
+            "illegalmonitorstate",
+            "monitör",
+            "monitor"
+          ],
+          "anchors": [
+            "wait yalnızca nesnenin monitörü tutulurken, synchronized blok içinden çağrılabilir."
+          ]
+        },
+        {
+          "id": "notify",
+          "label": "notify ya da notifyAll ile uyanır",
+          "aliases": [
+            "notify",
+            "notifyall",
+            "uyandır"
+          ],
+          "anchors": [
+            "wait eden thread notify ya da notifyAll ile uyandırılır."
+          ]
+        },
+        {
+          "id": "spurious",
+          "label": "Spurious wakeup, while döngüsü",
+          "aliases": [
+            "spurious",
+            "while",
+            "kendiliğinden uyan",
+            "sahte uyan"
+          ],
+          "anchors": [
+            "wait kendiliğinden uyanabildiği için koşul while döngüsünde yeniden kontrol edilir."
+          ]
+        },
+        {
+          "id": "concurrent-araclar",
+          "label": "Yeni kodda java.util.concurrent araçları",
+          "aliases": [
+            "blockingqueue",
+            "countdownlatch",
+            "java.util.concurrent",
+            "condition"
+          ],
+          "anchors": [
+            "Yeni kodda wait/notify yerine BlockingQueue gibi java.util.concurrent araçları kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Üretici–tüketici problemini wait/notify yerine hangi sınıfla çözersin?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: Object.wait, Thread.sleep"
+    },
+    {
+      "id": "java-lambda",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 1,
+      "prompt": "Lambda ifadesi nedir? Anonim sınıftan farkı nedir?",
+      "modelAnswer": "Lambda, tek soyut metodu olan bir **functional interface**'in kısa yoldan implementasyonudur; `(a, b) -> a + b` gibi yalnızca parametreler ve gövde yazılır. Anonim sınıftan farkı yeni bir **kapsam** (scope) açmamasıdır; lambda içindeki `this` çevreleyen sınıfın nesnesini, anonim sınıftaki `this` ise anonim nesnenin kendisini gösterir. Lambda yalnızca functional interface'ler için yazılabilir, anonim sınıf ise birden çok metodu olan bir arayüzü ya da bir sınıfı da genişletebilir ve kendi alanlarını taşıyabilir. Lambda dışarıdaki yerel değişkenleri yalnızca **effectively final** iseler, yani atandıktan sonra hiç değişmiyorlarsa kullanabilir; derleyici lambdaları ayrı bir `.class` dosyası üretmeden `invokedynamic` ile çalışma anında bağlar.",
+      "keyConcepts": [
+        {
+          "id": "functional-interface",
+          "label": "Functional interface implementasyonu",
+          "aliases": [
+            "functional interface",
+            "fonksiyonel arayüz",
+            "fonksiyonel interface",
+            "tek soyut metot",
+            "tek metotlu",
+            "single abstract method"
+          ],
+          "anchors": [
+            "Lambda tek soyut metodu olan bir functional interface'in kısa implementasyonudur."
+          ]
+        },
+        {
+          "id": "this-kapsam",
+          "label": "Yeni kapsam yok, this çevreleyen sınıf",
+          "aliases": [
+            "this",
+            "kapsam",
+            "scope",
+            "çevreleyen"
+          ],
+          "anchors": [
+            "Lambda yeni kapsam açmaz; içindeki this çevreleyen sınıfın nesnesidir."
+          ]
+        },
+        {
+          "id": "anonim-esnek",
+          "label": "Anonim sınıf birden çok metodu ve sınıfı karşılar",
+          "aliases": [
+            "birden çok metod",
+            "birden fazla metod",
+            "sınıfı genişlet",
+            "abstract class",
+            "kendi alan"
+          ],
+          "anchors": [
+            "Anonim sınıf birden çok metodu olan arayüzü ya da bir sınıfı genişletebilir, lambda yalnızca functional interface'i."
+          ]
+        },
+        {
+          "id": "effectively-final",
+          "label": "Yalnızca effectively final değişkenler",
+          "aliases": [
+            "effectively final",
+            "efektif final",
+            "final olmalı",
+            "değişmeyen",
+            "final gibi"
+          ],
+          "anchors": [
+            "Lambda dışarıdaki yerel değişkenleri yalnızca effectively final iseler kullanabilir."
+          ]
+        },
+        {
+          "id": "invokedynamic",
+          "label": "invokedynamic, ayrı .class yok",
+          "aliases": [
+            "invokedynamic",
+            ".class",
+            "class dosyası",
+            "sınıf dosyası",
+            "lambdametafactory"
+          ],
+          "anchors": [
+            "Lambda ayrı .class dosyası üretmez, invokedynamic ile çalışma anında bağlanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Lambda içinde dışarıdaki bir sayacı artırmak istersen neden derlenmez, nasıl çözersin?"
+      ],
+      "source": "Kendi derleme — JLS §15.27 Lambda Expressions"
+    },
+    {
+      "id": "java-functional-interface",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 1,
+      "prompt": "Functional interface nedir? java.util.function paketindeki temel arayüzler nelerdir?",
+      "modelAnswer": "**Functional interface**, tam olarak **bir soyut metodu** olan arayüzdür; lambda ve method reference yalnızca bu türlere atanabilir. `default` ve `static` metotlar bu sayıya dahil değildir; `@FunctionalInterface` anotasyonu zorunlu değildir ama ikinci bir soyut metot eklenirse derleme hatası verdirerek niyeti korur. `Function<T,R>` bir değeri dönüştürür, `Predicate<T>` boolean döner, `Supplier<T>` parametre almadan değer üretir, `Consumer<T>` değer alıp bir şey döndürmez. `BiFunction`, `UnaryOperator` ve `IntPredicate` gibi türler bunların varyasyonlarıdır; `Runnable` ve `Comparator` da birer functional interface'tir.",
+      "keyConcepts": [
+        {
+          "id": "tek-soyut",
+          "label": "Tam olarak bir soyut metot",
+          "aliases": [
+            "tek soyut",
+            "bir soyut",
+            "tek bir soyut",
+            "single abstract",
+            "tek metot",
+            "tek abstract"
+          ],
+          "anchors": [
+            "Functional interface tam olarak bir soyut metodu olan arayüzdür."
+          ]
+        },
+        {
+          "id": "anotasyon",
+          "label": "@FunctionalInterface zorunlu değil, derleyici denetler",
+          "aliases": [
+            "functionalinterface",
+            "anotasyon",
+            "annotation",
+            "zorunlu değil"
+          ],
+          "anchors": [
+            "@FunctionalInterface zorunlu değildir ama ikinci soyut metotta derleme hatası verdirir."
+          ]
+        },
+        {
+          "id": "default-static",
+          "label": "default ve static metotlar sayılmaz",
+          "aliases": [
+            "default",
+            "static",
+            "varsayılan metot"
+          ],
+          "anchors": [
+            "default ve static metotlar soyut metot sayısına dahil değildir."
+          ]
+        },
+        {
+          "id": "temel-arayuzler",
+          "label": "Function, Predicate, Supplier, Consumer",
+          "aliases": [
+            "predicate",
+            "supplier",
+            "consumer",
+            "bifunction",
+            "unaryoperator"
+          ],
+          "anchors": [
+            "Temel arayüzler Function, Predicate, Supplier ve Consumer'dır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Function'ları andThen ve compose ile birleştirmenin farkı nedir?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: java.util.function, @FunctionalInterface"
+    },
+    {
+      "id": "java-method-reference",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 1,
+      "prompt": "Method reference nedir? Hangi türleri vardır, ne zaman lambda yerine kullanılır?",
+      "modelAnswer": "Bir lambda yalnızca var olan bir metodu çağırıyorsa onun yerine **method reference** yazılabilir; `s -> s.toUpperCase()` yerine `String::toUpperCase` gibi. Dört türü vardır: statik metot (`Integer::parseInt`), belirli bir nesnenin metodu (`System.out::println`), türün herhangi bir nesnesinin metodu (`String::length`, ilk parametre hedef nesne olur) ve constructor (`ArrayList::new`). Lambda tek bir metodu iletmekten ibaretse method reference daha okunurdur; ek mantık, birden çok ifade ya da argüman dönüştürmesi varsa lambda daha açıktır. Belirli bir nesneye bağlı türde (`obj::metot`) nesne, referans oluşturulurken bir kez değerlendirilir; `obj` null ise `NullPointerException` çağrıda değil o anda fırlar.",
+      "keyConcepts": [
+        {
+          "id": "kisa-yazim",
+          "label": "Var olan metodu çağıran lambdanın kısa yazımı",
+          "aliases": [
+            "::",
+            "kısa yazım",
+            "kısaltma",
+            "shorthand",
+            "var olan bir metod",
+            "mevcut bir metod"
+          ],
+          "anchors": [
+            "Method reference yalnızca var olan bir metodu çağıran lambdanın kısa yazımıdır."
+          ]
+        },
+        {
+          "id": "dort-tur",
+          "label": "Statik, bağlı nesne, tür üzerinden, constructor",
+          "aliases": [
+            "statik",
+            "static",
+            "constructor",
+            "::new",
+            "kurucu",
+            "bound"
+          ],
+          "anchors": [
+            "Dört türü statik metot, belirli nesne, türün herhangi bir nesnesi ve constructor referansıdır."
+          ]
+        },
+        {
+          "id": "ne-zaman",
+          "label": "Tek çağrıda okunur, ek mantıkta lambda",
+          "aliases": [
+            "okunur",
+            "okunabil",
+            "readab",
+            "ek mantık",
+            "tek bir metod",
+            "sadece çağır"
+          ],
+          "anchors": [
+            "Tek metodu iletmekte method reference, ek mantık varsa lambda daha okunurdur."
+          ]
+        },
+        {
+          "id": "erken-degerlendirme",
+          "label": "obj::metot'ta nesne hemen değerlendirilir",
+          "aliases": [
+            "bir kez değerlendir",
+            "oluşturulurken",
+            "hemen değerlendir",
+            "nullpointer"
+          ],
+          "anchors": [
+            "Belirli nesneye bağlı referansta nesne, referans oluşturulurken değerlendirilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "String::compareToIgnoreCase bir Comparator<String> yerine nasıl geçebilir? Parametreler nasıl eşleşir?"
+      ],
+      "source": "Kendi derleme — JLS §15.13 Method Reference Expressions"
+    },
+    {
+      "id": "java-stream-map-flatmap",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 1,
+      "prompt": "Stream API'de map ile flatMap arasındaki fark nedir?",
+      "modelAnswer": "`map` her elemanı **bire bir** başka bir değere dönüştürür; n elemanlı bir stream'den yine n elemanlı bir stream çıkar. `flatMap` ise her elemanı **bir stream'e** dönüştürür ve bu stream'leri tek bir düz stream'de birleştirir (düzleştirir); bir elemandan sıfır, bir ya da çok eleman çıkabilir. Siparişlerin kalemlerini tek akışta toplamak için `orders.stream().flatMap(o -> o.items().stream())` yazılır; aynı yerde `map` kullanılsaydı `Stream<Stream<Item>>` elde edilirdi. Aynı ayrım `Optional`'da da vardır; dönüştürücü zaten `Optional` döndürüyorsa iç içe `Optional<Optional<T>>` oluşmaması için `flatMap` kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "bire-bir",
+          "label": "map bire bir dönüştürür",
+          "aliases": [
+            "bire bir",
+            "birebir",
+            "one-to-one",
+            "one to one",
+            "aynı sayıda"
+          ],
+          "anchors": [
+            "map her elemanı bire bir başka bir değere dönüştürür."
+          ]
+        },
+        {
+          "id": "duzlestirme",
+          "label": "flatMap stream'leri düzleştirir",
+          "aliases": [
+            "düzleştir",
+            "flatten",
+            "tek bir stream",
+            "tek stream",
+            "tek bir akış",
+            "düz bir stream"
+          ],
+          "anchors": [
+            "flatMap her elemandan bir stream üretir ve bunları tek bir stream'de düzleştirir."
+          ]
+        },
+        {
+          "id": "sifir-cok",
+          "label": "Bir elemandan sıfır ya da çok eleman",
+          "aliases": [
+            "sıfır",
+            "one-to-many",
+            "çok eleman",
+            "birden çok eleman",
+            "birden fazla eleman",
+            "bire çok"
+          ],
+          "anchors": [
+            "flatMap'te bir elemandan sıfır, bir ya da çok eleman çıkabilir."
+          ]
+        },
+        {
+          "id": "ic-ice",
+          "label": "map ile iç içe Stream<Stream> oluşur",
+          "aliases": [
+            "stream<stream",
+            "iç içe",
+            "nested",
+            "optional<optional"
+          ],
+          "anchors": [
+            "Aynı yerde map kullanılsaydı iç içe Stream<Stream<T>> oluşurdu."
+          ]
+        }
+      ],
+      "followUps": [
+        "Java 16'daki mapMulti, flatMap'e göre ne zaman daha verimlidir?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: Stream.map, Stream.flatMap, Optional.flatMap"
+    },
+    {
+      "id": "java-sealed-class",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 2,
+      "prompt": "Sealed class nedir? Ne işe yarar?",
+      "modelAnswer": "**Sealed** bir sınıf ya da arayüz (Java 17), kendisini hangi alt türlerin genişletebileceğini `permits` ile açıkça sınırlar; `sealed interface Shape permits Circle, Square` gibi. İzin verilen her alt tür `final`, `sealed` ya da `non-sealed` olarak işaretlenmek zorundadır, böylece hiyerarşinin nerede kapandığı ya da yeniden açıldığı belli olur. Faydası, ödeme sonucu (başarılı, reddedildi, beklemede) gibi **kapalı bir seçenek kümesini** derleyiciye bildirmektir; `switch` pattern matching'de derleyici tüm alt türlerin ele alındığını doğrulayıp `default` istemez ve yeni bir alt tür eklenince eksik kalan `switch`'ler derleme hatası verir. Enum'dan farkı, her alt türün kendi alanlarını taşıyan ayrı bir sınıf, çoğu zaman bir `record` olabilmesidir.",
+      "keyConcepts": [
+        {
+          "id": "permits",
+          "label": "permits ile alt türler sınırlanır",
+          "aliases": [
+            "permits",
+            "izin ver",
+            "sınırla",
+            "kısıtla",
+            "restrict"
+          ],
+          "anchors": [
+            "Sealed tür, kendisini genişletebilecek alt türleri permits ile sınırlar."
+          ]
+        },
+        {
+          "id": "final-nonsealed",
+          "label": "Alt türler final, sealed ya da non-sealed",
+          "aliases": [
+            "non-sealed",
+            "non sealed",
+            "final"
+          ],
+          "anchors": [
+            "İzin verilen her alt tür final, sealed ya da non-sealed olmak zorundadır."
+          ]
+        },
+        {
+          "id": "exhaustive",
+          "label": "switch'te tüm alt türler denetlenir",
+          "aliases": [
+            "exhaustive",
+            "tüm alt tür",
+            "default istemez",
+            "default gerek",
+            "eksik kalan",
+            "derleme hatası"
+          ],
+          "anchors": [
+            "Sealed hiyerarşide switch exhaustive denetlenir, default gerekmez."
+          ]
+        },
+        {
+          "id": "kapali-kume",
+          "label": "Kapalı seçenek kümesi, enum'dan farkı",
+          "aliases": [
+            "kapalı",
+            "enum",
+            "record",
+            "seçenek küme",
+            "domain model",
+            "sonlu"
+          ],
+          "anchors": [
+            "Sealed, alan modelindeki kapalı bir seçenek kümesini ifade eder; enum'dan farklı olarak alt türler alan taşır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sealed hiyerarşi ile Visitor kalıbı arasındaki ilişki nedir?"
+      ],
+      "source": "Kendi derleme — JEP 409: Sealed Classes"
+    },
+    {
+      "id": "java-pattern-matching-switch",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 2,
+      "prompt": "Java 21'de switch için pattern matching ve record pattern ne sağlar?",
+      "modelAnswer": "Pattern matching ile `case` etiketleri yalnızca sabit değil **tür** de olabilir; `case Circle c -> ...` hem türü kontrol eder hem de değişkeni o türle bağlar, ayrı bir `instanceof` ve cast gerekmez. **Record pattern** bir record'u bileşenlerine **ayrıştırır**: `case Point(int x, int y) -> ...` yazılabilir ve kalıplar iç içe kullanılabilir. `when` ile ek koşul eklenir (`case Circle c when c.radius() > 10`) ve `case null` ile null açıkça ele alınır; null için case yoksa switch eskisi gibi `NullPointerException` fırlatır. Sealed bir hiyerarşi üzerindeki switch **exhaustive** olduğunda `default` gerekmez ve yeni bir alt tür eklendiğinde derleyici eksik dalları gösterir.",
+      "keyConcepts": [
+        {
+          "id": "tur-case",
+          "label": "case'te tür kontrolü ve bağlama",
+          "aliases": [
+            "instanceof",
+            "cast",
+            "tür kontrol",
+            "türü kontrol",
+            "type pattern",
+            "binding"
+          ],
+          "anchors": [
+            "case etiketi türü kontrol edip değişkeni o türle bağlar, ayrı instanceof ve cast gerekmez."
+          ]
+        },
+        {
+          "id": "ayristirma",
+          "label": "Record bileşenlerine ayrıştırılır",
+          "aliases": [
+            "ayrıştır",
+            "deconstruct",
+            "bileşen",
+            "destructur",
+            "iç içe kalıp",
+            "nested pattern"
+          ],
+          "anchors": [
+            "Record pattern bir record'u bileşenlerine ayrıştırır ve iç içe kullanılabilir."
+          ]
+        },
+        {
+          "id": "when-null",
+          "label": "when koşulu ve case null",
+          "aliases": [
+            "when",
+            "case null",
+            "guard",
+            "ek koşul"
+          ],
+          "anchors": [
+            "when ile ek koşul eklenir, case null ile null açıkça ele alınır."
+          ]
+        },
+        {
+          "id": "exhaustive",
+          "label": "Sealed ile exhaustive, default gerekmez",
+          "aliases": [
+            "exhaustive",
+            "default gerek",
+            "sealed",
+            "eksik dal",
+            "tüm durum",
+            "eksiksiz"
+          ],
+          "anchors": [
+            "Sealed hiyerarşide switch exhaustive olur, default gerekmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir switch'te case sıralaması neden önemlidir; dominance hatası nedir?"
+      ],
+      "source": "Kendi derleme — JEP 441: Pattern Matching for switch; JEP 440: Record Patterns"
+    },
+    {
+      "id": "java-generics-wildcards",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Modern Java",
+      "difficulty": 3,
+      "prompt": "Generics'te ? extends ve ? super arasındaki fark nedir? PECS kuralı ne söyler?",
+      "modelAnswer": "`List<? extends Number>`, Number ya da alt türlerinden birinin listesidir; elemanları `Number` olarak **okunabilir**, ama hangi alt tür olduğu bilinmediği için içine `null` dışında bir şey **eklenemez**. `List<? super Integer>` ise Integer ya da üst türlerinden birinin listesidir; içine `Integer` **eklenebilir**, ama okunan eleman yalnızca `Object` olarak görülür. **PECS** (Producer Extends, Consumer Super) kuralına göre yapı sana değer üretiyorsa, yani sen okuyorsan `extends`, senden değer tüketiyorsa, yani sen yazıyorsan `super` kullanılır. `Collections.copy(List<? super T> dest, List<? extends T> src)` imzası bunun tipik örneğidir; hem okunup hem yazılan bir yapıda wildcard kullanılmaz. Bu kural gerekli, çünkü generics **invariant**'tır ve `List<Integer>` bir `List<Number>` değildir.",
+      "keyConcepts": [
+        {
+          "id": "extends-okuma",
+          "label": "? extends: okunur, eklenemez",
+          "aliases": [
+            "okunabil",
+            "okunur",
+            "eklenemez",
+            "ekleyemezsin",
+            "read-only",
+            "salt okunur"
+          ],
+          "anchors": [
+            "? extends ile tanımlı yapıdan okunabilir ama içine eklenemez."
+          ]
+        },
+        {
+          "id": "super-yazma",
+          "label": "? super: eklenebilir, Object okunur",
+          "aliases": [
+            "eklenebil",
+            "ekleyebilirsin",
+            "yazılabil",
+            "object olarak",
+            "object döner"
+          ],
+          "anchors": [
+            "? super ile tanımlı yapıya eklenebilir, okunan eleman Object olarak görülür."
+          ]
+        },
+        {
+          "id": "pecs",
+          "label": "Producer Extends, Consumer Super",
+          "aliases": [
+            "producer",
+            "consumer",
+            "üretici",
+            "tüketici",
+            "üretiyor",
+            "tüketiyor"
+          ],
+          "anchors": [
+            "Değer üreten yapı için extends, değer tüketen yapı için super kullanılır."
+          ]
+        },
+        {
+          "id": "invariant",
+          "label": "Generics invariant",
+          "aliases": [
+            "invariant",
+            "değişmez tür",
+            "kovaryans",
+            "covarian",
+            "alt türü değil"
+          ],
+          "anchors": [
+            "Generics invariant'tır; List<Integer> bir List<Number> değildir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir metot parametresinde List<Object> yerine List<?> kullanmanın farkı nedir?"
+      ],
+      "source": "Kendi derleme — JLS §4.5.1 Type Arguments of Parameterized Types; Effective Java, Item 31"
     }
   ]
 }
