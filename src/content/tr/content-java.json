@@ -1737,7 +1737,7 @@
       "topic": "JVM",
       "difficulty": 3,
       "prompt": "Garbage collection'da stop-the-world duraklaması nedir? G1 ve ZGC bunu nasıl azaltır?",
-      "modelAnswer": "**Stop-the-world**, GC'nin işini güvenle yapabilmek için tüm uygulama thread'lerini durdurduğu andır; bu süre boyunca istekler bekler ve gecikme sıçrar. **G1** heap'i eşit boyutlu bölgelere (region) ayırır, en çok çöp içeren bölgeleri önce toplar ve duraklamayı `-XX:MaxGCPauseMillis` ile verilen hedefin altında tutmaya çalışır. **ZGC** işaretleme ve taşıma işinin neredeyse tamamını uygulama thread'leriyle **eşzamanlı** (concurrent) yapar; duraklamalar heap boyutundan bağımsız olarak milisaniyenin altında kalır. Bedel olarak ZGC genellikle daha fazla CPU ve bellek harcar; toplam iş hacmi (throughput) öndeyse G1, düşük gecikme öndeyse ZGC seçilir.",
+      "modelAnswer": "**Stop-the-world**, GC'nin işini güvenle yapabilmek için tüm uygulama thread'lerini durdurduğu andır; bu süre boyunca istekler bekler ve gecikme sıçrar. **G1** heap'i eşit boyutlu bölgelere (region) ayırır, en çok çöp içeren bölgeleri önce toplar ve duraklamayı `-XX:MaxGCPauseMillis` ile verilen hedefin altında tutmaya çalışır. **ZGC** işaretleme ve taşıma işinin neredeyse tamamını uygulama thread'leriyle **eşzamanlı** (concurrent) yapar; duraklamalar heap boyutundan bağımsız olarak milisaniyenin altında kalır. Bu düşük gecikmenin karşılığında ZGC throughput'tan ve bellek payından ödün verir; Java 21'de gelen **generational ZGC** bu yükü azaltır ve Java 23'ten beri ZGC'nin varsayılan modudur. Toplam iş hacmi öndeyse G1, düşük gecikme öndeyse ZGC seçilir; JVM'in varsayılan collector'ı hâlâ G1'dir.",
       "keyConcepts": [
         {
           "id": "threadler-durur",
@@ -1797,17 +1797,17 @@
         },
         {
           "id": "denge",
-          "label": "Throughput ile gecikme dengesi",
+          "label": "Gecikme karşılığı throughput ödünü, generational ZGC",
           "aliases": [
             "throughput",
             "iş hacmi",
-            "bedel",
+            "ödün",
             "trade-off",
-            "tradeoff",
-            "fazla bellek"
+            "generational",
+            "nesilli"
           ],
           "anchors": [
-            "ZGC düşük gecikme için daha fazla kaynak harcar; throughput öndeyse G1 seçilir."
+            "ZGC düşük gecikme karşılığında throughput ve bellekten ödün verir; generational ZGC bu yükü azaltır."
           ]
         }
       ],
@@ -3088,7 +3088,7 @@
       "topic": "Concurrency",
       "difficulty": 3,
       "prompt": "ReentrantLock, synchronized'a göre neler sunar? Hangisini ne zaman kullanırsın?",
-      "modelAnswer": "İkisi de aynı thread'in kilidi tekrar alabildiği (reentrant) karşılıklı dışlama sağlar ve aynı bellek görünürlüğü garantilerini verir; fark esneklikte. `ReentrantLock`, `tryLock` ile kilidi beklemeden ya da süre sınırıyla denemeyi, `lockInterruptibly` ile beklerken **kesilebilmeyi**, `new ReentrantLock(true)` ile **adil** (fair) sırayı ve birden fazla `Condition` ile ayrı bekleme kuyruklarını sunar. Bedeli, kilidin `finally` bloğunda `unlock()` ile **elle bırakılması** zorunluluğudur; unutulursa kilit sonsuza kadar tutulur, `synchronized` ise bloktan çıkışta kilidi otomatik bırakır. Bu esnekliğe ihtiyaç yoksa daha sade olan `synchronized` tercih edilir; Java 21'de virtual thread'lerin `synchronized` içinde carrier'a sabitlenmesi (pinning) `ReentrantLock` için ek bir sebepti, Java 24'te bu sorun giderildi.",
+      "modelAnswer": "İkisi de aynı thread'in kilidi tekrar alabildiği (reentrant) karşılıklı dışlama sağlar ve aynı bellek görünürlüğü garantilerini verir; fark esneklikte. `ReentrantLock`, `tryLock` ile kilidi beklemeden ya da süre sınırıyla denemeyi, `lockInterruptibly` ile beklerken **kesilebilmeyi**, `new ReentrantLock(true)` ile **adil** (fair) sırayı ve birden fazla `Condition` ile ayrı bekleme kuyruklarını sunar. Bedeli, kilidin `finally` bloğunda `unlock()` ile **elle bırakılması** zorunluluğudur; unutulursa kilit sonsuza kadar tutulur, `synchronized` ise bloktan çıkışta kilidi otomatik bırakır. Bu esnekliğe ihtiyaç yoksa daha sade olan `synchronized` tercih edilir. Java 21–23'te virtual thread `synchronized` içinde bloklanınca carrier'a sabitlendiği (pinning) için bu sürümlere özgü olarak `ReentrantLock` önerilirdi; Java 24'te (ve 25 LTS'te) bu giderildi, ama native çağrı içinde ya da class initializer'da bloklanınca pinning hâlâ olabilir.",
       "keyConcepts": [
         {
           "id": "trylock",
@@ -3148,15 +3148,17 @@
         },
         {
           "id": "pinning",
-          "label": "Virtual thread pinning (Java 21)",
+          "label": "Pinning: Java 21–23'e özgü",
           "aliases": [
             "pinning",
             "sabitlen",
             "virtual thread",
-            "carrier"
+            "carrier",
+            "class initializer",
+            "native"
           ],
           "anchors": [
-            "Java 21'de synchronized virtual thread'i carrier'a sabitleyebiliyordu, Java 24'te giderildi."
+            "Java 21–23'te synchronized virtual thread'i carrier'a sabitliyordu; Java 24'te giderildi, native çağrı ve class initializer'da hâlâ olabilir."
           ]
         }
       ],
