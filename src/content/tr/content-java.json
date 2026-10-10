@@ -3835,6 +3835,871 @@
         "Bir metot parametresinde List<Object> yerine List<?> kullanmanın farkı nedir?"
       ],
       "source": "Kendi derleme — JLS §4.5.1 Type Arguments of Parameterized Types; Effective Java, Item 31"
+    },
+    {
+      "id": "java-spring-ioc-di",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 1,
+      "prompt": "Spring'de IoC ve Dependency Injection nedir? Container ne iş yapar?",
+      "modelAnswer": "**Inversion of Control**, nesnelerin oluşturulması, birbirine bağlanması ve yaşam döngüsünün uygulama kodundan alınıp bir çerçeveye bırakılmasıdır. Spring'de bu çerçeve `ApplicationContext`'tir; `@Component` ile işaretli sınıfları tarar ya da `@Bean` metotlarını okur, bu nesneleri **bean** olarak oluşturur ve yönetir. **Dependency Injection** IoC'nin uygulanma biçimidir; bir bean bağımlılıklarını kendisi `new` ile yaratmaz, container onları çoğunlukla constructor üzerinden enjekte eder. Sonuç gevşek bağlılıktır: bağımlılık arayüz üzerinden geldiği için testte sahte (mock) bir implementasyon verilebilir ve yapılandırma tek yerde toplanır.",
+      "keyConcepts": [
+        {
+          "id": "kontrol-devri",
+          "label": "Oluşturma ve yaşam döngüsü çerçeveye devredilir",
+          "aliases": [
+            "inversion of control",
+            "kontrolün tersine",
+            "yaşam döngüsü",
+            "oluşturma sorumlulu",
+            "framework",
+            "çerçeveye"
+          ],
+          "anchors": [
+            "IoC'de nesnelerin oluşturulması ve yaşam döngüsü uygulama kodundan alınıp çerçeveye bırakılır."
+          ]
+        },
+        {
+          "id": "application-context",
+          "label": "ApplicationContext bean'leri oluşturur ve yönetir",
+          "aliases": [
+            "applicationcontext",
+            "application context",
+            "beanfactory",
+            "bean'leri",
+            "konteyner"
+          ],
+          "anchors": [
+            "ApplicationContext bean'leri bulur, oluşturur ve yönetir."
+          ]
+        },
+        {
+          "id": "enjeksiyon",
+          "label": "Bağımlılık dışarıdan enjekte edilir",
+          "aliases": [
+            "enjekte",
+            "new ile",
+            "constructor",
+            "dışarıdan",
+            "kendisi yaratmaz"
+          ],
+          "anchors": [
+            "DI'da bean bağımlılıklarını kendisi oluşturmaz, container onları enjekte eder."
+          ]
+        },
+        {
+          "id": "gevsek-bag",
+          "label": "Gevşek bağlılık ve test edilebilirlik",
+          "aliases": [
+            "gevşek bağ",
+            "loose coupling",
+            "loosely",
+            "mock",
+            "test edilebil",
+            "sahte"
+          ],
+          "anchors": [
+            "DI gevşek bağlılık sağlar; testte sahte implementasyon verilebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "ApplicationContext ile BeanFactory arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: The IoC Container"
+    },
+    {
+      "id": "java-spring-injection-types",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 1,
+      "prompt": "Constructor, setter ve field injection arasındaki fark nedir? Neden constructor injection önerilir?",
+      "modelAnswer": "**Constructor injection**'da bağımlılıklar constructor parametresi olarak gelir; alanlar `final` olabilir, nesne hiçbir zaman eksik bağımlılıkla oluşmaz ve sınıf testte container olmadan `new` ile kurulabilir. Tek constructor varsa `@Autowired` yazmaya gerek yoktur. **Setter injection** isteğe bağlı ya da sonradan değiştirilebilecek bağımlılıklar için uygundur. **Field injection** (`@Autowired` alan üzerinde) kısa görünür ama bağımlılıkları gizler, alanlar `final` olamaz, test için reflection ya da container gerekir ve sınıfın çok fazla bağımlılıkla şiştiği kolayca fark edilmez. Constructor injection döngüsel bağımlılığı açılışta hata olarak gösterir; Spring Boot 2.6'dan beri döngüsel referanslar zaten varsayılan olarak yasaktır.",
+      "keyConcepts": [
+        {
+          "id": "final-zorunlu",
+          "label": "final alanlar, eksik bağımlılık olmaz",
+          "aliases": [
+            "final",
+            "immutable",
+            "değişmez",
+            "zorunlu bağımlılık",
+            "eksik bağımlılık"
+          ],
+          "anchors": [
+            "Constructor injection'da alanlar final olur ve nesne eksik bağımlılıkla oluşmaz."
+          ]
+        },
+        {
+          "id": "test",
+          "label": "Container olmadan test edilir",
+          "aliases": [
+            "test",
+            "mock",
+            "new ile",
+            "container olmadan",
+            "konteyner olmadan"
+          ],
+          "anchors": [
+            "Constructor injection kullanan sınıf testte container olmadan new ile kurulabilir."
+          ]
+        },
+        {
+          "id": "setter-opsiyonel",
+          "label": "Setter: isteğe bağlı bağımlılık",
+          "aliases": [
+            "isteğe bağlı",
+            "opsiyonel",
+            "optional",
+            "sonradan değiş"
+          ],
+          "anchors": [
+            "Setter injection isteğe bağlı ya da sonradan değişebilecek bağımlılıklar içindir."
+          ]
+        },
+        {
+          "id": "field-gizler",
+          "label": "Field: bağımlılığı gizler, final olamaz",
+          "aliases": [
+            "gizler",
+            "gizli",
+            "görünmez",
+            "final olamaz",
+            "reflection",
+            "şiştiği"
+          ],
+          "anchors": [
+            "Field injection bağımlılıkları gizler, alanlar final olamaz ve test için reflection gerekir."
+          ]
+        },
+        {
+          "id": "dongusel",
+          "label": "Döngüsel bağımlılık açılışta görünür",
+          "aliases": [
+            "döngüsel",
+            "circular",
+            "allow-circular-references",
+            "açılışta"
+          ],
+          "anchors": [
+            "Constructor injection döngüsel bağımlılığı uygulama açılırken hata olarak gösterir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Lombok'un @RequiredArgsConstructor'ı constructor injection'da nasıl kullanılır?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Dependency Injection; Spring Boot 2.6 sürüm notları"
+    },
+    {
+      "id": "java-spring-bean-scopes",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 2,
+      "prompt": "Spring'de bean scope'ları nelerdir? Singleton bir bean'de state tutmak neden risklidir?",
+      "modelAnswer": "Varsayılan scope **singleton**'dır; container başına bir örnek oluşturulur ve her enjeksiyonda aynı örnek verilir, yani bu JVM düzeyindeki Singleton kalıbı değil container başına tekliktir. **prototype**'ta bean her istendiğinde yeni örnek oluşturulur ve Spring onun yok edilmesini yönetmez. Web uygulamalarında **request** (HTTP isteği başına), **session** (HTTP oturumu başına) ve **application** (`ServletContext` başına) scope'ları da vardır. Singleton bean tüm istekler ve thread'ler arasında paylaşıldığı için içinde değişebilir alan (kullanıcıya özel veri, sayaç) tutmak **race condition**'a ve bir kullanıcının verisinin başkasına sızmasına yol açar; bu yüzden singleton bean'ler durumsuz (stateless) tasarlanır.",
+      "keyConcepts": [
+        {
+          "id": "varsayilan",
+          "label": "Varsayılan singleton, container başına tek örnek",
+          "aliases": [
+            "varsayılan",
+            "default",
+            "container başına",
+            "tek örnek",
+            "tek instance",
+            "aynı örnek"
+          ],
+          "anchors": [
+            "Varsayılan scope singleton'dır; container başına tek örnek oluşturulur."
+          ]
+        },
+        {
+          "id": "prototype",
+          "label": "prototype: her istendiğinde yeni örnek",
+          "aliases": [
+            "prototype",
+            "her istendiğinde",
+            "yeni örnek",
+            "yeni instance"
+          ],
+          "anchors": [
+            "prototype scope'ta bean her istendiğinde yeni örnek oluşturulur."
+          ]
+        },
+        {
+          "id": "web-scope",
+          "label": "request, session, application",
+          "aliases": [
+            "request",
+            "session",
+            "application",
+            "websocket",
+            "http isteği"
+          ],
+          "anchors": [
+            "Web uygulamalarında request, session ve application scope'ları vardır."
+          ]
+        },
+        {
+          "id": "paylasim",
+          "label": "Singleton paylaşılır: race condition, veri sızması",
+          "aliases": [
+            "race condition",
+            "paylaşıl",
+            "thread-safe",
+            "thread safe",
+            "sızma",
+            "eşzamanlı"
+          ],
+          "anchors": [
+            "Singleton bean thread'ler arasında paylaşılır; değişebilir alan race condition'a yol açar."
+          ]
+        },
+        {
+          "id": "stateless",
+          "label": "Durumsuz tasarlanır",
+          "aliases": [
+            "stateless",
+            "durumsuz",
+            "durum tutmamalı",
+            "değişebilir alan"
+          ],
+          "anchors": [
+            "Singleton bean'ler durumsuz tasarlanmalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Request scope'lu bir bean'i singleton bir servise enjekte etmek nasıl mümkün olur?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Bean Scopes"
+    },
+    {
+      "id": "java-spring-prototype-in-singleton",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 3,
+      "prompt": "Singleton bir bean'e prototype bean enjekte edildiğinde ne olur? Her kullanımda yeni örnek almak için ne yaparsın?",
+      "modelAnswer": "Enjeksiyon yalnızca singleton oluşturulurken **bir kez** yapılır; bu yüzden singleton uygulama boyunca hep **aynı** prototype örneğini kullanır ve prototype davranışı kaybolur. Her kullanımda yeni örnek almak için bağımlılık doğrudan değil bir **sağlayıcı** üzerinden alınır; `ObjectProvider<T>` (ya da `jakarta.inject.Provider<T>`) enjekte edilir ve her ihtiyaçta `getObject()` çağrılır. Alternatifleri, Spring'in çalışma anında gövdesini ürettiği bir `@Lookup` metodu ve bean'i **scoped proxy** (`proxyMode = ScopedProxyMode.TARGET_CLASS`) ile tanımlamaktır. Scoped proxy'de her metot çağrısı yeni bir prototype örneğine gidebilir, bu yüzden durum taşıyan prototype'larda `ObjectProvider` daha öngörülebilirdir.",
+      "keyConcepts": [
+        {
+          "id": "bir-kez",
+          "label": "Enjeksiyon bir kez, hep aynı örnek",
+          "aliases": [
+            "bir kez",
+            "tek sefer",
+            "aynı örnek",
+            "aynı instance",
+            "hep aynı",
+            "oluşturulurken"
+          ],
+          "anchors": [
+            "Enjeksiyon singleton oluşturulurken bir kez yapılır, hep aynı prototype örneği kullanılır."
+          ]
+        },
+        {
+          "id": "provider",
+          "label": "ObjectProvider ile her seferinde al",
+          "aliases": [
+            "objectprovider",
+            "provider",
+            "getobject",
+            "objectfactory",
+            "sağlayıcı"
+          ],
+          "anchors": [
+            "ObjectProvider enjekte edilip her ihtiyaçta getObject çağrılır."
+          ]
+        },
+        {
+          "id": "lookup",
+          "label": "@Lookup method injection",
+          "aliases": [
+            "lookup",
+            "method injection",
+            "getbean"
+          ],
+          "anchors": [
+            "@Lookup metodunun gövdesini Spring üretir ve her çağrıda yeni örnek döner."
+          ]
+        },
+        {
+          "id": "scoped-proxy",
+          "label": "Scoped proxy",
+          "aliases": [
+            "scoped proxy",
+            "proxymode",
+            "target_class",
+            "scopedproxymode",
+            "proxy"
+          ],
+          "anchors": [
+            "Bean scoped proxy ile tanımlanırsa proxy her kullanımda hedef örneği container'dan alır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Aynı problem request scope'lu bir bean'de neden genelde fark edilmez?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Method Injection, Scoped Beans as Dependencies"
+    },
+    {
+      "id": "java-spring-bean-lifecycle",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 2,
+      "prompt": "Spring'de bir bean'in yaşam döngüsü nasıldır? @PostConstruct ve @PreDestroy ne zaman çalışır?",
+      "modelAnswer": "Container önce bean'i **oluşturur** (constructor), sonra bağımlılıklarını enjekte eder ve varsa `BeanNameAware` gibi Aware arayüzlerini çağırır. Ardından `BeanPostProcessor`'ların `postProcessBeforeInitialization` metodu, sonra başlatma geri çağrıları çalışır: `@PostConstruct` (`jakarta.annotation`), `InitializingBean.afterPropertiesSet` ve tanımlıysa `initMethod`; `@PostConstruct` bağımlılıklar hazır olduktan sonra çalıştığı için başlatma mantığının yeridir. Sonra `postProcessAfterInitialization` çalışır; `@Transactional` gibi AOP proxy'leri genelde bu adımda bean'in yerine geçer. Context kapanırken `@PreDestroy`, `DisposableBean.destroy` ve `destroyMethod` sırayla çağrılır; prototype bean'lerde Spring yok etme geri çağrılarını çalıştırmaz.",
+      "keyConcepts": [
+        {
+          "id": "olustur-enjekte",
+          "label": "Önce oluşturma, sonra enjeksiyon",
+          "aliases": [
+            "constructor",
+            "oluşturulur",
+            "oluşturur",
+            "instantiat",
+            "aware"
+          ],
+          "anchors": [
+            "Bean önce constructor ile oluşturulur, sonra bağımlılıkları enjekte edilir."
+          ]
+        },
+        {
+          "id": "postconstruct-zamani",
+          "label": "@PostConstruct bağımlılıklar hazır olunca",
+          "aliases": [
+            "bağımlılıklar hazır",
+            "enjeksiyondan sonra",
+            "afterpropertiesset",
+            "initializingbean",
+            "initmethod",
+            "init-method"
+          ],
+          "anchors": [
+            "@PostConstruct bağımlılıklar enjekte edildikten sonra çalışır."
+          ]
+        },
+        {
+          "id": "bpp",
+          "label": "BeanPostProcessor ve AOP proxy",
+          "aliases": [
+            "beanpostprocessor",
+            "postprocessbefore",
+            "postprocessafter",
+            "proxy"
+          ],
+          "anchors": [
+            "BeanPostProcessor başlatmanın öncesinde ve sonrasında çalışır; AOP proxy'leri sonrasında oluşur."
+          ]
+        },
+        {
+          "id": "kapanis",
+          "label": "Kapanışta @PreDestroy",
+          "aliases": [
+            "kapanır",
+            "kapanış",
+            "shutdown",
+            "disposablebean",
+            "destroymethod",
+            "close"
+          ],
+          "anchors": [
+            "@PreDestroy context kapanırken çağrılır."
+          ]
+        },
+        {
+          "id": "prototype",
+          "label": "Prototype'ta yok etme çağrılmaz",
+          "aliases": [
+            "prototype",
+            "yönetmez",
+            "çağırmaz",
+            "çalıştırmaz"
+          ],
+          "anchors": [
+            "Prototype bean'lerde Spring yok etme geri çağrılarını çalıştırmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "@PostConstruct içinde aynı bean'in @Transactional bir metodunu çağırmak neden beklendiği gibi çalışmaz?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Customizing the Nature of a Bean, Container Extension Points"
+    },
+    {
+      "id": "java-spring-component-vs-bean",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 1,
+      "prompt": "@Component ile @Bean arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
+      "modelAnswer": "`@Component` bir **sınıfa** konur ve component scanning sırasında otomatik bulunur; kendi yazdığın sınıflar için kullanılır. `@Bean` ise bir `@Configuration` sınıfındaki **metoda** konur ve metodun döndürdüğü nesne bean olarak kaydedilir; kaynağını değiştiremediğin üçüncü parti sınıflar (`ObjectMapper`, `RestClient`, bir `DataSource`) ya da oluşturma mantığı, koşul veya parametre gerektiren durumlar için uygundur. `@Bean` metodunun adı varsayılan bean adıdır. `@Configuration` sınıfları CGLIB ile proxy'lendiği için bir `@Bean` metodunu başka bir `@Bean` metodundan çağırmak aynı singleton'ı döndürür; `proxyBeanMethods = false` ile ya da `@Component` içinde tanımlanan lite mod `@Bean`'lerde bu çağrı her seferinde yeni nesne üretir.",
+      "keyConcepts": [
+        {
+          "id": "sinif-tarama",
+          "label": "@Component sınıfa konur, taramayla bulunur",
+          "aliases": [
+            "sınıfa",
+            "scan",
+            "tarama",
+            "otomatik bul",
+            "kendi sınıf",
+            "kendi yazdı"
+          ],
+          "anchors": [
+            "@Component sınıfa konur ve component scanning ile otomatik bulunur."
+          ]
+        },
+        {
+          "id": "metot-configuration",
+          "label": "@Bean metoda, @Configuration içinde",
+          "aliases": [
+            "metoda",
+            "configuration",
+            "döndürdüğü",
+            "metot üzerin",
+            "method üzerin"
+          ],
+          "anchors": [
+            "@Bean bir @Configuration sınıfındaki metoda konur, döndürdüğü nesne bean olur."
+          ]
+        },
+        {
+          "id": "ucuncu-parti",
+          "label": "Üçüncü parti sınıflar, oluşturma mantığı",
+          "aliases": [
+            "üçüncü parti",
+            "third-party",
+            "third party",
+            "kütüphane",
+            "kaynağını değiştir",
+            "oluşturma mantığı"
+          ],
+          "anchors": [
+            "@Bean kaynağı değiştirilemeyen üçüncü parti sınıflar ve oluşturma mantığı için kullanılır."
+          ]
+        },
+        {
+          "id": "proxy-lite",
+          "label": "@Configuration proxy'si ve lite mod",
+          "aliases": [
+            "proxybeanmethods",
+            "lite mod",
+            "cglib",
+            "aynı singleton",
+            "proxy'len"
+          ],
+          "anchors": [
+            "@Configuration proxy'lendiği için @Bean metotları arası çağrı aynı singleton'ı döndürür."
+          ]
+        }
+      ],
+      "followUps": [
+        "Aynı türden hem bir @Component sınıf hem bir @Bean metodu tanımlarsan ne olur?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Using the @Bean Annotation, Full @Configuration vs lite @Bean mode"
+    },
+    {
+      "id": "java-spring-stereotypes",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 1,
+      "prompt": "@Service, @Repository ve @Controller, @Component'tan nasıl ayrılır?",
+      "modelAnswer": "Üçü de `@Component` ile meta-anotasyonlanmıştır; hepsi component scanning ile bulunur ve bean olur, temel fark **niyeti** ve katmanı belirtmeleridir. `@Repository` buna ek olarak **exception translation** sağlar: `PersistenceExceptionTranslationPostProcessor` bu bean'lerden fırlayan JPA/Hibernate exception'larını Spring'in `DataAccessException` hiyerarşisine çevirir. `@Controller` Spring MVC tarafından istek eşleme için taranır; `@RestController`, `@Controller` ile `@ResponseBody`'nin birleşimidir ve dönüş değeri doğrudan yanıt gövdesine yazılır. `@Service` ise davranış eklemez, yalnızca iş katmanını belgeler; AOP pointcut'larında katmanı seçmek için de kullanılabilir.",
+      "keyConcepts": [
+        {
+          "id": "meta",
+          "label": "Hepsi @Component'in özelleşmiş hâli",
+          "aliases": [
+            "meta-anotasyon",
+            "meta anotasyon",
+            "meta-annotation",
+            "özelleş",
+            "stereotype"
+          ],
+          "anchors": [
+            "@Service, @Repository ve @Controller, @Component ile meta-anotasyonlanmıştır."
+          ]
+        },
+        {
+          "id": "katman",
+          "label": "Niyet ve katman",
+          "aliases": [
+            "katman",
+            "layer",
+            "niyet",
+            "semantik",
+            "anlamsal"
+          ],
+          "anchors": [
+            "Temel fark, sınıfın hangi katmana ait olduğunu belirtmeleridir."
+          ]
+        },
+        {
+          "id": "translation",
+          "label": "@Repository exception translation",
+          "aliases": [
+            "exception translation",
+            "dataaccessexception",
+            "persistenceexceptiontranslation",
+            "çevirir",
+            "translation"
+          ],
+          "anchors": [
+            "@Repository, persistence exception'larını DataAccessException hiyerarşisine çevirir."
+          ]
+        },
+        {
+          "id": "mvc",
+          "label": "@Controller istek eşleme, @RestController",
+          "aliases": [
+            "restcontroller",
+            "responsebody",
+            "spring mvc",
+            "istek eşleme",
+            "request mapping",
+            "requestmapping"
+          ],
+          "anchors": [
+            "@Controller Spring MVC istek eşlemesine girer; @RestController @ResponseBody ekler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spring Data JPA repository arayüzlerine neden @Repository yazmak gerekmez?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Classpath Scanning and Managed Components, Exception Translation"
+    },
+    {
+      "id": "java-spring-primary-qualifier",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Core",
+      "difficulty": 1,
+      "prompt": "Aynı türden birden fazla bean varsa Spring hangisini enjekte eder? @Primary ve @Qualifier ne işe yarar?",
+      "modelAnswer": "Tek bir bağımlılık beklenen yerde aynı türden birden fazla aday varsa Spring hangisini seçeceğini bilemez ve açılışta `NoUniqueBeanDefinitionException` ile durur. `@Primary` bir bean'i o tür için **varsayılan** aday yapar; özel bir şey istenmeyen her yerde o enjekte edilir. `@Qualifier(\"stripePayment\")` ise enjeksiyon noktasında **belirli** bir bean'i adıyla ya da özel bir niteleyiciyle seçer ve `@Primary`'den önce gelir. Hepsine ihtiyaç varsa `List<PaymentClient>` ya da bean adlarını anahtar yapan `Map<String, PaymentClient>` enjekte edilebilir.",
+      "keyConcepts": [
+        {
+          "id": "belirsizlik",
+          "label": "Birden fazla aday: açılışta hata",
+          "aliases": [
+            "nouniquebeandefinition",
+            "açılışta",
+            "başlangıçta",
+            "belirsiz",
+            "ambiguous",
+            "seçemez"
+          ],
+          "anchors": [
+            "Birden fazla aday varsa Spring açılışta NoUniqueBeanDefinitionException ile durur."
+          ]
+        },
+        {
+          "id": "varsayilan",
+          "label": "@Primary varsayılan aday",
+          "aliases": [
+            "varsayılan",
+            "default",
+            "öncelikli",
+            "tercih edilen"
+          ],
+          "anchors": [
+            "@Primary bir bean'i o tür için varsayılan aday yapar."
+          ]
+        },
+        {
+          "id": "belirli",
+          "label": "@Qualifier belirli bean'i seçer",
+          "aliases": [
+            "adıyla",
+            "ismiyle",
+            "belirli bir",
+            "bean adı",
+            "niteleyici"
+          ],
+          "anchors": [
+            "@Qualifier enjeksiyon noktasında belirli bir bean'i adıyla seçer."
+          ]
+        },
+        {
+          "id": "oncelik",
+          "label": "@Qualifier @Primary'den önce gelir",
+          "aliases": [
+            "önce gelir",
+            "önceliklidir",
+            "ezer",
+            "baskın"
+          ],
+          "anchors": [
+            "@Qualifier, @Primary'den önce gelir."
+          ]
+        },
+        {
+          "id": "liste",
+          "label": "Hepsini List ya da Map ile al",
+          "aliases": [
+            "list<",
+            "map<string",
+            "hepsini",
+            "tümünü",
+            "liste olarak"
+          ],
+          "anchors": [
+            "Aynı türdeki bean'lerin hepsi List ya da Map olarak enjekte edilebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Parametre adının bean adıyla eşleşmesi seçimde nasıl rol oynar?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Fine-tuning Annotation-based Autowiring with @Primary and @Qualifier"
+    },
+    {
+      "id": "java-spring-aop-concepts",
+      "category": "java",
+      "kind": "definition",
+      "topic": "AOP",
+      "difficulty": 2,
+      "prompt": "AOP nedir? Aspect, advice, pointcut ve join point kavramlarını açıkla.",
+      "modelAnswer": "**AOP** (Aspect-Oriented Programming), loglama, transaction, güvenlik, cache ve metrik gibi birçok sınıfı kesen (**cross-cutting**) işleri iş mantığından ayırıp tek bir yerde toplamaktır. **Join point** programın araya girilebilecek bir noktasıdır; Spring AOP'de bu her zaman bir metot çalışmasıdır. **Pointcut** hangi join point'lerin seçileceğini söyleyen ifadedir (`execution(* com.shop.service.*.*(..))` ya da `@annotation(Audited)`), **advice** o noktalarda çalışacak koddur (`@Before`, `@Around`), **aspect** ise pointcut ile advice'ı bir araya getiren modüldür (`@Aspect` sınıfı). Spring AOP bunu çalışma anında **proxy** ile uygular; `@Transactional`, `@Cacheable` ve `@Async` da bu mekanizmanın üzerine kuruludur.",
+      "keyConcepts": [
+        {
+          "id": "cross-cutting",
+          "label": "Kesişen işler iş mantığından ayrılır",
+          "aliases": [
+            "cross-cutting",
+            "cross cutting",
+            "kesişen",
+            "loglama",
+            "logging",
+            "tekrar eden"
+          ],
+          "anchors": [
+            "AOP, loglama ve transaction gibi kesişen işleri iş mantığından ayırır."
+          ]
+        },
+        {
+          "id": "join-point-metot",
+          "label": "Spring AOP'de join point bir metot çalışmasıdır",
+          "aliases": [
+            "metot çalış",
+            "metod çalış",
+            "method execution",
+            "metot çağrı",
+            "metod çağrı"
+          ],
+          "anchors": [
+            "Spring AOP'de join point her zaman bir metot çalışmasıdır."
+          ]
+        },
+        {
+          "id": "pointcut-advice",
+          "label": "Pointcut nerede, advice ne çalışır",
+          "aliases": [
+            "execution(",
+            "annotation(",
+            "expression",
+            "hangi metot",
+            "çalışacak kod",
+            "seçen ifade"
+          ],
+          "anchors": [
+            "Pointcut hangi noktaların seçileceğini, advice orada çalışacak kodu belirler."
+          ]
+        },
+        {
+          "id": "proxy",
+          "label": "Çalışma anında proxy ile uygulanır",
+          "aliases": [
+            "proxy",
+            "weaving",
+            "çalışma anında",
+            "transactional",
+            "cacheable"
+          ],
+          "anchors": [
+            "Spring AOP aspect'leri çalışma anında proxy ile uygular."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spring AOP ile AspectJ arasındaki fark nedir; hangi durumda AspectJ gerekir?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Aspect Oriented Programming with Spring"
+    },
+    {
+      "id": "java-spring-aop-proxy-types",
+      "category": "java",
+      "kind": "definition",
+      "topic": "AOP",
+      "difficulty": 3,
+      "prompt": "Spring AOP'de JDK dynamic proxy ile CGLIB proxy arasındaki fark nedir?",
+      "modelAnswer": "**JDK dynamic proxy**, bean'in yalnızca **arayüzlerini** implemente eden bir nesnedir; sadece arayüz metotları yakalanır ve bean somut sınıf türüyle enjekte edilmek istenirse hata alınır. **CGLIB** proxy ise çalışma anında bean sınıfının bir **alt sınıfını** üretir; arayüz gerekmez ama `final` sınıflar proxy'lenemez, `final` ve `private` metotlar override edilemediği için sessizce yakalanmaz. Spring Boot, bean arayüz implemente etse bile varsayılan olarak CGLIB kullanır (`spring.aop.proxy-target-class=true`). İki türde de proxy, nesnenin kendi içinden yaptığı çağrıları (self-invocation) yakalamaz.",
+      "keyConcepts": [
+        {
+          "id": "arayuz",
+          "label": "JDK proxy arayüz üzerinden çalışır",
+          "aliases": [
+            "arayüz",
+            "interface",
+            "somut sınıf",
+            "beannotofrequiredtype"
+          ],
+          "anchors": [
+            "JDK dynamic proxy yalnızca bean'in arayüzlerini implemente eder."
+          ]
+        },
+        {
+          "id": "alt-sinif",
+          "label": "CGLIB alt sınıf üretir",
+          "aliases": [
+            "alt sınıf",
+            "subclass",
+            "kalıtım",
+            "extends",
+            "türetir"
+          ],
+          "anchors": [
+            "CGLIB çalışma anında bean sınıfının alt sınıfını üretir."
+          ]
+        },
+        {
+          "id": "final",
+          "label": "final sınıf ve metotlar proxy'lenemez",
+          "aliases": [
+            "final",
+            "private",
+            "override edilemez"
+          ],
+          "anchors": [
+            "CGLIB final sınıfları proxy'leyemez, final ve private metotları yakalayamaz."
+          ]
+        },
+        {
+          "id": "boot-varsayilan",
+          "label": "Spring Boot varsayılanı CGLIB",
+          "aliases": [
+            "proxy-target-class",
+            "proxytargetclass",
+            "varsayılan olarak cglib",
+            "default olarak cglib",
+            "boot cglib",
+            "cglib varsayılan"
+          ],
+          "anchors": [
+            "Spring Boot arayüz olsa bile varsayılan olarak CGLIB proxy kullanır."
+          ]
+        },
+        {
+          "id": "self-invocation",
+          "label": "İç çağrılar yakalanmaz",
+          "aliases": [
+            "self-invocation",
+            "self invocation",
+            "kendi içinden",
+            "iç çağrı",
+            "this"
+          ],
+          "anchors": [
+            "Hiçbir proxy türü nesnenin kendi içinden yaptığı çağrıları yakalamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sınıfı final yapmak Spring'de hangi özellikleri sessizce bozabilir?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Proxying Mechanisms; Spring Boot: spring.aop.proxy-target-class"
+    },
+    {
+      "id": "java-spring-advice-types",
+      "category": "java",
+      "kind": "definition",
+      "topic": "AOP",
+      "difficulty": 2,
+      "prompt": "Spring AOP'de advice türleri nelerdir? @Around'u diğerlerinden ayıran ne?",
+      "modelAnswer": "`@Before` metottan önce çalışır, `@AfterReturning` metot normal döndükten sonra çalışır ve dönüş değerini görebilir, `@AfterThrowing` metot exception fırlattığında çalışır ve exception'ı görebilir, `@After` ise iki durumda da `finally` gibi çalışır. `@Around` metodu tamamen **sarar**: `ProceedingJoinPoint.proceed()` çağrısıyla hedef metodu ne zaman, hangi argümanlarla ve hatta çağırıp çağırmayacağına kendisi karar verir. Bu yüzden süre ölçmek, argümanları ya da dönüş değerini değiştirmek, exception'ı yakalayıp başka bir sonuç döndürmek yalnızca `@Around` ile yapılabilir. `proceed()` çağırmak unutulursa hedef metot hiç çalışmaz; bu yüzden işi görebilen en sınırlı advice türünü seçmek önerilir.",
+      "keyConcepts": [
+        {
+          "id": "diger-turler",
+          "label": "@Before, @AfterReturning, @AfterThrowing, @After",
+          "aliases": [
+            "before",
+            "afterreturning",
+            "afterthrowing",
+            "after",
+            "finally"
+          ],
+          "anchors": [
+            "@Before önce, @AfterReturning normal dönüşte, @AfterThrowing exception'da, @After her durumda çalışır."
+          ]
+        },
+        {
+          "id": "sarar",
+          "label": "@Around metodu sarar",
+          "aliases": [
+            "sarar",
+            "sarmal",
+            "wrap",
+            "etrafında",
+            "kontrol eder"
+          ],
+          "anchors": [
+            "@Around hedef metodu tamamen sarar."
+          ]
+        },
+        {
+          "id": "proceed",
+          "label": "proceed() ile hedefi çağırır",
+          "aliases": [
+            "proceed",
+            "proceedingjoinpoint"
+          ],
+          "anchors": [
+            "@Around hedef metodu ProceedingJoinPoint.proceed() ile çağırır."
+          ]
+        },
+        {
+          "id": "yetenekler",
+          "label": "Süre ölçme, değer değiştirme, exception yutma",
+          "aliases": [
+            "süre ölç",
+            "argüman",
+            "dönüş değerini değiş",
+            "yakalayıp",
+            "exception'ı yut",
+            "sonucu değiş"
+          ],
+          "anchors": [
+            "Süre ölçmek, argüman ve dönüş değerini değiştirmek yalnızca @Around ile yapılır."
+          ]
+        },
+        {
+          "id": "unutma",
+          "label": "proceed unutulursa metot çalışmaz",
+          "aliases": [
+            "unutulursa",
+            "unutursan",
+            "hiç çalışmaz",
+            "en sınırlı",
+            "least powerful"
+          ],
+          "anchors": [
+            "proceed çağrılmazsa hedef metot çalışmaz; en sınırlı advice türü seçilmelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Birden fazla aspect aynı metoda uygulanıyorsa çalışma sırasını nasıl belirlersin?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Declaring Advice"
     }
   ]
 }
