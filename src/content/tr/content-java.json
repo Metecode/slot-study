@@ -4785,7 +4785,8 @@
           "label": "REQUIRED: varsa katılır, yoksa başlatır",
           "aliases": [
             "katıl",
-            "join",
+            "join olur",
+            "join eder",
             "mevcut transaction",
             "yoksa yeni",
             "aynı transaction"
