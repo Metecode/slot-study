@@ -5161,6 +5161,686 @@
         "readOnly bir transaction'ın içinden readOnly olmayan REQUIRED bir metot çağrılırsa ne olur?"
       ],
       "source": "Kendi derleme — Spring Framework belgeleri: @Transactional Settings, HibernateJpaDialect; PostgreSQL: SET TRANSACTION READ ONLY"
+    },
+    {
+      "id": "java-jpa-persistence-context",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 2,
+      "prompt": "JPA'da persistence context nedir? Dirty checking nasıl çalışır?",
+      "modelAnswer": "**Persistence context**, bir `EntityManager`'ın yönettiği entity örneklerinin kümesidir; Spring'de varsayılan olarak transaction boyunca yaşar. İçinde aynı id için **tek bir örnek** bulunur; aynı entity iki kez okunursa ikinci okuma veritabanına gitmeden aynı nesneyi döndürür, bu yüzden first-level cache olarak da anılır. Hibernate yüklenen her entity'nin ilk hâlinin bir kopyasını tutar; **flush** anında (commit'ten önce ya da etkilenen tabloya sorgu atılmadan önce) mevcut hâli bu kopyayla karşılaştırır ve değişen entity'ler için `UPDATE` üretir. Yani managed bir entity'de setter çağırmak yeterlidir, ayrıca `save()` çağırmak gerekmez; aynı sebeple çok sayıda entity yükleyen uzun bir transaction bellek ve flush maliyeti biriktirir.",
+      "keyConcepts": [
+        {
+          "id": "managed-kume",
+          "label": "EntityManager'ın yönettiği entity kümesi",
+          "aliases": [
+            "entitymanager",
+            "managed",
+            "yönetilen",
+            "session",
+            "transaction boyunca"
+          ],
+          "anchors": [
+            "Persistence context bir EntityManager'ın yönettiği entity örneklerinin kümesidir."
+          ]
+        },
+        {
+          "id": "tek-ornek",
+          "label": "Aynı id için tek örnek, first-level cache",
+          "aliases": [
+            "tek bir örnek",
+            "aynı nesne",
+            "aynı örnek",
+            "first-level",
+            "first level",
+            "birinci seviye"
+          ],
+          "anchors": [
+            "Persistence context'te aynı id için tek örnek bulunur; first-level cache gibi davranır."
+          ]
+        },
+        {
+          "id": "karsilastirma",
+          "label": "Flush'ta ilk hâlle karşılaştırılır",
+          "aliases": [
+            "kopyasını",
+            "kopyayla",
+            "snapshot",
+            "ilk hâl",
+            "ilk hal",
+            "flush"
+          ],
+          "anchors": [
+            "Flush anında entity'nin mevcut hâli ilk yüklendiği hâlin kopyasıyla karşılaştırılır."
+          ]
+        },
+        {
+          "id": "save-gereksiz",
+          "label": "Setter yeterli, save gerekmez",
+          "aliases": [
+            "save gerekmez",
+            "save çağırmak gerekmez",
+            "setter",
+            "otomatik update",
+            "kendiliğinden update",
+            "update üret"
+          ],
+          "anchors": [
+            "Managed entity'de setter çağırmak yeterlidir, değişiklik flush'ta UPDATE olarak yazılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir persistence context'te binlerce entity işleyen toplu bir işte bellek sorununu nasıl önlersin?"
+      ],
+      "source": "Kendi derleme — Jakarta Persistence 3.1 spesifikasyonu: Persistence Contexts; Hibernate ORM belgeleri: Flushing"
+    },
+    {
+      "id": "java-jpa-entity-states",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 2,
+      "prompt": "JPA'da bir entity hangi durumlarda bulunabilir? persist ile merge arasındaki fark nedir?",
+      "modelAnswer": "**Transient** (new) entity `new` ile oluşturulmuş ve hiçbir persistence context'e bağlı olmayan nesnedir; **managed** entity persistence context tarafından izlenir ve değişiklikleri flush'ta veritabanına yazılır. **Detached** entity'nin persistence context'i kapanmıştır (transaction bitmiş, nesne controller'a dönmüştür) ve değişiklikleri artık izlenmez; **removed** entity silinmek üzere işaretlenmiştir ve flush'ta `DELETE` edilir. `persist` transient bir nesneyi **aynı örnek** üzerinden managed yapar; `merge` ise detached nesnenin durumunu managed bir örneğe **kopyalar** ve o managed örneği döndürür, verilen nesne detached kalır. Spring Data'nın `save()`'i entity yeniyse (id ya da version null) `persist`, değilse `merge` çağırır. Hibernate 6.6'dan beri generated id'li ya da wrapper tipte `@Version`'ı olan detached bir entity'nin satırı yoksa `merge` INSERT yapmaz, `OptimisticLockException` fırlatır.",
+      "keyConcepts": [
+        {
+          "id": "dort-durum",
+          "label": "Transient, managed, detached, removed",
+          "aliases": [
+            "transient",
+            "managed",
+            "detached",
+            "removed",
+            "yönetilen",
+            "kopuk"
+          ],
+          "anchors": [
+            "Entity transient, managed, detached ya da removed durumunda olabilir."
+          ]
+        },
+        {
+          "id": "detached",
+          "label": "Detached: context kapanmış, izlenmez",
+          "aliases": [
+            "izlenmez",
+            "kapanmış",
+            "kapandı",
+            "context dışında",
+            "bağlantısı kop"
+          ],
+          "anchors": [
+            "Detached entity'nin persistence context'i kapanmıştır, değişiklikleri izlenmez."
+          ]
+        },
+        {
+          "id": "persist-ayni",
+          "label": "persist aynı örneği managed yapar",
+          "aliases": [
+            "aynı örnek",
+            "aynı nesne",
+            "aynı instance",
+            "insert"
+          ],
+          "anchors": [
+            "persist verilen nesnenin kendisini managed yapar."
+          ]
+        },
+        {
+          "id": "merge-kopya",
+          "label": "merge kopyalar, managed örneği döndürür",
+          "aliases": [
+            "kopyalar",
+            "döndürdüğü",
+            "dönen nesne",
+            "managed örneği",
+            "yeni bir örnek"
+          ],
+          "anchors": [
+            "merge detached nesnenin durumunu managed bir örneğe kopyalar ve o örneği döndürür."
+          ]
+        },
+        {
+          "id": "save",
+          "label": "save: yeniyse persist, değilse merge",
+          "aliases": [
+            "save",
+            "isnew",
+            "id null",
+            "version null",
+            "spring data"
+          ],
+          "anchors": [
+            "Spring Data save, entity yeniyse persist, değilse merge çağırır."
+          ]
+        }
+      ],
+      "followUps": [
+        "merge'ün döndürdüğü nesne yerine parametre olarak verdiğin nesneyi değiştirmeye devam edersen ne olur?"
+      ],
+      "source": "Kendi derleme — Jakarta Persistence 3.1: Entity Instance's Life Cycle; Spring Data JPA: SimpleJpaRepository.save; Hibernate ORM 6.6 Migration Guide"
+    },
+    {
+      "id": "java-jpa-lazy-vs-eager",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 1,
+      "prompt": "JPA'da LAZY ve EAGER fetch arasındaki fark nedir? İlişkilerin varsayılanları nelerdir?",
+      "modelAnswer": "**EAGER**'da ilişki, sahibi entity yüklenirken hemen yüklenir; **LAZY**'de ilişkinin yerine bir **proxy** (koleksiyonlarda Hibernate'in persistent collection'ı) konur ve veri ilk erişildiği anda ayrı bir sorguyla getirilir. Varsayılanlar spesifikasyondan gelir; `@ManyToOne` ve `@OneToOne` EAGER, `@OneToMany` ve `@ManyToMany` LAZY'dir. Yaygın öneri tüm ilişkileri `fetch = FetchType.LAZY` yapmak ve gereken veriyi kullanım senaryosuna göre `JOIN FETCH` ya da `@EntityGraph` ile tek sorguda çekmektir, çünkü EAGER mapping düzeyinde sabittir ve tek bir sorgu için LAZY'ye çevrilemez. LAZY ilişkiye persistence context kapandıktan sonra erişilirse `LazyInitializationException` alınır.",
+      "keyConcepts": [
+        {
+          "id": "hemen-sonra",
+          "label": "EAGER hemen, LAZY ilk erişimde",
+          "aliases": [
+            "hemen",
+            "ilk eriş",
+            "erişildiğinde",
+            "ihtiyaç anında",
+            "ayrı bir sorgu",
+            "on demand"
+          ],
+          "anchors": [
+            "EAGER ilişkiyi hemen yükler, LAZY ilk erişildiğinde ayrı bir sorguyla getirir."
+          ]
+        },
+        {
+          "id": "proxy",
+          "label": "LAZY'de proxy ya da persistent collection",
+          "aliases": [
+            "proxy",
+            "persistent collection",
+            "persistentbag",
+            "vekil"
+          ],
+          "anchors": [
+            "LAZY ilişkinin yerine bir proxy ya da persistent collection konur."
+          ]
+        },
+        {
+          "id": "varsayilanlar",
+          "label": "ManyToOne/OneToOne EAGER, OneToMany/ManyToMany LAZY",
+          "aliases": [
+            "manytoone",
+            "onetoone",
+            "onetomany",
+            "manytomany",
+            "toone",
+            "tomany"
+          ],
+          "anchors": [
+            "@ManyToOne ve @OneToOne varsayılan olarak EAGER, @OneToMany ve @ManyToMany LAZY'dir."
+          ]
+        },
+        {
+          "id": "hepsi-lazy",
+          "label": "Hepsini LAZY yap, gerekince JOIN FETCH",
+          "aliases": [
+            "join fetch",
+            "entitygraph",
+            "fetchtype.lazy",
+            "kullanım senaryosu",
+            "sorgu bazında",
+            "sorguya göre"
+          ],
+          "anchors": [
+            "İlişkiler LAZY yapılır, gereken veri sorguya göre JOIN FETCH ya da @EntityGraph ile çekilir."
+          ]
+        },
+        {
+          "id": "lazyinit",
+          "label": "Context kapanınca LazyInitializationException",
+          "aliases": [
+            "lazyinitialization",
+            "context kapan",
+            "session kapan",
+            "transaction dışında"
+          ],
+          "anchors": [
+            "LAZY ilişkiye context kapandıktan sonra erişmek LazyInitializationException verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir @ManyToOne ilişkisini LAZY yapınca Jackson ile serileştirmede hangi sorunla karşılaşabilirsin?"
+      ],
+      "source": "Kendi derleme — Jakarta Persistence 3.1: FetchType ve ilişki anotasyonlarının varsayılanları"
+    },
+    {
+      "id": "java-jpa-lazy-initialization-exception",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 2,
+      "prompt": "LazyInitializationException neden oluşur? Nasıl çözülür, open-in-view neden önerilmez?",
+      "modelAnswer": "LAZY bir ilişkiye, onu yükleyen persistence context **kapandıktan sonra** erişildiğinde fırlar; tipik örnek, transaction'lı servisten dönen entity'nin ilişkisine controller'da ya da JSON serileştirmesi sırasında dokunmaktır. Doğru çözüm gereken veriyi transaction içinde ve tek sorguda çekmektir; `JOIN FETCH`, `@EntityGraph` ya da doğrudan bir **DTO projection** kullanılır, entity'yi transaction içinde DTO'ya dönüştürmek de olur. İlişkiyi EAGER yapmak ya da `hibernate.enable_lazy_load_no_trans` açmak hatayı gizler ama gereksiz ve kontrolsüz sorgu üretir. Spring Boot'ta `spring.jpa.open-in-view` varsayılan olarak **açıktır** ve açılışta bunu bir uyarıyla bildirir; `EntityManager` isteğin sonuna kadar açık kalır, view ya da serileştirme sırasında fark edilmeden sorgular atılır ve veritabanı bağlantısı yanıt yazılana kadar meşgul kalabilir. Bu yüzden genelde `spring.jpa.open-in-view=false` yapılır ve veri ihtiyacı servis katmanında açıkça karşılanır.",
+      "keyConcepts": [
+        {
+          "id": "kapandiktan-sonra",
+          "label": "Context kapandıktan sonra erişim",
+          "aliases": [
+            "kapandıktan sonra",
+            "kapandığında",
+            "transaction dışında",
+            "session kapalı",
+            "context kapan",
+            "detached"
+          ],
+          "anchors": [
+            "LazyInitializationException, LAZY ilişkiye persistence context kapandıktan sonra erişilince fırlar."
+          ]
+        },
+        {
+          "id": "serilestirme",
+          "label": "Controller ya da JSON serileştirmede",
+          "aliases": [
+            "controller",
+            "serileştir",
+            "serializ",
+            "json",
+            "jackson"
+          ],
+          "anchors": [
+            "Tipik örnek ilişkiye controller'da ya da JSON serileştirmesinde dokunmaktır."
+          ]
+        },
+        {
+          "id": "tek-sorgu",
+          "label": "Transaction içinde JOIN FETCH, EntityGraph, DTO",
+          "aliases": [
+            "join fetch",
+            "entitygraph",
+            "projection",
+            "dto'ya",
+            "transaction içinde"
+          ],
+          "anchors": [
+            "Gereken veri transaction içinde JOIN FETCH, @EntityGraph ya da DTO projection ile çekilir."
+          ]
+        },
+        {
+          "id": "gizleyen",
+          "label": "EAGER ve no_trans hatayı gizler",
+          "aliases": [
+            "enable_lazy_load_no_trans",
+            "no_trans",
+            "gizler",
+            "eager yap",
+            "eager'a çevir"
+          ],
+          "anchors": [
+            "EAGER yapmak ya da enable_lazy_load_no_trans açmak hatayı gizler, sorunu çözmez."
+          ]
+        },
+        {
+          "id": "osiv",
+          "label": "open-in-view varsayılan açık, uyarı verir, bağlantıyı tutar",
+          "aliases": [
+            "varsayılan olarak açık",
+            "uyarı",
+            "warning",
+            "bağlantı",
+            "connection",
+            "open-in-view=false"
+          ],
+          "anchors": [
+            "Spring Boot'ta open-in-view varsayılan olarak açıktır, açılışta uyarı verir ve bağlantıyı istek sonuna kadar tutabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "open-in-view kapatıldıktan sonra ortaya çıkan LazyInitializationException'ları sistematik olarak nasıl bulursun?"
+      ],
+      "source": "Kendi derleme — Spring Boot: spring.jpa.open-in-view (JpaBaseConfiguration); Hibernate ORM belgeleri: Fetching"
+    },
+    {
+      "id": "java-jpa-eager-n-plus-one",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 3,
+      "prompt": "N+1 problemini çözmek için ilişkiyi EAGER yapmak neden işe yaramaz?",
+      "modelAnswer": "EAGER yalnızca verinin ne zaman yükleneceğini söyler, nasıl yükleneceğini değil. `find()` ile id üzerinden yüklemede Hibernate EAGER ilişkiyi join ile getirebilir; ama JPQL ya da Spring Data sorgu metodu (`findAll`, `findByStatus`) önce yalnızca ana entity'leri çeker, sonra her satırın EAGER ilişkisini **ayrı birer sorguyla** yükler ve N+1 aynen sürer. Üstelik EAGER mapping düzeyinde sabittir; ilişkiye ihtiyaç duymayan her sorgu da onu yükler ve bu tek bir sorgu için kapatılamaz, birden fazla EAGER koleksiyon da `MultipleBagFetchException` ya da kartezyen çarpım üretebilir. Doğrusu ilişkiyi LAZY bırakıp ihtiyaç olan sorguda `JOIN FETCH` ya da `@EntityGraph` kullanmak, koleksiyonlarda `@BatchSize` (`hibernate.default_batch_fetch_size`) ile toplu yüklemektir.",
+      "keyConcepts": [
+        {
+          "id": "ne-zaman",
+          "label": "EAGER ne zaman yükleneceğini söyler, nasıl değil",
+          "aliases": [
+            "ne zaman yüklen",
+            "nasıl yüklen",
+            "fetch plan",
+            "fetch stratejisi",
+            "fetch mode",
+            "zamanını"
+          ],
+          "anchors": [
+            "EAGER verinin ne zaman yükleneceğini belirler, hangi sorguyla yükleneceğini değil."
+          ]
+        },
+        {
+          "id": "ayri-sorgular",
+          "label": "JPQL'de her satır için ayrı sorgu",
+          "aliases": [
+            "ayrı birer sorgu",
+            "ayrı sorgu",
+            "her satır",
+            "jpql",
+            "findall",
+            "sorgu metod"
+          ],
+          "anchors": [
+            "JPQL sorgusunda Hibernate önce ana entity'leri çeker, EAGER ilişkiyi her satır için ayrı sorguyla yükler."
+          ]
+        },
+        {
+          "id": "sabit",
+          "label": "Mapping düzeyinde sabit, her sorguda yüklenir",
+          "aliases": [
+            "mapping düzey",
+            "kapatılamaz",
+            "ihtiyaç duymayan",
+            "her sorguda yüklen",
+            "gereksiz yük"
+          ],
+          "anchors": [
+            "EAGER mapping düzeyinde sabittir; ihtiyaç duymayan sorgular da ilişkiyi yükler."
+          ]
+        },
+        {
+          "id": "multiple-bag",
+          "label": "MultipleBagFetchException, kartezyen çarpım",
+          "aliases": [
+            "multiplebagfetch",
+            "kartezyen",
+            "cartesian"
+          ],
+          "anchors": [
+            "Birden fazla EAGER koleksiyon MultipleBagFetchException ya da kartezyen çarpım üretir."
+          ]
+        },
+        {
+          "id": "dogrusu",
+          "label": "LAZY bırak, JOIN FETCH, EntityGraph, BatchSize",
+          "aliases": [
+            "join fetch",
+            "entitygraph",
+            "batchsize",
+            "batch_fetch_size",
+            "lazy bırak",
+            "lazy kalsın"
+          ],
+          "anchors": [
+            "İlişki LAZY bırakılır, ihtiyaç olan sorguda JOIN FETCH, @EntityGraph ya da batch fetching kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sorgunun kaç SQL ürettiğini testte nasıl doğrularsın?"
+      ],
+      "source": "Kendi derleme — Hibernate ORM belgeleri: Fetching strategies, Batch fetching"
+    },
+    {
+      "id": "java-jpa-cache-levels",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 2,
+      "prompt": "Hibernate'te first-level ve second-level cache arasındaki fark nedir?",
+      "modelAnswer": "**First-level cache** persistence context'in kendisidir; `EntityManager` (Hibernate `Session`) başınadır, her zaman açıktır, kapatılamaz ve transaction bitince kaybolur. **Second-level cache** ise `SessionFactory` düzeyinde, tüm oturumlar arasında **paylaşılan** bir önbellektir; varsayılan olarak kapalıdır ve bir sağlayıcıyla (JCache üzerinden Ehcache ya da Caffeine, veya Infinispan) entity bazında `@Cacheable` (`jakarta.persistence`) ve `@Cache` ile açılır. Özellikle sık okunup nadiren değişen referans veriler (ülke, kategori listesi) için uygundur; sorgu sonuçları için ayrıca query cache gerekir. Riski **bayat veridir**; başka bir uygulama örneğinin ya da doğrudan SQL'in yaptığı değişiklikleri görmeyebilir, bu yüzden çok örnekli kurulumda dağıtık bir sağlayıcı ya da kısa ömür gerekir. Spring'in `@Cacheable`'ı (`org.springframework.cache`) ise metot sonucunu önbelleğe alan ayrı bir mekanizmadır ve Hibernate'in second-level cache'iyle karıştırılmamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "l1-oturum",
+          "label": "L1: EntityManager başına, kapatılamaz",
+          "aliases": [
+            "persistence context",
+            "entitymanager",
+            "session başına",
+            "kapatılamaz",
+            "her zaman açık",
+            "transaction bitince"
+          ],
+          "anchors": [
+            "First-level cache persistence context'in kendisidir, EntityManager başınadır ve kapatılamaz."
+          ]
+        },
+        {
+          "id": "l2-paylasilan",
+          "label": "L2: SessionFactory düzeyinde, paylaşılan",
+          "aliases": [
+            "sessionfactory",
+            "paylaşılan",
+            "shared",
+            "uygulama genelinde",
+            "oturumlar arası"
+          ],
+          "anchors": [
+            "Second-level cache SessionFactory düzeyinde, oturumlar arasında paylaşılan bir önbellektir."
+          ]
+        },
+        {
+          "id": "l2-kapali",
+          "label": "L2 varsayılan kapalı, sağlayıcı gerekir",
+          "aliases": [
+            "varsayılan olarak kapalı",
+            "sağlayıcı",
+            "provider",
+            "ehcache",
+            "jcache",
+            "infinispan"
+          ],
+          "anchors": [
+            "Second-level cache varsayılan olarak kapalıdır ve bir önbellek sağlayıcısı gerektirir."
+          ]
+        },
+        {
+          "id": "bayat",
+          "label": "Bayat veri riski, referans veri için uygun",
+          "aliases": [
+            "bayat",
+            "stale",
+            "referans veri",
+            "nadiren değişen",
+            "dağıtık",
+            "tutarsız"
+          ],
+          "anchors": [
+            "Second-level cache nadiren değişen veriye uygundur; dışarıdan yapılan değişikliklerde bayat veri riski vardır."
+          ]
+        },
+        {
+          "id": "spring-cacheable",
+          "label": "Spring @Cacheable ayrı bir mekanizma",
+          "aliases": [
+            "org.springframework.cache",
+            "metot sonucu",
+            "metod sonucu",
+            "karıştırıl",
+            "farklı mekanizma"
+          ],
+          "anchors": [
+            "Spring'in @Cacheable'ı metot sonucunu önbelleğe alır, Hibernate second-level cache'inden farklıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Second-level cache'te entity'ler için hangi concurrency stratejileri vardır, READ_WRITE ne sağlar?"
+      ],
+      "source": "Kendi derleme — Hibernate ORM belgeleri: Caching; Jakarta Persistence 3.1: @Cacheable"
+    },
+    {
+      "id": "java-jpa-locking",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 2,
+      "prompt": "JPA'da optimistic ve pessimistic locking nasıl uygulanır? @Version ne işe yarar?",
+      "modelAnswer": "**Optimistic locking** kilit tutmaz; entity'ye `@Version` ile işaretli sayısal bir alan eklenir ve Hibernate her güncellemede `UPDATE ... SET version = version + 1 WHERE id = ? AND version = ?` üretir. Araya başka bir transaction girip sürümü değiştirdiyse güncelleme sıfır satır etkiler ve `OptimisticLockException` (Spring'de `ObjectOptimisticLockingFailureException`) fırlar; işlem yeniden denenir ya da kullanıcıya verinin değiştiği söylenir. **Pessimistic locking** satırı veritabanında kilitler: Spring Data'da `@Lock(LockModeType.PESSIMISTIC_WRITE)` ya da `entityManager.find(..., LockModeType.PESSIMISTIC_WRITE)` `SELECT ... FOR UPDATE` üretir ve kilit transaction bitene kadar diğer yazanları bekletir. Çakışma seyrekse optimistic, aynı satıra yoğun eşzamanlı yazma varsa pessimistic seçilir; pessimistic kilitlerde deadlock ve uzun bekleme riskine karşı `jakarta.persistence.lock.timeout` ile süre sınırı konur.",
+      "keyConcepts": [
+        {
+          "id": "version-kosulu",
+          "label": "@Version ile sürüm koşulu ve artış",
+          "aliases": [
+            "version + 1",
+            "versiyon",
+            "sürüm numara",
+            "sürümü",
+            "kilit tutmaz",
+            "version kolonu"
+          ],
+          "anchors": [
+            "Optimistic locking'de güncelleme sürüm koşuluyla yapılır ve sürüm artırılır."
+          ]
+        },
+        {
+          "id": "ole",
+          "label": "Çakışmada OptimisticLockException, yeniden deneme",
+          "aliases": [
+            "optimisticlockexception",
+            "optimisticlockingfailure",
+            "sıfır satır",
+            "0 satır",
+            "yeniden dene",
+            "retry"
+          ],
+          "anchors": [
+            "Sürüm değiştiyse güncelleme sıfır satır etkiler ve OptimisticLockException fırlar."
+          ]
+        },
+        {
+          "id": "for-update",
+          "label": "Pessimistic: SELECT FOR UPDATE",
+          "aliases": [
+            "for update",
+            "pessimistic_write",
+            "lockmodetype",
+            "satırı kilitler",
+            "satır kilidi"
+          ],
+          "anchors": [
+            "Pessimistic locking SELECT ... FOR UPDATE ile satırı transaction sonuna kadar kilitler."
+          ]
+        },
+        {
+          "id": "secim",
+          "label": "Seyrek çakışmada optimistic, yoğunda pessimistic",
+          "aliases": [
+            "seyrek",
+            "yoğun yazma",
+            "yoğun eşzamanlı",
+            "contention",
+            "çakışma oranı",
+            "sık çakış"
+          ],
+          "anchors": [
+            "Çakışma seyrekse optimistic, yoğunsa pessimistic locking seçilir."
+          ]
+        },
+        {
+          "id": "timeout",
+          "label": "Deadlock ve beklemeye karşı timeout",
+          "aliases": [
+            "lock.timeout",
+            "timeout",
+            "zaman aşım",
+            "deadlock",
+            "süre sınırı"
+          ],
+          "anchors": [
+            "Pessimistic kilitlerde deadlock ve uzun beklemeye karşı lock timeout konur."
+          ]
+        }
+      ],
+      "followUps": [
+        "@Version alanı olan bir entity'yi REST üzerinden güncellerken istemciden gelen sürümü nasıl kullanırsın?"
+      ],
+      "source": "Kendi derleme — Jakarta Persistence 3.1: Optimistic Locking and Concurrency, Pessimistic Locking; Spring Data JPA: @Lock"
+    },
+    {
+      "id": "java-jpa-mappedby",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JPA",
+      "difficulty": 2,
+      "prompt": "Çift yönlü bir ilişkide mappedBy ne işe yarar? Owning side nedir?",
+      "modelAnswer": "Çift yönlü ilişkide iki taraftan yalnızca biri foreign key'i yönetir; buna **owning side** denir ve `@ManyToOne` olan taraf her zaman owning side'dır. Karşı taraf `@OneToMany(mappedBy = \"order\")` ile ilişkinin hangi alan tarafından yönetildiğini söyler ve **inverse side** olur; Hibernate yalnızca owning side'daki değişikliği veritabanına yazar. Bu yüzden yalnızca `order.getItems().add(item)` yapıp `item.setOrder(order)` demezsen foreign key yazılmaz; iki tarafı birlikte güncelleyen `addItem` gibi yardımcı metotlar yazılır. `@OneToMany`'de `mappedBy` unutulursa Hibernate ilişkiyi tek yönlü iki ayrı ilişki sayar ve fazladan bir **ara tablo** (join table) bekler.",
+      "keyConcepts": [
+        {
+          "id": "fk-yoneten",
+          "label": "Foreign key'i yöneten taraf",
+          "aliases": [
+            "foreign key",
+            "yabancı anahtar",
+            "join column",
+            "joincolumn",
+            "kolonu tutan"
+          ],
+          "anchors": [
+            "Owning side foreign key'i yöneten taraftır."
+          ]
+        },
+        {
+          "id": "manytoone",
+          "label": "@ManyToOne tarafı owning side",
+          "aliases": [
+            "manytoone",
+            "many tarafı",
+            "çok tarafı",
+            "child tarafı"
+          ],
+          "anchors": [
+            "@ManyToOne olan taraf her zaman owning side'dır."
+          ]
+        },
+        {
+          "id": "inverse",
+          "label": "mappedBy tarafı inverse, yazılmaz",
+          "aliases": [
+            "inverse",
+            "ters taraf",
+            "karşı taraf",
+            "yalnızca owning",
+            "yazılmaz",
+            "dikkate alınmaz"
+          ],
+          "anchors": [
+            "mappedBy olan taraf inverse side'dır; yalnızca owning side'daki değişiklik veritabanına yazılır."
+          ]
+        },
+        {
+          "id": "senkron",
+          "label": "İki tarafı birlikte güncelle",
+          "aliases": [
+            "iki tarafı",
+            "her iki taraf",
+            "yardımcı metot",
+            "helper",
+            "senkron",
+            "setorder"
+          ],
+          "anchors": [
+            "İki tarafı birlikte güncelleyen yardımcı metotlar yazılmalıdır."
+          ]
+        },
+        {
+          "id": "ara-tablo",
+          "label": "mappedBy yoksa ara tablo",
+          "aliases": [
+            "ara tablo",
+            "join table",
+            "jointable",
+            "tek yönlü",
+            "fazladan tablo"
+          ],
+          "anchors": [
+            "@OneToMany'de mappedBy unutulursa Hibernate fazladan bir ara tablo bekler."
+          ]
+        }
+      ],
+      "followUps": [
+        "orphanRemoval ile CascadeType.REMOVE arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — Jakarta Persistence 3.1: Bidirectional Relationships; Hibernate ORM belgeleri: Associations"
     }
   ]
 }
