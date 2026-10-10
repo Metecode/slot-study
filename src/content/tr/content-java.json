@@ -2248,6 +2248,610 @@
         "Bir metodu override ederken throws listesine yeni bir checked exception ekleyebilir misin? Neden?"
       ],
       "source": "Kendi derleme — JLS §8.4.6 Method Throws, §14.18 The throw Statement"
+    },
+    {
+      "id": "java-solid",
+      "category": "java",
+      "kind": "definition",
+      "topic": "SOLID",
+      "difficulty": 1,
+      "prompt": "SOLID prensipleri nelerdir? Her birini kısaca açıkla.",
+      "modelAnswer": "**Single Responsibility**, bir sınıfın değişmek için tek bir sebebi, yani tek bir sorumluluğu olmasıdır. **Open/Closed**, sınıfların genişletmeye açık ama değişikliğe kapalı olmasıdır; yeni davranış mevcut kodu değiştirmeden yeni bir implementasyonla eklenir. **Liskov Substitution**, alt türün üst türün beklendiği her yerde programın doğruluğunu bozmadan kullanılabilmesidir. **Interface Segregation**, istemcilerin kullanmadıkları metotlara bağımlı bırakılmaması, şişkin arayüzler yerine küçük ve odaklı arayüzler tanımlanmasıdır. **Dependency Inversion**, üst seviye modüllerin alt seviye detaylara değil soyutlamalara bağlı olmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "srp",
+          "label": "Single Responsibility: tek sorumluluk",
+          "aliases": [
+            "single responsibility",
+            "tek sorumlulu",
+            "tek bir sorumlulu",
+            "tek sebep",
+            "tek bir sebep"
+          ],
+          "anchors": [
+            "Single Responsibility, bir sınıfın değişmek için tek bir sebebi olmasıdır."
+          ]
+        },
+        {
+          "id": "ocp",
+          "label": "Open/Closed: genişletmeye açık, değişikliğe kapalı",
+          "aliases": [
+            "open/closed",
+            "open closed",
+            "open-closed",
+            "genişletmeye açık",
+            "değişikliğe kapalı",
+            "açık/kapalı"
+          ],
+          "anchors": [
+            "Open/Closed, sınıfın genişletmeye açık, değişikliğe kapalı olmasıdır."
+          ]
+        },
+        {
+          "id": "lsp",
+          "label": "Liskov: alt tür üst türün yerine geçebilir",
+          "aliases": [
+            "liskov",
+            "substitution",
+            "yerine kullanılabil",
+            "yerine geçebil",
+            "alt tür"
+          ],
+          "anchors": [
+            "Liskov, alt türün üst türün yerine doğruluğu bozmadan kullanılabilmesidir."
+          ]
+        },
+        {
+          "id": "isp",
+          "label": "Interface Segregation: küçük arayüzler",
+          "aliases": [
+            "interface segregation",
+            "arayüz ayrım",
+            "küçük arayüz",
+            "kullanmadıkları",
+            "şişkin",
+            "fat interface"
+          ],
+          "anchors": [
+            "Interface Segregation, istemcinin kullanmadığı metotlara bağımlı bırakılmamasıdır."
+          ]
+        },
+        {
+          "id": "dip",
+          "label": "Dependency Inversion: soyutlamaya bağımlılık",
+          "aliases": [
+            "dependency inversion",
+            "bağımlılığın tersine",
+            "soyutlamalara bağlı",
+            "soyutlamaya bağlı",
+            "abstraction"
+          ],
+          "anchors": [
+            "Dependency Inversion, üst seviye modüllerin detaylara değil soyutlamalara bağlı olmasıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "SOLID'i aşırı uygulamanın (over-engineering) belirtileri nelerdir?"
+      ],
+      "source": "Kendi derleme — Robert C. Martin, SOLID prensipleri"
+    },
+    {
+      "id": "java-open-closed",
+      "category": "java",
+      "kind": "definition",
+      "topic": "SOLID",
+      "difficulty": 2,
+      "prompt": "Open/Closed prensibi ne demektir? Java'da nasıl uygulanır?",
+      "modelAnswer": "Bir modül **genişletmeye açık, değişikliğe kapalı** olmalıdır; yeni bir davranış eklemek, çalışan ve test edilmiş kodu düzenlemeyi gerektirmemelidir. Java'da bu genelde bir **interface** ve onun yeni implementasyonlarıyla yapılır: her ödeme türü için `if/else` ya da `switch` zincirini büyütmek yerine `PaymentMethod` arayüzü tanımlanır, yeni ödeme türü yeni bir sınıf olarak eklenir. Bu, **Strategy** kalıbının ve polimorfizmin doğrudan uygulamasıdır; Spring'de aynı arayüzün tüm bean'lerini `List<PaymentMethod>` olarak enjekte etmek de aynı fikre dayanır. Her şeyi önceden soyutlamak gerekmez; prensip, değişimin gerçekten tekrarladığı yerde uygulanır.",
+      "keyConcepts": [
+        {
+          "id": "acik-kapali",
+          "label": "Genişletmeye açık, değişikliğe kapalı",
+          "aliases": [
+            "genişletmeye açık",
+            "değişikliğe kapalı",
+            "mevcut kodu değiştirmeden",
+            "dokunmadan",
+            "extension",
+            "modification"
+          ],
+          "anchors": [
+            "Yeni davranış eklemek mevcut, test edilmiş kodu değiştirmeyi gerektirmemelidir."
+          ]
+        },
+        {
+          "id": "interface-impl",
+          "label": "Interface ve yeni implementasyon",
+          "aliases": [
+            "interface",
+            "arayüz",
+            "implementasyon",
+            "implementation",
+            "abstract",
+            "soyutlama"
+          ],
+          "anchors": [
+            "Java'da bir interface tanımlanır, yeni davranış yeni bir implementasyonla eklenir."
+          ]
+        },
+        {
+          "id": "kosul-zinciri",
+          "label": "if/else ya da switch büyütmek yerine",
+          "aliases": [
+            "if/else",
+            "if-else",
+            "if else",
+            "switch",
+            "koşul zinciri",
+            "instanceof"
+          ],
+          "anchors": [
+            "Her yeni tür için if/else ya da switch zincirini büyütmek prensibi ihlal eder."
+          ]
+        },
+        {
+          "id": "strategy",
+          "label": "Strategy kalıbı ve polimorfizm",
+          "aliases": [
+            "strategy",
+            "strateji",
+            "polimorfizm",
+            "polymorphism",
+            "çok biçimlilik"
+          ],
+          "anchors": [
+            "Open/Closed, Strategy kalıbı ve polimorfizmle uygulanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Java 21'de sealed arayüz ve exhaustive switch kullanmak Open/Closed ile çelişir mi?"
+      ],
+      "source": "Kendi derleme — Bertrand Meyer ve Robert C. Martin, Open-Closed Principle"
+    },
+    {
+      "id": "java-liskov",
+      "category": "java",
+      "kind": "definition",
+      "topic": "SOLID",
+      "difficulty": 2,
+      "prompt": "Liskov Substitution prensibi nedir? Kare–dikdörtgen örneği neden bir ihlaldir?",
+      "modelAnswer": "**Liskov Substitution**, bir alt türün üst türün beklendiği her yerde programın doğruluğunu bozmadan kullanılabilmesi gerektiğini söyler; alt tür, üst türün **sözleşmesini** (ön koşullar, son koşullar, değişmezler) korumalıdır. `Square extends Rectangle` matematikte doğru görünür, ama karede `setWidth` çağrıldığında yükseklik de değişir. `Rectangle` alıp genişliği 5, yüksekliği 4 yapan ve alanı 20 bekleyen kod, kare verildiğinde 16 bulur; alt tür üst türün **davranışını** bozmuştur. Belirtileri, override edilen metotta `UnsupportedOperationException` fırlatmak ya da çağıran tarafta `instanceof` ile alt türü ayıklamaktır; çözüm çoğu zaman kalıtımı kaldırıp ortak bir arayüz (`Shape`) kullanmaktır.",
+      "keyConcepts": [
+        {
+          "id": "yerine-gecme",
+          "label": "Alt tür üst türün yerine kullanılabilmeli",
+          "aliases": [
+            "yerine kullanılabil",
+            "yerine geçebil",
+            "yerine konabil",
+            "alt tür",
+            "subtype",
+            "alt sınıf"
+          ],
+          "anchors": [
+            "Alt tür, üst türün beklendiği her yerde doğruluğu bozmadan kullanılabilmelidir."
+          ]
+        },
+        {
+          "id": "sozlesme",
+          "label": "Üst türün sözleşmesi korunmalı",
+          "aliases": [
+            "sözleşme",
+            "contract",
+            "davranış",
+            "beklenti",
+            "ön koşul",
+            "precondition"
+          ],
+          "anchors": [
+            "Alt tür üst türün sözleşmesini ve beklenen davranışını korumalıdır."
+          ]
+        },
+        {
+          "id": "kare-ornegi",
+          "label": "setWidth yüksekliği de değiştirir",
+          "aliases": [
+            "setwidth",
+            "setheight",
+            "genişli",
+            "yüksekli",
+            "width",
+            "height"
+          ],
+          "anchors": [
+            "Karede genişliği değiştirmek yüksekliği de değiştirir, alan beklentisi bozulur."
+          ]
+        },
+        {
+          "id": "belirti-cozum",
+          "label": "Belirtiler ve ortak arayüz çözümü",
+          "aliases": [
+            "unsupportedoperation",
+            "instanceof",
+            "ortak arayüz",
+            "ortak bir arayüz",
+            "kalıtımı kaldır",
+            "composition"
+          ],
+          "anchors": [
+            "UnsupportedOperationException ve instanceof ayıklaması ihlal belirtisidir; çözüm ortak arayüzdür."
+          ]
+        }
+      ],
+      "followUps": [
+        "Collections.unmodifiableList'in add çağrısında exception fırlatması Liskov'u ihlal eder mi?"
+      ],
+      "source": "Kendi derleme — Barbara Liskov, behavioral subtyping; SOLID prensipleri"
+    },
+    {
+      "id": "java-dip-vs-di",
+      "category": "java",
+      "kind": "definition",
+      "topic": "SOLID",
+      "difficulty": 2,
+      "prompt": "Dependency Inversion ile Dependency Injection arasındaki fark nedir?",
+      "modelAnswer": "**Dependency Inversion** bir tasarım prensibidir; üst seviye iş mantığı belirli bir veritabanı ya da HTTP istemcisi gibi alt seviye detaylara değil, **soyutlamalara** bağlı olmalı ve o soyutlamayı genellikle üst seviye modül tanımlamalıdır. **Dependency Injection** ise bir tekniktir; nesne bağımlılıklarını kendisi `new` ile oluşturmaz, onları dışarıdan, çoğunlukla constructor üzerinden alır. DI, DIP'i uygulamanın en yaygın yoludur ama ikisi aynı şey değildir: somut bir sınıfı enjekte etmek DI'dır, fakat ortada soyutlama olmadığı için DIP sağlanmaz. Spring'in IoC container'ı DI'ı otomatikleştirir; DIP'e uyulup uyulmadığı ise kodun tasarımına bağlıdır.",
+      "keyConcepts": [
+        {
+          "id": "prensip-teknik",
+          "label": "DIP prensip, DI teknik",
+          "aliases": [
+            "prensip",
+            "principle",
+            "teknik",
+            "technique",
+            "tasarım ilkesi"
+          ],
+          "anchors": [
+            "Dependency Inversion bir tasarım prensibi, Dependency Injection ise bir tekniktir."
+          ]
+        },
+        {
+          "id": "soyutlama",
+          "label": "DIP: soyutlamaya bağımlılık",
+          "aliases": [
+            "soyutlama",
+            "abstraction",
+            "interface",
+            "arayüz",
+            "üst seviye",
+            "high-level"
+          ],
+          "anchors": [
+            "DIP'te üst seviye modül detaylara değil soyutlamalara bağlıdır."
+          ]
+        },
+        {
+          "id": "disaridan",
+          "label": "DI: bağımlılık dışarıdan verilir",
+          "aliases": [
+            "dışarıdan",
+            "constructor",
+            "new ile",
+            "kendisi oluşturmaz",
+            "enjekte"
+          ],
+          "anchors": [
+            "DI'da nesne bağımlılıklarını kendisi oluşturmaz, dışarıdan alır."
+          ]
+        },
+        {
+          "id": "ayni-degil",
+          "label": "DI tek başına DIP sağlamaz",
+          "aliases": [
+            "somut",
+            "concrete",
+            "aynı şey değil",
+            "bir yolu",
+            "yollarından"
+          ],
+          "anchors": [
+            "Somut bir sınıfı enjekte etmek DI'dır ama DIP sağlamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Soyutlamayı (interface'i) alt seviye modülün değil üst seviye modülün paketine koymak neden önemlidir?"
+      ],
+      "source": "Kendi derleme — Robert C. Martin, Dependency Inversion Principle; Martin Fowler, Inversion of Control Containers and the Dependency Injection pattern"
+    },
+    {
+      "id": "java-fail-fast-fail-safe",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 2,
+      "prompt": "Fail-fast ve fail-safe iterator arasındaki fark nedir?",
+      "modelAnswer": "**Fail-fast** iterator (`ArrayList`, `HashMap`), gezinme sırasında koleksiyon iterator dışından yapısal olarak değiştirilirse `ConcurrentModificationException` fırlatır; değişikliği iç `modCount` sayacından anlar. **Fail-safe** iterator (`CopyOnWriteArrayList`, `ConcurrentHashMap`) exception fırlatmaz: `CopyOnWriteArrayList` oluşturulduğu andaki anlık görüntüyü gezer, `ConcurrentHashMap` ise weakly consistent'tir, sonradan yapılan değişiklikleri görebilir de görmeyebilir de. Fail-fast tek thread'de de tetiklenir: for-each içinde `list.remove()` çağırmak tipik örnektir, doğrusu `Iterator.remove()` ya da `removeIf` kullanmaktır. Bu kontrol de garanti değildir; hatayı erken yakalamak için yapılan bir en iyi çabadır.",
+      "keyConcepts": [
+        {
+          "id": "cme",
+          "label": "Fail-fast: ConcurrentModificationException",
+          "aliases": [
+            "concurrentmodification",
+            "modcount",
+            "yapısal",
+            "structural modification"
+          ],
+          "anchors": [
+            "Fail-fast iterator, koleksiyon gezinme sırasında yapısal olarak değişirse ConcurrentModificationException fırlatır."
+          ]
+        },
+        {
+          "id": "snapshot",
+          "label": "Fail-safe: exception yok, anlık görüntü",
+          "aliases": [
+            "fırlatmaz",
+            "anlık görüntü",
+            "snapshot",
+            "kopya",
+            "weakly consistent",
+            "copyonwrite"
+          ],
+          "anchors": [
+            "Fail-safe iterator exception fırlatmaz; anlık görüntü üzerinde gezer ya da weakly consistent'tir."
+          ]
+        },
+        {
+          "id": "dogru-silme",
+          "label": "Silme Iterator.remove ya da removeIf ile",
+          "aliases": [
+            "iterator.remove",
+            "iterator'ın remove",
+            "removeif",
+            "iterator ile sil"
+          ],
+          "anchors": [
+            "Gezinirken silmenin doğru yolu Iterator.remove() ya da removeIf kullanmaktır."
+          ]
+        },
+        {
+          "id": "garanti-degil",
+          "label": "Fail-fast garanti değil, en iyi çaba",
+          "aliases": [
+            "garanti değil",
+            "best effort",
+            "best-effort",
+            "en iyi çaba"
+          ],
+          "anchors": [
+            "Fail-fast davranışı garanti edilmez, hatayı erken yakalamak için en iyi çabadır."
+          ]
+        }
+      ],
+      "followUps": [
+        "CopyOnWriteArrayList hangi senaryoda uygundur, hangisinde pahalıya patlar?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: ConcurrentModificationException, java.util.concurrent"
+    },
+    {
+      "id": "java-map-implementations",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 1,
+      "prompt": "HashMap, LinkedHashMap ve TreeMap arasındaki fark nedir? Hangisini ne zaman seçersin?",
+      "modelAnswer": "`HashMap` sıra garantisi vermez ve `get`/`put` ortalama **O(1)**'dir; sıranın önemli olmadığı çoğu durumda varsayılan seçimdir. `LinkedHashMap` girdileri ayrıca çift bağlı bir listede tuttuğu için **ekleme sırasını** korur; erişim sırası modu ve `removeEldestEntry` ile basit bir LRU cache da kurulabilir. `TreeMap` kırmızı-siyah ağaç üzerine kuruludur, anahtarları `Comparable` ya da verilen `Comparator`'a göre **sıralı** tutar ve işlemleri **O(log n)**'dir. `TreeMap` ayrıca `floorKey`, `headMap`, `subMap` gibi aralık sorguları sunar; doğal sıralamada `null` anahtar kabul etmez, `HashMap` ve `LinkedHashMap` ise bir `null` anahtara izin verir.",
+      "keyConcepts": [
+        {
+          "id": "sirasiz-o1",
+          "label": "HashMap: sırasız, O(1)",
+          "aliases": [
+            "o(1)",
+            "sıra garanti",
+            "sırasız",
+            "sabit zaman",
+            "constant time",
+            "sıra yok"
+          ],
+          "anchors": [
+            "HashMap sıra garantisi vermez, get ve put ortalama O(1)'dir."
+          ]
+        },
+        {
+          "id": "ekleme-sirasi",
+          "label": "LinkedHashMap: ekleme sırası, LRU",
+          "aliases": [
+            "ekleme sıra",
+            "insertion order",
+            "eklendiği sıra",
+            "bağlı liste",
+            "linked list",
+            "lru cache"
+          ],
+          "anchors": [
+            "LinkedHashMap girdileri bağlı listede tutarak ekleme sırasını korur."
+          ]
+        },
+        {
+          "id": "sirali-agac",
+          "label": "TreeMap: sıralı, kırmızı-siyah ağaç",
+          "aliases": [
+            "sıralı",
+            "sorted",
+            "kırmızı-siyah",
+            "red-black",
+            "ağaç",
+            "comparator"
+          ],
+          "anchors": [
+            "TreeMap anahtarları kırmızı-siyah ağaçta sıralı tutar."
+          ]
+        },
+        {
+          "id": "log-n",
+          "label": "TreeMap işlemleri O(log n)",
+          "aliases": [
+            "log n",
+            "logn",
+            "log(n)",
+            "logaritmik"
+          ],
+          "anchors": [
+            "TreeMap'te get ve put O(log n)'dir."
+          ]
+        },
+        {
+          "id": "aralik",
+          "label": "TreeMap aralık sorguları",
+          "aliases": [
+            "floorkey",
+            "ceilingkey",
+            "submap",
+            "headmap",
+            "tailmap",
+            "aralık sorgu"
+          ],
+          "anchors": [
+            "TreeMap floorKey, headMap, subMap gibi aralık sorguları sunar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Çok thread'li bir ortamda sıralı bir map gerekirse hangi sınıfı kullanırsın?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: HashMap, LinkedHashMap, TreeMap"
+    },
+    {
+      "id": "java-hashset-internals",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 1,
+      "prompt": "HashSet tekrar eden elemanları nasıl engeller?",
+      "modelAnswer": "`HashSet` içeride bir `HashMap` kullanır; eklenen eleman bu map'in **anahtarı** olur, değer olarak sabit bir yer tutucu nesne konur. `add` çağrısında elemanın önce `hashCode`'u ile kovası bulunur, sonra o kovadakilerle `equals` ile karşılaştırılır; eşit bir eleman varsa ekleme yapılmaz ve `add` **false** döner. Bu yüzden kendi sınıfını `HashSet`'e koyacaksan `equals` ve `hashCode`'u birlikte ve tutarlı biçimde override etmelisin; aksi hâlde mantıken aynı iki nesne ayrı ayrı saklanır. Sıralı bir küme gerekiyorsa `TreeSet`, ekleme sırası gerekiyorsa `LinkedHashSet` kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "hashmap-anahtar",
+          "label": "İçeride HashMap, eleman anahtar olur",
+          "aliases": [
+            "hashmap",
+            "anahtar",
+            "map'in",
+            "map kullan"
+          ],
+          "anchors": [
+            "HashSet içeride bir HashMap kullanır, eleman o map'in anahtarı olur."
+          ]
+        },
+        {
+          "id": "hashcode-equals",
+          "label": "Önce hashCode, sonra equals",
+          "aliases": [
+            "hashcode",
+            "equals",
+            "kova",
+            "bucket"
+          ],
+          "anchors": [
+            "Önce hashCode ile kova bulunur, sonra equals ile eşitlik kontrol edilir."
+          ]
+        },
+        {
+          "id": "false-doner",
+          "label": "Eşitse eklenmez, add false döner",
+          "aliases": [
+            "false",
+            "eklenmez",
+            "eklemez",
+            "ekleme yapılmaz",
+            "eklenmiyor"
+          ],
+          "anchors": [
+            "Eşit eleman varsa ekleme yapılmaz ve add false döner."
+          ]
+        },
+        {
+          "id": "override",
+          "label": "equals ve hashCode tutarlı override",
+          "aliases": [
+            "override",
+            "tutarlı",
+            "sözleşme",
+            "contract"
+          ],
+          "anchors": [
+            "Kendi sınıfında equals ve hashCode birlikte ve tutarlı override edilmelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "HashSet'e eklenmiş bir nesnenin hashCode'unu etkileyen alanını değiştirirsen ne olur?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: HashSet; Object.hashCode sözleşmesi"
+    },
+    {
+      "id": "java-immutable-collections",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Collections",
+      "difficulty": 2,
+      "prompt": "List.of, Collections.unmodifiableList ve Arrays.asList arasındaki fark nedir?",
+      "modelAnswer": "`List.of` (Java 9+) gerçekten **değiştirilemez** bir liste üretir; `add`, `remove` ve `set` `UnsupportedOperationException` fırlatır ve **null** eleman kabul edilmez. `Collections.unmodifiableList` ise yalnızca bir **görünüm** (view) döndürür; görünüm üzerinden değişiklik yapılamaz ama alttaki orijinal liste değişirse görünüm de değişir, gerçek bir kopya için `List.copyOf` kullanılır. `Arrays.asList` diziyi saran **sabit boyutlu** bir liste verir; `set` çalışır ve diziye yazar, ama `add` ve `remove` exception fırlatır. Sık yapılan hata, `List.of` ya da `stream().toList()` sonucunu değiştirilebilir sanıp üzerine eleman eklemeye çalışmaktır.",
+      "keyConcepts": [
+        {
+          "id": "tam-degismez",
+          "label": "List.of tamamen değiştirilemez, null almaz",
+          "aliases": [
+            "değiştirilemez",
+            "immutable",
+            "null kabul",
+            "null eleman",
+            "null almaz"
+          ],
+          "anchors": [
+            "List.of gerçekten değiştirilemez bir liste üretir ve null eleman kabul etmez."
+          ]
+        },
+        {
+          "id": "gorunum",
+          "label": "unmodifiableList bir görünüm",
+          "aliases": [
+            "görünüm",
+            "view",
+            "orijinal",
+            "alttaki liste",
+            "sarmalayıcı"
+          ],
+          "anchors": [
+            "unmodifiableList bir görünümdür; alttaki liste değişirse görünüm de değişir."
+          ]
+        },
+        {
+          "id": "sabit-boyut",
+          "label": "Arrays.asList sabit boyutlu, diziye yazar",
+          "aliases": [
+            "sabit boyut",
+            "fixed-size",
+            "fixed size",
+            "boyutu değişmez",
+            "diziye yazar",
+            "diziyle bağlı"
+          ],
+          "anchors": [
+            "Arrays.asList diziyi saran sabit boyutlu bir listedir; set çalışır, add çalışmaz."
+          ]
+        },
+        {
+          "id": "uoe",
+          "label": "Değiştirme denemesi UnsupportedOperationException",
+          "aliases": [
+            "unsupportedoperation",
+            "exception fırlat",
+            "exception atar",
+            "hata verir"
+          ],
+          "anchors": [
+            "İzin verilmeyen değişiklik UnsupportedOperationException fırlatır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir metottan iç listeyi döndürürken List.copyOf ile unmodifiableList arasında nasıl seçim yaparsın?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: List.of, Collections.unmodifiableList, Arrays.asList"
     }
   ]
 }
