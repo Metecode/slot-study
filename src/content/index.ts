@@ -3,6 +3,7 @@ import type { Category, Question } from "../domain/question";
 import cybersecurity from "./tr/content-cybersecurity.json";
 import docker from "./tr/content-docker.json";
 import dotnet from "./tr/content-dotnet.json";
+import java from "./tr/content-java.json";
 import javascript from "./tr/content-javascript.json";
 import react from "./tr/content-react.json";
 import sql from "./tr/content-sql.json";
@@ -17,6 +18,7 @@ const FILES: ReadonlyArray<readonly [string, unknown]> = [
   ["tr/content-cybersecurity.json", cybersecurity],
   ["tr/content-docker.json", docker],
   ["tr/content-dotnet.json", dotnet],
+  ["tr/content-java.json", java],
   ["tr/content-javascript.json", javascript],
   ["tr/content-react.json", react],
   ["tr/content-sql.json", sql],
