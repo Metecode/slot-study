@@ -5841,6 +5841,423 @@
         "orphanRemoval ile CascadeType.REMOVE arasındaki fark nedir?"
       ],
       "source": "Kendi derleme — Jakarta Persistence 3.1: Bidirectional Relationships; Hibernate ORM belgeleri: Associations"
+    },
+    {
+      "id": "java-spring-security-filter-chain",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Security",
+      "difficulty": 2,
+      "prompt": "Bir HTTP isteği Spring Security'den nasıl geçer? Filter chain nasıl kurulur?",
+      "modelAnswer": "Spring Security servlet filtreleri üzerine kuruludur; servlet container'a kayıtlı `DelegatingFilterProxy` isteği Spring context'teki `FilterChainProxy` bean'ine devreder. `FilterChainProxy` isteğe uyan **ilk** `SecurityFilterChain`'i seçer ve onun filtrelerini sırayla çalıştırır; tipik sıra `CsrfFilter`, kimlik doğrulama filtreleri (`UsernamePasswordAuthenticationFilter`, `BearerTokenAuthenticationFilter`), `ExceptionTranslationFilter` ve en sonda yetki kararını veren `AuthorizationFilter`'dır. Spring Security 6'da yapılandırma `WebSecurityConfigurerAdapter`'ı genişleterek değil, `HttpSecurity` ile kurulan bir `SecurityFilterChain` **bean**'i döndürerek yapılır; farklı yollar için `securityMatcher` ve `@Order` ile birden fazla zincir tanımlanabilir. Spring Security 7'de (Spring Boot 4) `and()` zincirlemesi kaldırıldı, yapılandırma yalnızca lambda DSL ile yazılır.",
+      "keyConcepts": [
+        {
+          "id": "delegating",
+          "label": "DelegatingFilterProxy isteği FilterChainProxy'ye verir",
+          "aliases": [
+            "delegatingfilterproxy",
+            "filterchainproxy",
+            "springsecurityfilterchain",
+            "servlet filtre",
+            "servlet filter"
+          ],
+          "anchors": [
+            "DelegatingFilterProxy isteği Spring context'teki FilterChainProxy'ye devreder."
+          ]
+        },
+        {
+          "id": "ilk-eslesen",
+          "label": "İsteğe uyan ilk SecurityFilterChain",
+          "aliases": [
+            "securityfilterchain",
+            "ilk eşleşen",
+            "ilk uyan",
+            "securitymatcher",
+            "birden fazla zincir"
+          ],
+          "anchors": [
+            "FilterChainProxy isteğe uyan ilk SecurityFilterChain'i seçer."
+          ]
+        },
+        {
+          "id": "filtre-sirasi",
+          "label": "Sıralı filtreler: CSRF, kimlik doğrulama, yetki",
+          "aliases": [
+            "csrffilter",
+            "usernamepasswordauthenticationfilter",
+            "bearertokenauthenticationfilter",
+            "exceptiontranslationfilter",
+            "authorizationfilter",
+            "sırayla"
+          ],
+          "anchors": [
+            "Zincirdeki filtreler sırayla çalışır; en sonda AuthorizationFilter yetki kararını verir."
+          ]
+        },
+        {
+          "id": "bean-config",
+          "label": "WebSecurityConfigurerAdapter değil, SecurityFilterChain bean'i",
+          "aliases": [
+            "websecurityconfigureradapter",
+            "httpsecurity",
+            "bean'i döndür",
+            "bean olarak",
+            "lambda dsl"
+          ],
+          "anchors": [
+            "Spring Security 6'da yapılandırma HttpSecurity ile kurulan bir SecurityFilterChain bean'iyle yapılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir uygulamada session'lı ve stateless iki ayrı SecurityFilterChain tanımlamak ne zaman gerekir?"
+      ],
+      "source": "Kendi derleme — Spring Security 6 belgeleri: Servlet Architecture; Spring Security 7 Migration: Configuration"
+    },
+    {
+      "id": "java-spring-security-authentication",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Security",
+      "difficulty": 2,
+      "prompt": "Spring Security'de kimlik doğrulama akışı nasıl işler? AuthenticationManager, AuthenticationProvider ve UserDetailsService'in rolü nedir?",
+      "modelAnswer": "Kimlik doğrulama filtresi istekten bilgileri çıkarıp henüz doğrulanmamış bir `Authentication` nesnesi (`UsernamePasswordAuthenticationToken`) oluşturur ve `AuthenticationManager`'a verir. Varsayılan implementasyon `ProviderManager`, nesneyi destekleyen `AuthenticationProvider`'a devreder; kullanıcı adı ve şifre için `DaoAuthenticationProvider` kullanıcıyı `UserDetailsService` ile yükler ve şifreyi `PasswordEncoder` (genelde BCrypt) ile karşılaştırır. Başarılı olursa yetkileri (`GrantedAuthority`) taşıyan doğrulanmış bir `Authentication` döner ve `SecurityContextHolder` üzerinden `SecurityContext`'e konur; bu varsayılan olarak `ThreadLocal`'dır, yani istek boyunca aynı thread'de erişilebilir. Session'lı uygulamada context `SecurityContextRepository` ile oturuma kaydedilir, stateless bir API'de ise her istek kendi token'ıyla yeniden doğrulanır; başarısızlıkta `AuthenticationException` fırlar ve yanıtı `AuthenticationEntryPoint` üretir.",
+      "keyConcepts": [
+        {
+          "id": "token",
+          "label": "Filtre doğrulanmamış Authentication oluşturur",
+          "aliases": [
+            "usernamepasswordauthenticationtoken",
+            "authentication nesnesi",
+            "doğrulanmamış",
+            "bilgileri çıkar",
+            "doğrulama filtre",
+            "authentication filter"
+          ],
+          "anchors": [
+            "Kimlik doğrulama filtresi istekten bilgileri çıkarıp doğrulanmamış bir Authentication nesnesi oluşturur."
+          ]
+        },
+        {
+          "id": "provider-manager",
+          "label": "ProviderManager uygun provider'a devreder",
+          "aliases": [
+            "providermanager",
+            "destekleyen",
+            "supports",
+            "devreder",
+            "daoauthenticationprovider"
+          ],
+          "anchors": [
+            "ProviderManager, Authentication'ı destekleyen AuthenticationProvider'a devreder."
+          ]
+        },
+        {
+          "id": "kullanici-sifre",
+          "label": "Kullanıcı yüklenir, şifre PasswordEncoder ile doğrulanır",
+          "aliases": [
+            "passwordencoder",
+            "bcrypt",
+            "loaduserbyusername",
+            "şifreyi karşılaştır",
+            "kullanıcıyı yükle"
+          ],
+          "anchors": [
+            "DaoAuthenticationProvider kullanıcıyı UserDetailsService ile yükler, şifreyi PasswordEncoder ile karşılaştırır."
+          ]
+        },
+        {
+          "id": "security-context",
+          "label": "SecurityContextHolder, ThreadLocal",
+          "aliases": [
+            "securitycontextholder",
+            "securitycontext",
+            "threadlocal",
+            "grantedauthority",
+            "yetkiler"
+          ],
+          "anchors": [
+            "Doğrulanmış Authentication SecurityContextHolder üzerinden SecurityContext'e konur."
+          ]
+        },
+        {
+          "id": "kalicilik",
+          "label": "Oturuma kaydedilir ya da her istekte token",
+          "aliases": [
+            "securitycontextrepository",
+            "session",
+            "oturum",
+            "stateless",
+            "her istek",
+            "authenticationentrypoint"
+          ],
+          "anchors": [
+            "Session'lı uygulamada context oturuma kaydedilir, stateless API'de her istek yeniden doğrulanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir controller metodunda o anki kullanıcıya hangi yollarla erişebilirsin?"
+      ],
+      "source": "Kendi derleme — Spring Security 6 belgeleri: Servlet Authentication Architecture"
+    },
+    {
+      "id": "java-spring-security-401-403",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Security",
+      "difficulty": 1,
+      "prompt": "Authentication ile authorization arasındaki fark nedir? 401 ve 403 hangi durumda döner?",
+      "modelAnswer": "**Authentication** \"kimsin?\" sorusunu cevaplar ve kullanıcının kimliğini doğrular; **authorization** \"bunu yapmaya yetkin var mı?\" sorusunu cevaplar, yani doğrulanmış kullanıcının bir kaynağa erişip erişemeyeceğini belirler. **401 Unauthorized** adına rağmen kimlik doğrulama eksik ya da geçersiz olduğunda döner (token yok ya da süresi dolmuş); Spring Security'de bunu `AuthenticationEntryPoint` üretir, form login'de ise entry point bunun yerine giriş sayfasına yönlendirir. **403 Forbidden** kullanıcı tanındığı hâlde gerekli yetkiye sahip olmadığında döner ve `AccessDeniedHandler` tarafından üretilir. `ExceptionTranslationFilter` erişim reddedildiğinde kullanıcı anonimse entry point'i (401), doğrulanmışsa access denied handler'ı (403) çağırır; yetki kuralları `authorizeHttpRequests` ya da `@EnableMethodSecurity` ile açılan `@PreAuthorize` ile yazılır.",
+      "keyConcepts": [
+        {
+          "id": "kimlik",
+          "label": "Authentication: kimsin?",
+          "aliases": [
+            "kimsin",
+            "kimlik",
+            "identity",
+            "kim olduğu"
+          ],
+          "anchors": [
+            "Authentication kullanıcının kim olduğunu doğrular."
+          ]
+        },
+        {
+          "id": "yetki",
+          "label": "Authorization: neye erişebilir?",
+          "aliases": [
+            "yetki",
+            "permission",
+            "erişebilir mi",
+            "neye erişe",
+            "erişim hakkı"
+          ],
+          "anchors": [
+            "Authorization doğrulanmış kullanıcının bir kaynağa erişip erişemeyeceğini belirler."
+          ]
+        },
+        {
+          "id": "401",
+          "label": "401: kimlik doğrulama eksik, AuthenticationEntryPoint",
+          "aliases": [
+            "authenticationentrypoint",
+            "entry point",
+            "doğrulanmamış",
+            "token yok",
+            "süresi dolmuş",
+            "unauthenticated"
+          ],
+          "anchors": [
+            "401 kimlik doğrulama eksik ya da geçersizse döner ve AuthenticationEntryPoint üretir."
+          ]
+        },
+        {
+          "id": "403",
+          "label": "403: tanınıyor ama yetkisi yok, AccessDeniedHandler",
+          "aliases": [
+            "accessdeniedhandler",
+            "accessdenied",
+            "yetkisi yok",
+            "yetkisiz",
+            "forbidden",
+            "erişim reddi"
+          ],
+          "anchors": [
+            "403 kullanıcı tanındığı hâlde yetkisi olmadığında döner ve AccessDeniedHandler üretir."
+          ]
+        },
+        {
+          "id": "exception-translation",
+          "label": "ExceptionTranslationFilter: anonimse 401, değilse 403",
+          "aliases": [
+            "exceptiontranslationfilter",
+            "anonim",
+            "anonymous",
+            "preauthorize",
+            "authorizehttprequests"
+          ],
+          "anchors": [
+            "ExceptionTranslationFilter reddedilen kullanıcı anonimse entry point'i, doğrulanmışsa access denied handler'ı çağırır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spring Security'nin varsayılan 401 yanıtını bir REST API için JSON gövdeli hâle nasıl getirirsin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.5.2 ve §15.5.4; Spring Security 6 belgeleri: Handling Security Exceptions"
+    },
+    {
+      "id": "java-spring-security-csrf",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Spring Security",
+      "difficulty": 2,
+      "prompt": "CSRF nedir? Spring Security'de CSRF korumasını kapatmak ne zaman güvenlidir?",
+      "modelAnswer": "**CSRF** (Cross-Site Request Forgery), kötü niyetli bir sitenin kullanıcının tarayıcısına senin uygulamana istek attırmasıdır; tarayıcı cookie'leri isteğe **kendiliğinden** eklediği için istek kullanıcının oturumuyla gider. Spring Security durum değiştiren isteklerde (POST, PUT, PATCH, DELETE) CSRF korumasını varsayılan olarak açık tutar ve istekte başka bir sitenin bilemeyeceği bir CSRF token'ı bekler. Korumayı kapatmanın gerekçesi API'nin stateless olması değil, kimlik bilgisinin tarayıcı tarafından **otomatik gönderilmemesidir**: access token bellekte tutulup `Authorization` başlığıyla gönderiliyorsa başka bir site bu başlığı ekleyemez. Kimlik bilgisi herhangi bir cookie'de taşınıyorsa, örneğin session cookie'si ya da httpOnly bir refresh token cookie'si, o uçlar için koruma hâlâ gerekir; CSRF token ya da en azından `SameSite=Strict`/`Lax` cookie ve `Origin` kontrolü kullanılır. httpOnly cookie'yi JavaScript'ten saklar ama CSRF'e karşı korumaz.",
+      "keyConcepts": [
+        {
+          "id": "otomatik-cookie",
+          "label": "Tarayıcı cookie'yi kendiliğinden ekler",
+          "aliases": [
+            "cookie",
+            "çerez",
+            "kendiliğinden",
+            "otomatik ekle",
+            "başka bir site",
+            "kötü niyetli site"
+          ],
+          "anchors": [
+            "CSRF'te başka bir site tarayıcıya istek attırır; tarayıcı cookie'leri kendiliğinden ekler."
+          ]
+        },
+        {
+          "id": "varsayilan-acik",
+          "label": "Varsayılan açık, durum değiştiren isteklerde token",
+          "aliases": [
+            "varsayılan olarak açık",
+            "durum değiştiren",
+            "token bekler",
+            "csrf token",
+            "synchronizer"
+          ],
+          "anchors": [
+            "Spring Security durum değiştiren isteklerde CSRF korumasını varsayılan olarak açık tutar."
+          ]
+        },
+        {
+          "id": "otomatik-gonderilmez",
+          "label": "Gerekçe: kimlik bilgisi otomatik gönderilmez",
+          "aliases": [
+            "otomatik gönderilme",
+            "authorization başlığı",
+            "authorization header",
+            "bearer",
+            "bellekte",
+            "başlığı ekleyemez"
+          ],
+          "anchors": [
+            "Koruma ancak kimlik bilgisi tarayıcı tarafından otomatik gönderilmiyorsa, örneğin Authorization başlığındaysa kapatılabilir."
+          ]
+        },
+        {
+          "id": "cookie-varsa",
+          "label": "Cookie'de kimlik varsa koruma hâlâ gerekir",
+          "aliases": [
+            "samesite",
+            "refresh token",
+            "refresh cookie",
+            "session cookie",
+            "hâlâ gerek",
+            "hala gerek"
+          ],
+          "anchors": [
+            "Kimlik bilgisi cookie'de taşınıyorsa CSRF token ya da SameSite cookie ile koruma hâlâ gerekir."
+          ]
+        },
+        {
+          "id": "httponly",
+          "label": "httpOnly CSRF'e karşı korumaz",
+          "aliases": [
+            "httponly",
+            "javascript'ten sakla",
+            "javascript erişeme"
+          ],
+          "anchors": [
+            "httpOnly cookie'yi JavaScript'ten saklar ama CSRF'e karşı korumaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Cookie'de token taşıyan bir SPA için CSRF korumasını Spring Security'de nasıl yapılandırırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Cross-Site Request Forgery Prevention Cheat Sheet; Spring Security 6 belgeleri: Cross Site Request Forgery (CSRF)"
+    },
+    {
+      "id": "java-spring-data-access-exception",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Exception",
+      "difficulty": 2,
+      "prompt": "SQLException ile Spring'in DataAccessException hiyerarşisi arasındaki fark nedir? Spring neden exception'ları çevirir?",
+      "modelAnswer": "`SQLException` JDBC'nin **checked** exception'ıdır ve hatanın türü sürücüye özgü `SQLState` ya da vendor hata koduna bakılarak anlaşılır; bu yüzden kod hem `throws` ile dolar hem de belirli bir veritabanına bağlanır. Spring bu hataları **unchecked** olan `DataAccessException` hiyerarşisine çevirir: `DuplicateKeyException`, `DataIntegrityViolationException`, `OptimisticLockingFailureException`, `CannotAcquireLockException` gibi anlamlı ve teknolojiden bağımsız türler JDBC, JPA ya da Hibernate kullanılsa da aynıdır. `TransientDataAccessException` alt dalı, kilit alınamaması gibi yeniden denemenin işe yarayabileceği geçici hataları ayırır. Çeviriyi `JdbcTemplate` kendisi `SQLExceptionTranslator` ile yapar; JPA ve Hibernate tarafında `@Repository` işaretli bean'lere `PersistenceExceptionTranslationPostProcessor` uygular, Spring Data repository'lerinde bu otomatiktir. Unchecked oldukları için `@Transactional` bu exception'larda varsayılan olarak rollback yapar.",
+      "keyConcepts": [
+        {
+          "id": "checked-vendor",
+          "label": "SQLException checked ve sürücüye özgü",
+          "aliases": [
+            "checked",
+            "sqlstate",
+            "vendor",
+            "sürücüye özgü",
+            "hata kodu",
+            "error code"
+          ],
+          "anchors": [
+            "SQLException checked'tir, hatanın türü sürücüye özgü SQLState ya da hata kodundan anlaşılır."
+          ]
+        },
+        {
+          "id": "unchecked",
+          "label": "DataAccessException unchecked",
+          "aliases": [
+            "unchecked",
+            "runtimeexception",
+            "throws gerekmez",
+            "throws ile dol"
+          ],
+          "anchors": [
+            "DataAccessException hiyerarşisi unchecked'tir."
+          ]
+        },
+        {
+          "id": "anlamli-turler",
+          "label": "Anlamlı, teknolojiden bağımsız türler",
+          "aliases": [
+            "duplicatekey",
+            "dataintegrityviolation",
+            "optimisticlockingfailure",
+            "cannotacquirelock",
+            "teknolojiden bağımsız",
+            "veritabanından bağımsız"
+          ],
+          "anchors": [
+            "DataAccessException alt türleri anlamlıdır ve JDBC, JPA ya da Hibernate'te aynıdır."
+          ]
+        },
+        {
+          "id": "transient",
+          "label": "Geçici hatalar: TransientDataAccessException",
+          "aliases": [
+            "transientdataaccess",
+            "geçici",
+            "transient",
+            "yeniden dene",
+            "retry"
+          ],
+          "anchors": [
+            "TransientDataAccessException yeniden denemenin işe yarayabileceği geçici hataları ayırır."
+          ]
+        },
+        {
+          "id": "ceviri",
+          "label": "SQLExceptionTranslator ve @Repository ile çeviri",
+          "aliases": [
+            "sqlexceptiontranslator",
+            "jdbctemplate",
+            "persistenceexceptiontranslation",
+            "repository",
+            "exception translation"
+          ],
+          "anchors": [
+            "Çeviriyi JdbcTemplate SQLExceptionTranslator ile, JPA tarafında @Repository bean'lerine post processor yapar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Unique constraint ihlalini yakalayıp kullanıcıya anlamlı bir hata dönmek için hangi exception'ı nerede yakalarsın?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Consistent Exception Hierarchy, Exception Translation"
     }
   ]
 }
