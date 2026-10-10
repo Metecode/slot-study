@@ -1574,6 +1574,680 @@
         "Virtual thread kullanan bir uygulamada ThreadLocal kullanmanın riski nedir?"
       ],
       "source": "Kendi derleme"
+    },
+    {
+      "id": "java-jvm-jdk-jre",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 1,
+      "prompt": "JVM, JRE ve JDK arasındaki fark nedir?",
+      "modelAnswer": "**JVM**, derlenmiş bytecode'u çalıştıran sanal makinedir; bellek yönetimi, garbage collection ve JIT derleme onun işidir. **JRE**, JVM'e standart sınıf kütüphanelerini ekler ve bir uygulamayı çalıştırmak için gereken her şeyi içerir. **JDK** ise bunların üstüne `javac` derleyicisini ve `jar`, `jdb`, `jlink` gibi geliştirme araçlarını koyar; kod derlemek için JDK gerekir. Java 11'den beri Oracle ayrı bir JRE yayımlamıyor (bazı dağıtımlar hâlâ sunuyor); uygulamaya özel küçük bir çalışma ortamı `jlink` ile üretilir.",
+      "keyConcepts": [
+        {
+          "id": "jvm-bytecode",
+          "label": "JVM bytecode'u çalıştırır",
+          "aliases": [
+            "bytecode",
+            "byte code",
+            "sanal makine",
+            "virtual machine"
+          ],
+          "anchors": [
+            "JVM derlenmiş bytecode'u çalıştıran sanal makinedir."
+          ]
+        },
+        {
+          "id": "jre-kutuphane",
+          "label": "JRE: JVM + standart kütüphaneler",
+          "aliases": [
+            "kütüphane",
+            "library",
+            "libraries",
+            "runtime environment",
+            "çalışma ortamı"
+          ],
+          "anchors": [
+            "JRE, JVM'e standart sınıf kütüphanelerini ekleyen çalışma ortamıdır."
+          ]
+        },
+        {
+          "id": "jdk-araclar",
+          "label": "JDK: JRE + geliştirme araçları",
+          "aliases": [
+            "javac",
+            "derleyici",
+            "compiler",
+            "geliştirme araç",
+            "development kit",
+            "debugger"
+          ],
+          "anchors": [
+            "JDK, JRE'ye javac derleyicisi ve geliştirme araçlarını ekler."
+          ]
+        },
+        {
+          "id": "jlink",
+          "label": "Java 11+ ayrı JRE yok, jlink",
+          "aliases": [
+            "jlink",
+            "java 11",
+            "ayrı jre",
+            "custom runtime",
+            "özel çalışma ortamı"
+          ],
+          "anchors": [
+            "Java 11'den beri Oracle ayrı JRE yayımlamıyor, özel çalışma ortamı jlink ile üretilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir Docker image'ında tam JDK yerine jlink ile üretilmiş bir çalışma ortamı kullanmanın faydası nedir?"
+      ],
+      "source": "Kendi derleme — JDK 21 belgeleri: Java SE platform bileşenleri, jlink"
+    },
+    {
+      "id": "java-bytecode-jit",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 2,
+      "prompt": "Java neden platform bağımsızdır? Bytecode ve JIT derleyicinin rolü nedir?",
+      "modelAnswer": "`javac` kaynak kodu doğrudan makine koduna değil, platformdan bağımsız **bytecode**'a (`.class` dosyaları) derler. Bu bytecode'u her işletim sistemi için ayrı yazılmış JVM çalıştırır; aynı `.class` dosyası Windows'ta da Linux'ta da çalışır. JVM bytecode'u önce yorumlayarak çalıştırır, sık çalışan metotları ise **JIT** derleyiciyle çalışma anında makine koduna çevirir. JIT çalışma anı profilini gördüğü için inlining gibi agresif optimizasyonlar yapabilir; Java uygulamalarının ilk dakikalarda yavaş, ısındıktan (warm-up) sonra hızlı olması bundandır.",
+      "keyConcepts": [
+        {
+          "id": "javac-class",
+          "label": "javac .class dosyalarına derler",
+          "aliases": [
+            "javac",
+            ".class",
+            "class dosya",
+            "ara kod",
+            "intermediate"
+          ],
+          "anchors": [
+            "javac kaynak kodu makine koduna değil, .class dosyalarındaki bytecode'a derler."
+          ]
+        },
+        {
+          "id": "platforma-ozel-jvm",
+          "label": "Her platformun kendi JVM'i",
+          "aliases": [
+            "her platform",
+            "her işletim sistemi",
+            "işletim sistemine özel",
+            "write once",
+            "sanal makine"
+          ],
+          "anchors": [
+            "Aynı bytecode'u her işletim sistemi için ayrı yazılmış JVM çalıştırır."
+          ]
+        },
+        {
+          "id": "yorumlama",
+          "label": "Bytecode önce yorumlanır",
+          "aliases": [
+            "yorumla",
+            "interpret"
+          ],
+          "anchors": [
+            "JVM bytecode'u başlangıçta yorumlayarak çalıştırır."
+          ]
+        },
+        {
+          "id": "sik-calisan",
+          "label": "Sık çalışan kod makine koduna derlenir",
+          "aliases": [
+            "sık çalışan",
+            "hot spot",
+            "hotspot",
+            "makine kodu",
+            "native kod",
+            "machine code"
+          ],
+          "anchors": [
+            "JIT sık çalışan metotları çalışma anında makine koduna çevirir."
+          ]
+        },
+        {
+          "id": "profil-warmup",
+          "label": "Profile göre optimizasyon, warm-up",
+          "aliases": [
+            "profil",
+            "inlining",
+            "warm-up",
+            "warmup",
+            "ısınma",
+            "ısındık"
+          ],
+          "anchors": [
+            "JIT çalışma anı profiline göre optimize eder, bu yüzden uygulama ısındıktan sonra hızlanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "JIT ile AOT derleme (GraalVM native image) arasındaki fark nedir, hangisi ne zaman tercih edilir?"
+      ],
+      "source": "Kendi derleme — JVM Specification, HotSpot JIT derleyicisi"
+    },
+    {
+      "id": "java-gc-stop-the-world",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 3,
+      "prompt": "Garbage collection'da stop-the-world duraklaması nedir? G1 ve ZGC bunu nasıl azaltır?",
+      "modelAnswer": "**Stop-the-world**, GC'nin işini güvenle yapabilmek için tüm uygulama thread'lerini durdurduğu andır; bu süre boyunca istekler bekler ve gecikme sıçrar. **G1** heap'i eşit boyutlu bölgelere (region) ayırır, en çok çöp içeren bölgeleri önce toplar ve duraklamayı `-XX:MaxGCPauseMillis` ile verilen hedefin altında tutmaya çalışır. **ZGC** işaretleme ve taşıma işinin neredeyse tamamını uygulama thread'leriyle **eşzamanlı** (concurrent) yapar; duraklamalar heap boyutundan bağımsız olarak milisaniyenin altında kalır. Bedel olarak ZGC genellikle daha fazla CPU ve bellek harcar; toplam iş hacmi (throughput) öndeyse G1, düşük gecikme öndeyse ZGC seçilir.",
+      "keyConcepts": [
+        {
+          "id": "threadler-durur",
+          "label": "Tüm uygulama thread'leri durur",
+          "aliases": [
+            "tüm thread",
+            "bütün thread",
+            "uygulama thread",
+            "durdur",
+            "pause"
+          ],
+          "anchors": [
+            "Stop-the-world sırasında GC tüm uygulama thread'lerini durdurur."
+          ]
+        },
+        {
+          "id": "gecikme",
+          "label": "Gecikme sıçrar",
+          "aliases": [
+            "gecikme",
+            "latency",
+            "yanıt süre",
+            "response time"
+          ],
+          "anchors": [
+            "Duraklama boyunca istekler bekler ve gecikme artar."
+          ]
+        },
+        {
+          "id": "g1-bolge",
+          "label": "G1: bölgeler ve duraklama hedefi",
+          "aliases": [
+            "region",
+            "bölge",
+            "maxgcpausemillis",
+            "duraklama hedef",
+            "pause target",
+            "en çok çöp"
+          ],
+          "anchors": [
+            "G1 heap'i bölgelere ayırır, en çok çöp içerenleri önce toplar ve bir duraklama hedefini gözetir."
+          ]
+        },
+        {
+          "id": "zgc-eszamanli",
+          "label": "ZGC: eşzamanlı, milisaniye altı",
+          "aliases": [
+            "eşzamanlı",
+            "concurrent",
+            "milisaniyenin altı",
+            "sub-millisecond",
+            "heap boyutundan bağımsız"
+          ],
+          "anchors": [
+            "ZGC işinin neredeyse tamamını uygulamayla eşzamanlı yapar, duraklamaları milisaniyenin altındadır."
+          ]
+        },
+        {
+          "id": "denge",
+          "label": "Throughput ile gecikme dengesi",
+          "aliases": [
+            "throughput",
+            "iş hacmi",
+            "bedel",
+            "trade-off",
+            "tradeoff",
+            "fazla bellek"
+          ],
+          "anchors": [
+            "ZGC düşük gecikme için daha fazla kaynak harcar; throughput öndeyse G1 seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir uygulamada GC duraklamalarının soruna yol açıp açmadığını nasıl ölçersin?"
+      ],
+      "source": "Kendi derleme — HotSpot Virtual Machine Garbage Collection Tuning Guide (JDK 21): G1, ZGC"
+    },
+    {
+      "id": "java-memory-leak",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 2,
+      "prompt": "Garbage collector olmasına rağmen Java'da memory leak nasıl oluşur, nasıl tespit edilir?",
+      "modelAnswer": "GC yalnızca **ulaşılamayan** nesneleri toplar; artık kullanılmayan bir nesneye hâlâ bir referans tutuluyorsa o nesne toplanamaz ve bellek sızıntısı oluşur. Tipik kaynaklar sürekli büyüyen `static` koleksiyonlar ve sınırsız cache'ler, kaydı silinmeyen listener'lar, thread havuzunda temizlenmeyen `ThreadLocal` değerleri ve kapatılmayan kaynaklardır. Belirtisi, her GC'den sonra kalan heap kullanımının zamanla artması ve sonunda `OutOfMemoryError` alınmasıdır. Tespit için heap dump alınıp (`jcmd <pid> GC.heap_dump` ya da `-XX:+HeapDumpOnOutOfMemoryError`) Eclipse MAT gibi bir araçla en çok bellek tutan nesneler ve onları tutan referans zinciri incelenir.",
+      "keyConcepts": [
+        {
+          "id": "hala-referans",
+          "label": "Hâlâ referans tutulan nesne toplanamaz",
+          "aliases": [
+            "ulaşılamayan",
+            "ulaşılabilir",
+            "reachable",
+            "referans tutul",
+            "referansı kal",
+            "toplanamaz"
+          ],
+          "anchors": [
+            "GC yalnızca ulaşılamayan nesneleri toplar; referansı tutulan gereksiz nesne bellekte kalır."
+          ]
+        },
+        {
+          "id": "kaynaklar",
+          "label": "static koleksiyon, cache, listener, ThreadLocal",
+          "aliases": [
+            "static",
+            "cache",
+            "önbellek",
+            "listener",
+            "dinleyici",
+            "threadlocal"
+          ],
+          "anchors": [
+            "Sızıntının tipik kaynakları büyüyen static koleksiyonlar, sınırsız cache'ler, listener'lar ve ThreadLocal'dır."
+          ]
+        },
+        {
+          "id": "belirti",
+          "label": "GC sonrası heap sürekli artar, OOM",
+          "aliases": [
+            "outofmemory",
+            "zamanla art",
+            "sürekli art",
+            "heap kullanımı"
+          ],
+          "anchors": [
+            "GC sonrasında kalan heap kullanımı zamanla artar ve sonunda OutOfMemoryError alınır."
+          ]
+        },
+        {
+          "id": "heap-dump",
+          "label": "Heap dump ve analiz aracı",
+          "aliases": [
+            "heap dump",
+            "heapdump",
+            "heap_dump",
+            "eclipse mat",
+            "profiler",
+            "visualvm"
+          ],
+          "anchors": [
+            "Tespit için heap dump alınıp bir analiz aracıyla belleği tutan referans zinciri incelenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sınırsız büyüyen bir cache'i sızıntı olmaktan nasıl çıkarırsın?"
+      ],
+      "source": "Kendi derleme — Java SE 21 Troubleshooting Guide: Troubleshoot Memory Leaks"
+    },
+    {
+      "id": "java-oom-vs-soe",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 1,
+      "prompt": "OutOfMemoryError ile StackOverflowError arasındaki fark nedir?",
+      "modelAnswer": "`StackOverflowError`, bir thread'in **stack**'i dolduğunda fırlar; neredeyse her zaman sonlanmayan ya da çok derin bir **özyineleme** (recursion) yüzündendir ve stack boyutu `-Xss` ile ayarlanır. `OutOfMemoryError` ise **heap** (ya da metaspace gibi başka bir bellek alanı) dolduğunda ve GC yer açamadığında fırlar; sebebi bellek sızıntısı ya da `-Xmx` ile verilen heap'in yük için küçük kalmasıdır. İkisi de `Exception` değil `Error` alt sınıfıdır; normalde yakalanıp toparlanmaya çalışılmaz. Hata mesajı hangi alanın dolduğunu söyler, `Java heap space` ya da `Metaspace` gibi.",
+      "keyConcepts": [
+        {
+          "id": "stack-ozyineleme",
+          "label": "Stack dolar, derin özyineleme",
+          "aliases": [
+            "özyineleme",
+            "recursion",
+            "recursive",
+            "rekürsif",
+            "-xss",
+            "çağrı derinliği"
+          ],
+          "anchors": [
+            "StackOverflowError thread'in stack'i dolduğunda, genelde sonlanmayan özyinelemede fırlar."
+          ]
+        },
+        {
+          "id": "heap-dolar",
+          "label": "Heap ya da metaspace dolar",
+          "aliases": [
+            "heap",
+            "metaspace",
+            "-xmx",
+            "sızıntı",
+            "leak"
+          ],
+          "anchors": [
+            "OutOfMemoryError heap ya da metaspace dolduğunda ve GC yer açamadığında fırlar."
+          ]
+        },
+        {
+          "id": "error-sinifi",
+          "label": "İkisi de Error, yakalanmaz",
+          "aliases": [
+            "throwable",
+            "yakalanmaz",
+            "yakalanmamalı",
+            "toparlan",
+            "exception değil"
+          ],
+          "anchors": [
+            "İkisi de Exception değil Error alt sınıfıdır ve normalde yakalanmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "OutOfMemoryError aldığında ilk hangi bilgiyi toplarsın?"
+      ],
+      "source": "Kendi derleme — Java SE 21 API: VirtualMachineError; Troubleshooting Guide"
+    },
+    {
+      "id": "java-classloader",
+      "category": "java",
+      "kind": "definition",
+      "topic": "JVM",
+      "difficulty": 3,
+      "prompt": "Class loader nedir? Parent delegation modeli nasıl çalışır?",
+      "modelAnswer": "**Class loader**, bir sınıf ilk kez gerektiğinde onun bytecode'unu bulup JVM'e yükleyen bileşendir; sınıflar uygulama başında topluca değil, ihtiyaç anında yüklenir. Hiyerarşide **bootstrap** (çekirdek `java.*` sınıfları), **platform** ve **application** (classpath) class loader'ları vardır. Parent delegation'da bir loader sınıfı önce **ebeveynine** sorar, yalnızca ebeveyn bulamazsa kendisi yükler; böylece kimse kendi `java.lang.String`'ini yükleyip çekirdek sınıfların yerine geçiremez. JVM'de bir sınıfın kimliği adı ile onu yükleyen loader'ın birlikteliğidir; aynı sınıf iki farklı loader'la yüklenirse `ClassCastException` gibi şaşırtıcı hatalar çıkar.",
+      "keyConcepts": [
+        {
+          "id": "ihtiyac-aninda",
+          "label": "Bytecode'u ihtiyaç anında yükler",
+          "aliases": [
+            "ihtiyaç anında",
+            "ilk kez",
+            "ilk kullan",
+            "lazy",
+            "dinamik yükle",
+            "çalışma anında yükle"
+          ],
+          "anchors": [
+            "Class loader bir sınıfın bytecode'unu ilk gerektiğinde bulup JVM'e yükler."
+          ]
+        },
+        {
+          "id": "hiyerarsi",
+          "label": "Bootstrap, platform, application",
+          "aliases": [
+            "bootstrap",
+            "platform",
+            "application",
+            "system class",
+            "classpath",
+            "extension"
+          ],
+          "anchors": [
+            "Hiyerarşide bootstrap, platform ve application class loader'ları vardır."
+          ]
+        },
+        {
+          "id": "once-ebeveyn",
+          "label": "Önce ebeveyne sorar",
+          "aliases": [
+            "ebeveyn",
+            "üst loader",
+            "önce parent",
+            "parent'a",
+            "üste sor",
+            "delege"
+          ],
+          "anchors": [
+            "Bir loader sınıfı önce ebeveynine sorar, ebeveyn bulamazsa kendisi yükler."
+          ]
+        },
+        {
+          "id": "cekirdek-korunur",
+          "label": "Çekirdek sınıflar ezilemez",
+          "aliases": [
+            "java.lang",
+            "çekirdek sınıf",
+            "core class",
+            "güvenlik",
+            "ezilemez",
+            "yerine geç"
+          ],
+          "anchors": [
+            "Delegasyon sayesinde uygulama çekirdek java sınıflarının yerine kendi sürümünü koyamaz."
+          ]
+        },
+        {
+          "id": "kimlik",
+          "label": "Sınıf kimliği: ad + loader",
+          "aliases": [
+            "classcastexception",
+            "farklı loader",
+            "iki loader",
+            "loader'ın birlikte",
+            "ad ve loader"
+          ],
+          "anchors": [
+            "Sınıfın kimliği adı ve yükleyen loader'dır; iki loader'la yüklenen aynı sınıf farklı sayılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Uygulama sunucuları ve hot reload araçları parent delegation'ı neden bazen tersine çevirir?"
+      ],
+      "source": "Kendi derleme — JVM Specification §5.3 Creation and Loading; Java SE 21 API: ClassLoader"
+    },
+    {
+      "id": "java-immutable-class",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Immutable bir sınıf nasıl tasarlanır? Faydaları nelerdir?",
+      "modelAnswer": "Sınıf `final` yapılır ki alt sınıf davranışı değiştiremesin; tüm alanlar `private final` olur ve setter yazılmaz. Değerler constructor'da bir kez atanır; `List` ya da `Date` gibi değiştirilebilir bir alan varsa constructor'da ve getter'da **defensive copy** alınır ya da `List.copyOf` ile değiştirilemez bir kopya tutulur. Değişiklik gerektiren işlemler nesneyi değiştirmek yerine **yeni bir nesne** döndürür. Böyle bir sınıf senkronizasyon gerekmeden **thread-safe** olur, `HashMap` anahtarı ya da cache değeri olarak güvenle kullanılır ve durumu hiç değişmediği için hakkında akıl yürütmek kolaydır. `record` bu kalıbın çoğunu hazır verir ama alanlardaki değiştirilebilir nesneleri kendiliğinden kopyalamaz.",
+      "keyConcepts": [
+        {
+          "id": "final-alanlar",
+          "label": "final sınıf, private final alanlar, setter yok",
+          "aliases": [
+            "private final",
+            "final alan",
+            "final field",
+            "final class",
+            "setter yok",
+            "setter olmaz"
+          ],
+          "anchors": [
+            "Sınıf final yapılır, alanlar private final olur ve setter yazılmaz."
+          ]
+        },
+        {
+          "id": "defensive-copy",
+          "label": "Değiştirilebilir alanlarda defensive copy",
+          "aliases": [
+            "defensive copy",
+            "savunmacı kopya",
+            "kopyasını",
+            "copyof",
+            "değiştirilemez kopya"
+          ],
+          "anchors": [
+            "Değiştirilebilir alanlar constructor'da ve getter'da kopyalanır."
+          ]
+        },
+        {
+          "id": "yeni-nesne",
+          "label": "Değişiklik yeni nesne döndürür",
+          "aliases": [
+            "yeni nesne",
+            "yeni bir nesne",
+            "new instance",
+            "yeni instance",
+            "yeni örnek"
+          ],
+          "anchors": [
+            "Değişiklik gerektiren işlemler mevcut nesneyi değiştirmez, yeni nesne döndürür."
+          ]
+        },
+        {
+          "id": "thread-safe",
+          "label": "Thread-safe, güvenli anahtar",
+          "aliases": [
+            "thread-safe",
+            "thread safe",
+            "senkronizasyon gerek",
+            "hashmap anahtar",
+            "map anahtar"
+          ],
+          "anchors": [
+            "Immutable nesne senkronizasyon gerekmeden thread-safe'tir ve güvenli map anahtarıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "record'un alanlarından biri List ise record gerçekten immutable olur mu?"
+      ],
+      "source": "Kendi derleme — Effective Java (Bloch), Item 17: Minimize mutability"
+    },
+    {
+      "id": "java-autoboxing-integer-cache",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Autoboxing nedir? İki Integer'ı == ile karşılaştırmak neden tehlikelidir?",
+      "modelAnswer": "**Autoboxing**, derleyicinin `int` gibi primitive bir değeri gerektiğinde otomatik olarak `Integer` sarmalayıcısına çevirmesidir; **unboxing** bunun tersidir ve `List<Integer>`'a `int` eklemek tipik örnektir. `==` iki nesnede değeri değil **referansı** karşılaştırır, yani iki değişkenin aynı nesneyi gösterip göstermediğine bakar. `Integer.valueOf` -128 ile 127 arasındaki değerler için önbellekteki aynı nesneyi döndürdüğünden iki `Integer` 127 iken `==` true, 128 iken false dönebilir; doğrusu `equals` kullanmak ya da değeri `int`'e açmaktır. Ayrıca `null` bir `Integer`'ın unboxing'i `NullPointerException` fırlatır.",
+      "keyConcepts": [
+        {
+          "id": "primitive-wrapper",
+          "label": "primitive ile wrapper arasında otomatik dönüşüm",
+          "aliases": [
+            "primitive",
+            "wrapper",
+            "sarmalayıcı",
+            "unboxing",
+            "otomatik dönüş"
+          ],
+          "anchors": [
+            "Autoboxing primitive değeri otomatik olarak wrapper nesnesine çevirmektir."
+          ]
+        },
+        {
+          "id": "referans-karsilastirma",
+          "label": "== referansı karşılaştırır",
+          "aliases": [
+            "referansı karşılaştır",
+            "referans karşılaştır",
+            "reference",
+            "aynı nesne",
+            "kimlik karşılaştır",
+            "adresi"
+          ],
+          "anchors": [
+            "Nesnelerde == değeri değil, aynı nesne olup olmadığını karşılaştırır."
+          ]
+        },
+        {
+          "id": "onbellek",
+          "label": "-128 ile 127 arası önbellek",
+          "aliases": [
+            "-128",
+            "önbellek",
+            "cache",
+            "valueof",
+            "integercache"
+          ],
+          "anchors": [
+            "Integer.valueOf -128 ile 127 arasındaki değerler için önbellekteki aynı nesneyi döndürür."
+          ]
+        },
+        {
+          "id": "equals-kullan",
+          "label": "equals ya da int ile karşılaştır",
+          "aliases": [
+            "equals",
+            "intvalue",
+            "int'e aç",
+            "int'e çevir",
+            "primitive'e"
+          ],
+          "anchors": [
+            "Integer değerleri equals ile ya da int'e açılarak karşılaştırılmalıdır."
+          ]
+        },
+        {
+          "id": "null-unboxing",
+          "label": "null unboxing NullPointerException verir",
+          "aliases": [
+            "nullpointer",
+            "null olan",
+            "null ise",
+            "null bir"
+          ],
+          "anchors": [
+            "null bir Integer'ın unboxing'i NullPointerException fırlatır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir Map<String, Integer>'dan okunan değeri int'e atarken hangi hata riski vardır?"
+      ],
+      "source": "Kendi derleme — JLS §5.1.7 Boxing Conversion; Java SE 21 API: Integer.valueOf"
+    },
+    {
+      "id": "java-throw-vs-throws",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Exception",
+      "difficulty": 1,
+      "prompt": "throw ile throws arasındaki fark nedir?",
+      "modelAnswer": "`throw`, metot **gövdesinde** bir exception nesnesini o anda fırlatan ifadedir: `throw new IllegalArgumentException(\"tutar negatif\")`. `throws` ise metot **imzasında** yer alır ve metodun hangi exception'ları fırlatabileceğini çağırana bildirir; birden fazla tür virgülle yazılır. Checked bir exception metot içinde yakalanmıyorsa `throws` ile bildirilmesi derleyici tarafından zorunlu tutulur, unchecked exception'larda bu isteğe bağlıdır. `throw` ile yalnızca `Throwable` türünden bir nesne fırlatılabilir.",
+      "keyConcepts": [
+        {
+          "id": "govdede-firlatir",
+          "label": "throw gövdede nesneyi fırlatır",
+          "aliases": [
+            "throw new",
+            "gövde",
+            "metodun içinde",
+            "metot içinde",
+            "exception nesnesi"
+          ],
+          "anchors": [
+            "throw metot gövdesinde bir exception nesnesini o anda fırlatır."
+          ]
+        },
+        {
+          "id": "imzada-bildirir",
+          "label": "throws imzada bildirir",
+          "aliases": [
+            "imza",
+            "signature",
+            "bildir",
+            "deklar",
+            "declare"
+          ],
+          "anchors": [
+            "throws metot imzasında metodun fırlatabileceği exception'ları bildirir."
+          ]
+        },
+        {
+          "id": "checked-zorunlu",
+          "label": "Checked için throws zorunlu",
+          "aliases": [
+            "checked",
+            "zorunlu",
+            "derleyici",
+            "compile"
+          ],
+          "anchors": [
+            "Yakalanmayan checked exception'ı throws ile bildirmek derleyicinin zorunluluğudur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir metodu override ederken throws listesine yeni bir checked exception ekleyebilir misin? Neden?"
+      ],
+      "source": "Kendi derleme — JLS §8.4.6 Method Throws, §14.18 The throw Statement"
     }
   ]
 }
