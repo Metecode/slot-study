@@ -4700,6 +4700,467 @@
         "Birden fazla aspect aynı metoda uygulanıyorsa çalışma sırasını nasıl belirlersin?"
       ],
       "source": "Kendi derleme — Spring Framework belgeleri: Declaring Advice"
+    },
+    {
+      "id": "java-spring-transactional-basics",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 1,
+      "prompt": "@Transactional ile işaretli bir metot çağrıldığında arka planda ne olur?",
+      "modelAnswer": "Çağrı önce bean'in **proxy**'sine gelir; proxy'deki `TransactionInterceptor`, `PlatformTransactionManager`'dan (JPA kullanan bir Spring Boot uygulamasında `JpaTransactionManager`) bir transaction başlatmasını ister. Transaction manager veritabanı bağlantısını ve `EntityManager`'ı o anki **thread'e bağlar**; aynı thread'de çağrılan repository'ler ve `JdbcTemplate` bu sayede aynı bağlantıyı ve transaction'ı kullanır. Metot normal dönerse transaction **commit** edilir, `RuntimeException` ya da `Error` fırlarsa **rollback** yapılır; checked exception varsayılan olarak commit'e engel olmaz. Mekanizma proxy üzerinden işlediği için yalnızca dışarıdan gelen çağrılarda devreye girer; `jakarta.transaction.Transactional` da aynı şekilde desteklenir.",
+      "keyConcepts": [
+        {
+          "id": "proxy-interceptor",
+          "label": "Proxy ve TransactionInterceptor",
+          "aliases": [
+            "proxy",
+            "interceptor",
+            "transactioninterceptor",
+            "araya gir"
+          ],
+          "anchors": [
+            "Çağrı bean'in proxy'sine gelir, TransactionInterceptor transaction'ı başlatır."
+          ]
+        },
+        {
+          "id": "transaction-manager",
+          "label": "PlatformTransactionManager transaction'ı yönetir",
+          "aliases": [
+            "platformtransactionmanager",
+            "transactionmanager",
+            "transaction manager",
+            "jpatransactionmanager",
+            "datasourcetransactionmanager"
+          ],
+          "anchors": [
+            "Transaction'ı PlatformTransactionManager başlatır ve bitirir; JPA'da JpaTransactionManager'dır."
+          ]
+        },
+        {
+          "id": "thread-baglama",
+          "label": "Bağlantı thread'e bağlanır",
+          "aliases": [
+            "thread'e bağ",
+            "aynı bağlantı",
+            "aynı connection",
+            "threadlocal",
+            "aynı thread",
+            "transactionsynchronizationmanager"
+          ],
+          "anchors": [
+            "Bağlantı ve EntityManager thread'e bağlanır, aynı thread'deki repository'ler aynı transaction'ı kullanır."
+          ]
+        },
+        {
+          "id": "commit-rollback",
+          "label": "Normal dönüşte commit, RuntimeException'da rollback",
+          "aliases": [
+            "commit",
+            "rollback",
+            "geri al",
+            "runtimeexception"
+          ],
+          "anchors": [
+            "Metot normal dönerse commit, RuntimeException ya da Error fırlarsa rollback yapılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir @Transactional metodun içinden yeni bir thread başlatırsan o thread aynı transaction'ı görür mü?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Understanding the Spring Framework's Declarative Transaction Implementation"
+    },
+    {
+      "id": "java-spring-propagation",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 3,
+      "prompt": "@Transactional'da propagation nedir? REQUIRED, REQUIRES_NEW ve NESTED arasındaki fark nedir?",
+      "modelAnswer": "Propagation, transaction'lı bir metot başka bir transaction'lı metodu çağırdığında ne olacağını belirler. Varsayılan `REQUIRED`'da açık bir transaction varsa ona **katılınır**, yoksa yenisi başlar; içteki metot hata fırlatırsa transaction rollback-only işaretlenir ve **tamamı** geri alınır. `REQUIRES_NEW` dıştaki transaction'ı **askıya alır** ve ayrı bir bağlantıyla bağımsız bir transaction açar; içteki commit dıştaki geri alınsa bile kalır, bu yüzden denetim kaydı (audit log) gibi işler için uygundur ama aynı anda iki bağlantı tuttuğu için havuzu tüketebilir. `NESTED` aynı transaction içinde bir **savepoint** açar; içteki kısım tek başına savepoint'e geri alınabilir, dıştaki rollback ise hepsini geri alır. NESTED JDBC savepoint'lerine dayanır ve `JpaTransactionManager`'da varsayılan olarak kapalıdır, çünkü savepoint `EntityManager`'ın durumunu geri almaz.",
+      "keyConcepts": [
+        {
+          "id": "katilir",
+          "label": "REQUIRED: varsa katılır, yoksa başlatır",
+          "aliases": [
+            "katıl",
+            "join",
+            "mevcut transaction",
+            "yoksa yeni",
+            "aynı transaction"
+          ],
+          "anchors": [
+            "REQUIRED'da açık transaction varsa ona katılınır, yoksa yenisi başlar."
+          ]
+        },
+        {
+          "id": "tamami",
+          "label": "REQUIRED'da içteki hata tamamını geri alır",
+          "aliases": [
+            "rollback-only",
+            "rollback only",
+            "tamamı geri",
+            "hepsi geri",
+            "tümü geri"
+          ],
+          "anchors": [
+            "REQUIRED'da içteki hata ortak transaction'ı rollback-only yapar ve tamamı geri alınır."
+          ]
+        },
+        {
+          "id": "askiya",
+          "label": "REQUIRES_NEW: askıya alır, bağımsız transaction",
+          "aliases": [
+            "askıya",
+            "suspend",
+            "bağımsız",
+            "ayrı bir transaction",
+            "ayrı bağlantı",
+            "audit"
+          ],
+          "anchors": [
+            "REQUIRES_NEW dıştaki transaction'ı askıya alıp bağımsız yeni bir transaction açar."
+          ]
+        },
+        {
+          "id": "savepoint",
+          "label": "NESTED: savepoint",
+          "aliases": [
+            "savepoint",
+            "kayıt noktası",
+            "ara nokta"
+          ],
+          "anchors": [
+            "NESTED aynı transaction içinde savepoint açar, içteki kısım ona geri alınabilir."
+          ]
+        },
+        {
+          "id": "jpa-siniri",
+          "label": "NESTED JPA'da varsayılan kapalı",
+          "aliases": [
+            "nestedtransactionallowed",
+            "jpatransactionmanager",
+            "jdbc",
+            "entitymanager"
+          ],
+          "anchors": [
+            "NESTED JDBC savepoint'ine dayanır; JpaTransactionManager'da varsayılan olarak kapalıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "REQUIRES_NEW ile açılan iç transaction, dıştakinin kilitlediği bir satırı güncellemeye çalışırsa ne olur?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Transaction Propagation; JpaTransactionManager Javadoc"
+    },
+    {
+      "id": "java-spring-transaction-isolation",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 2,
+      "prompt": "@Transactional'daki isolation ayarı ne işe yarar? Isolation.DEFAULT ne anlama gelir?",
+      "modelAnswer": "`isolation` özelliği, Spring'in transaction başlarken veritabanı bağlantısına hangi izolasyon seviyesini uygulayacağını söyler (`READ_COMMITTED`, `REPEATABLE_READ`, `SERIALIZABLE` gibi). `Isolation.DEFAULT`, Spring'in hiçbir şey ayarlamadığı ve **veritabanının kendi varsayılanının** geçerli olduğu anlamına gelir; bu PostgreSQL, Oracle ve SQL Server'da `READ COMMITTED`, MySQL InnoDB'de `REPEATABLE READ`'dir, yani aynı kod farklı veritabanında farklı davranabilir. Seviye yalnızca **yeni bir transaction başlarken** uygulanır; `REQUIRED` ile mevcut bir transaction'a katılan metodun isolation değeri sessizce yok sayılır (`validateExistingTransaction` açılırsa hata verir). Yüksek seviyeler daha fazla kilit ya da serileştirme hatası demektir; PostgreSQL'de `SERIALIZABLE` kullanıyorsan çakışan transaction'ları yeniden denemeye hazır olmalısın.",
+      "keyConcepts": [
+        {
+          "id": "seviye",
+          "label": "Bağlantıya izolasyon seviyesi uygulanır",
+          "aliases": [
+            "izolasyon seviye",
+            "read_committed",
+            "read committed",
+            "repeatable",
+            "serializable"
+          ],
+          "anchors": [
+            "isolation, transaction başlarken bağlantıya uygulanacak izolasyon seviyesidir."
+          ]
+        },
+        {
+          "id": "db-varsayilan",
+          "label": "DEFAULT veritabanının varsayılanıdır",
+          "aliases": [
+            "veritabanının varsayılan",
+            "veritabanının kendi",
+            "veritabanına bırak",
+            "db varsayılan",
+            "database default"
+          ],
+          "anchors": [
+            "Isolation.DEFAULT'ta Spring bir şey ayarlamaz, veritabanının varsayılanı geçerlidir."
+          ]
+        },
+        {
+          "id": "farkli-db",
+          "label": "Varsayılan veritabanına göre değişir",
+          "aliases": [
+            "mysql",
+            "innodb",
+            "oracle",
+            "farklı veritabanı",
+            "veritabanına göre"
+          ],
+          "anchors": [
+            "PostgreSQL'de varsayılan READ COMMITTED, MySQL InnoDB'de REPEATABLE READ'dir."
+          ]
+        },
+        {
+          "id": "yeni-transaction",
+          "label": "Yalnızca yeni transaction başlarken uygulanır",
+          "aliases": [
+            "yeni bir transaction",
+            "yeni transaction",
+            "yok sayılır",
+            "katılan",
+            "validateexistingtransaction",
+            "ignore"
+          ],
+          "anchors": [
+            "Isolation yalnızca yeni transaction başlarken uygulanır; mevcut transaction'a katılanınki yok sayılır."
+          ]
+        },
+        {
+          "id": "retry",
+          "label": "Yüksek seviye: serileştirme hatası ve yeniden deneme",
+          "aliases": [
+            "yeniden dene",
+            "retry",
+            "serileştirme hata",
+            "serialization failure",
+            "daha fazla kilit"
+          ],
+          "anchors": [
+            "Yüksek izolasyon seviyesi serileştirme hatalarına yol açar, transaction yeniden denenmelidir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Isolation seviyesini yükseltmek yerine bir lost update problemini nasıl çözebilirsin?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Transaction Isolation; PostgreSQL ve MySQL belgeleri: varsayılan izolasyon seviyeleri"
+    },
+    {
+      "id": "java-spring-rollback-rules",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 2,
+      "prompt": "@Transactional hangi exception'larda rollback yapar? Bu davranış nasıl değiştirilir?",
+      "modelAnswer": "Varsayılan olarak yalnızca `RuntimeException` ve `Error` rollback'e yol açar; checked exception fırlarsa transaction **commit** edilir. Bu, `@Transactional(rollbackFor = Exception.class)` ya da tersine `noRollbackFor` ile metot bazında değiştirilir; Spring Framework 6.2'den beri `@EnableTransactionManagement(rollbackOn = RollbackOn.ALL_EXCEPTIONS)` ile tüm uygulamanın varsayılanı da değiştirilebilir. Exception metot içinde yakalanıp **yutulursa** proxy hiçbir hata görmez ve commit eder; yakalayıp yine de geri almak gerekiyorsa `TransactionAspectSupport.currentTransactionStatus().setRollbackOnly()` çağrılır. Sık karşılaşılan tuzak, içteki bir `REQUIRED` metodun RuntimeException fırlatmasıyla ortak transaction'ın **rollback-only** işaretlenmesidir; dıştaki metot hatayı yakalayıp devam etse bile commit anında `UnexpectedRollbackException` alınır.",
+      "keyConcepts": [
+        {
+          "id": "runtime-varsayilan",
+          "label": "Varsayılan: RuntimeException ve Error",
+          "aliases": [
+            "runtimeexception",
+            "unchecked",
+            "error",
+            "checked exception",
+            "commit edilir"
+          ],
+          "anchors": [
+            "Varsayılan olarak yalnızca RuntimeException ve Error rollback'e yol açar, checked exception commit edilir."
+          ]
+        },
+        {
+          "id": "rollbackfor",
+          "label": "rollbackFor ve noRollbackFor",
+          "aliases": [
+            "rollbackfor",
+            "norollbackfor",
+            "rollbackon",
+            "all_exceptions"
+          ],
+          "anchors": [
+            "Davranış rollbackFor ve noRollbackFor ile değiştirilir."
+          ]
+        },
+        {
+          "id": "yutma",
+          "label": "Yutulan exception commit eder",
+          "aliases": [
+            "yutul",
+            "yutar",
+            "yakalanırsa",
+            "catch",
+            "swallow",
+            "setrollbackonly"
+          ],
+          "anchors": [
+            "Metot içinde yakalanıp yutulan exception'da proxy hata görmez ve commit eder."
+          ]
+        },
+        {
+          "id": "rollback-only",
+          "label": "rollback-only ve UnexpectedRollbackException",
+          "aliases": [
+            "rollback-only",
+            "rollback only",
+            "unexpectedrollback",
+            "rollbackonly"
+          ],
+          "anchors": [
+            "İçteki hata ortak transaction'ı rollback-only yapar; dıştaki commit etmeye çalışınca UnexpectedRollbackException alır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Checked exception'da commit etmek hangi senaryoda bilinçli olarak istenir?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Rolling Back a Declarative Transaction; RollbackOn Javadoc (6.2)"
+    },
+    {
+      "id": "java-spring-self-invocation",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 3,
+      "prompt": "@Transactional bir metodu aynı sınıftaki başka bir metottan çağırınca transaction neden açılmaz?",
+      "modelAnswer": "Spring `@Transactional`'ı bean'in önüne konan bir **proxy** ile uygular; transaction'ı başlatan ve bitiren kod bu proxy'dedir. Sınıfın içinden yapılan `this.save()` çağrısı proxy'den geçmeden doğrudan asıl nesneye gider, bu yüzden transaction mantığı hiç çalışmaz. Aynı sebeple varsayılan proxy modunda `private` metotlardaki `@Transactional` da, iç çağrıyla tetiklenen `@Async` ve `@Cacheable` da etkisiz kalır. Çözüm genelde metodu ayrı bir bean'e taşımaktır; alternatifler bean'in kendi proxy'sini enjekte etmek (self-injection) ya da AspectJ weaving'e geçmektir.",
+      "keyConcepts": [
+        {
+          "id": "proxy",
+          "label": "@Transactional proxy ile uygulanır",
+          "aliases": [
+            "proxy",
+            "vekil",
+            "cglib",
+            "interceptor"
+          ],
+          "anchors": [
+            "Spring @Transactional'ı bean'in önüne konan bir proxy ile uygular."
+          ]
+        },
+        {
+          "id": "ic-cagri",
+          "label": "İç çağrı proxy'den geçmez",
+          "aliases": [
+            "this",
+            "self-invocation",
+            "self invocation",
+            "iç çağrı",
+            "proxy'den geç",
+            "proxy'yi atla"
+          ],
+          "anchors": [
+            "Sınıf içinden this üzerinden yapılan çağrı proxy'den geçmez, doğrudan asıl nesneye gider."
+          ]
+        },
+        {
+          "id": "diger-etkiler",
+          "label": "private metot, @Async ve @Cacheable da etkilenir",
+          "aliases": [
+            "private",
+            "async",
+            "cacheable"
+          ],
+          "anchors": [
+            "Proxy modunda private metotlardaki ve iç çağrıyla tetiklenen @Async, @Cacheable da çalışmaz."
+          ]
+        },
+        {
+          "id": "cozum",
+          "label": "Ayrı bean, self-injection ya da AspectJ",
+          "aliases": [
+            "ayrı bean",
+            "ayrı bir bean",
+            "başka bir bean",
+            "self-injection",
+            "kendi proxy",
+            "aspectj"
+          ],
+          "anchors": [
+            "Çözüm metodu ayrı bir bean'e taşımak, self-injection ya da AspectJ weaving kullanmaktır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir metodun gerçekten transaction içinde çalıştığını çalışma anında nasıl doğrularsın?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: Declarative Transaction Management, proxy modu"
+    },
+    {
+      "id": "java-spring-readonly",
+      "category": "java",
+      "kind": "definition",
+      "topic": "Transaction",
+      "difficulty": 2,
+      "prompt": "@Transactional(readOnly = true) ne sağlar? Gerçekten yazmayı engeller mi?",
+      "modelAnswer": "`readOnly = true` transaction'ın yalnızca okuma yapacağını bildiren bir **ipucudur**; asıl kazanç ORM tarafındadır. Hibernate ile Spring oturumu salt okunur moda, flush modunu da `MANUAL`'a alır; yüklenen entity'ler için dirty checking kopyası tutulmaz ve transaction sonunda flush yapılmaz, bu da bellek ve CPU kazandırır. Ayrıca JDBC bağlantısında `setReadOnly(true)` çağrılır; sürücü ve veritabanı buna göre optimizasyon yapabilir, routing yapılandırılmış bir `DataSource` okuma isteklerini replikaya yönlendirebilir. Yazmanın engellenmesi garanti değildir ve veritabanına bağlıdır: PostgreSQL salt okunur transaction'da `UPDATE`'i reddeder, bazı veritabanları ipucunu yok sayar; bu yüzden readOnly bir güvenlik önlemi değil, performans ipucudur. Spring Data JPA'nın `SimpleJpaRepository`'si sınıf düzeyinde `readOnly = true` taşır, yazma metotları bunu ayrıca ezer.",
+      "keyConcepts": [
+        {
+          "id": "ipucu",
+          "label": "Bir ipucudur",
+          "aliases": [
+            "ipucu",
+            "hint",
+            "optimizasyon"
+          ],
+          "anchors": [
+            "readOnly, transaction'ın yalnızca okuma yapacağını bildiren bir ipucudur."
+          ]
+        },
+        {
+          "id": "dirty-flush",
+          "label": "Dirty checking ve flush yapılmaz",
+          "aliases": [
+            "dirty checking",
+            "flush",
+            "manual",
+            "snapshot",
+            "kopya tutulmaz",
+            "salt okunur mod"
+          ],
+          "anchors": [
+            "Hibernate'te readOnly'de dirty checking kopyası tutulmaz ve flush yapılmaz."
+          ]
+        },
+        {
+          "id": "jdbc-replika",
+          "label": "JDBC setReadOnly ve replika yönlendirme",
+          "aliases": [
+            "setreadonly",
+            "replika",
+            "replica",
+            "routing",
+            "sürücü"
+          ],
+          "anchors": [
+            "JDBC bağlantısında setReadOnly çağrılır, okuma replikaya yönlendirilebilir."
+          ]
+        },
+        {
+          "id": "garanti-degil",
+          "label": "Engelleme veritabanına bağlı, güvenlik önlemi değil",
+          "aliases": [
+            "garanti değil",
+            "veritabanına bağlı",
+            "reddeder",
+            "güvenlik önlemi değil",
+            "yok sayar"
+          ],
+          "anchors": [
+            "Yazmanın engellenmesi veritabanına bağlıdır; readOnly bir güvenlik önlemi değildir."
+          ]
+        },
+        {
+          "id": "spring-data",
+          "label": "SimpleJpaRepository varsayılan readOnly",
+          "aliases": [
+            "simplejparepository",
+            "spring data",
+            "sınıf düzeyinde"
+          ],
+          "anchors": [
+            "Spring Data JPA repository'leri sınıf düzeyinde readOnly transaction taşır."
+          ]
+        }
+      ],
+      "followUps": [
+        "readOnly bir transaction'ın içinden readOnly olmayan REQUIRED bir metot çağrılırsa ne olur?"
+      ],
+      "source": "Kendi derleme — Spring Framework belgeleri: @Transactional Settings, HibernateJpaDialect; PostgreSQL: SET TRANSACTION READ ONLY"
     }
   ]
 }
