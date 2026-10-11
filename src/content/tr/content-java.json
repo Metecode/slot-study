@@ -255,31 +255,31 @@
       "topic": "Collections",
       "difficulty": 3,
       "prompt": "HashMap içeride nasıl çalışır? Çakışmalar nasıl çözülür, yeniden boyutlandırma ne zaman olur?",
-      "modelAnswer": "HashMap içeride bir **dizi** (bucket dizisi) tutar. `put(key, value)` çağrıldığında:\n\n1. Anahtarın `hashCode()`'u alınır ve bitleri karıştırılarak **dizi indeksi** hesaplanır.\n2. O indeksteki kova boşsa eleman oraya konur.\n3. Doluysa bu bir **çakışma**dır; kovadaki elemanlar `equals` ile karşılaştırılır. Aynı anahtar varsa değer güncellenir, yoksa eleman kovaya eklenir.\n\nÇakışan elemanlar kovada **bağlı liste** olarak tutulur. Java 8'den itibaren bir kovadaki eleman sayısı **8'i geçerse** (ve dizi yeterince büyükse) liste **kırmızı-siyah ağaca** (treeify) dönüştürülür; kötü bir hashCode durumunda arama O(n) yerine **O(log n)** olur.\n\n**Yeniden boyutlandırma (resize):** Eleman sayısı `kapasite × load factor`'ü geçince dizi **iki katına** çıkarılır ve tüm elemanlar yeni dizideki yerlerine taşınır. Varsayılan kapasite 16, **load factor 0.75**'tir. Resize pahalı bir işlemdir; eleman sayısı önceden biliniyorsa kapasite baştan verilir.\n\nSık atlanan nokta: HashMap **thread-safe değildir**. Birden fazla thread aynı anda yazarsa veri kaybolabilir; eşzamanlı kullanım için ConcurrentHashMap kullanılır.",
+      "modelAnswer": "HashMap bir **bucket dizisi** tutar; `put` anahtarın `hashCode()`'unu bitlerini karıştırarak bir dizi indeksine çevirir ve elemanı o kovaya koyar. Kova doluysa kovadaki anahtarlar `equals` ile karşılaştırılır; aynı anahtar varsa değer güncellenir, yoksa eleman kovadaki **bağlı listeye** eklenir. Java 8'den beri bir kovadaki eleman sayısı 8'i geçerse ve dizi en az 64 boyutundaysa liste **kırmızı-siyah ağaca** dönüştürülür (treeify), böylece kötü bir hashCode'da arama O(n) yerine **O(log n)** olur. Eleman sayısı `kapasite × load factor` eşiğini geçince dizi **iki katına** çıkarılıp elemanlar yeniden dağıtılır; varsayılan kapasite 16, load factor 0.75'tir ve beklenen boyut biliniyorsa kapasite baştan verilir. HashMap thread-safe değildir; eşzamanlı yazmada veri kaybolabilir, bunun için `ConcurrentHashMap` kullanılır.",
       "keyConcepts": [
         {
           "id": "dizi-indeks",
-          "label": "Bucket dizisi ve hashCode'dan indeks",
+          "label": "Bucket dizisi, hashCode'dan indeks",
           "aliases": [
-            "dizi",
             "bucket",
             "kova",
-            "indeks"
+            "indeks",
+            "hashcode"
           ],
           "anchors": [
-            "HashMap bir bucket dizisi tutar ve hashCode'dan dizi indeksi hesaplar."
+            "HashMap bir bucket dizisi tutar, indeks anahtarın hashCode'undan hesaplanır."
           ]
         },
         {
           "id": "cakisma-equals",
-          "label": "Çakışmada equals",
+          "label": "Kovada equals ile karşılaştırma",
           "aliases": [
-            "çakışma",
+            "equals",
             "collision",
-            "equals"
+            "aynı anahtar"
           ],
           "anchors": [
-            "Aynı kovaya düşen elemanlar equals ile karşılaştırılır."
+            "Kova doluysa anahtarlar equals ile karşılaştırılır."
           ]
         },
         {
@@ -289,26 +289,26 @@
             "bağlı liste",
             "linked list",
             "kırmızı-siyah",
-            "ağaç",
+            "red-black",
             "treeify",
             "log n"
           ],
           "anchors": [
-            "Çakışan elemanlar bağlı listede tutulur, 8'i geçince ağaca dönüştürülür."
+            "Çakışan elemanlar bağlı listede tutulur, liste uzayınca kırmızı-siyah ağaca dönüşür."
           ]
         },
         {
           "id": "resize",
-          "label": "Load factor ve resize",
+          "label": "Load factor eşiğinde iki katına",
           "aliases": [
             "load factor",
             "0.75",
             "iki kat",
             "resize",
-            "yeniden boyut"
+            "kapasite"
           ],
           "anchors": [
-            "Eleman sayısı kapasite çarpı load factor'ü geçince dizi iki katına çıkar."
+            "Eleman sayısı kapasite × load factor'ü geçince dizi iki katına çıkarılır."
           ]
         },
         {
@@ -316,18 +316,19 @@
           "label": "Thread-safe değil",
           "aliases": [
             "thread-safe değil",
+            "thread safe değil",
             "concurrenthashmap",
             "eşzamanlı"
           ],
           "anchors": [
-            "HashMap thread-safe değildir, eşzamanlı kullanım için ConcurrentHashMap kullanılır."
+            "HashMap thread-safe değildir; eşzamanlı kullanımda ConcurrentHashMap gerekir."
           ]
         }
       ],
       "followUps": [
         "HashMap null anahtar kabul eder mi? Hashtable ve ConcurrentHashMap'te durum nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — OpenJDK 21: HashMap kaynak kodu ve API belgesi"
     },
     {
       "id": "java-arraylist-vs-linkedlist",
@@ -336,15 +337,17 @@
       "topic": "Collections",
       "difficulty": 1,
       "prompt": "ArrayList ile LinkedList arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
-      "modelAnswer": "**ArrayList** içeride **dinamik bir dizi** kullanır:\n- İndeksle erişim (`get(i)`) **O(1)**.\n- Sona ekleme ortalama O(1); dizi dolunca daha büyük bir diziye kopyalanır.\n- Ortaya ekleme veya silme **O(n)**, çünkü sonraki elemanlar kaydırılır.\n\n**LinkedList** **çift yönlü bağlı liste**dir:\n- İndeksle erişim **O(n)**, çünkü baştan veya sondan tek tek gidilir.\n- Başa ve sona ekleme/silme O(1).\n- Her eleman için ayrı bir düğüm nesnesi ve iki işaretçi tutar; **bellek yükü** fazladır.\n\nPratikte **neredeyse her durumda ArrayList** tercih edilir. Teoride LinkedList'in avantajlı olduğu \"ortaya ekleme\" bile, o konuma ulaşmak O(n) sürdüğü için kazanç sağlamaz. Ayrıca ArrayList'in elemanları bellekte **ardışık** durduğu için işlemci önbelleğini çok daha iyi kullanır.\n\nSık atlanan nokta: kuyruk veya yığın (stack) gerekiyorsa LinkedList yerine **ArrayDeque** daha hızlıdır.",
+      "modelAnswer": "`ArrayList` içeride **dinamik bir dizi** kullanır; indeksle erişim **O(1)**, sona ekleme ortalama O(1)'dir, ortaya ekleme ya da silme ise sonraki elemanları kaydırdığı için O(n)'dir. `LinkedList` **çift yönlü bağlı listedir**; başa ve sona ekleme O(1), ama indeksle erişim O(n)'dir ve her eleman için ayrı bir düğüm nesnesiyle iki işaretçi tuttuğu için bellek yükü fazladır. Pratikte neredeyse her durumda `ArrayList` seçilir, çünkü LinkedList'in teorik avantajı olan ortaya ekleme bile o konuma ulaşmak O(n) sürdüğü için kazanç sağlamaz ve ArrayList'in ardışık belleği işlemci önbelleğini çok daha iyi kullanır. Kuyruk ya da yığın gerekiyorsa da LinkedList yerine `ArrayDeque` daha hızlıdır.",
       "keyConcepts": [
         {
           "id": "arraylist-dizi",
           "label": "ArrayList dinamik dizi",
           "aliases": [
             "dinamik dizi",
-            "dizi",
-            "array"
+            "dynamic array",
+            "resizable array",
+            "kaydır",
+            "dizi kullan"
           ],
           "anchors": [
             "ArrayList içeride dinamik bir dizi kullanır."
@@ -356,7 +359,9 @@
           "aliases": [
             "o(1)",
             "indeksle erişim",
-            "get(i)"
+            "get(i)",
+            "rastgele erişim",
+            "random access"
           ],
           "anchors": [
             "ArrayList'te indeksle erişim O(1), LinkedList'te O(n)'dir."
@@ -367,12 +372,13 @@
           "label": "LinkedList bağlı liste",
           "aliases": [
             "bağlı liste",
+            "linked list",
             "düğüm",
             "node",
             "işaretçi"
           ],
           "anchors": [
-            "LinkedList çift yönlü bağlı listedir ve her eleman için düğüm tutar."
+            "LinkedList her eleman için ayrı düğüm tutan çift yönlü bağlı listedir."
           ]
         },
         {
@@ -380,13 +386,13 @@
           "label": "Pratikte ArrayList",
           "aliases": [
             "arraylist tercih",
-            "her durumda arraylist",
-            "önbellek",
+            "arraylist seçilir",
+            "önbelle",
             "cache",
             "ardışık"
           ],
           "anchors": [
-            "Pratikte bellek düzeni sayesinde neredeyse her durumda ArrayList tercih edilir."
+            "Pratikte ArrayList tercih edilir; ardışık belleği işlemci önbelleğini iyi kullanır."
           ]
         },
         {
@@ -396,17 +402,18 @@
             "arraydeque",
             "kuyruk",
             "queue",
+            "yığın",
             "stack"
           ],
           "anchors": [
-            "Kuyruk veya yığın için ArrayDeque daha hızlıdır."
+            "Kuyruk ya da yığın için LinkedList yerine ArrayDeque kullanılır."
           ]
         }
       ],
       "followUps": [
         "ArrayList'in kapasitesi dolduğunda içeride tam olarak ne olur?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Java SE 21 API: ArrayList, LinkedList, ArrayDeque"
     },
     {
       "id": "java-checked-unchecked",
@@ -780,32 +787,35 @@
       "topic": "JVM",
       "difficulty": 2,
       "prompt": "JVM'de stack ve heap arasındaki fark nedir? Garbage collector nasıl çalışır?",
-      "modelAnswer": "**Stack**, her thread'e ait bir bellek alanıdır. Metot çağrıları, **yerel değişkenler** ve primitive değerler ile nesne **referansları** burada tutulur. Metot bitince ilgili alan otomatik olarak boşalır; erişimi çok hızlıdır ama boyutu sınırlıdır (sonsuz özyineleme `StackOverflowError` verir).\n\n**Heap**, tüm thread'lerin paylaştığı alandır. `new` ile oluşturulan **tüm nesneler** burada yaşar. Heap'teki nesneleri **garbage collector (GC)** yönetir.\n\nGC, artık hiçbir canlı referansın ulaşamadığı nesneleri bulup belleklerini geri alır. Kök noktalardan (stack'teki referanslar, static alanlar) başlayıp ulaşılabilen nesneleri işaretler, ulaşılamayanları temizler.\n\nHeap **nesillere** ayrılır: çoğu nesne kısa ömürlüdür ve **young generation**'da doğup orada ölür; orada yapılan toplama hızlıdır. Uzun yaşayanlar **old generation**'a taşınır. Modern JVM'lerde varsayılan collector **G1**'dir; düşük gecikme gereken büyük heap'ler için ZGC de seçilebilir.\n\nSık atlanan nokta: GC olan bir dilde de **bellek sızıntısı** olur. Bir nesneye artık ihtiyaç olmasa bile ona referans tutulmaya devam edilirse (sürekli büyüyen static bir Map gibi) GC onu toplayamaz.",
+      "modelAnswer": "**Stack** her thread'e ait bir alandır; metot çağrılarının çerçeveleri, yerel değişkenler, primitive değerler ve nesne referansları burada tutulur, metot bitince alan kendiliğinden boşalır ve boyutu sınırlıdır (sonsuz özyineleme `StackOverflowError` verir). **Heap** tüm thread'lerin paylaştığı alandır ve `new` ile oluşturulan bütün nesneler burada yaşar. Garbage collector kök noktalardan (stack'teki referanslar, static alanlar) başlayarak **ulaşılabilen** nesneleri işaretler ve hiçbir canlı referansın ulaşamadığı nesnelerin belleğini geri alır. Heap **nesillere** ayrılır: çoğu nesne kısa ömürlüdür ve young generation'da doğup ölür, uzun yaşayanlar old generation'a taşınır; Java 9'dan beri varsayılan collector G1'dir.",
       "keyConcepts": [
         {
           "id": "stack",
           "label": "Stack: thread'e özel, yerel değişkenler",
           "aliases": [
-            "stack",
             "yerel değişken",
+            "local variable",
             "thread'e ait",
-            "metot çağrı"
+            "thread'e özel",
+            "metot çağrı",
+            "çerçeve"
           ],
           "anchors": [
-            "Stack her thread'e aittir ve yerel değişkenleri ile referansları tutar."
+            "Stack her thread'e ait alandır; yerel değişkenler ve referanslar burada tutulur."
           ]
         },
         {
           "id": "heap",
           "label": "Heap: paylaşılan, nesneler",
           "aliases": [
-            "heap",
             "new ile",
-            "nesneler",
-            "paylaş"
+            "tüm thread",
+            "paylaşılan",
+            "nesneler burada",
+            "shared"
           ],
           "anchors": [
-            "Heap tüm thread'lerin paylaştığı ve nesnelerin yaşadığı alandır."
+            "Heap tüm thread'lerin paylaştığı alandır, new ile oluşturulan nesneler burada yaşar."
           ]
         },
         {
@@ -813,12 +823,14 @@
           "label": "GC ulaşılamayan nesneleri toplar",
           "aliases": [
             "ulaşılamayan",
-            "referans",
-            "garbage collector",
-            "gc"
+            "ulaşılabil",
+            "reachable",
+            "kök nokta",
+            "gc root",
+            "işaretle"
           ],
           "anchors": [
-            "GC artık hiçbir referansın ulaşamadığı nesneleri toplar."
+            "GC kök noktalardan ulaşılabilen nesneleri işaretler, ulaşılamayanları toplar."
           ]
         },
         {
@@ -828,30 +840,18 @@
             "young",
             "old generation",
             "nesil",
-            "g1",
-            "zgc"
+            "generational",
+            "garbage-first"
           ],
           "anchors": [
-            "Heap nesillere ayrılır, kısa ömürlü nesneler young generation'da toplanır."
-          ]
-        },
-        {
-          "id": "sizinti",
-          "label": "GC'li dilde de bellek sızıntısı",
-          "aliases": [
-            "sızıntı",
-            "leak",
-            "static map"
-          ],
-          "anchors": [
-            "Gereksiz referanslar tutulmaya devam ederse GC'li dilde de bellek sızıntısı olur."
+            "Heap young ve old generation olarak nesillere ayrılır."
           ]
         }
       ],
       "followUps": [
-        "OutOfMemoryError aldığında sebebini bulmak için ne yaparsın?"
+        "Bir nesnenin young generation'dan old generation'a taşınması neye bağlıdır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — JVM Specification §2.5 Run-Time Data Areas; HotSpot GC Tuning Guide (JDK 21)"
     },
     {
       "id": "java-synchronized-volatile",
@@ -1478,55 +1478,59 @@
       "topic": "Collections",
       "difficulty": 1,
       "prompt": "Comparable ile Comparator arasındaki fark nedir?",
-      "modelAnswer": "İkisi de nesnelerin sıralanmasını sağlar:\n\n- **Comparable**, sınıfın kendi içinde `compareTo(T other)` metodunu uygulamasıdır. Nesnenin **doğal sıralamasını** tanımlar ve **tek bir** sıralama olabilir. `String`, `Integer`, `LocalDate` Comparable'dır.\n- **Comparator**, sıralama mantığını **sınıfın dışında** tanımlar. Aynı sınıf için **birden fazla** sıralama yazılabilir ve kaynak koduna erişimin olmayan sınıflar da sıralanabilir.\n\n```java\naccounts.sort(Comparator.comparing(Account::balance).reversed()\n                        .thenComparing(Account::iban));\n```\n\nJava 8'den itibaren `Comparator.comparing`, `thenComparing`, `reversed` ve `nullsFirst` ile okunaklı zincirler kurulur.\n\nHer ikisinde de dönüş değeri sözleşmesi aynıdır: **negatif** (önce gelir), **sıfır** (eşit), **pozitif** (sonra gelir).\n\nSık atlanan nokta: `compareTo` içinde `return this.balance - other.balance` gibi çıkarma yapmak **taşma (overflow)** nedeniyle büyük sayılarda yanlış sonuç verir. `Integer.compare` veya `Comparator.comparing` kullanılmalıdır.",
+      "modelAnswer": "`Comparable`, sınıfın kendi içinde `compareTo` metodunu uygulayarak **doğal sıralamasını** tanımlamasıdır; tek bir sıralama olabilir ve `String`, `Integer`, `LocalDate` Comparable'dır. `Comparator` ise sıralama mantığını **sınıfın dışında** tanımlar; aynı sınıf için birden fazla sıralama yazılabilir ve kaynak koduna erişemediğin sınıflar da sıralanabilir. Java 8'den beri `Comparator.comparing(Account::balance).reversed().thenComparing(Account::iban)` gibi okunaklı zincirler kurulur. İkisinde de dönüş değeri sözleşmesi aynıdır, negatif önce, sıfır eşit, pozitif sonra demektir; `return this.balance - other.balance` gibi çıkarma büyük sayılarda **taşma** yapacağı için `Integer.compare` ya da `Comparator.comparing` kullanılır.",
       "keyConcepts": [
         {
           "id": "comparable",
-          "label": "Comparable doğal sıralama, sınıf içinde",
+          "label": "Comparable: doğal sıralama, sınıf içinde",
           "aliases": [
-            "comparable",
             "compareto",
             "doğal sıra",
-            "sınıfın kendi"
+            "natural order",
+            "sınıfın kendi",
+            "kendi içinde"
           ],
           "anchors": [
-            "Comparable sınıfın içinde doğal sıralamayı tanımlar."
+            "Comparable sınıfın kendi içinde compareTo ile doğal sıralamasını tanımlar."
           ]
         },
         {
           "id": "comparator",
-          "label": "Comparator dışarıda, birden fazla",
+          "label": "Comparator: dışarıda, birden fazla",
           "aliases": [
-            "comparator",
             "dışında",
-            "birden fazla sıra"
+            "birden fazla sıra",
+            "harici",
+            "external",
+            "compare("
           ],
           "anchors": [
-            "Comparator sıralamayı sınıf dışında tanımlar ve birden fazla olabilir."
+            "Comparator sıralamayı sınıfın dışında tanımlar, birden fazla sıralama yazılabilir."
           ]
         },
         {
           "id": "zincir",
-          "label": "comparing/thenComparing zinciri",
+          "label": "comparing ve thenComparing zinciri",
           "aliases": [
             "comparator.comparing",
             "thencomparing",
-            "reversed"
+            "reversed",
+            "comparing("
           ],
           "anchors": [
-            "Comparator.comparing ve thenComparing ile okunaklı zincirler kurulur."
+            "Comparator.comparing ve thenComparing ile okunaklı sıralama zincirleri kurulur."
           ]
         },
         {
           "id": "sozlesme",
-          "label": "Negatif/sıfır/pozitif",
+          "label": "Negatif, sıfır, pozitif",
           "aliases": [
             "negatif",
             "sıfır",
             "pozitif"
           ],
           "anchors": [
-            "Dönüş değeri negatif, sıfır veya pozitiftir."
+            "Dönüş değeri negatifse önce, sıfırsa eşit, pozitifse sonra gelir."
           ]
         },
         {
@@ -1539,14 +1543,14 @@
             "çıkarma"
           ],
           "anchors": [
-            "compareTo içinde çıkarma yapmak taşma nedeniyle yanlış sonuç verebilir."
+            "compareTo'da çıkarma taşmaya yol açar, Integer.compare kullanılmalıdır."
           ]
         }
       ],
       "followUps": [
         "TreeMap'e Comparable olmayan bir nesne anahtar olarak verirsen ne olur?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Java SE 21 API: Comparable, Comparator"
     },
     {
       "id": "java-virtual-threads",
