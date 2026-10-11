@@ -9,17 +9,17 @@
       "topic": "Temeller",
       "difficulty": 2,
       "prompt": "equals ve hashCode arasındaki sözleşme nedir? Birini override edip diğerini etmezsen ne olur?",
-      "modelAnswer": "Sözleşme şudur: **equals ile eşit olan iki nesnenin hashCode'u da eşit olmalıdır.** Tersi gerekmez; hashCode'u aynı olan iki nesne eşit olmayabilir (bu bir **çakışma**dır ve normaldir).\n\nHashMap ve HashSet bu sözleşmeye dayanır. Bir anahtar ararken önce **hashCode** ile doğru kovaya (bucket) gider, sonra kovadaki elemanları **equals** ile karşılaştırır.\n\nYalnızca equals override edilirse, mantıksal olarak eşit iki nesne `Object`'in varsayılan hashCode'u yüzünden farklı kovalara düşer:\n\n```java\nSet<Account> set = new HashSet<>();\nset.add(new Account(\"TR01\"));\nset.contains(new Account(\"TR01\")); // false döner\n```\n\nAynı nesne iki kez eklenebilir, map'te koyduğun değeri bulamazsın.\n\nSık atlanan nokta: hashCode'da kullanılan alanlar **değiştirilebilirse** sorun çıkar. Nesne bir HashSet'e eklendikten sonra o alan değişirse hashCode da değişir ve nesne artık bulunamaz. Bu yüzden map anahtarları değişmez (immutable) olmalıdır; Java 16+ record'ları equals ve hashCode'u otomatik ve doğru üretir.",
+      "modelAnswer": "Sözleşmeye göre `equals` ile eşit olan iki nesnenin `hashCode`'u da **eşit olmalıdır**; tersi gerekmez, hashCode'u aynı iki nesne eşit olmayabilir ve bu normal bir **çakışmadır**. `HashMap` ve `HashSet` bir anahtarı önce hashCode ile doğru kovada arar, sonra kovadakileri equals ile karşılaştırır. Yalnızca equals override edilirse mantıken eşit iki nesne `Object`'in varsayılan hashCode'u yüzünden farklı kovalara düşer; `set.contains(new Account(\"TR01\"))` false döner ve aynı nesne kümeye iki kez eklenebilir. hashCode'da kullanılan alanlar değiştirilebilirse, nesne map'e girdikten sonra değişen alan onu bulunamaz hâle getirir; bu yüzden anahtarlar değişmez olmalıdır, record'lar ise ikisini de alanlardan tutarlı biçimde üretir.",
       "keyConcepts": [
         {
           "id": "sozlesme",
           "label": "Eşit nesnelerin hashCode'u eşit",
           "aliases": [
-            "eşit olan",
+            "eşit olmalı",
             "hashcode'u da eşit",
             "aynı hashcode",
-            "sözleşme",
-            "contract"
+            "eşit nesne",
+            "equal objects"
           ],
           "anchors": [
             "equals ile eşit olan iki nesnenin hashCode'u da eşit olmalıdır."
@@ -31,33 +31,36 @@
           "aliases": [
             "çakışma",
             "collision",
-            "tersi gerekmez"
+            "tersi gerekmez",
+            "tersi doğru değil"
           ],
           "anchors": [
-            "hashCode'u aynı olan iki nesne eşit olmayabilir, bu bir çakışmadır."
+            "hashCode'u aynı olan iki nesne eşit olmayabilir; bu normal bir çakışmadır."
           ]
         },
         {
           "id": "hashmap",
-          "label": "HashMap önce hashCode sonra equals kullanır",
+          "label": "HashMap önce hashCode, sonra equals kullanır",
           "aliases": [
             "kova",
             "bucket",
+            "önce hashcode",
             "hashmap",
             "hashset"
           ],
           "anchors": [
-            "HashMap önce hashCode ile kovayı bulur, sonra equals ile karşılaştırır."
+            "HashMap anahtarı önce hashCode ile kovada arar, sonra equals ile karşılaştırır."
           ]
         },
         {
           "id": "bulunamaz",
-          "label": "Override edilmezse nesne bulunamaz",
+          "label": "Yalnızca equals override edilirse nesne bulunamaz",
           "aliases": [
             "bulunamaz",
             "false döner",
             "iki kez ekle",
-            "bulamazsın"
+            "bulamazsın",
+            "farklı kova"
           ],
           "anchors": [
             "Yalnızca equals override edilirse eşit nesneler farklı kovalara düşer ve bulunamaz."
@@ -65,22 +68,23 @@
         },
         {
           "id": "immutable",
-          "label": "Anahtarlar değişmez olmalı",
+          "label": "Anahtar alanları değişmemeli",
           "aliases": [
             "değişmez",
             "immutable",
-            "record",
-            "alan değiş"
+            "anahtar değiş",
+            "alan değiş",
+            "mutable anahtar"
           ],
           "anchors": [
-            "hashCode'da kullanılan alanlar değişirse nesne kayboluyor, anahtarlar değişmez olmalıdır."
+            "hashCode'da kullanılan alanlar değişirse nesne map'te bulunamaz; anahtarlar değişmez olmalıdır."
           ]
         }
       ],
       "followUps": [
         "== ile equals arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Java SE 21 API: Object.equals ve Object.hashCode sözleşmesi"
     },
     {
       "id": "java-string-immutable",
@@ -89,15 +93,15 @@
       "topic": "Temeller",
       "difficulty": 1,
       "prompt": "Java'da String neden immutable'dır? String pool nedir?",
-      "modelAnswer": "String bir kez oluşturulduktan sonra **içeriği değiştirilemez**. `concat`, `replace` veya `+` gibi işlemler mevcut String'i değiştirmez, **yeni bir String nesnesi** döndürür.\n\nImmutable olmasının sebepleri:\n- **String pool:** Aynı literal'ler bellekte tek kopya olarak paylaşılır. Paylaşılan bir değer değiştirilebilseydi, onu kullanan herkes etkilenirdi.\n- **Güvenlik:** Dosya yolları, URL'ler ve veritabanı bağlantı bilgileri String olarak taşınır; doğrulandıktan sonra değiştirilememeleri gerekir.\n- **Thread safety:** Değişmediği için senkronizasyon gerekmeden thread'ler arasında paylaşılabilir.\n- **hashCode önbelleği:** hashCode bir kez hesaplanıp saklanır; HashMap anahtarı olarak çok verimlidir.\n\n**String pool**, heap içinde literal String'lerin tutulduğu özel bir alandır:\n\n```java\nString a = \"slot\";\nString b = \"slot\";\nString c = new String(\"slot\");\na == b      // true, ikisi de pool'daki aynı nesne\na == c      // false, new her zaman yeni nesne oluşturur\na.equals(c) // true\n```\n\nSık atlanan nokta: içerik karşılaştırması her zaman `equals` ile yapılmalıdır. `==` literal'lerde tesadüfen çalışır ve bu, hatayı gizler.",
+      "modelAnswer": "String oluşturulduktan sonra **içeriği değiştirilemez**; `concat`, `replace` ya da `+` mevcut nesneyi değiştirmez, yeni bir String döndürür. **String pool**, heap'te literal String'lerin tek kopya olarak paylaşıldığı alandır; `\"slot\"` iki yerde yazılsa da aynı nesne kullanılır, `new String(\"slot\")` ise her zaman yeni nesne üretir. Bu paylaşım ancak değer değişmediği için güvenlidir; değişmezlik ayrıca String'i senkronizasyonsuz **thread-safe** yapar, doğrulanmış bir dosya yolu ya da URL'nin sonradan değiştirilmesini engeller ve hashCode'un bir kez hesaplanıp saklanmasına izin verir. İçerik her zaman `equals` ile karşılaştırılır; `==` literal'lerde pool sayesinde tesadüfen true dönebilir ve bu hatayı gizler.",
       "keyConcepts": [
         {
           "id": "degistirilemez",
           "label": "İçerik değiştirilemez",
           "aliases": [
             "değiştirilemez",
-            "immutable",
-            "değişmez"
+            "değişmez",
+            "içeriği değiş"
           ],
           "anchors": [
             "String oluşturulduktan sonra içeriği değiştirilemez."
@@ -109,35 +113,39 @@
           "aliases": [
             "yeni bir string",
             "yeni nesne",
-            "yeni string"
+            "yeni string",
+            "yeni bir nesne"
           ],
           "anchors": [
-            "String üzerindeki işlemler yeni bir nesne döndürür."
+            "concat, replace ve + mevcut String'i değiştirmez, yeni nesne döndürür."
           ]
         },
         {
           "id": "pool",
-          "label": "String pool",
+          "label": "Literal'ler tek kopya paylaşılır",
           "aliases": [
-            "string pool",
-            "pool",
             "literal",
-            "havuz"
+            "havuz",
+            "tek kopya",
+            "paylaşıl",
+            "intern"
           ],
           "anchors": [
-            "Aynı literal'ler String pool'da tek kopya olarak paylaşılır."
+            "String pool'da aynı literal'ler tek kopya olarak paylaşılır."
           ]
         },
         {
           "id": "sebepler",
-          "label": "Güvenlik, thread safety, hashCode",
+          "label": "Thread safety, güvenlik, hashCode önbelleği",
           "aliases": [
+            "thread-safe",
+            "thread safe",
             "güvenlik",
-            "thread",
-            "hashcode"
+            "hashcode",
+            "senkronizasyon"
           ],
           "anchors": [
-            "Immutability güvenlik, thread safety ve hashCode önbelleği sağlar."
+            "Değişmezlik String'i thread-safe yapar, güvenlik sağlar ve hashCode'un saklanmasına izin verir."
           ]
         },
         {
@@ -148,14 +156,14 @@
             "=="
           ],
           "anchors": [
-            "İçerik karşılaştırması == ile değil equals ile yapılmalıdır."
+            "String içeriği equals ile karşılaştırılmalıdır, == değil."
           ]
         }
       ],
       "followUps": [
         "Döngü içinde String birleştirmek neden yavaştır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Java SE 21 API: String; JLS §3.10.5 String Literals"
     },
     {
       "id": "java-stringbuilder",
@@ -164,23 +172,24 @@
       "topic": "Temeller",
       "difficulty": 1,
       "prompt": "String, StringBuilder ve StringBuffer arasındaki fark nedir?",
-      "modelAnswer": "- **String:** Immutable. Her değişiklik yeni bir nesne oluşturur.\n- **StringBuilder:** **Değiştirilebilir** (mutable). `append` aynı nesnenin iç dizisine yazar, yeni nesne oluşturmaz. **Thread-safe değildir.**\n- **StringBuffer:** StringBuilder ile aynı API, ama metotları **synchronized** olduğu için thread-safe ve bu yüzden daha yavaştır.\n\nDöngü içinde birleştirme yapılacaksa StringBuilder kullanılır:\n\n```java\nStringBuilder sb = new StringBuilder();\nfor (String line : lines) {\n    sb.append(line).append('\\n');\n}\nString result = sb.toString();\n```\n\nAynı döngüyü `result += line` ile yazmak her turda yeni bir String ve kopyalama demektir; çok sayıda satırda **O(n²)** maliyete çıkar.\n\nStringBuffer bugün nadiren kullanılır, çünkü bir String'i birden fazla thread'in aynı anda doldurması pek gerekmez; gerekirse bile senkronizasyon genelde daha üst seviyede yapılır.\n\nSık atlanan nokta: tek satırlık `\"a\" + b + \"c\"` birleştirmesinde StringBuilder'a gerek yoktur; derleyici bunu zaten verimli koda çevirir. Sorun yalnızca **döngü** içindeki birleştirmededir.",
+      "modelAnswer": "`String` immutable'dır, her değişiklik yeni bir nesne üretir. `StringBuilder` **değiştirilebilir** bir karakter tamponudur; `append` aynı nesnenin iç dizisine yazar ama **thread-safe değildir**. `StringBuffer` aynı API'yi sunar, metotları `synchronized` olduğu için thread-safe ama daha yavaştır ve bugün nadiren gerekir. Döngüde `result += line` yazmak her turda yeni bir String ve kopyalama demektir, toplam maliyet **O(n²)**'ye çıkar; bu yüzden döngüde `StringBuilder` kullanılır. Tek satırlık `\"a\" + b + \"c\"` birleştirmesinde gerek yoktur; derleyici bunu zaten verimli koda çevirir (Java 9'dan beri `invokedynamic` ile).",
       "keyConcepts": [
         {
           "id": "string-immutable",
           "label": "String immutable",
           "aliases": [
             "immutable",
+            "değişmez",
             "yeni bir nesne",
-            "değişmez"
+            "yeni nesne"
           ],
           "anchors": [
-            "String immutable'dır ve her değişiklik yeni nesne oluşturur."
+            "String immutable'dır, her değişiklik yeni bir nesne üretir."
           ]
         },
         {
           "id": "builder-mutable",
-          "label": "StringBuilder mutable",
+          "label": "StringBuilder değiştirilebilir",
           "aliases": [
             "mutable",
             "değiştirilebilir",
@@ -188,19 +197,20 @@
             "aynı nesne"
           ],
           "anchors": [
-            "StringBuilder değiştirilebilirdir ve aynı nesneye yazar."
+            "StringBuilder değiştirilebilirdir, append aynı nesneye yazar."
           ]
         },
         {
           "id": "buffer-sync",
-          "label": "StringBuffer synchronized",
+          "label": "StringBuffer synchronized ve thread-safe",
           "aliases": [
             "synchronized",
             "thread-safe",
-            "stringbuffer"
+            "thread safe",
+            "senkronize"
           ],
           "anchors": [
-            "StringBuffer synchronized olduğu için thread-safe ama daha yavaştır."
+            "StringBuffer'ın metotları synchronized olduğu için thread-safe ama daha yavaştır."
           ]
         },
         {
@@ -210,17 +220,33 @@
             "döngü",
             "loop",
             "o(n²)",
-            "n kare"
+            "o(n^2)",
+            "n kare",
+            "for içinde"
           ],
           "anchors": [
-            "Döngü içinde birleştirme için StringBuilder kullanılır."
+            "Döngüde += ile birleştirme O(n²) maliyete çıkar, StringBuilder kullanılır."
+          ]
+        },
+        {
+          "id": "derleyici",
+          "label": "Tek satırı derleyici optimize eder",
+          "aliases": [
+            "derleyici",
+            "compiler",
+            "invokedynamic",
+            "tek satır",
+            "stringconcatfactory"
+          ],
+          "anchors": [
+            "Tek satırlık birleştirmeyi derleyici zaten verimli koda çevirir."
           ]
         }
       ],
       "followUps": [
         "StringBuilder'ın başlangıç kapasitesini vermek neden performansa yardımcı olabilir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Java SE 21 API: StringBuilder, StringBuffer; JEP 280: Indify String Concatenation"
     },
     {
       "id": "java-hashmap-internals",
@@ -389,7 +415,7 @@
       "topic": "Exception",
       "difficulty": 1,
       "prompt": "Checked ve unchecked exception arasındaki fark nedir?",
-      "modelAnswer": "**Checked exception**, `Exception` sınıfından türeyen ama `RuntimeException`'dan türemeyen exception'lardır (`IOException`, `SQLException`). Derleyici bunları **zorunlu kılar**: metot ya `try-catch` ile yakalamalı ya da `throws` ile bildirmelidir; aksi hâlde kod derlenmez.\n\n**Unchecked exception**, `RuntimeException`'dan türeyenlerdir (`NullPointerException`, `IllegalArgumentException`, `IndexOutOfBoundsException`). Derleyici yakalamayı zorunlu tutmaz. Genelde **programlama hatalarını** temsil eder.\n\nHiyerarşinin en üstünde `Throwable` vardır; altında `Exception` ve `Error` bulunur. **Error** (`OutOfMemoryError`, `StackOverflowError`) JVM düzeyindeki ciddi sorunlardır ve normalde yakalanmaz.\n\nGenel yaklaşım: çağıranın **makul şekilde toparlanabileceği** durumlar (dosya bulunamadı) için checked, programlama hatası veya geçersiz girdi için unchecked kullanılır.\n\nSık atlanan nokta: Spring'in `@Transactional`'ı varsayılan olarak yalnızca **unchecked** exception'larda rollback yapar. Checked exception fırlatılırsa transaction commit edilir; bunu değiştirmek için `rollbackFor` belirtilir.",
+      "modelAnswer": "**Checked exception** `Exception`'dan türeyip `RuntimeException`'dan türemeyen exception'lardır (`IOException`, `SQLException`); derleyici bunların `try-catch` ile yakalanmasını ya da `throws` ile bildirilmesini **zorunlu tutar**, aksi hâlde kod derlenmez. **Unchecked exception** `RuntimeException`'dan türer (`NullPointerException`, `IllegalArgumentException`) ve derleyici yakalamayı zorunlu kılmaz; genelde programlama hatalarını temsil eder. Hiyerarşinin tepesinde `Throwable` vardır, altında `Exception` ve `Error` bulunur; `OutOfMemoryError` gibi Error'lar JVM düzeyindeki ciddi sorunlardır ve normalde yakalanmaz. Genel kural, çağıranın makul şekilde **toparlanabileceği** durumlar için checked, programlama hatası ya da geçersiz girdi için unchecked kullanmaktır; Spring'in `@Transactional`'ının varsayılan olarak yalnızca unchecked exception'larda rollback yapması da bu ayrıma dayanır.",
       "keyConcepts": [
         {
           "id": "checked-zorunlu",
@@ -399,7 +425,8 @@
             "zorunlu",
             "throws",
             "derlenmez",
-            "ioexception"
+            "ioexception",
+            "compile"
           ],
           "anchors": [
             "Checked exception'ları derleyici yakalamaya veya throws ile bildirmeye zorlar."
@@ -412,7 +439,8 @@
             "runtimeexception",
             "nullpointer",
             "illegalargument",
-            "zorunlu değil"
+            "zorunlu değil",
+            "zorunlu kılmaz"
           ],
           "anchors": [
             "Unchecked exception'lar RuntimeException'dan türer ve yakalamak zorunlu değildir."
@@ -422,33 +450,35 @@
           "id": "error",
           "label": "Error ve Throwable",
           "aliases": [
-            "error",
             "throwable",
             "outofmemory",
-            "stackoverflow"
+            "stackoverflow",
+            "error'lar",
+            "error sınıf"
           ],
           "anchors": [
             "Error JVM düzeyindeki ciddi sorunlardır ve normalde yakalanmaz."
           ]
         },
         {
-          "id": "transactional",
-          "label": "@Transactional yalnızca unchecked'te rollback",
+          "id": "ne-zaman",
+          "label": "Toparlanabilir durum checked, programlama hatası unchecked",
           "aliases": [
-            "@transactional",
-            "rollback",
-            "rollbackfor",
-            "commit edilir"
+            "toparlan",
+            "recover",
+            "programlama hata",
+            "geçersiz girdi",
+            "kurtarılabilir"
           ],
           "anchors": [
-            "Spring'in @Transactional'ı varsayılan olarak yalnızca unchecked exception'larda rollback yapar."
+            "Çağıranın toparlanabileceği durumlar için checked, programlama hataları için unchecked kullanılır."
           ]
         }
       ],
       "followUps": [
         "Bir checked exception'ı yakalayıp RuntimeException'a sarmak ne zaman doğru bir yaklaşımdır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — JLS §11.1.1 The Kinds of Exceptions"
     },
     {
       "id": "java-final-finally-finalize",
@@ -457,16 +487,17 @@
       "topic": "Temeller",
       "difficulty": 1,
       "prompt": "final, finally ve finalize arasındaki fark nedir?",
-      "modelAnswer": "İsimleri benzer ama tamamen farklı kavramlardır:\n\n- **final** bir anahtar kelimedir:\n  - Değişkende: bir kez atanır, **yeniden atanamaz**.\n  - Metotta: alt sınıfta **override edilemez**.\n  - Sınıfta: **kalıtılamaz** (`String` final'dır).\n- **finally** bir `try` bloğunun parçasıdır: exception fırlasa da fırlamasa da **her zaman çalışır**. Kaynakları serbest bırakmak için kullanılır. (Bugün bunun yerine genelde try-with-resources tercih edilir.)\n- **finalize** `Object`'in bir metodudur; garbage collector nesneyi toplamadan önce çağırabilir. Ne zaman, hatta çalışıp çalışmayacağı garanti değildir. Java 9'da **deprecated** edilmiştir ve kullanılmamalıdır.\n\nSık atlanan nokta: `final` bir referans değişkeni nesneyi değiştirilemez yapmaz. `final List<String> list` başka bir listeye atanamaz, ama `list.add(...)` ile içeriği değiştirilebilir.",
+      "modelAnswer": "`final` bir anahtar kelimedir; değişkeni yeniden atanamaz, metodu override edilemez, sınıfı kalıtılamaz yapar (`String` final'dır). `finally` bir `try` bloğunun parçasıdır ve exception fırlasa da fırlamasa da çalışır; kaynak temizliği için kullanılır, bugün bunun yerine genelde try-with-resources tercih edilir. `finalize` ise `Object`'in, GC nesneyi toplamadan önce çağırabileceği bir metottur; ne zaman, hatta çalışıp çalışmayacağı garanti olmadığı için Java 9'da deprecated edildi, Java 18'de kaldırılmak üzere işaretlendi (JEP 421) ve kullanılmamalıdır. `final` bir referans nesneyi değişmez yapmaz: `final List<String> list` başka bir listeye atanamaz ama `list.add(...)` ile içeriği değişebilir.",
       "keyConcepts": [
         {
           "id": "final",
-          "label": "final: değiştirilemez/override/kalıtım",
+          "label": "final: yeniden atama, override ve kalıtım yok",
           "aliases": [
             "yeniden atanamaz",
             "override edilemez",
             "kalıtılamaz",
-            "final"
+            "extend edilemez",
+            "tekrar atanamaz"
           ],
           "anchors": [
             "final değişkeni yeniden atanamaz, metodu override edilemez, sınıfı kalıtılamaz yapar."
@@ -474,47 +505,53 @@
         },
         {
           "id": "finally",
-          "label": "finally her zaman çalışır",
+          "label": "finally try'dan sonra her durumda çalışır",
           "aliases": [
-            "finally",
+            "try bloğ",
+            "fırlasa da",
+            "her durumda çalışır",
             "her zaman çalışır",
-            "try"
+            "temizli",
+            "kaynak kapat"
           ],
           "anchors": [
-            "finally bloğu exception olsa da olmasa da her zaman çalışır."
+            "finally bloğu exception fırlasa da fırlamasa da çalışır."
           ]
         },
         {
           "id": "finalize",
-          "label": "finalize deprecated",
+          "label": "finalize deprecated, kaldırılacak",
           "aliases": [
-            "finalize",
             "garbage collector",
             "deprecated",
-            "garanti değil"
+            "garanti değil",
+            "garanti olmadığı",
+            "jep 421",
+            "kaldırılmak"
           ],
           "anchors": [
-            "finalize garbage collector'dan önce çağrılabilen, garantisi olmayan ve deprecated bir metottur."
+            "finalize'ın çalışması garanti değildir; deprecated edildi ve kaldırılacak."
           ]
         },
         {
           "id": "referans",
-          "label": "final referans içerik değiştirmeyi engellemez",
+          "label": "final referans içeriği korumaz",
           "aliases": [
-            "içeriği değiştiril",
+            "içeriği değiş",
             "list.add",
-            "referans",
-            "nesneyi değiştirilemez yapmaz"
+            "nesneyi değişmez yapmaz",
+            "referansı sabit",
+            "içerik değişebilir"
           ],
           "anchors": [
-            "final referans başka nesneye atanamaz ama nesnenin içeriği değişebilir."
+            "final referans başka nesneye atanamaz ama gösterdiği nesnenin içeriği değişebilir."
           ]
         }
       ],
       "followUps": [
         "finally bloğunun çalışmadığı bir durum var mıdır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — JLS §4.12.4 final Variables, §14.20.2 try-finally; JEP 421"
     },
     {
       "id": "java-interface-vs-abstract",
@@ -523,45 +560,48 @@
       "topic": "OOP",
       "difficulty": 1,
       "prompt": "Interface ile abstract class arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
-      "modelAnswer": "**Abstract class**:\n- Hem soyut hem gövdeli metotlar içerebilir.\n- **State** (instance alanları) ve constructor tutabilir.\n- Bir sınıf yalnızca **bir** abstract class'ı genişletebilir (`extends`).\n\n**Interface**:\n- Bir **sözleşme** tanımlar. Java 8'den itibaren `default` ve `static` metotlar, Java 9'dan itibaren `private` metotlar içerebilir.\n- Instance state tutamaz; alanları yalnızca `public static final` sabitlerdir.\n- Bir sınıf **birden fazla** interface'i uygulayabilir (`implements`).\n\nSeçim:\n- Farklı sınıfların ortak bir **yeteneği** varsa (Comparable, Serializable gibi) veya birden fazla tür birleştirilecekse **interface**.\n- Yakından ilişkili sınıflar ortak **state ve kod** paylaşıyorsa (bir şablon algoritma gibi) **abstract class**.\n\nGenel tercih interface'tir; daha esnektir ve test sırasında kolayca taklit edilebilir (mock). Spring'deki servis katmanlarının interface ile tanımlanmasının bir sebebi de budur.",
+      "modelAnswer": "Abstract class hem soyut hem gövdeli metotlar içerebilir, **instance alanları** (state) ve constructor tutabilir; bir sınıf yalnızca **bir** abstract class'ı genişletebilir. Interface bir sözleşme tanımlar; Java 8'den beri `default` ve `static`, Java 9'dan beri `private` metotlar içerebilir ama instance state tutamaz, alanları yalnızca `public static final` sabitlerdir. Bir sınıf **birden fazla** interface'i `implements` ile uygulayabilir. Farklı sınıfların ortak bir **yeteneği** varsa (`Comparable` gibi) interface, yakından ilişkili sınıflar ortak state ve kod paylaşıyorsa (şablon bir algoritma gibi) abstract class seçilir; varsayılan tercih daha esnek olan interface'tir.",
       "keyConcepts": [
         {
           "id": "abstract-state",
           "label": "Abstract class state tutar",
           "aliases": [
-            "state",
-            "constructor",
+            "state tut",
             "instance alan",
-            "alanları"
+            "constructor",
+            "durum tut",
+            "alan tutabil"
           ],
           "anchors": [
-            "Abstract class state ve constructor tutabilir."
+            "Abstract class instance alanları ve constructor tutabilir."
           ]
         },
         {
           "id": "tek-extends",
           "label": "Tek extends, çoklu implements",
           "aliases": [
-            "bir tane",
-            "yalnızca bir",
+            "tek abstract",
+            "tek bir abstract",
             "birden fazla interface",
             "extends",
-            "implements"
+            "implements",
+            "çoklu kalıtım"
           ],
           "anchors": [
-            "Bir sınıf tek bir abstract class'ı genişletir ama birden fazla interface uygular."
+            "Bir sınıf tek bir abstract class'ı genişletir, birden fazla interface uygulayabilir."
           ]
         },
         {
           "id": "default",
-          "label": "Interface default metotları",
+          "label": "Interface default ve static metotları",
           "aliases": [
             "default",
             "java 8",
-            "sözleşme"
+            "static metot",
+            "private metot"
           ],
           "anchors": [
-            "Interface bir sözleşmedir ve Java 8'den itibaren default metot içerebilir."
+            "Interface Java 8'den beri default ve static metotlar içerebilir."
           ]
         },
         {
@@ -572,7 +612,7 @@
             "ortak kod",
             "şablon",
             "esnek",
-            "mock"
+            "template method"
           ],
           "anchors": [
             "Ortak yetenek için interface, ortak state ve kod için abstract class seçilir."
@@ -582,7 +622,7 @@
       "followUps": [
         "Bir sınıf aynı imzalı default metoda sahip iki interface'i uygularsa ne olur?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — JLS §9 Interfaces, §8.1.1.1 abstract Classes"
     },
     {
       "id": "java-oop-principles",
@@ -591,7 +631,7 @@
       "topic": "OOP",
       "difficulty": 1,
       "prompt": "Nesne yönelimli programlamanın dört temel prensibini Java örnekleriyle açıkla.",
-      "modelAnswer": "- **Encapsulation (kapsülleme):** Bir nesnenin verisini dışarıdan doğrudan erişime kapatıp yalnızca kontrollü metotlarla açmaktır. `private` alanlar ve doğrulama yapan metotlar: bakiye alanına doğrudan yazılamaz, `withdraw()` yetersiz bakiyede hata verir.\n- **Inheritance (kalıtım):** Bir sınıfın başka bir sınıfın özelliklerini ve davranışlarını devralmasıdır (`extends`). `SavingsAccount extends Account`.\n- **Polymorphism (çok biçimlilik):** Aynı arayüzün farklı nesnelerde farklı davranmasıdır. `Account` türünde bir referans, çalışma anında hangi alt sınıfı gösteriyorsa onun `calculateInterest()` metodunu çağırır (**runtime**, override). Aynı isimli metodun farklı parametrelerle tanımlanması ise **compile-time** polimorfizmdir (overload).\n- **Abstraction (soyutlama):** Karmaşık ayrıntıları gizleyip yalnızca gerekli olanı göstermektir; interface ve abstract class ile yapılır. `PaymentService` arayüzünü kullanan kod, ödemenin kart mı havale mi ile yapıldığını bilmez.\n\nSık atlanan nokta: kalıtım güçlü bir bağımlılık yaratır. Davranış paylaşmak için çoğu zaman **composition over inheritance** (kalıtım yerine bileşim) daha esnek bir tasarımdır.",
+      "modelAnswer": "**Encapsulation** (kapsülleme), verinin `private` alanlarda saklanıp yalnızca kontrollü metotlarla açılmasıdır; bakiye alanına doğrudan yazılamaz, `withdraw()` yetersiz bakiyede hata verir. **Inheritance** (kalıtım), bir sınıfın başka bir sınıfın alanlarını ve davranışını `extends` ile devralmasıdır (`SavingsAccount extends Account`). **Polymorphism** (çok biçimlilik), aynı türdeki bir referansın çalışma anında gösterdiği alt sınıfın override edilmiş metodunu çağırmasıdır; aynı adlı metodun farklı parametrelerle tanımlanması (overload) ise derleme zamanı polimorfizmidir. **Abstraction** (soyutlama), ayrıntıları gizleyip yalnızca gerekeni bir interface ya da abstract class ile göstermektir; `PaymentService`'i kullanan kod ödemenin kartla mı havaleyle mi yapıldığını bilmez. Kalıtım güçlü bir bağımlılık yarattığı için davranış paylaşmakta çoğu zaman **composition over inheritance** daha esnektir.",
       "keyConcepts": [
         {
           "id": "encapsulation",
@@ -602,7 +642,7 @@
             "private"
           ],
           "anchors": [
-            "Encapsulation verinin dışarıya kapatılıp kontrollü metotlarla açılmasıdır."
+            "Encapsulation, veriyi gizleyip yalnızca kontrollü metotlarla açmaktır."
           ]
         },
         {
@@ -615,7 +655,7 @@
             "miras"
           ],
           "anchors": [
-            "Inheritance bir sınıfın başka bir sınıfın özelliklerini devralmasıdır."
+            "Inheritance, bir sınıfın başka bir sınıfın özelliklerini devralmasıdır."
           ]
         },
         {
@@ -629,7 +669,7 @@
             "overload"
           ],
           "anchors": [
-            "Polymorphism aynı arayüzün farklı nesnelerde farklı davranmasıdır."
+            "Polymorphism, aynı arayüzün çalışma anında farklı nesnelerde farklı davranmasıdır."
           ]
         },
         {
@@ -638,10 +678,11 @@
           "aliases": [
             "abstraction",
             "soyutlama",
-            "ayrıntıları gizle"
+            "ayrıntıları gizle",
+            "detayları gizle"
           ],
           "anchors": [
-            "Abstraction karmaşık ayrıntıları gizleyip gerekli olanı göstermektir."
+            "Abstraction, karmaşık ayrıntıları gizleyip gerekeni göstermektir."
           ]
         },
         {
@@ -649,17 +690,18 @@
           "label": "Composition over inheritance",
           "aliases": [
             "composition",
-            "bileşim"
+            "bileşim",
+            "kompozisyon"
           ],
           "anchors": [
-            "Davranış paylaşımı için kalıtım yerine bileşim çoğu zaman daha esnektir."
+            "Davranış paylaşmak için çoğu zaman kalıtım yerine composition daha esnektir."
           ]
         }
       ],
       "followUps": [
         "Overloading ile overriding arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Nesne yönelimli programlama temel ilkeleri; Effective Java, Item 18: Favor composition over inheritance"
     },
     {
       "id": "java-pass-by-value",
@@ -668,15 +710,17 @@
       "topic": "Temeller",
       "difficulty": 2,
       "prompt": "Java pass-by-value mı yoksa pass-by-reference mı? Bir nesneyi metoda verip içinde değiştirdiğinde ne olur?",
-      "modelAnswer": "Java **her zaman pass-by-value**'dur. Fark, neyin kopyalandığındadır:\n\n- Primitive tiplerde (`int`, `double`) **değerin kendisi** kopyalanır. Metot içindeki değişiklik dışarıyı etkilemez.\n- Nesnelerde **referansın değeri** (nesnenin adresi) kopyalanır. Metot aynı nesneyi gösteren **kopya bir referans** alır.\n\nBu yüzden:\n\n```java\nvoid update(Account acc) {\n    acc.setBalance(100);     // dışarıdaki nesne değişir\n    acc = new Account();     // dışarıdaki referans etkilenmez\n    acc.setBalance(999);     // yeni nesneyi değiştirir, dışarıyı değil\n}\n```\n\nMetot nesnenin **içeriğini** değiştirebilir, çünkü iki referans aynı nesneyi gösterir. Ama referansı **başka bir nesneye atamak** yalnızca yerel kopyayı değiştirir; çağıranın değişkeni hâlâ eski nesneyi gösterir.\n\n\"Nesneler referansla geçer\" ifadesi bu yüzden yanlıştır: gerçek pass-by-reference'ta (C++'taki `&` gibi) metot içinde yapılan atama çağıranın değişkenini de değiştirirdi.",
+      "modelAnswer": "Java **her zaman pass-by-value**'dur; fark neyin kopyalandığındadır. Primitive tiplerde (`int`, `double`) değerin kendisi kopyalanır ve metot içindeki değişiklik dışarıyı etkilemez. Nesnelerde **referansın değeri** kopyalanır; metot aynı nesneyi gösteren bir kopya referans alır, bu yüzden `acc.setBalance(100)` dışarıdaki nesneyi değiştirir. Ama metot içinde `acc = new Account()` gibi yeni bir atama yalnızca yerel kopyayı değiştirir, çağıranın değişkeni hâlâ eski nesneyi gösterir. Gerçek pass-by-reference'ta (C++'taki `&` gibi) bu atama çağıranın değişkenini de değiştirirdi; \"nesneler referansla geçer\" ifadesi bu yüzden yanlıştır.",
       "keyConcepts": [
         {
           "id": "her-zaman",
           "label": "Her zaman pass-by-value",
           "aliases": [
-            "her zaman pass-by-value",
-            "pass-by-value",
-            "değer ile"
+            "her zaman pass",
+            "her zaman değer",
+            "değer ile",
+            "call by value",
+            "değer geçir"
           ],
           "anchors": [
             "Java her zaman pass-by-value'dur."
@@ -688,7 +732,7 @@
           "aliases": [
             "primitive",
             "değerin kendisi",
-            "int "
+            "ilkel"
           ],
           "anchors": [
             "Primitive tiplerde değerin kendisi kopyalanır."
@@ -699,22 +743,25 @@
           "label": "Nesnede referansın kopyası",
           "aliases": [
             "referansın değeri",
+            "kopya referans",
             "kopya bir referans",
             "referans kopyalan",
-            "adres"
+            "referansın kopyası",
+            "adres kopyalan"
           ],
           "anchors": [
-            "Nesnelerde referansın değeri kopyalanır."
+            "Nesnelerde referansın değeri kopyalanır, metot aynı nesneyi gösteren kopya referans alır."
           ]
         },
         {
           "id": "icerik-vs-atama",
           "label": "İçerik değişir, atama dışarıyı etkilemez",
           "aliases": [
-            "içeriğini değiştir",
-            "başka bir nesneye ata",
             "yerel kopya",
-            "etkilenmez"
+            "etkilenmez",
+            "yeni atama",
+            "başka bir nesneye ata",
+            "eski nesneyi göster"
           ],
           "anchors": [
             "Metot nesnenin içeriğini değiştirebilir ama referansı yeniden atamak dışarıyı etkilemez."
@@ -724,7 +771,7 @@
       "followUps": [
         "Bir metodun iki Integer'ın değerini değiştiren bir swap metodu yazılabilir mi?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — JLS §8.4.1 Formal Parameters"
     },
     {
       "id": "java-memory-gc",
@@ -1285,26 +1332,28 @@
       "topic": "Exception",
       "difficulty": 1,
       "prompt": "try-with-resources nedir ve neden finally bloğunda kaynak kapatmaktan daha iyidir?",
-      "modelAnswer": "try-with-resources (Java 7), `AutoCloseable` arayüzünü uygulayan kaynakların blok bitince **otomatik olarak kapatılmasını** sağlar:\n\n```java\ntry (Connection conn = dataSource.getConnection();\n     PreparedStatement ps = conn.prepareStatement(sql)) {\n    // kullan\n} // ps ve conn burada otomatik kapanır\n```\n\nKaynaklar **açıldıkları sıranın tersine** kapatılır: önce `ps`, sonra `conn`.\n\nElle `finally` ile kapatmaya göre üstünlükleri:\n- **Daha az ve güvenli kod:** Null kontrolü ve iç içe try-catch gerekmez; kapatmayı unutmak mümkün olmaz.\n- **Suppressed exception:** Blokta bir exception fırladıktan sonra `close()` da exception fırlatırsa, finally yaklaşımında asıl exception kaybolur ve yerine close hatası görünür. try-with-resources **asıl exception'ı korur**, close hatasını ona `getSuppressed()` ile ekler.\n\nKapatılmayan veritabanı bağlantıları **bağlantı havuzunu tüketir**; havuz dolunca uygulama yeni istekleri karşılayamaz hâle gelir. Bu yüzden JDBC, dosya ve stream kaynaklarında try-with-resources kullanılmalıdır.",
+      "modelAnswer": "try-with-resources (Java 7), `AutoCloseable` uygulayan kaynakların blok bitince **otomatik kapatılmasını** sağlar; `try (Connection conn = ds.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) { ... }` gibi yazılır. Kaynaklar açıldıkları sıranın **tersine** kapatılır, burada önce `ps`, sonra `conn`. Elle `finally` yazmaya göre null kontrolü ve iç içe try-catch gerekmez, kapatmayı unutmak mümkün olmaz. Asıl fark exception'larda ortaya çıkar; blokta exception fırladıktan sonra `close()` da fırlatırsa `finally` yaklaşımında asıl exception kaybolur, try-with-resources ise asıl exception'ı korur ve kapatma hatasını ona **suppressed** olarak ekler (`getSuppressed()`). Kapatılmayan veritabanı bağlantıları bağlantı havuzunu tüketir; JDBC, dosya ve stream kaynaklarında bu yüzden try-with-resources kullanılır.",
       "keyConcepts": [
         {
           "id": "otomatik",
           "label": "Otomatik kapatma",
           "aliases": [
             "otomatik",
-            "kapatıl",
-            "autocloseable"
+            "autocloseable",
+            "closeable",
+            "kendiliğinden kapan"
           ],
           "anchors": [
-            "try-with-resources AutoCloseable kaynakları otomatik kapatır."
+            "try-with-resources AutoCloseable kaynakları blok bitince otomatik kapatır."
           ]
         },
         {
           "id": "ters-sira",
           "label": "Ters sırada kapatma",
           "aliases": [
-            "ters",
-            "tersine"
+            "tersine",
+            "ters sıra",
+            "son açılan ilk"
           ],
           "anchors": [
             "Kaynaklar açıldıkları sıranın tersine kapatılır."
@@ -1317,7 +1366,8 @@
             "suppressed",
             "asıl exception",
             "getsuppressed",
-            "kaybolur"
+            "kaybolur",
+            "bastırıl"
           ],
           "anchors": [
             "try-with-resources asıl exception'ı korur, close hatasını suppressed olarak ekler."
@@ -1329,17 +1379,19 @@
           "aliases": [
             "havuz",
             "pool",
-            "bağlantı"
+            "tüketir",
+            "tükenir",
+            "connection leak"
           ],
           "anchors": [
-            "Kapatılmayan bağlantılar bağlantı havuzunu tüketir."
+            "Kapatılmayan veritabanı bağlantıları bağlantı havuzunu tüketir."
           ]
         }
       ],
       "followUps": [
         "Kendi sınıfını try-with-resources ile kullanılabilir yapmak için ne yaparsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — JLS §14.20.3 try-with-resources; Java SE 21 API: Throwable.getSuppressed"
     },
     {
       "id": "java-generics-erasure",
