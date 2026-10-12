@@ -1443,6 +1443,339 @@
         "CORS yanıtında Access-Control-Allow-Origin isteğe göre değişiyorsa Vary'ye ne eklenmelidir?"
       ],
       "source": "Kendi derleme — RFC 9110 §12.5.5 Vary; RFC 9111 §4.1"
+    },
+    {
+      "id": "web-rest-constraints",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 2,
+      "prompt": "REST'in mimari kısıtları nelerdir?",
+      "modelAnswer": "Roy Fielding'in 2000 tarihli tezinde tanımladığı REST altı kısıttan oluşur; istemci-sunucu ayrımı, stateless iletişim, önbelleğe alınabilirlik, uniform interface, katmanlı sistem ve isteğe bağlı code-on-demand. **Uniform interface** REST'i diğer mimarilerden ayıran kısıttır; kaynaklar URI ile tanımlanır, temsiller üzerinden değiştirilir, mesajlar kendini açıklar ve uygulamanın durumu hypermedia ile ilerler (HATEOAS). Stateless kısıtı her isteğin anlaşılmak için gereken her şeyi taşımasını, önbellek kısıtı da yanıtların önbelleğe alınabilir olup olmadığını açıkça belirtmesini ister. Katmanlı sistem istemcinin arada proxy, CDN ya da load balancer olup olmadığını bilmek zorunda olmamasıdır; code-on-demand ise sunucunun istemciye çalıştırılabilir kod gönderebilmesidir ve tek isteğe bağlı kısıttır. Bu kısıtların hepsini uygulamayan, HTTP üzerinden JSON dönen API'lere günlük dilde REST denir, ama Fielding'in tanımına göre çoğu tam REST değildir.",
+      "keyConcepts": [
+        {
+          "id": "istemci-sunucu",
+          "label": "İstemci-sunucu ayrımı",
+          "aliases": [
+            "istemci-sunucu",
+            "istemci sunucu",
+            "client-server",
+            "client server",
+            "sorumlulukların ayrı"
+          ],
+          "anchors": [
+            "REST'in ilk kısıtı istemci ile sunucunun sorumluluklarının ayrılmasıdır."
+          ]
+        },
+        {
+          "id": "stateless",
+          "label": "Stateless iletişim",
+          "aliases": [
+            "stateless",
+            "durumsuz",
+            "oturum tutmaz",
+            "gereken her şey"
+          ],
+          "anchors": [
+            "Her istek anlaşılmak için gereken her şeyi taşır, sunucu oturum durumu tutmaz."
+          ]
+        },
+        {
+          "id": "onbellek",
+          "label": "Önbelleğe alınabilirlik",
+          "aliases": [
+            "önbellek",
+            "cacheable",
+            "cache"
+          ],
+          "anchors": [
+            "Yanıtlar önbelleğe alınabilir olup olmadıklarını açıkça belirtir."
+          ]
+        },
+        {
+          "id": "uniform",
+          "label": "Uniform interface (HATEOAS dahil)",
+          "aliases": [
+            "uniform interface",
+            "tek tip arayüz",
+            "tekdüze arayüz",
+            "ortak arayüz",
+            "hateoas",
+            "hypermedia"
+          ],
+          "anchors": [
+            "Uniform interface REST'i ayıran kısıttır; kaynaklar URI ile tanımlanır, durum hypermedia ile ilerler."
+          ]
+        },
+        {
+          "id": "katmanli",
+          "label": "Katmanlı sistem ve isteğe bağlı code-on-demand",
+          "aliases": [
+            "katmanlı",
+            "layered",
+            "code-on-demand",
+            "code on demand"
+          ],
+          "anchors": [
+            "Katmanlı sistemde istemci aradaki proxy'leri bilmez; code-on-demand isteğe bağlı kısıttır."
+          ]
+        }
+      ],
+      "followUps": [
+        "HTTP üzerinden JSON dönen RPC tarzı bir API'yi REST'ten ayıran nedir?"
+      ],
+      "source": "Kendi derleme — Roy T. Fielding, Architectural Styles and the Design of Network-based Software Architectures (2000), Bölüm 5"
+    },
+    {
+      "id": "web-rest-stateless",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 2,
+      "prompt": "REST'te stateless ne demektir? Veritabanında veri tutan bir API stateless sayılır mı?",
+      "modelAnswer": "Stateless, sunucunun iki istek arasında istemciye ait **oturum durumu** tutmaması demektir; her istek, kimlik bilgisi dahil, anlaşılmak için gereken her şeyi kendisi taşır. Siparişler, kullanıcılar gibi veritabanındaki **kaynak durumu** bu kısıtın konusu değildir; bir API veritabanına yazıp okuyarak da stateless olabilir. Önemli olan bir isteğin, önceki isteklerin sunucu belleğinde bıraktığı bir bağlama dayanmamasıdır; \"önce sepeti seç, sonra öde\" akışında seçili sepet sunucu belleğinde değil, istekte ya da veritabanında bir kaynak olarak durmalıdır. Kazanç ölçeklemededir; her istek herhangi bir sunucu örneğine gidebilir, sticky session ya da örnekler arası oturum paylaşımı gerekmez ve bir örnek çöktüğünde oturum kaybolmaz. Bedeli, kimlik bilgisi gibi bağlamın her istekte yeniden gönderilip doğrulanmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "oturum-durumu",
+          "label": "Sunucu istekler arası oturum durumu tutmaz",
+          "aliases": [
+            "oturum durumu",
+            "oturum bilgi",
+            "oturum tutmaz",
+            "session state",
+            "session bilgi",
+            "session tutmaz"
+          ],
+          "anchors": [
+            "Stateless sunucu iki istek arasında istemciye ait oturum durumu tutmaz."
+          ]
+        },
+        {
+          "id": "her-istek",
+          "label": "Her istek gereken her şeyi taşır",
+          "aliases": [
+            "gereken her şey",
+            "gerekli tüm",
+            "tüm bilgi",
+            "self-contained",
+            "her istekte",
+            "kimlik bilgisi"
+          ],
+          "anchors": [
+            "Her istek kimlik bilgisi dahil anlaşılmak için gereken her şeyi taşır."
+          ]
+        },
+        {
+          "id": "kaynak-durumu",
+          "label": "Kaynak durumu kısıtın konusu değildir",
+          "aliases": [
+            "kaynak durumu",
+            "resource state",
+            "kalıcı veri",
+            "konusu değil",
+            "ayrı şey",
+            "fark etmez"
+          ],
+          "anchors": [
+            "Veritabanındaki kaynak durumu stateless kısıtının konusu değildir; böyle bir API de stateless olabilir."
+          ]
+        },
+        {
+          "id": "olcekleme",
+          "label": "Her istek herhangi bir örneğe gidebilir",
+          "aliases": [
+            "ölçekle",
+            "scaling",
+            "scale",
+            "yatay",
+            "herhangi bir sunucu",
+            "herhangi bir örne"
+          ],
+          "anchors": [
+            "Stateless API'de her istek herhangi bir sunucu örneğine gidebilir, yatay ölçekleme kolaylaşır."
+          ]
+        },
+        {
+          "id": "sticky",
+          "label": "Sticky session ya da oturum paylaşımı gerekmez",
+          "aliases": [
+            "sticky",
+            "oturum paylaş",
+            "session replication",
+            "sunucu belleğ",
+            "bellekte tut"
+          ],
+          "anchors": [
+            "Sticky session ya da örnekler arası oturum paylaşımı gerekmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "JWT kullanan her API stateless mıdır; sunucuda bir token iptal listesi tutmak bu kısıtı bozar mı?"
+      ],
+      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.3 Stateless"
+    },
+    {
+      "id": "web-idempotency-key",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 3,
+      "prompt": "Idempotency key nedir? POST isteklerinde neden kullanılır?",
+      "modelAnswer": "`POST` idempotent olmadığı için bir ödeme isteği gönderildikten sonra bağlantı koparsa istemci isteğin işlenip işlenmediğini bilemez; tekrar gönderirse ödeme iki kez alınabilir. Idempotency key bu belirsizliği çözer; istemci her mantıksal işlem için benzersiz bir anahtar (genellikle UUID) üretir, isteği `Idempotency-Key` başlığıyla gönderir ve yeniden denemelerde **aynı anahtarı** kullanır. Sunucu anahtarı ilk işlemin sonucuyla birlikte saklar; aynı anahtarla gelen tekrar istekte işlemi yeniden yapmaz, kaydedilen yanıtı aynen döner. Aynı anahtar farklı bir gövdeyle gelirse ya da ilk istek hâlâ işlenirken ikincisi gelirse sunucu onu hatayla reddetmeli, anahtarları da belirli bir süre sonra siler. Stripe gibi ödeme API'lerinde yaygın olan bu başlık için IETF'te bir standart taslağı var (draft-ietf-httpapi-idempotency-key-header).",
+      "keyConcepts": [
+        {
+          "id": "cift-islem",
+          "label": "Kopan bağlantıda tekrar POST çift işlem yaratır",
+          "aliases": [
+            "iki kez",
+            "çift ödeme",
+            "çift işlem",
+            "double charge",
+            "mükerrer",
+            "duplicate"
+          ],
+          "anchors": [
+            "Bağlantı koptuktan sonra tekrarlanan POST ödemenin iki kez alınmasına yol açabilir."
+          ]
+        },
+        {
+          "id": "benzersiz",
+          "label": "İstemci benzersiz anahtar üretir, tekrarda aynısını gönderir",
+          "aliases": [
+            "benzersiz",
+            "uuid",
+            "unique",
+            "aynı anahtar",
+            "istemci üretir"
+          ],
+          "anchors": [
+            "İstemci her işlem için benzersiz bir anahtar üretir ve yeniden denemelerde aynı anahtarı gönderir."
+          ]
+        },
+        {
+          "id": "kayitli-yanit",
+          "label": "Sunucu sonucu saklar, tekrarda aynı yanıtı döner",
+          "aliases": [
+            "kaydedilen yanıt",
+            "saklanan yanıt",
+            "önceki yanıt",
+            "önceki cevab",
+            "yeniden yapmaz",
+            "tekrar yapmaz"
+          ],
+          "anchors": [
+            "Sunucu anahtarı sonuçla saklar; aynı anahtarla gelen istekte işlemi yapmaz, kaydedilen yanıtı döner."
+          ]
+        },
+        {
+          "id": "farkli-govde",
+          "label": "Farklı gövde ya da eşzamanlı tekrar reddedilir",
+          "aliases": [
+            "farklı gövde",
+            "farklı bir gövde",
+            "farklı payload",
+            "hâlâ işlenirken",
+            "hala işlenirken",
+            "eşzamanlı tekrar"
+          ],
+          "anchors": [
+            "Aynı anahtar farklı gövdeyle ya da ilk istek sürerken gelirse sunucu reddeder."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucuda aynı anahtarla gelen iki eşzamanlı isteğin ikisinin de işlenmesini nasıl önlersin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.2.2 Idempotent Methods; IETF draft-ietf-httpapi-idempotency-key-header"
+    },
+    {
+      "id": "web-hateoas",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 3,
+      "prompt": "HATEOAS nedir? Pratikte neden nadiren tam uygulanır?",
+      "modelAnswer": "HATEOAS (Hypermedia as the Engine of Application State), istemcinin bir sonraki adımda ne yapabileceğini yanıttaki **bağlantılardan** öğrenmesidir; örneğin bir sipariş yanıtı, siparişin durumuna göre `cancel` ya da `pay` linklerini içerir ve istemci URL'leri kendi kodunda kurmaz. Böylece sunucu URL yapısını ya da iş akışını değiştirdiğinde istemci kırılmaz, bağlantıları takip etmeye devam eder; HAL gibi biçimler ve Spring HATEOAS bu linkleri standart bir yapıda verir. Richardson olgunluk modelinde en üst seviye budur. Pratikte nadiren tam uygulanır, çünkü istemciler zaten OpenAPI gibi bir sözleşmeye göre yazılır ve hangi alanı nasıl göstereceğini bilmek zorundadır; linkler yanıtı büyütür, getirdiği esneklik de çoğu ekipte tek bir istemci için ek karmaşıklıktan öteye geçmez.",
+      "keyConcepts": [
+        {
+          "id": "linkler",
+          "label": "Yanıt sonraki adımların linklerini içerir",
+          "aliases": [
+            "link",
+            "hypermedia",
+            "hipermedya",
+            "_links",
+            "sonraki adım",
+            "yanıttaki bağlantı"
+          ],
+          "anchors": [
+            "HATEOAS'ta istemci sonraki adımları yanıttaki bağlantılardan öğrenir."
+          ]
+        },
+        {
+          "id": "url-kurmaz",
+          "label": "İstemci URL kurmaz, değişiklikte kırılmaz",
+          "aliases": [
+            "url'leri kendi",
+            "url kurmaz",
+            "hardcode",
+            "ezber",
+            "kırılmaz",
+            "gevşek bağ"
+          ],
+          "anchors": [
+            "İstemci URL'leri kendi kodunda kurmadığı için sunucu değişince kırılmaz."
+          ]
+        },
+        {
+          "id": "richardson",
+          "label": "Richardson olgunluk modelinin en üst seviyesi",
+          "aliases": [
+            "richardson",
+            "olgunluk",
+            "maturity",
+            "seviye 3",
+            "level 3",
+            "en üst seviye"
+          ],
+          "anchors": [
+            "HATEOAS Richardson olgunluk modelinin en üst seviyesidir."
+          ]
+        },
+        {
+          "id": "hal",
+          "label": "HAL ve Spring HATEOAS gibi biçimler",
+          "aliases": [
+            "hal+json",
+            "spring hateoas",
+            "json:api",
+            "siren"
+          ],
+          "anchors": [
+            "HAL gibi biçimler ve Spring HATEOAS linkleri standart bir yapıda verir."
+          ]
+        },
+        {
+          "id": "neden-nadir",
+          "label": "İstemciler zaten bir sözleşmeye göre yazılır",
+          "aliases": [
+            "openapi",
+            "swagger",
+            "sözleşme",
+            "contract",
+            "karmaşıklık",
+            "yanıtı büyüt"
+          ],
+          "anchors": [
+            "İstemciler OpenAPI gibi bir sözleşmeye göre yazıldığı için HATEOAS'ın getirisi azdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API'nin Richardson olgunluk modelinde hangi seviyede olduğunu nasıl anlarsın?"
+      ],
+      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.5 Uniform Interface; Martin Fowler, Richardson Maturity Model (2010)"
     }
   ]
 }
