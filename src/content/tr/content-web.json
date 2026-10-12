@@ -1,0 +1,923 @@
+{
+  "lang": "tr",
+  "category": "web",
+  "questions": [
+    {
+      "id": "web-safe-idempotent",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 2,
+      "prompt": "HTTP'de safe ve idempotent metot ne demektir? Hangi metotlar hangisine girer?",
+      "modelAnswer": "**Safe** metot sunucudaki durumu değiştirmeyi amaçlamayan, esasen salt okuma yapan metottur; `GET`, `HEAD`, `OPTIONS` ve `TRACE` safe'tir. **Idempotent** metotta aynı istek kaç kez gönderilirse gönderilsin sunucuda amaçlanan etki aynıdır; safe metotların hepsi ile `PUT` ve `DELETE` idempotent'tir. `POST` ve `PATCH` ikisine de girmez, çünkü aynı `POST` iki kez gönderilince iki kayıt oluşabilir. Bu ayrım yeniden denemeyi belirler; bağlantı yanıt gelmeden koparsa istemci ya da proxy idempotent bir isteği güvenle tekrarlayabilir ama `POST`'u kendiliğinden tekrarlamamalıdır. Tanım amaçlanan etkiyle ilgilidir; `GET` erişim logu yazabilir, `DELETE`'in ikinci çağrısı `404` dönebilir, önemli olan kaynağın son durumunun aynı kalmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "salt-okuma",
+          "label": "Safe: sunucu durumunu değiştirmez",
+          "aliases": [
+            "salt okuma",
+            "read-only",
+            "sadece okur",
+            "yalnızca okur",
+            "değiştirmez",
+            "yan etkisiz"
+          ],
+          "anchors": [
+            "Safe metot sunucudaki durumu değiştirmeyi amaçlamaz, esasen salt okuma yapar."
+          ]
+        },
+        {
+          "id": "ayni-etki",
+          "label": "Idempotent: tekrarı aynı etkiyi bırakır",
+          "aliases": [
+            "aynı etki",
+            "aynı sonuç",
+            "sonuç aynı",
+            "kaç kez",
+            "kaç kere",
+            "birden fazla kez"
+          ],
+          "anchors": [
+            "Idempotent metotta aynı isteği bir ya da birçok kez göndermenin etkisi aynıdır."
+          ]
+        },
+        {
+          "id": "post-degil",
+          "label": "PUT ve DELETE idempotent, POST ve PATCH değil",
+          "aliases": [
+            "delete",
+            "iki kayıt",
+            "çift kayıt",
+            "duplicate",
+            "post değil",
+            "post ve patch"
+          ],
+          "anchors": [
+            "PUT ve DELETE idempotent'tir; POST ve PATCH değildir, POST tekrarı iki kayıt oluşturabilir."
+          ]
+        },
+        {
+          "id": "yeniden-deneme",
+          "label": "Ayrım yeniden denemeyi belirler",
+          "aliases": [
+            "yeniden dene",
+            "tekrar dene",
+            "retry",
+            "güvenle tekrarla",
+            "kendiliğinden tekrarla",
+            "otomatik tekrar"
+          ],
+          "anchors": [
+            "Bağlantı koparsa idempotent istek güvenle tekrarlanabilir, POST kendiliğinden tekrarlanmaz."
+          ]
+        },
+        {
+          "id": "amaclanan",
+          "label": "Tanım amaçlanan etkiyle ilgilidir",
+          "aliases": [
+            "amaçlanan",
+            "son durum",
+            "intended",
+            "erişim logu",
+            "log yazabilir"
+          ],
+          "anchors": [
+            "Tanım amaçlanan etkiyle ilgilidir; log yazmak ya da ikinci DELETE'in 404 dönmesi idempotentliği bozmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Ağ hatasından sonra bir POST isteğini güvenle tekrarlamak için ne yapılabilir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.2.1 Safe Methods, §9.2.2 Idempotent Methods"
+    },
+    {
+      "id": "web-get-vs-post",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 1,
+      "prompt": "GET ile POST arasındaki fark nedir?",
+      "modelAnswer": "`GET` bir kaynağın temsilini okumak içindir; safe ve idempotent'tir, parametreleri URL'deki query string'de taşır, bu yüzden yer imine eklenebilir, paylaşılabilir ve önbelleğe alınabilir. `POST` gövdedeki veriyi sunucunun işlemesi için gönderir; kayıt oluşturma, form gönderme ya da bir işlemi tetikleme gibi durum değiştiren işlerde kullanılır ve idempotent değildir. Bu yüzden tarayıcı `POST` sonucu olan bir sayfayı yenilerken formu yeniden göndermek için onay ister. `GET` isteğindeki gövdenin tanımlı bir anlamı yoktur ve bazı sunucular ya da proxy'ler onu reddeder ya da düşürür. Query string sunucu loglarına, tarayıcı geçmişine ve `Referer` başlığına düştüğü için parola ya da token gibi hassas veri `GET` parametresiyle gönderilmez; `POST` da kendi başına şifreleme sağlamaz, gizliliği HTTPS sağlar.",
+      "keyConcepts": [
+        {
+          "id": "okuma-gonderme",
+          "label": "GET okur, POST veriyi işlenmek üzere gönderir",
+          "aliases": [
+            "okuma",
+            "kayıt oluştur",
+            "form gönder",
+            "durum değiştir",
+            "veri al",
+            "veri gönder"
+          ],
+          "anchors": [
+            "GET kaynağı okur; POST gövdedeki veriyi sunucunun işlemesi için gönderir."
+          ]
+        },
+        {
+          "id": "url-govde",
+          "label": "GET parametresi URL'de, POST verisi gövdede",
+          "aliases": [
+            "query string",
+            "url'de",
+            "sorgu parametre",
+            "gövdede",
+            "body'de",
+            "request body"
+          ],
+          "anchors": [
+            "GET parametreleri URL'deki query string'de, POST verisi gövdede taşınır."
+          ]
+        },
+        {
+          "id": "idempotent",
+          "label": "GET safe ve idempotent, POST değil",
+          "aliases": [
+            "idempotent",
+            "safe",
+            "yeniden gönder",
+            "tekrar gönder"
+          ],
+          "anchors": [
+            "GET safe ve idempotent'tir, POST idempotent değildir."
+          ]
+        },
+        {
+          "id": "onbellek",
+          "label": "GET önbelleğe alınır ve yer imine eklenir",
+          "aliases": [
+            "önbellek",
+            "cache",
+            "yer imi",
+            "bookmark",
+            "paylaşılabilir"
+          ],
+          "anchors": [
+            "GET yanıtı önbelleğe alınabilir, URL'si yer imine eklenip paylaşılabilir."
+          ]
+        },
+        {
+          "id": "hassas-veri",
+          "label": "Hassas veri URL'ye konmaz; gizliliği HTTPS sağlar",
+          "aliases": [
+            "loglar",
+            "geçmiş",
+            "history",
+            "referer",
+            "hassas",
+            "https"
+          ],
+          "anchors": [
+            "Query string loglara ve tarayıcı geçmişine düştüğü için hassas veri GET ile gönderilmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "GET isteğindeki URL'nin uzunluğu için HTTP'de bir sınır var mı?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.3.1 GET, §9.3.3 POST; MDN: HTTP request methods"
+    },
+    {
+      "id": "web-put-vs-patch",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 1,
+      "prompt": "PUT ile PATCH arasındaki fark nedir?",
+      "modelAnswer": "`PUT` gönderilen gövdeyi kaynağın **yeni ve tam hâli** olarak kabul eder ve hedefteki durumu onunla değiştirir; kaynak yoksa oluşturabilir, bu durumda `201 Created` döner. `PATCH` ise yalnızca yapılacak **değişiklikleri** anlatan bir patch belgesi gönderir; biçimi `Content-Type` belirler, yaygın olanlar alan alan birleştiren JSON Merge Patch (`application/merge-patch+json`) ve işlem listesi taşıyan JSON Patch'tir (`application/json-patch+json`). `PUT` idempotent'tir, aynı gövde kaç kez gelirse gelsin sonuç aynıdır; `PATCH` ise idempotent sayılmaz, çünkü \"listeye ekle\" ya da \"sayacı artır\" gibi bir işlem her tekrarda sonucu değiştirir. `PUT` ile bir alanı göndermeyi unutmak o alanı silmek ya da varsayılana döndürmek anlamına gelir; kısmi güncelleme için bu yüzden `PATCH` kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "tam-hal",
+          "label": "PUT kaynağın tam hâlini gönderir ve değiştirir",
+          "aliases": [
+            "tam hâl",
+            "tam hal",
+            "tamamını",
+            "replace",
+            "eksik alan",
+            "gönderilmeyen alan"
+          ],
+          "anchors": [
+            "PUT gövdeyi kaynağın yeni ve tam hâli olarak kabul eder, gönderilmeyen alan silinir."
+          ]
+        },
+        {
+          "id": "kismi",
+          "label": "PATCH yalnızca değişiklikleri taşır",
+          "aliases": [
+            "kısmi",
+            "partial",
+            "değişiklikleri",
+            "yalnızca değişen",
+            "sadece değişen"
+          ],
+          "anchors": [
+            "PATCH yalnızca yapılacak değişiklikleri taşıyan bir patch belgesi gönderir."
+          ]
+        },
+        {
+          "id": "idempotent",
+          "label": "PUT idempotent, PATCH sayılmaz",
+          "aliases": [
+            "idempotent",
+            "aynı sonuç",
+            "sayacı artır",
+            "listeye ekle"
+          ],
+          "anchors": [
+            "PUT idempotent'tir; PATCH idempotent sayılmaz, ekleme gibi işlemler tekrarda sonucu değiştirir."
+          ]
+        },
+        {
+          "id": "bicim",
+          "label": "Patch biçimleri: JSON Merge Patch, JSON Patch",
+          "aliases": [
+            "merge patch",
+            "merge-patch",
+            "json patch",
+            "json-patch",
+            "rfc 6902",
+            "rfc 7396"
+          ],
+          "anchors": [
+            "Yaygın patch biçimleri JSON Merge Patch ve JSON Patch'tir."
+          ]
+        },
+        {
+          "id": "olusturma",
+          "label": "PUT kaynak yoksa oluşturabilir (201)",
+          "aliases": [
+            "201",
+            "created",
+            "oluşturabilir",
+            "yoksa oluştur",
+            "upsert"
+          ],
+          "anchors": [
+            "PUT hedef kaynak yoksa onu oluşturabilir ve 201 Created döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir PATCH isteğini idempotent hâle getirmek için ne yapabilirsin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.3.4 PUT; RFC 5789 (PATCH); RFC 7396 (JSON Merge Patch); RFC 6902 (JSON Patch)"
+    },
+    {
+      "id": "web-head-options",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 1,
+      "prompt": "HEAD ve OPTIONS metotları ne işe yarar?",
+      "modelAnswer": "`HEAD`, `GET` ile aynı isteği yapar ama sunucu gövdeyi göndermez, yalnızca başlıkları döner; bir dosyanın boyutunu (`Content-Length`), değişip değişmediğini (`ETag`, `Last-Modified`) ya da bir linkin hâlâ çalışıp çalışmadığını gövdeyi indirmeden öğrenmek için kullanılır. `OPTIONS` hedef kaynağın hangi iletişim seçeneklerini desteklediğini sorar; sunucu desteklenen metotları `Allow` başlığında bildirebilir, istek hedefi `*` olursa soru belirli bir kaynak için değil sunucunun geneli içindir. Tarayıcıda en sık görüldüğü yer CORS preflight'tır; tarayıcı asıl istekten önce `OPTIONS` göndererek başka bir origin'e yapılacak isteğe izin verilip verilmediğini sorar. İkisi de safe ve idempotent'tir, sunucudaki durumu değiştirmez.",
+      "keyConcepts": [
+        {
+          "id": "govdesiz",
+          "label": "HEAD gövdesiz, yalnızca başlıklar",
+          "aliases": [
+            "gövdesiz",
+            "gövdeyi göndermez",
+            "body dönmez",
+            "body olmadan",
+            "sadece header",
+            "sadece başlık"
+          ],
+          "anchors": [
+            "HEAD GET ile aynıdır ama sunucu gövdeyi göndermez, yalnızca başlıkları döner."
+          ]
+        },
+        {
+          "id": "head-kullanim",
+          "label": "HEAD ile indirmeden boyut ve değişiklik kontrolü",
+          "aliases": [
+            "content-length",
+            "boyut",
+            "değişip değişmediğ",
+            "link kontrol",
+            "linkin",
+            "indirmeden"
+          ],
+          "anchors": [
+            "HEAD dosyanın boyutunu ya da değişip değişmediğini gövdeyi indirmeden öğrenmek için kullanılır."
+          ]
+        },
+        {
+          "id": "allow",
+          "label": "OPTIONS desteklenen metotları sorar (Allow)",
+          "aliases": [
+            "allow",
+            "desteklenen metot",
+            "hangi metot",
+            "iletişim seçenek",
+            "desteklediği"
+          ],
+          "anchors": [
+            "OPTIONS kaynağın desteklediği iletişim seçeneklerini sorar, sunucu Allow başlığıyla bildirir."
+          ]
+        },
+        {
+          "id": "preflight",
+          "label": "OPTIONS en sık CORS preflight'ta görülür",
+          "aliases": [
+            "preflight",
+            "cors",
+            "ön kontrol",
+            "ön istek",
+            "cross-origin"
+          ],
+          "anchors": [
+            "Tarayıcı CORS preflight'ta asıl istekten önce OPTIONS gönderir."
+          ]
+        },
+        {
+          "id": "safe",
+          "label": "İkisi de safe ve idempotent",
+          "aliases": [
+            "safe",
+            "idempotent",
+            "durumu değiştirmez"
+          ],
+          "anchors": [
+            "HEAD ve OPTIONS safe ve idempotent'tir, sunucu durumunu değiştirmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucu HEAD yanıtında Content-Length göndermek zorunda mı?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.3.2 HEAD, §9.3.7 OPTIONS; MDN: OPTIONS"
+    },
+    {
+      "id": "web-status-classes",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 1,
+      "prompt": "HTTP durum kodu sınıfları nelerdir? 4xx ile 5xx ayrımı istemci için neden önemlidir?",
+      "modelAnswer": "Durum kodunun ilk rakamı sınıfını belirler; `1xx` bilgilendirme, `2xx` başarı, `3xx` yönlendirme, `4xx` istemci hatası, `5xx` sunucu hatasıdır. İstemci tanımadığı bir kodu sınıfının `x00` koduna eşdeğer sayar, yani bilinmeyen bir `4xx`'i `400` gibi işler. `4xx` sorunun istekte olduğunu söyler; `429` gibi birkaç istisna dışında aynı istek düzeltilmeden tekrarlanırsa sonuç değişmez. `5xx` ise sorunun sunucu tarafında olduğunu ve isteğin geçerli olabileceğini söyler; `502`, `503`, `504` gibi geçici durumlarda bekleyip yeniden denemek anlamlıdır. İzleme de bu ayrıma dayanır; `5xx` oranındaki artış sunucu tarafında bir arızaya işaret eder ve alarm üretir, `4xx` artışı ise çoğu zaman istemci ya da entegrasyon hatasına işaret eder.",
+      "keyConcepts": [
+        {
+          "id": "siniflar",
+          "label": "1xx bilgi, 2xx başarı, 3xx yönlendirme",
+          "aliases": [
+            "bilgilendirme",
+            "informational",
+            "başarı",
+            "success",
+            "yönlendirme",
+            "redirect"
+          ],
+          "anchors": [
+            "1xx bilgilendirme, 2xx başarı, 3xx yönlendirme sınıfıdır."
+          ]
+        },
+        {
+          "id": "istemci-hatasi",
+          "label": "4xx istemci hatası, istek düzeltilmeli",
+          "aliases": [
+            "istemci hata",
+            "client hata",
+            "client error",
+            "hatalı istek",
+            "isteği düzelt",
+            "hata istemcide"
+          ],
+          "anchors": [
+            "4xx istemci hatasıdır; istek düzeltilmeden tekrarlanırsa sonuç değişmez."
+          ]
+        },
+        {
+          "id": "sunucu-hatasi",
+          "label": "5xx sunucu hatası",
+          "aliases": [
+            "sunucu hata",
+            "server hata",
+            "server error",
+            "sunucu tarafında",
+            "server side",
+            "hata sunucuda"
+          ],
+          "anchors": [
+            "5xx sunucu hatasıdır; sorun sunucu tarafındadır, istek geçerli olabilir."
+          ]
+        },
+        {
+          "id": "yeniden-deneme",
+          "label": "Geçici 5xx'te yeniden denenebilir",
+          "aliases": [
+            "yeniden dene",
+            "tekrar dene",
+            "retry",
+            "bekleyip",
+            "geçici"
+          ],
+          "anchors": [
+            "Geçici 5xx durumlarında bekleyip yeniden denemek anlamlıdır, 4xx'te değil."
+          ]
+        },
+        {
+          "id": "izleme",
+          "label": "İzleme ve alarm 5xx oranına bakar",
+          "aliases": [
+            "izleme",
+            "monitoring",
+            "alarm",
+            "alert",
+            "hata oranı",
+            "metrik"
+          ],
+          "anchors": [
+            "5xx oranındaki artış sunucu arızası olarak alarm üretir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API doğrulama hatasında 200 dönüp gövdeye success: false yazarsa ne kaybeder?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15 Status Codes"
+    },
+    {
+      "id": "web-redirect-codes",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "301, 302, 307 ve 308 yönlendirme kodları arasındaki fark nedir?",
+      "modelAnswer": "`301 Moved Permanently` ve `308 Permanent Redirect` **kalıcıdır**; istemciler ve arama motorları yeni adresi kalıcı kabul eder ve bu yanıtlar varsayılan olarak önbelleğe alınabilir. `302 Found` ve `307 Temporary Redirect` **geçicidir**; istemci sonraki isteklerde yine eski adresi kullanmalıdır. Tarihsel nedenle tarayıcılar 301 ve 302'de POST'u GET'e çevirip gövdeyi düşürebilir, 307 ve 308 ise metodu ve gövdeyi **aynen korur**; form gönderimi ya da API çağrısı yönlendirilecekse bu yüzden 307 ya da 308 seçilir. POST sonrası kullanıcıyı sonuç sayfasına GET ile göndermek içinse bilerek `303 See Other` kullanılır; bu Post/Redirect/Get kalıbı sayfa yenilendiğinde formun yeniden gönderilmesini önler.",
+      "keyConcepts": [
+        {
+          "id": "kalici",
+          "label": "301 ve 308 kalıcı",
+          "aliases": [
+            "kalıcı",
+            "permanent",
+            "moved permanently",
+            "arama motoru"
+          ],
+          "anchors": [
+            "301 ve 308 kalıcı yönlendirmedir; istemci ve arama motorları yeni adresi kalıcı kabul eder."
+          ]
+        },
+        {
+          "id": "gecici",
+          "label": "302 ve 307 geçici",
+          "aliases": [
+            "geçici",
+            "temporary",
+            "eski adres",
+            "eski url"
+          ],
+          "anchors": [
+            "302 ve 307 geçici yönlendirmedir; istemci sonraki isteklerde eski adresi kullanır."
+          ]
+        },
+        {
+          "id": "metot-donusumu",
+          "label": "301 ve 302'de POST GET'e dönüşebilir",
+          "aliases": [
+            "get'e çevir",
+            "get'e dön",
+            "post'u get",
+            "metot değiş",
+            "metodu değiş",
+            "gövdeyi düş"
+          ],
+          "anchors": [
+            "Tarayıcılar tarihsel nedenle 301 ve 302'de POST'u GET'e çevirebilir."
+          ]
+        },
+        {
+          "id": "metot-korunur",
+          "label": "307 ve 308 metodu ve gövdeyi korur",
+          "aliases": [
+            "aynen korur",
+            "metodu korur",
+            "metot korunur",
+            "gövdeyi korur",
+            "metodu değiştirmez",
+            "method preserv"
+          ],
+          "anchors": [
+            "307 ve 308 istek metodunu ve gövdesini değiştirmeden korur."
+          ]
+        },
+        {
+          "id": "see-other",
+          "label": "POST sonrası GET için 303",
+          "aliases": [
+            "303",
+            "see other",
+            "post/redirect/get",
+            "post-redirect-get",
+            "redirect/get"
+          ],
+          "anchors": [
+            "POST sonrası sonuç sayfasına GET ile yönlendirmek için 303 See Other kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API'nin adresini kalıcı olarak taşırken POST yapan istemcilerin bozulmaması için hangi kodu seçersin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.4 Redirection 3xx"
+    },
+    {
+      "id": "web-400-vs-422",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "400 Bad Request ile 422 Unprocessable Content arasındaki fark nedir?",
+      "modelAnswer": "`400 Bad Request` sunucunun isteği istemci kaynaklı bir sorun yüzünden işlemediğini söyler; tipik örnek bozuk JSON, ayrıştırılamayan sözdizimi ya da geçersiz bir başlıktır. `422` ise sunucunun içerik türünü anladığını ve gövdenin sözdizimsel olarak doğru olduğunu, ama içindeki talimatları işleyemediğini söyler; JSON düzgün ayrışır ama `email` alanı geçersizdir ya da bitiş tarihi başlangıçtan öncedir. 422 aslında WebDAV için tanımlanmıştı, RFC 9110 onu genel HTTP'ye taşıdı ve adını Unprocessable Entity'den Unprocessable Content'e çevirdi. Pratikte birçok API doğrulama hatalarında da 400 döner; önemli olan bir API içinde tutarlı olmak ve hangi alanın neden reddedildiğini gövdede, örneğin RFC 9457 Problem Details biçiminde, makinenin okuyabileceği şekilde bildirmektir.",
+      "keyConcepts": [
+        {
+          "id": "sozdizimi",
+          "label": "400: istek bozuk, ayrıştırılamıyor",
+          "aliases": [
+            "sözdizimi",
+            "syntax",
+            "bozuk json",
+            "malformed",
+            "ayrıştırıla",
+            "parse edile"
+          ],
+          "anchors": [
+            "400 isteğin bozuk olduğunu, örneğin JSON'un ayrıştırılamadığını söyler."
+          ]
+        },
+        {
+          "id": "anlamsal",
+          "label": "422: sözdizimi doğru, içerik işlenemiyor",
+          "aliases": [
+            "anlamsal",
+            "semantic",
+            "doğrulama",
+            "validation",
+            "iş kuralı",
+            "geçersiz alan"
+          ],
+          "anchors": [
+            "422'de gövde sözdizimsel olarak doğrudur ama içeriği doğrulamadan geçmez."
+          ]
+        },
+        {
+          "id": "tutarlilik",
+          "label": "Birçok API ikisi için de 400 döner; tutarlılık önemli",
+          "aliases": [
+            "tutarlı",
+            "consistent",
+            "birçok api",
+            "çoğu api",
+            "ikisi de kullanıl"
+          ],
+          "anchors": [
+            "Birçok API doğrulama hatasında da 400 döner; önemli olan tutarlı olmaktır."
+          ]
+        },
+        {
+          "id": "problem-details",
+          "label": "Hata ayrıntısı gövdede (Problem Details)",
+          "aliases": [
+            "problem details",
+            "problem+json",
+            "rfc 9457",
+            "rfc 7807",
+            "hangi alan",
+            "alan bazlı"
+          ],
+          "anchors": [
+            "Hangi alanın neden reddedildiği gövdede, örneğin Problem Details biçiminde bildirilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Aynı e-posta adresiyle ikinci kez kayıt olmaya çalışan bir istek için 400, 409 ve 422'den hangisini seçersin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.5.1 400, §15.5.21 422; RFC 9457 (Problem Details for HTTP APIs)"
+    },
+    {
+      "id": "web-409-vs-412",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "409 Conflict hangi durumda döner? 412 Precondition Failed'dan farkı nedir?",
+      "modelAnswer": "`409 Conflict` isteğin kaynağın **mevcut durumuyla çeliştiğini** söyler; tipik örnekler zaten var olan bir kaydı yeniden oluşturmak, başkasının az önce değiştirdiği bir sürümün üzerine yazmaya çalışmak ya da kaynağın o anki durumunda izin verilmeyen bir geçiştir. Sunucu çakışmayı istemcinin çözebileceği kadar açıklamalıdır, örneğin hangi alanın ya da hangi sürümün çakıştığını gövdede belirterek. `412 Precondition Failed` ise istemcinin kendi koyduğu bir **koşulun** sunucuda yanlış çıktığını söyler; istemci `If-Match: \"v7\"` gönderir, kaynağın `ETag`'i artık `\"v8\"` ise sunucu işlemi hiç yapmaz ve 412 döner. Fark kararın kaynağındadır; 409'da çakışmayı sunucu kendi kurallarıyla tespit eder, 412'de istemci isteği bir koşula bağlamıştır ve HTTP'de iyimser kilitleme (optimistic locking) en temiz bu yolla kurulur. İki durumda da istemci kaynağın güncel hâlini yeniden okuyup değişikliğini onun üzerine uygulamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "mevcut-durum",
+          "label": "409: istek kaynağın mevcut durumuyla çelişir",
+          "aliases": [
+            "mevcut durum",
+            "çeliş",
+            "çakış",
+            "zaten var",
+            "duplicate",
+            "state conflict"
+          ],
+          "anchors": [
+            "409 isteğin kaynağın mevcut durumuyla çeliştiğini söyler, örneğin kayıt zaten vardır."
+          ]
+        },
+        {
+          "id": "kosul",
+          "label": "412: istemcinin koyduğu koşul yanlış çıktı",
+          "aliases": [
+            "if-match",
+            "if-unmodified-since",
+            "koşullu",
+            "ön koşul",
+            "önkoşul",
+            "koşulun"
+          ],
+          "anchors": [
+            "412 istemcinin If-Match gibi bir başlıkla koyduğu koşulun sunucuda yanlış çıktığını söyler."
+          ]
+        },
+        {
+          "id": "etag-surum",
+          "label": "ETag ile sürüm karşılaştırması",
+          "aliases": [
+            "etag",
+            "entity tag",
+            "sürüm",
+            "version"
+          ],
+          "anchors": [
+            "İstemcinin gönderdiği ETag kaynağın güncel ETag'iyle eşleşmezse işlem yapılmaz."
+          ]
+        },
+        {
+          "id": "iyimser-kilit",
+          "label": "İyimser kilitleme, kaybolan güncellemeyi önler",
+          "aliases": [
+            "iyimser kilit",
+            "optimistic lock",
+            "optimistic concurrency",
+            "lost update",
+            "kaybolan güncelleme",
+            "üzerine yaz"
+          ],
+          "anchors": [
+            "If-Match ile koşullu istek HTTP'de iyimser kilitlemeyi kurar ve başkasının değişikliğinin üzerine yazılmasını önler."
+          ]
+        },
+        {
+          "id": "yeniden-oku",
+          "label": "İstemci güncel hâli okuyup yeniden uygular",
+          "aliases": [
+            "yeniden oku",
+            "tekrar oku",
+            "güncel hâl",
+            "güncel hal",
+            "son hâli",
+            "son hali"
+          ],
+          "anchors": [
+            "İstemci kaynağın güncel hâlini yeniden okuyup değişikliğini onun üzerine uygular."
+          ]
+        }
+      ],
+      "followUps": [
+        "PUT isteklerinde If-Match'i zorunlu tutan bir sunucu, başlıksız gelen isteğe hangi kodu döner?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §13.1.1 If-Match, §15.5.10 409, §15.5.13 412"
+    },
+    {
+      "id": "web-429",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 1,
+      "prompt": "429 Too Many Requests nedir? Bu yanıtı alan istemci ne yapmalı?",
+      "modelAnswer": "`429 Too Many Requests` istemcinin belirli bir sürede çok fazla istek gönderdiğini, yani **rate limiting**'e takıldığını söyler. Sunucu yanıta, ne kadar beklenmesi gerektiğini saniye ya da tarih olarak bildiren `Retry-After` başlığını ekleyebilir; istemci bu başlık varsa ona uymalıdır. Başlık yoksa istemci aynı isteği hemen tekrarlamak yerine **exponential backoff** ile, her denemede bekleme süresini katlayarak ve araya rastgele bir **jitter** ekleyerek yeniden denemelidir; jitter, aynı anda reddedilen çok sayıda istemcinin hep birlikte geri dönmesini önler. Limitin kullanıcıya, API anahtarına ya da IP adresine göre mi sayıldığını standart belirlemez, sunucuya bırakır.",
+      "keyConcepts": [
+        {
+          "id": "rate-limit",
+          "label": "Rate limiting'e takıldı",
+          "aliases": [
+            "rate limit",
+            "rate-limit",
+            "hız sınır",
+            "istek sınır",
+            "kota",
+            "quota"
+          ],
+          "anchors": [
+            "429 istemcinin belirli sürede çok fazla istek gönderip rate limiting'e takıldığını söyler."
+          ]
+        },
+        {
+          "id": "retry-after",
+          "label": "Retry-After varsa ona uyulur",
+          "aliases": [
+            "retry-after",
+            "retry after",
+            "ne kadar bekle",
+            "bekleme süresi"
+          ],
+          "anchors": [
+            "Sunucu Retry-After başlığıyla ne kadar beklenmesi gerektiğini bildirebilir."
+          ]
+        },
+        {
+          "id": "backoff",
+          "label": "Exponential backoff ile yeniden deneme",
+          "aliases": [
+            "backoff",
+            "back-off",
+            "katlayarak",
+            "üstel",
+            "exponential",
+            "giderek artan"
+          ],
+          "anchors": [
+            "İstemci bekleme süresini her denemede katlayarak, exponential backoff ile yeniden dener."
+          ]
+        },
+        {
+          "id": "jitter",
+          "label": "Jitter ile istemcilerin aynı anda dönmesi önlenir",
+          "aliases": [
+            "jitter",
+            "rastgele",
+            "random",
+            "hep birlikte",
+            "aynı anda geri",
+            "thundering herd"
+          ],
+          "anchors": [
+            "Rastgele jitter, reddedilen istemcilerin hep birlikte geri dönmesini önler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucu tarafında rate limiting için token bucket ile fixed window yaklaşımları nasıl ayrışır?"
+      ],
+      "source": "Kendi derleme — RFC 6585 §4 (429 Too Many Requests); RFC 9110 §10.2.3 Retry-After"
+    },
+    {
+      "id": "web-5xx",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "500, 502, 503 ve 504 durum kodları arasındaki fark nedir?",
+      "modelAnswer": "`500 Internal Server Error` uygulamanın kendisinde beklenmeyen bir durum oluştuğunu söyler; yakalanmamış bir exception tipik sebeptir. `502 Bad Gateway` ve `504 Gateway Timeout`'u ise isteği arkadaki sunucuya ileten bir ara katman, yani reverse proxy, load balancer ya da API gateway üretir; 502'de arkadaki sunucudan geçersiz bir yanıt gelmiş ya da bağlantı reddedilmiştir, 504'te ise yanıt zamanında hiç gelmemiştir. `503 Service Unavailable` sunucunun aşırı yük ya da bakım yüzünden isteği **geçici olarak** karşılayamadığını söyler ve ne zaman tekrar denenebileceğini `Retry-After` ile bildirebilir. Hata ayıklamada bu ayrım yeri gösterir; 500 uygulama loguna, 502 arkadaki sürecin ayakta olup olmadığına ya da yanlış porta, 504 ise yavaş bir sorguya ya da proxy'nin zaman aşımı ayarına bakmayı söyler.",
+      "keyConcepts": [
+        {
+          "id": "beklenmeyen",
+          "label": "500: uygulamada beklenmeyen hata",
+          "aliases": [
+            "beklenmeyen",
+            "yakalanmamış",
+            "unhandled",
+            "exception",
+            "genel sunucu hata",
+            "uygulama hata"
+          ],
+          "anchors": [
+            "500 uygulamanın kendisinde beklenmeyen bir durum, örneğin yakalanmamış bir exception oluştuğunu söyler."
+          ]
+        },
+        {
+          "id": "ara-katman",
+          "label": "502 ve 504'ü ara katman üretir",
+          "aliases": [
+            "reverse proxy",
+            "load balancer",
+            "gateway",
+            "ara katman",
+            "proxy",
+            "nginx"
+          ],
+          "anchors": [
+            "502 ve 504'ü isteği arkadaki sunucuya ileten proxy ya da gateway üretir."
+          ]
+        },
+        {
+          "id": "gecersiz-yanit",
+          "label": "502: arkadan geçersiz yanıt ya da bağlantı reddi",
+          "aliases": [
+            "geçersiz yanıt",
+            "invalid response",
+            "bağlantı reddedil",
+            "connection refused",
+            "bad gateway"
+          ],
+          "anchors": [
+            "502'de gateway arkadaki sunucudan geçersiz bir yanıt almıştır ya da bağlantı reddedilmiştir."
+          ]
+        },
+        {
+          "id": "zaman-asimi",
+          "label": "504: arkadan zamanında yanıt gelmedi",
+          "aliases": [
+            "zaman aşımı",
+            "timeout",
+            "time out",
+            "zamanında",
+            "gateway timeout"
+          ],
+          "anchors": [
+            "504'te gateway arkadaki sunucudan zamanında yanıt alamamıştır."
+          ]
+        },
+        {
+          "id": "gecici",
+          "label": "503: geçici olarak hizmet dışı",
+          "aliases": [
+            "geçici",
+            "temporar",
+            "aşırı yük",
+            "overload",
+            "bakım",
+            "maintenance"
+          ],
+          "anchors": [
+            "503 sunucunun aşırı yük ya da bakım yüzünden geçici olarak hizmet veremediğini söyler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sağlık kontrolü (health check) ucu, bakım sırasında hangi kodu dönmeli?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.6 Server Error 5xx"
+    },
+    {
+      "id": "web-401-www-authenticate",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "401 yanıtı neden WWW-Authenticate başlığı taşımalıdır? Bir sunucu kaynağın varlığını gizlemek için 403 yerine ne zaman 404 döner?",
+      "modelAnswer": "RFC 9110'a göre 401 üreten sunucu, hedef kaynağa uygulanabilecek en az bir **challenge** içeren `WWW-Authenticate` başlığı göndermek zorundadır; istemci hangi şemayla (`Basic`, `Bearer` gibi) ve hangi parametrelerle kimlik doğrulaması yapacağını buradan öğrenir. OAuth 2.0 bearer token kullanan bir API'de bu başlık `error=\"invalid_token\"` gibi parametrelerle token'ın geçersiz ya da süresi dolmuş olduğunu da söyler, istemci de token'ı yenileyip isteği tekrarlar. 403'te ise sunucu isteği anlamış ama reddetmiştir; kimlik bilgisi gönderildiyse onları yetersiz bulmuştur ve istemci aynı kimlik bilgileriyle isteği kendiliğinden tekrarlamamalıdır. Kaynağın var olduğunu bilmek bile saldırgana bilgi veriyorsa, örneğin başka bir kullanıcının özel deposu ya da bir yönetim adresi söz konusuysa, RFC 9110 sunucunun 403 yerine 404 dönmesine açıkça izin verir. Böylece yetkisiz kullanıcı yasaklanmış bir kaynakla hiç var olmayan bir kaynağı ayırt edemez ve geçerli adresleri tek tek deneyerek çıkaramaz.",
+      "keyConcepts": [
+        {
+          "id": "challenge",
+          "label": "401 en az bir challenge taşımak zorunda",
+          "aliases": [
+            "challenge",
+            "kimlik doğrulama yöntem",
+            "kimlik doğrulama şema",
+            "hangi yöntem",
+            "hangi şema",
+            "authentication scheme"
+          ],
+          "anchors": [
+            "401 üreten sunucu en az bir challenge içeren WWW-Authenticate başlığı göndermek zorundadır."
+          ]
+        },
+        {
+          "id": "bearer",
+          "label": "Şema ve parametreler: Basic, Bearer, invalid_token",
+          "aliases": [
+            "bearer",
+            "basic",
+            "invalid_token",
+            "realm"
+          ],
+          "anchors": [
+            "Başlık Basic ya da Bearer gibi şemayı ve invalid_token gibi parametreleri bildirir."
+          ]
+        },
+        {
+          "id": "tekrarlamaz",
+          "label": "403: yetki yetersiz, aynı bilgilerle tekrarlanmaz",
+          "aliases": [
+            "tekrarlamamalı",
+            "aynı kimlik",
+            "tekrar denememeli",
+            "yetkisi yok",
+            "yetki yetersiz",
+            "yetersiz bul"
+          ],
+          "anchors": [
+            "403'te istemci aynı kimlik bilgileriyle isteği kendiliğinden tekrarlamamalıdır."
+          ]
+        },
+        {
+          "id": "bilgi-sizintisi",
+          "label": "Varlığını bilmek bilgi veriyorsa 404",
+          "aliases": [
+            "bilgi sız",
+            "information leak",
+            "enumeration",
+            "ayırt edemez",
+            "var olup olmadığ",
+            "var olduğunu bil"
+          ],
+          "anchors": [
+            "Kaynağın var olduğunu bilmek bilgi sızdırıyorsa sunucu 403 yerine 404 döner, yetkisiz kullanıcı ayırt edemez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Herkese açık bir uca süresi dolmuş bir Bearer token ile istek gelirse sunucu 401 mi dönmeli, isteği anonim olarak mı işlemeli?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §11.6.1 WWW-Authenticate, §15.5.2 401, §15.5.4 403; RFC 6750 §3"
+    }
+  ]
+}
