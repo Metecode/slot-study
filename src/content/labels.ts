@@ -9,6 +9,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   javascript: "JavaScript",
   sql: "SQL",
   react: "React",
+  web: "HTTP & Web",
   koleksiyonlar: "Koleksiyonlar",
   algoritma: "Algoritma",
   "tasarim-kaliplari": "Tasarım Kalıpları",
