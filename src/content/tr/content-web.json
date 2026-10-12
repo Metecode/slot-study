@@ -918,6 +918,531 @@
         "Herkese açık bir uca süresi dolmuş bir Bearer token ile istek gelirse sunucu 401 mi dönmeli, isteği anonim olarak mı işlemeli?"
       ],
       "source": "Kendi derleme — RFC 9110 §11.6.1 WWW-Authenticate, §15.5.2 401, §15.5.4 403; RFC 6750 §3"
+    },
+    {
+      "id": "web-content-negotiation",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Header'lar",
+      "difficulty": 1,
+      "prompt": "Content negotiation nedir? Accept ile Content-Type başlıkları nasıl ayrışır?",
+      "modelAnswer": "Content negotiation, aynı kaynağın birden fazla temsili olduğunda (JSON ya da XML, Türkçe ya da İngilizce, sıkıştırılmış ya da düz) sunucunun istemcinin tercihine göre birini seçmesidir. İstemci tercihlerini `Accept`, `Accept-Language` ve `Accept-Encoding` ile bildirir ve `q` ağırlığıyla sıralayabilir, örneğin `Accept: application/json, application/xml;q=0.5`. `Content-Type` ise tercih değil **beyandır**; mesajın gövdesinde gerçekte ne olduğunu söyler, bu yüzden istemcinin gönderdiği gövdede de sunucunun yanıtında da bulunur. Sunucu istenen temsillerin hiçbirini üretemiyorsa `406 Not Acceptable` dönebilir ya da varsayılan bir temsil gönderebilir; istekteki gövdenin `Content-Type`'ını desteklemiyorsa `415 Unsupported Media Type` döner.",
+      "keyConcepts": [
+        {
+          "id": "temsil",
+          "label": "Aynı kaynağın birden fazla temsilinden seçim",
+          "aliases": [
+            "temsil",
+            "representation",
+            "json ya da xml",
+            "json veya xml",
+            "farklı biçim",
+            "farklı format"
+          ],
+          "anchors": [
+            "Content negotiation aynı kaynağın birden fazla temsilinden istemcinin tercihine uyanı seçmektir."
+          ]
+        },
+        {
+          "id": "accept-tercih",
+          "label": "Accept istemcinin yanıtta kabul ettiklerini bildirir",
+          "aliases": [
+            "kabul ettiği",
+            "beklediği",
+            "tercih ettiği",
+            "tercihleri",
+            "istediği format",
+            "hangi format"
+          ],
+          "anchors": [
+            "Accept istemcinin yanıtta kabul edeceği türleri, gerekirse q ağırlığıyla, bildirir."
+          ]
+        },
+        {
+          "id": "beyan",
+          "label": "Content-Type gövdenin gerçek türünü beyan eder",
+          "aliases": [
+            "beyan",
+            "gövdenin türü",
+            "gövdenin format",
+            "body'nin format",
+            "body'nin türü",
+            "media type"
+          ],
+          "anchors": [
+            "Content-Type mesaj gövdesinin gerçekte ne olduğunu söyler, istekte de yanıtta da bulunur."
+          ]
+        },
+        {
+          "id": "accept-ailesi",
+          "label": "Accept-Language ve Accept-Encoding",
+          "aliases": [
+            "accept-language",
+            "accept-encoding",
+            "accept-charset"
+          ],
+          "anchors": [
+            "Dil ve sıkıştırma tercihi Accept-Language ve Accept-Encoding ile bildirilir."
+          ]
+        },
+        {
+          "id": "hata-kodlari",
+          "label": "406 Not Acceptable ve 415 Unsupported Media Type",
+          "aliases": [
+            "406",
+            "415",
+            "not acceptable",
+            "unsupported media type"
+          ],
+          "anchors": [
+            "Uygun temsil yoksa 406, istek gövdesinin türü desteklenmiyorsa 415 döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucu yanıtı Accept-Language'e göre seçiyorsa önbelleğin yanlış dilde yanıt vermemesi için ne eklemelidir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §8.3 Content-Type, §12 Content Negotiation, §15.5.7 406, §15.5.16 415"
+    },
+    {
+      "id": "web-content-encoding-chunked",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Header'lar",
+      "difficulty": 3,
+      "prompt": "Content-Encoding ile Transfer-Encoding: chunked arasındaki fark nedir?",
+      "modelAnswer": "`Content-Encoding` temsilin kendisine uygulanmış bir dönüşümdür, örneğin `gzip` ya da `br` ile sıkıştırma; istemci `Accept-Encoding` ile neyi çözebildiğini bildirir, kodlama uçtan uca korunur ve sıkıştırılmış temsilin `ETag`'i düz olanınkinden farklı olmalıdır. `Transfer-Encoding: chunked` ise HTTP/1.1'e özgü, yalnızca o bağlantıyı (hop-by-hop) ilgilendiren bir **çerçeveleme** yöntemidir; gövde, her biri kendi uzunluğuyla başlayan parçalar hâlinde gönderilir ve sıfır uzunluklu bir parçayla biter. Bu sayede sunucu toplam boyutu bilmeden, `Content-Length` vermeden yanıtı akış hâlinde göndermeye başlayabilir. HTTP/2 ve HTTP/3'te chunked yoktur ve `Transfer-Encoding` başlığı kullanılamaz; gövde zaten protokolün kendi `DATA` frame'leriyle taşınır, bitişini HTTP/2'de `END_STREAM` bayrağı, HTTP/3'te QUIC stream'inin kapanması bildirir. İkisi birlikte de kullanılabilir; HTTP/1.1'de bir proxy gzip'li bir gövdeyi açmadan chunked olarak iletebilir.",
+      "keyConcepts": [
+        {
+          "id": "sikistirma",
+          "label": "Content-Encoding temsili sıkıştırır (gzip, br)",
+          "aliases": [
+            "gzip",
+            "brotli",
+            "sıkıştır",
+            "compression",
+            "deflate",
+            "zstd"
+          ],
+          "anchors": [
+            "Content-Encoding temsile uygulanan gzip ya da br gibi bir sıkıştırmadır."
+          ]
+        },
+        {
+          "id": "uctan-uca",
+          "label": "Content-Encoding uçtan uca, Accept-Encoding ile seçilir",
+          "aliases": [
+            "accept-encoding",
+            "uçtan uca",
+            "end-to-end",
+            "end to end",
+            "temsilin parçası"
+          ],
+          "anchors": [
+            "Content-Encoding uçtan uca korunur ve istemcinin Accept-Encoding tercihine göre seçilir."
+          ]
+        },
+        {
+          "id": "hop-by-hop",
+          "label": "chunked HTTP/1.1'de bağlantıya özgü çerçevelemedir",
+          "aliases": [
+            "hop-by-hop",
+            "çerçeveleme",
+            "framing",
+            "parça parça",
+            "parçalar hâlinde",
+            "parçalar halinde"
+          ],
+          "anchors": [
+            "chunked yalnızca o bağlantıyı ilgilendiren, gövdeyi parçalara bölen bir çerçeveleme yöntemidir."
+          ]
+        },
+        {
+          "id": "boyut-bilinmeden",
+          "label": "Boyut bilinmeden akış, Content-Length yok",
+          "aliases": [
+            "content-length",
+            "boyutu bilmeden",
+            "uzunluğu bilmeden",
+            "akış hâlinde",
+            "akış halinde",
+            "streaming"
+          ],
+          "anchors": [
+            "chunked sayesinde sunucu toplam boyutu bilmeden, Content-Length vermeden göndermeye başlar."
+          ]
+        },
+        {
+          "id": "h2-frame",
+          "label": "HTTP/2 ve HTTP/3'te chunked yok, DATA frame'leri var",
+          "aliases": [
+            "data frame",
+            "end_stream",
+            "frame'ler",
+            "kendi çerçeve",
+            "http/2",
+            "http/3"
+          ],
+          "anchors": [
+            "HTTP/2 ve HTTP/3'te chunked kullanılmaz; gövde protokolün DATA frame'leriyle taşınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir HTTP/1.1 isteğinde hem Content-Length hem Transfer-Encoding: chunked bulunursa neden güvenlik sorunu doğabilir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §8.4 Content-Encoding; RFC 9112 §7 Transfer Codings; RFC 9113 §8.1; RFC 9114 §4.1"
+    },
+    {
+      "id": "web-no-cache-vs-no-store",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 2,
+      "prompt": "Cache-Control'de no-cache ile no-store arasındaki fark nedir?",
+      "modelAnswer": "`no-store` yanıtın hiçbir önbellekte, tarayıcıda da proxy'de de saklanmamasını ister; her istek sunucuya tam olarak gider. `no-cache` ise adının düşündürdüğünün aksine saklamayı yasaklamaz; önbellek yanıtı tutabilir ama her kullanımdan önce sunucuya **yeniden doğrulatmak** zorundadır. Doğrulama `ETag` ya da `Last-Modified` ile koşullu istek olarak gider ve içerik değişmemişse sunucu gövdesiz bir `304` döner, böylece veri yeniden indirilmez. Bu yüzden her açılışta güncel olması gereken ama sık değişmeyen bir HTML sayfası için `no-cache`, banka ekstresi ya da kişisel veri gibi hiç diske yazılmaması gereken yanıtlar için `no-store` seçilir.",
+      "keyConcepts": [
+        {
+          "id": "saklanmaz",
+          "label": "no-store: hiçbir önbellekte saklanmaz",
+          "aliases": [
+            "saklamaz",
+            "saklanmaz",
+            "saklanmama",
+            "cache'lenmez",
+            "cache'lemez",
+            "önbelleğe alınmaz"
+          ],
+          "anchors": [
+            "no-store yanıtın tarayıcı ya da proxy, hiçbir önbellekte saklanmamasını ister."
+          ]
+        },
+        {
+          "id": "yeniden-dogrula",
+          "label": "no-cache: saklanır ama her kullanımda doğrulanır",
+          "aliases": [
+            "yeniden doğrula",
+            "doğrulat",
+            "revalidat",
+            "her kullanımda",
+            "her seferinde sor",
+            "validation"
+          ],
+          "anchors": [
+            "no-cache'te önbellek yanıtı tutabilir ama her kullanımdan önce sunucuya doğrulatır."
+          ]
+        },
+        {
+          "id": "yanilgi",
+          "label": "no-cache saklamayı yasaklamaz",
+          "aliases": [
+            "yasaklamaz",
+            "aksine",
+            "saklayabilir",
+            "saklanır ama",
+            "cache'lenir ama",
+            "tutabilir"
+          ],
+          "anchors": [
+            "Adının aksine no-cache saklamayı yasaklamaz."
+          ]
+        },
+        {
+          "id": "kosullu-304",
+          "label": "Doğrulama koşullu istekle, değişmediyse 304",
+          "aliases": [
+            "304",
+            "not modified",
+            "etag",
+            "if-none-match",
+            "koşullu"
+          ],
+          "anchors": [
+            "Doğrulama koşullu istekle yapılır; içerik değişmediyse sunucu 304 döner."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Hassas veri için no-store",
+          "aliases": [
+            "hassas",
+            "kişisel veri",
+            "sensitive",
+            "gizli veri",
+            "banka"
+          ],
+          "anchors": [
+            "Hiç saklanmaması gereken hassas ya da kişisel veriler için no-store seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "must-revalidate ile no-cache arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — RFC 9111 §5.2.2.4 no-cache, §5.2.2.5 no-store; MDN: Cache-Control"
+    },
+    {
+      "id": "web-cache-control",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 2,
+      "prompt": "Cache-Control'deki max-age, s-maxage, public, private ve immutable ne işe yarar?",
+      "modelAnswer": "`max-age=N` yanıtın N saniye boyunca **taze** sayılacağını söyler; bu sürede önbellek sunucuya hiç sormadan yanıtı kullanır. `private` yanıtın yalnızca tek kullanıcıya ait tarayıcı önbelleğinde saklanabileceğini, CDN ya da proxy gibi **paylaşılan önbelleklerde** (shared cache) saklanamayacağını söyler; kişiye özel sayfalar için gerekir. `public` ise yanıtı normalde saklanmayacağı durumlarda bile, örneğin `Authorization` başlığı taşıyan bir isteğin yanıtıyken, paylaşılan önbelleğe açar. `s-maxage` yalnızca paylaşılan önbellekler için `max-age`'i geçersiz kılar; böylece CDN'de 10 dakika, tarayıcıda 1 dakika gibi iki ayrı süre verilebilir. `immutable` tazelik süresi boyunca içeriğin değişmeyeceğini söyler ve tarayıcının sayfa yenilemede bile yeniden doğrulama göndermemesini ister; dosya adında içerik hash'i taşıyan JS ve CSS dosyalarında `max-age=31536000, immutable` ile kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "taze",
+          "label": "max-age: saniye cinsinden tazelik",
+          "aliases": [
+            "taze",
+            "freshness",
+            "saniye",
+            "sormadan",
+            "sunucuya gitmeden"
+          ],
+          "anchors": [
+            "max-age yanıtın kaç saniye taze sayılacağını, sunucuya sorulmadan kullanılacağını söyler."
+          ]
+        },
+        {
+          "id": "paylasilan",
+          "label": "private: yalnızca tarayıcı, paylaşılan önbellek saklamaz",
+          "aliases": [
+            "paylaşılan",
+            "shared",
+            "ortak cache",
+            "ortak önbellek",
+            "sadece tarayıcı",
+            "kişiye özel"
+          ],
+          "anchors": [
+            "private yanıt yalnızca tarayıcı önbelleğinde saklanır, CDN gibi paylaşılan önbelleklerde saklanmaz."
+          ]
+        },
+        {
+          "id": "authorization",
+          "label": "public: normalde saklanmayacak yanıtı paylaşılan önbelleğe açar",
+          "aliases": [
+            "authorization",
+            "normalde saklanmayacak",
+            "kimlik doğrulamalı",
+            "her önbellek",
+            "tüm önbellek",
+            "herkese açık"
+          ],
+          "anchors": [
+            "public, Authorization taşıyan istek gibi normalde saklanmayacak bir yanıtı paylaşılan önbelleğe açar."
+          ]
+        },
+        {
+          "id": "cdn-suresi",
+          "label": "s-maxage: yalnızca paylaşılan önbelleğin süresi",
+          "aliases": [
+            "cdn'de",
+            "cdn için",
+            "proxy için",
+            "geçersiz kılar",
+            "override",
+            "ayrı süre"
+          ],
+          "anchors": [
+            "s-maxage yalnızca CDN ve proxy gibi paylaşılan önbellekler için max-age'i geçersiz kılar."
+          ]
+        },
+        {
+          "id": "hash-dosya",
+          "label": "immutable: hash'li dosyada yenilemede bile doğrulama yok",
+          "aliases": [
+            "içerik hash",
+            "hash'li",
+            "dosya adında",
+            "fingerprint",
+            "yenilemede",
+            "reload"
+          ],
+          "anchors": [
+            "immutable, adında içerik hash'i olan dosyanın sayfa yenilemede bile yeniden doğrulanmamasını ister."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kullanıcının profil sayfası yanlışlıkla public olarak CDN'de önbelleğe alınırsa ne olur?"
+      ],
+      "source": "Kendi derleme — RFC 9111 §3.5, §5.2.2 (max-age, private, public, s-maxage); RFC 8246 (immutable)"
+    },
+    {
+      "id": "web-conditional-request",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 2,
+      "prompt": "ETag ve Last-Modified ile koşullu istek nasıl çalışır? 304 Not Modified ne zaman döner?",
+      "modelAnswer": "Sunucu yanıtla birlikte temsilin sürüm etiketini (`ETag`) ya da son değişiklik zamanını (`Last-Modified`) gönderir. Önbellekteki kopyanın tazelik süresi dolduğunda istemci onu atmak yerine sunucuya `If-None-Match` ya da `If-Modified-Since` ile sorar; temsil değişmemişse sunucu gövdesiz bir `304` döner ve istemci elindeki kopyayı, yanıttaki başlıklarla tazeleyerek kullanmaya devam eder. Değişmişse normal bir `200` ile yeni gövde gelir. `Last-Modified` saniye çözünürlüklüdür ve aynı saniyedeki iki değişikliği ayırt edemez, `ETag` ise içerikten ya da sürümden türetildiği için daha kesindir; ikisi birlikte gelirse sunucu `If-Modified-Since`'i yok sayar ve `If-None-Match`'e bakar. 304 bant genişliğini kurtarır ama gidiş-dönüşü kurtarmaz, istek yine sunucuya kadar gider.",
+      "keyConcepts": [
+        {
+          "id": "if-none-match",
+          "label": "İstemci If-None-Match ya da If-Modified-Since ile sorar",
+          "aliases": [
+            "if-none-match",
+            "if-modified-since",
+            "if none match",
+            "doğrula",
+            "revalidat"
+          ],
+          "anchors": [
+            "İstemci elindeki kopyayı If-None-Match ya da If-Modified-Since başlığıyla sunucuya doğrulatır."
+          ]
+        },
+        {
+          "id": "govdesiz",
+          "label": "304 gövdesizdir, elindeki kopya kullanılır",
+          "aliases": [
+            "gövdesiz",
+            "gövde olmadan",
+            "body gelmez",
+            "body olmadan",
+            "elindeki kopya",
+            "cache'teki"
+          ],
+          "anchors": [
+            "Temsil değişmemişse sunucu gövdesiz bir 304 döner ve istemci elindeki kopyayı kullanır."
+          ]
+        },
+        {
+          "id": "saniye",
+          "label": "Last-Modified saniye çözünürlüklü, ETag daha kesin",
+          "aliases": [
+            "saniye",
+            "çözünürlük",
+            "resolution",
+            "daha kesin",
+            "daha hassas",
+            "aynı saniye"
+          ],
+          "anchors": [
+            "Last-Modified saniye çözünürlüklüdür; ETag daha kesin bir doğrulayıcıdır."
+          ]
+        },
+        {
+          "id": "oncelik",
+          "label": "İkisi varsa If-None-Match öncelikli",
+          "aliases": [
+            "öncelik",
+            "precedence",
+            "yok sayar",
+            "ignore"
+          ],
+          "anchors": [
+            "İkisi birlikte gelirse sunucu If-Modified-Since'i yok sayar, If-None-Match'e bakar."
+          ]
+        },
+        {
+          "id": "bant",
+          "label": "Bant genişliği kazanılır, gidiş-dönüş kazanılmaz",
+          "aliases": [
+            "bant genişliği",
+            "bandwidth",
+            "gidiş-dönüş",
+            "gidiş dönüş",
+            "round trip",
+            "round-trip"
+          ],
+          "anchors": [
+            "304 bant genişliğini kurtarır ama istek yine sunucuya gider, gidiş-dönüş kalır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Zayıf ETag (W/ önekli) ile güçlü ETag arasındaki fark nedir, hangisi ne zaman kullanılır?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §8.8 Validator Fields, §13.1 Preconditions, §15.4.5 304; RFC 9111 §4.3"
+    },
+    {
+      "id": "web-vary",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 3,
+      "prompt": "Vary başlığı ne işe yarar? Yanlış kullanıldığında önbellekte ne olur?",
+      "modelAnswer": "`Vary` yanıtın, URL dışında hangi istek başlıklarına göre seçildiğini söyler ve önbelleğe bu başlıkları **anahtarın parçası** yapmasını bildirir; sunucu gövdeyi `Accept-Encoding`'e göre sıkıştırıyorsa `Vary: Accept-Encoding` göndermelidir. Eksik bırakılırsa paylaşılan bir önbellek ilk gelen temsili herkese verir; sıkıştırmayı çözemeyen bir istemci gzip'li gövde alır ya da Türkçe isteyen kullanıcı İngilizce sayfa görür. Aşırı kullanıldığında da sorun çıkar; `Vary: User-Agent` ya da `Vary: Cookie` neredeyse her istemci için ayrı bir kopya demektir ve önbellek isabet oranı çöker. `Vary: *` ise saklanan yanıtın hiçbir istekle eşleşmeyeceği anlamına gelir, yanıt pratikte önbellekten hiç sunulamaz.",
+      "keyConcepts": [
+        {
+          "id": "anahtar",
+          "label": "İstek başlıklarını önbellek anahtarına ekler",
+          "aliases": [
+            "anahtar",
+            "cache key",
+            "hangi istek başlık",
+            "başlıklarına göre",
+            "header'lara göre",
+            "farklı versiyon"
+          ],
+          "anchors": [
+            "Vary hangi istek başlıklarının önbellek anahtarının parçası olacağını söyler."
+          ]
+        },
+        {
+          "id": "accept-encoding",
+          "label": "Tipik örnek: Accept-Encoding ve Accept-Language",
+          "aliases": [
+            "accept-encoding",
+            "accept-language",
+            "gzip",
+            "sıkıştır"
+          ],
+          "anchors": [
+            "Gövde Accept-Encoding ya da Accept-Language'e göre değişiyorsa Vary'de belirtilir."
+          ]
+        },
+        {
+          "id": "yanlis-temsil",
+          "label": "Eksikse yanlış temsil herkese verilir",
+          "aliases": [
+            "yanlış temsil",
+            "yanlış dil",
+            "yanlış içerik",
+            "herkese ver",
+            "ilk gelen",
+            "başka kullanıcı"
+          ],
+          "anchors": [
+            "Vary eksikse paylaşılan önbellek ilk gelen temsili herkese verir."
+          ]
+        },
+        {
+          "id": "isabet",
+          "label": "User-Agent ya da Cookie ile isabet oranı çöker",
+          "aliases": [
+            "user-agent",
+            "isabet oran",
+            "hit ratio",
+            "hit rate",
+            "ayrı kopya",
+            "parçalan"
+          ],
+          "anchors": [
+            "Vary: User-Agent ya da Cookie neredeyse her istemci için ayrı kopya demektir, isabet oranı düşer."
+          ]
+        },
+        {
+          "id": "yildiz",
+          "label": "Vary: * hiçbir istekle eşleşmez",
+          "aliases": [
+            "vary: *",
+            "yıldız",
+            "hiç eşleşmez",
+            "eşleşmeyeceği",
+            "asla eşleşmez"
+          ],
+          "anchors": [
+            "Vary: * içeren saklı yanıt hiçbir istekle eşleşmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "CORS yanıtında Access-Control-Allow-Origin isteğe göre değişiyorsa Vary'ye ne eklenmelidir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §12.5.5 Vary; RFC 9111 §4.1"
     }
   ]
 }
