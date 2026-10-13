@@ -3005,6 +3005,622 @@
         "Bir kullanıcının yetkisi alındığında bunun JWT kullanan bir sistemde hemen etkili olması için ne yapılabilir?"
       ],
       "source": "Kendi derleme — RFC 7519 (JWT); OWASP Session Management Cheat Sheet; OWASP JSON Web Token Cheat Sheet"
+    },
+    {
+      "id": "web-same-origin-policy",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 1,
+      "prompt": "Same-origin policy nedir? İki URL ne zaman aynı origin sayılır?",
+      "modelAnswer": "Origin, bir URL'nin **scheme**, **host** ve **port** üçlüsüdür; `https://example.com` ile `https://example.com:8443`, `http://example.com` ya da `https://api.example.com` farklı origin'lerdir, yol ise origin'e dahil değildir. Same-origin policy, bir origin'den yüklenen sayfanın başka bir origin'in verisine erişimini tarayıcının sınırlamasıdır; sayfadaki JavaScript başka origin'e yaptığı `fetch` isteğinin yanıtını okuyamaz, başka origin'den gelen bir `iframe`'in DOM'una erişemez. Kural okumayı kısıtlar, göndermeyi değil; sayfa başka origin'e form gönderebilir, görsel ve script yükleyebilir, CSRF bu yüzden bu politikaya rağmen mümkündür. Amaç, kullanıcının giriş yaptığı bir sitedeki verinin aynı tarayıcıda açık kötü niyetli bir sitenin kodu tarafından okunmasını önlemektir; kontrollü bir istisna gerektiğinde sunucu CORS başlıklarıyla izin verir.",
+      "keyConcepts": [
+        {
+          "id": "uclu",
+          "label": "Origin: scheme, host ve port",
+          "aliases": [
+            "port",
+            "protokol",
+            "scheme",
+            "host",
+            "domain ve port",
+            "alan adı ve port"
+          ],
+          "anchors": [
+            "İki URL'nin aynı origin sayılması için scheme, host ve port'un aynı olması gerekir."
+          ]
+        },
+        {
+          "id": "okuyamaz",
+          "label": "Başka origin'in yanıtı ve DOM'u okunamaz",
+          "aliases": [
+            "okuyamaz",
+            "erişemez",
+            "okumasını engel",
+            "yanıtı oku",
+            "cevabı oku",
+            "dom'una"
+          ],
+          "anchors": [
+            "Sayfadaki kod başka origin'den gelen yanıtı okuyamaz, başka origin'in DOM'una erişemez."
+          ]
+        },
+        {
+          "id": "gondermek-serbest",
+          "label": "Gönderme kısıtlanmaz: form, görsel, script",
+          "aliases": [
+            "göndermeyi değil",
+            "gönderebilir",
+            "form gönder",
+            "görsel",
+            "script yükle",
+            "embed"
+          ],
+          "anchors": [
+            "Kural okumayı kısıtlar; sayfa başka origin'e form gönderebilir, görsel ve script yükleyebilir."
+          ]
+        },
+        {
+          "id": "kullanici-verisi",
+          "label": "Kullanıcının oturumlu verisi kötü siteden korunur",
+          "aliases": [
+            "kötü niyetli",
+            "kötü amaçlı",
+            "malicious",
+            "giriş yaptığı",
+            "oturumlu",
+            "kullanıcı verisi"
+          ],
+          "anchors": [
+            "Amaç kullanıcının giriş yaptığı sitedeki verinin kötü niyetli bir site tarafından okunmasını önlemektir."
+          ]
+        },
+        {
+          "id": "cors-istisna",
+          "label": "Kontrollü istisna CORS ile tanınır",
+          "aliases": [
+            "cors",
+            "access-control",
+            "izin verir",
+            "istisna"
+          ],
+          "anchors": [
+            "Sunucu CORS başlıklarıyla belirli origin'lere kontrollü istisna tanıyabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sayfa başka origin'den <script> yükleyebiliyorsa, JSONP bir zamanlar CORS'un yerine nasıl kullanıldı?"
+      ],
+      "source": "Kendi derleme — RFC 6454 (The Web Origin Concept); HTML Living Standard: Origin; MDN: Same-origin policy"
+    },
+    {
+      "id": "web-cors-preflight",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 2,
+      "prompt": "CORS'ta simple request ile preflight request arasındaki fark nedir? Preflight ne zaman gönderilir?",
+      "modelAnswer": "Tarayıcı başka bir origin'e yapılan isteklerin bir kısmını ön kontrolsüz gönderir; metodu `GET`, `HEAD` ya da `POST` olan, yalnızca güvenli sayılan (safelisted) başlıkları taşıyan ve `Content-Type`'ı `application/x-www-form-urlencoded`, `multipart/form-data` ya da `text/plain` olan istekler bu sınıftadır. Bunun dışındaki her istekte, örneğin metot `PUT` ya da `DELETE` ise, gövde `application/json` ise ya da `Authorization` gibi özel bir başlık varsa, tarayıcı önce `OPTIONS` metoduyla bir **ön kontrol** isteği yollar ve `Access-Control-Request-Method` ile `Access-Control-Request-Headers` başlıklarıyla ne yapmak istediğini sorar. Sunucu `Access-Control-Allow-Origin`, `Access-Control-Allow-Methods` ve `Access-Control-Allow-Headers` ile izin verirse asıl istek gönderilir; vermezse tarayıcı asıl isteği hiç göndermez ve sayfadaki kod yalnızca genel bir ağ hatası görür. Sunucu `Access-Control-Max-Age` ile preflight sonucunun ne kadar önbellekte tutulacağını bildirebilir; başlık yoksa bu süre 5 saniyedir ve tarayıcılar ayrıca üst sınır koyar (Ekim 2026 itibarıyla Chromium'da 2 saat, Firefox'ta 24 saat).",
+      "keyConcepts": [
+        {
+          "id": "simple-kosullar",
+          "label": "Simple: GET/HEAD/POST, güvenli başlıklar, üç Content-Type",
+          "aliases": [
+            "form-urlencoded",
+            "multipart/form-data",
+            "text/plain",
+            "safelisted",
+            "güvenli sayılan",
+            "basit istek"
+          ],
+          "anchors": [
+            "Simple request GET, HEAD ya da POST olur, yalnızca güvenli başlık ve üç Content-Type'tan birini taşır."
+          ]
+        },
+        {
+          "id": "options-on-kontrol",
+          "label": "Önce OPTIONS ile ön kontrol",
+          "aliases": [
+            "options",
+            "ön kontrol",
+            "access-control-request-method",
+            "access-control-request-headers",
+            "önce sor"
+          ],
+          "anchors": [
+            "Preflight'ta tarayıcı önce OPTIONS isteğiyle yapmak istediği metodu ve başlıkları sorar."
+          ]
+        },
+        {
+          "id": "tetikleyen",
+          "label": "JSON gövde, PUT/DELETE ya da özel başlık tetikler",
+          "aliases": [
+            "application/json",
+            "authorization",
+            "özel başlık",
+            "custom header",
+            "put ya da delete",
+            "put/delete"
+          ],
+          "anchors": [
+            "application/json gövde, PUT ya da DELETE ve Authorization gibi özel başlıklar preflight tetikler."
+          ]
+        },
+        {
+          "id": "izin",
+          "label": "Allow başlıklarıyla izin, yoksa asıl istek gitmez",
+          "aliases": [
+            "access-control-allow-methods",
+            "access-control-allow-headers",
+            "allow-methods",
+            "izin verirse",
+            "asıl istek",
+            "hiç göndermez"
+          ],
+          "anchors": [
+            "Sunucu Access-Control-Allow başlıklarıyla izin vermezse tarayıcı asıl isteği göndermez."
+          ]
+        },
+        {
+          "id": "max-age",
+          "label": "Preflight sonucu Access-Control-Max-Age ile önbelleğe alınır",
+          "aliases": [
+            "access-control-max-age",
+            "max-age",
+            "preflight cache",
+            "önbelleğe al",
+            "her seferinde",
+            "tekrar sorma"
+          ],
+          "anchors": [
+            "Access-Control-Max-Age preflight sonucunun ne kadar önbellekte tutulacağını söyler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Preflight isteğine sunucu 401 dönerse ne olur; kimlik doğrulama katmanı OPTIONS isteklerini nasıl ele almalı?"
+      ],
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol, CORS-safelisted method ve request-header; MDN: Access-Control-Max-Age"
+    },
+    {
+      "id": "web-cors-credentials",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 3,
+      "prompt": "CORS'ta credentials ile yapılan bir istekte Access-Control-Allow-Origin: * neden kullanılamaz?",
+      "modelAnswer": "Cookie, HTTP kimlik doğrulaması ya da istemci sertifikası taşıyan bir cross-origin istek için istemcide `fetch(url, { credentials: \"include\" })` ya da `xhr.withCredentials = true` gerekir; bu durumda Fetch standardı `*` joker değerini kabul etmez. Sunucu isteğin `Origin` başlığındaki değeri bir izin listesine göre kontrol edip aynen geri yazmalı (`Access-Control-Allow-Origin: https://app.example.com`) ve `Access-Control-Allow-Credentials: true` göndermelidir, yoksa tarayıcı yanıtı sayfaya vermez. Kısıtın amacı \"her site okuyabilir\" ile \"kullanıcının oturumuyla okunur\" durumlarının birleşmesini, yani herhangi bir sitenin kullanıcının hesabındaki veriyi okuyabilmesini önlemektir. Yanıt isteğe göre değiştiği için önbelleklerin bir origin'e verilen yanıtı başkasına sunmaması için `Vary: Origin` eklenir; `Allow-Headers`, `Allow-Methods` ve `Expose-Headers`'taki `*` da credentials'lı isteklerde joker sayılmaz. Gelen her `Origin`'i doğrulamadan geri yazmak `*`'ın yasakladığı durumu yeniden yaratır ve bilinen bir CORS açığıdır.",
+      "keyConcepts": [
+        {
+          "id": "include",
+          "label": "İstemcide credentials: include ya da withCredentials",
+          "aliases": [
+            "include",
+            "withcredentials",
+            "with credentials",
+            "cookie gönder",
+            "cookie'ler gider",
+            "kimlik bilgisi"
+          ],
+          "anchors": [
+            "İstemci cookie göndermek için fetch'te credentials include ya da withCredentials kullanır."
+          ]
+        },
+        {
+          "id": "origin-yaz",
+          "label": "Sunucu izinli Origin'i aynen geri yazar",
+          "aliases": [
+            "origin başlığı",
+            "aynen geri",
+            "izin listesi",
+            "allowlist",
+            "origin'i açıkça",
+            "belirli origin"
+          ],
+          "anchors": [
+            "Sunucu isteğin Origin değerini izin listesine göre kontrol edip aynen geri yazar."
+          ]
+        },
+        {
+          "id": "allow-credentials",
+          "label": "Access-Control-Allow-Credentials: true",
+          "aliases": [
+            "allow-credentials",
+            "access-control-allow-credentials",
+            "credentials: true"
+          ],
+          "anchors": [
+            "Sunucu ayrıca Access-Control-Allow-Credentials: true göndermelidir."
+          ]
+        },
+        {
+          "id": "vary-origin",
+          "label": "Vary: Origin",
+          "aliases": [
+            "vary: origin",
+            "vary origin",
+            "vary"
+          ],
+          "anchors": [
+            "Yanıt origin'e göre değiştiği için Vary: Origin eklenir."
+          ]
+        },
+        {
+          "id": "korunan-veri",
+          "label": "Her sitenin kullanıcı verisini okuması önlenir; körü körüne yansıtmak açıktır",
+          "aliases": [
+            "körü körüne",
+            "doğrulamadan",
+            "reflect",
+            "herhangi bir site",
+            "her site",
+            "kullanıcının verisi"
+          ],
+          "anchors": [
+            "Kısıt herhangi bir sitenin kullanıcının oturumuyla veri okumasını önler; Origin'i doğrulamadan yansıtmak açıktır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Birden fazla frontend origin'ine izin vermesi gereken bir API, credentials'lı CORS'u güvenli biçimde nasıl yapılandırır?"
+      ],
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol and credentials, HTTP responses; MDN: Cross-Origin Resource Sharing"
+    },
+    {
+      "id": "web-cors-not-protection",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 2,
+      "prompt": "CORS sunucuyu korur mu? CORS ayarı neden bir yetkilendirme mekanizması yerine geçmez?",
+      "modelAnswer": "Hayır; CORS sunucunun değil **tarayıcıdaki kullanıcının** korunması için vardır, kuralı sunucu yazar ama tarayıcı uygular. curl, Postman ya da başka bir sunucu `Origin` başlığını istediği gibi yazabilir ya da hiç göndermeyebilir ve CORS yanıt başlıklarını tamamen yok sayar; API'ye bu yollarla yapılan her istek, CORS ayarı ne olursa olsun işlenir. Tarayıcıda bile simple request'ler sunucuya ulaşır ve işlenir, tarayıcı yalnızca yanıtın sayfa tarafından okunmasını engeller; durum değiştiren bir form `POST`'u bu yüzden CORS'tan bağımsız olarak CSRF korumasıyla ele alınmalıdır. CORS gevşetilmiş bir same-origin policy'dir, yani hangi sitelerin kullanıcının tarayıcısı üzerinden yanıtı okuyabileceğini söyler; kimin hangi veriye erişebileceğine ise her istekte kimlik doğrulama ve yetkilendirme karar vermelidir.",
+      "keyConcepts": [
+        {
+          "id": "tarayici-uygular",
+          "label": "CORS'u tarayıcı uygular, kullanıcıyı korur",
+          "aliases": [
+            "tarayıcı uygular",
+            "tarayıcının uygula",
+            "tarayıcıda uygulan",
+            "browser enforce",
+            "kullanıcıyı korur",
+            "tarayıcı kuralı"
+          ],
+          "anchors": [
+            "CORS kuralını sunucu yazar ama tarayıcı uygular; amacı tarayıcıdaki kullanıcıyı korumaktır."
+          ]
+        },
+        {
+          "id": "tarayici-disi",
+          "label": "Tarayıcı dışı istemciler CORS'u yok sayar",
+          "aliases": [
+            "curl",
+            "postman",
+            "sunucudan sunucuya",
+            "server-to-server",
+            "tarayıcı dışı",
+            "yok sayar"
+          ],
+          "anchors": [
+            "curl, Postman ya da başka bir sunucu CORS başlıklarını yok sayar."
+          ]
+        },
+        {
+          "id": "istek-ulasir",
+          "label": "Simple request sunucuya ulaşır, yalnızca okuma engellenir",
+          "aliases": [
+            "sunucuya ulaşır",
+            "sunucuya gider",
+            "istek gider",
+            "yanıtı okuyamaz",
+            "okunmasını engeller",
+            "okumayı engeller"
+          ],
+          "anchors": [
+            "Tarayıcıda bile simple request sunucuya ulaşıp işlenir; yalnızca yanıtın okunması engellenir."
+          ]
+        },
+        {
+          "id": "csrf",
+          "label": "Durum değiştiren istekler için CSRF koruması ayrıca gerekir",
+          "aliases": [
+            "csrf",
+            "cross-site request forgery",
+            "csrf token",
+            "samesite"
+          ],
+          "anchors": [
+            "Durum değiştiren istekler CORS'tan bağımsız olarak CSRF korumasıyla ele alınır."
+          ]
+        },
+        {
+          "id": "yetki-ayri",
+          "label": "Erişim kararını kimlik doğrulama ve yetkilendirme verir",
+          "aliases": [
+            "kimlik doğrulama",
+            "authentication",
+            "erişim kontrol",
+            "access control",
+            "yetki kontrol",
+            "auth kontrol"
+          ],
+          "anchors": [
+            "Kimin hangi veriye erişeceğine her istekte kimlik doğrulama ve yetkilendirme karar verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Origin başlığını tarayıcıdaki bir sayfa değiştiremiyorsa, sunucu tarafında Origin kontrolü CSRF'e karşı ne kadar işe yarar?"
+      ],
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol; MDN: Cross-Origin Resource Sharing; OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+    },
+    {
+      "id": "web-polling",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Gerçek Zamanlı",
+      "difficulty": 1,
+      "prompt": "Polling ile long polling arasındaki fark nedir?",
+      "modelAnswer": "Polling'de istemci sunucuya belirli aralıklarla, örneğin her 5 saniyede bir \"yeni bir şey var mı?\" diye sorar; yanıtların çoğu boş döner, bu da gereksiz istek ve sunucu yükü demektir, yeni veri ise en kötü durumda bir aralık kadar gecikir. Long polling'de istemci isteği gönderir ve sunucu yeni veri olana ya da bir zaman aşımına kadar yanıtı **bekletir**; veri gelir gelmez yanıt döner ve istemci hemen yeni bir istek açar. Böylece gecikme neredeyse sıfıra iner ve boş yanıtlar azalır, ama sunucu bekleyen her istemci için bir bağlantıyı açık tutmak zorundadır ve aradaki proxy ile load balancer'ın zaman aşımları bu bekleme süresinden uzun olmalıdır. İkisi de sıradan HTTP istekleri olduğu için her ortamda çalışır; sık ve iki yönlü mesajlaşma gerekiyorsa WebSocket, yalnızca sunucudan akış gerekiyorsa Server-Sent Events daha uygundur.",
+      "keyConcepts": [
+        {
+          "id": "araliklarla",
+          "label": "Polling belirli aralıklarla sorar",
+          "aliases": [
+            "aralıklarla",
+            "periyodik",
+            "her saniye",
+            "interval",
+            "düzenli aralık",
+            "belirli aralık"
+          ],
+          "anchors": [
+            "Polling'de istemci sunucuya belirli aralıklarla yeni veri olup olmadığını sorar."
+          ]
+        },
+        {
+          "id": "bos-yanit",
+          "label": "Yanıtların çoğu boş, gereksiz yük",
+          "aliases": [
+            "boş yanıt",
+            "boş cevap",
+            "boş döner",
+            "gereksiz istek",
+            "gereksiz yük",
+            "israf"
+          ],
+          "anchors": [
+            "Polling'de yanıtların çoğu boş döner, gereksiz istek ve sunucu yükü oluşur."
+          ]
+        },
+        {
+          "id": "bekletir",
+          "label": "Long polling'de sunucu veri olana kadar bekletir",
+          "aliases": [
+            "bekletir",
+            "bekletil",
+            "açık tutar",
+            "veri gelene kadar",
+            "veri olana kadar",
+            "yanıtı tutar"
+          ],
+          "anchors": [
+            "Long polling'de sunucu yeni veri olana ya da zaman aşımına kadar yanıtı bekletir."
+          ]
+        },
+        {
+          "id": "yeni-istek",
+          "label": "Yanıttan sonra istemci hemen yeni istek açar",
+          "aliases": [
+            "yeni istek",
+            "hemen tekrar",
+            "yeniden istek",
+            "tekrar istek",
+            "yeni bir istek"
+          ],
+          "anchors": [
+            "Yanıt gelince istemci hemen yeni bir istek açar."
+          ]
+        },
+        {
+          "id": "maliyet",
+          "label": "Açık bağlantı maliyeti ve zaman aşımı ayarları",
+          "aliases": [
+            "açık bağlantı",
+            "bağlantıyı açık",
+            "zaman aşımı",
+            "timeout",
+            "kaynak tüket"
+          ],
+          "anchors": [
+            "Long polling sunucuda bekleyen her istemci için açık bağlantı tutar, proxy zaman aşımları buna göre ayarlanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Long polling yapan istemcilerin sayısı on binlere çıkınca sunucu tarafında ne gibi sorunlar çıkar?"
+      ],
+      "source": "Kendi derleme — RFC 6202 (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)"
+    },
+    {
+      "id": "web-sse",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Gerçek Zamanlı",
+      "difficulty": 2,
+      "prompt": "Server-Sent Events nedir? WebSocket yerine ne zaman tercih edilir?",
+      "modelAnswer": "Server-Sent Events, sunucunun tek bir uzun süreli HTTP yanıtı üzerinden istemciye sürekli olay göndermesidir; yanıt `text/event-stream` türündedir ve tarayıcıda `EventSource` API'siyle dinlenir. Akış **tek yönlüdür**, yalnızca sunucudan istemciye gider; istemcinin sunucuya bir şey göndermesi gerekirse normal HTTP istekleri kullanılır. Bağlantı koparsa tarayıcı kendiliğinden yeniden bağlanır ve son aldığı olayın kimliğini `Last-Event-ID` başlığıyla gönderir, böylece sunucu kaçırılan olayları tekrar yollayabilir. Sıradan HTTP olduğu için proxy, load balancer, cookie ile kimlik doğrulama ve HTTP/2 ile ek bir şey gerektirmeden çalışır; bildirim, canlı skor, log akışı ya da bir yapay zekâ cevabının parça parça gelmesi gibi yalnızca sunucudan veri akan durumlarda WebSocket'ten daha basittir. Sınırları da vardır; yalnızca metin taşır ve HTTP/1.1'de tarayıcının alan adı başına 6 bağlantı sınırına takılır, bu yüzden çok sekme açılan uygulamalarda HTTP/2 üzerinden sunulmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "event-stream",
+          "label": "text/event-stream ve EventSource",
+          "aliases": [
+            "text/event-stream",
+            "event-stream",
+            "eventsource",
+            "event source",
+            "uzun süreli http",
+            "açık kalan http"
+          ],
+          "anchors": [
+            "SSE text/event-stream türünde uzun süreli bir HTTP yanıtıdır ve EventSource ile dinlenir."
+          ]
+        },
+        {
+          "id": "tek-yonlu",
+          "label": "Tek yönlü, sunucudan istemciye",
+          "aliases": [
+            "tek yönlü",
+            "tek yön",
+            "one-way",
+            "unidirectional",
+            "sadece sunucudan",
+            "yalnızca sunucudan"
+          ],
+          "anchors": [
+            "SSE akışı tek yönlüdür, yalnızca sunucudan istemciye gider."
+          ]
+        },
+        {
+          "id": "yeniden-baglanma",
+          "label": "Otomatik yeniden bağlanma ve Last-Event-ID",
+          "aliases": [
+            "yeniden bağlan",
+            "otomatik bağlan",
+            "reconnect",
+            "last-event-id",
+            "kaçırılan olay"
+          ],
+          "anchors": [
+            "Bağlantı koparsa tarayıcı kendiliğinden yeniden bağlanır ve Last-Event-ID gönderir."
+          ]
+        },
+        {
+          "id": "sade-http",
+          "label": "Sıradan HTTP: proxy, cookie ve HTTP/2 ile çalışır",
+          "aliases": [
+            "sıradan http",
+            "normal http",
+            "düz http",
+            "standart http",
+            "ek protokol",
+            "http üzerinden"
+          ],
+          "anchors": [
+            "SSE sıradan HTTP olduğu için proxy, cookie ve HTTP/2 ile ek bir şey gerektirmeden çalışır."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Bildirim, canlı skor, log ve yanıt akışı",
+          "aliases": [
+            "bildirim",
+            "notification",
+            "canlı skor",
+            "log akışı",
+            "borsa",
+            "fiyat"
+          ],
+          "anchors": [
+            "Bildirim, canlı skor ve log akışı gibi yalnızca sunucudan veri akan durumlarda SSE tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tarayıcının EventSource API'siyle Authorization başlığı gönderilemiyorsa SSE ucunda kimlik doğrulama nasıl yapılır?"
+      ],
+      "source": "Kendi derleme — HTML Living Standard: Server-sent events; MDN: Using server-sent events"
+    },
+    {
+      "id": "web-websocket",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Gerçek Zamanlı",
+      "difficulty": 2,
+      "prompt": "WebSocket bağlantısı nasıl kurulur? HTTP'den farkı nedir?",
+      "modelAnswer": "WebSocket bağlantısı sıradan bir HTTP/1.1 isteğiyle başlar; istemci `Upgrade: websocket` ve `Connection: Upgrade` başlıklarıyla rastgele bir `Sec-WebSocket-Key` gönderir, sunucu `101 Switching Protocols` ve bu anahtardan türettiği `Sec-WebSocket-Accept` ile cevap verir. Bundan sonra aynı TCP bağlantısı HTTP olmaktan çıkar ve iki tarafın da istediği an mesaj gönderebildiği **full-duplex**, kalıcı bir kanala dönüşür; mesajlar küçük başlıklı frame'lerle taşınır, her mesaj için istek-yanıt döngüsü ve tekrarlanan HTTP başlıkları yoktur. HTTP'nin sağladığı birçok şey burada uygulamaya kalır; kopan bağlantıyı yeniden kurmak, mesajın ulaştığını onaylamak, ölçeklerken bağlantının hangi sunucu örneğinde olduğunu bilmek gibi. WebSocket CORS'a tabi değildir ve tarayıcı, SameSite kurallarının izin verdiği cookie'leri el sıkışmaya ekler; bu yüzden sunucu `Origin` başlığını kontrol etmezse başka bir site kullanıcının oturumuyla bağlantı açabilir (cross-site WebSocket hijacking). Yanıtı akış hâlinde almak yetiyorsa SSE, sık ve iki yönlü mesajlaşma, örneğin sohbet, çok oyunculu oyun ya da ortak düzenleme gerekiyorsa WebSocket seçilir.",
+      "keyConcepts": [
+        {
+          "id": "upgrade",
+          "label": "HTTP Upgrade ile başlar, 101 ile geçilir",
+          "aliases": [
+            "upgrade",
+            "101",
+            "switching protocols",
+            "sec-websocket-key",
+            "sec-websocket-accept",
+            "el sıkışma"
+          ],
+          "anchors": [
+            "WebSocket HTTP Upgrade isteğiyle başlar, sunucu 101 Switching Protocols ile cevap verir."
+          ]
+        },
+        {
+          "id": "full-duplex",
+          "label": "Full-duplex, iki taraf da istediği an gönderir",
+          "aliases": [
+            "full-duplex",
+            "full duplex",
+            "çift yönlü",
+            "iki yönlü",
+            "bidirectional",
+            "iki taraf da"
+          ],
+          "anchors": [
+            "Bağlantı iki tarafın da istediği an mesaj gönderebildiği full-duplex bir kanaldır."
+          ]
+        },
+        {
+          "id": "kalici-kanal",
+          "label": "Kalıcı bağlantı, istek-yanıt döngüsü yok",
+          "aliases": [
+            "kalıcı",
+            "sürekli açık",
+            "açık kalır",
+            "persistent",
+            "istek-cevap",
+            "istek-yanıt döngüsü"
+          ],
+          "anchors": [
+            "Bağlantı açık kalır; mesajlar frame'lerle gider, her mesaj için istek-yanıt döngüsü yoktur."
+          ]
+        },
+        {
+          "id": "uygulamaya-kalir",
+          "label": "Yeniden bağlanma, onay ve ölçekleme uygulamaya kalır",
+          "aliases": [
+            "yeniden bağlan",
+            "reconnect",
+            "ping",
+            "heartbeat",
+            "hangi sunucu",
+            "sticky"
+          ],
+          "anchors": [
+            "Kopan bağlantıyı yeniden kurmak ve ölçeklerken bağlantının yerini bilmek uygulamaya kalır."
+          ]
+        },
+        {
+          "id": "origin-kontrol",
+          "label": "CORS yok; sunucu Origin'i kontrol etmeli",
+          "aliases": [
+            "origin kontrol",
+            "origin başlığını kontrol",
+            "hijacking",
+            "cswsh",
+            "cors'a tabi değil",
+            "cors yok"
+          ],
+          "anchors": [
+            "WebSocket CORS'a tabi değildir; sunucu Origin başlığını kontrol etmezse başka site bağlantı açabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir WebSocket sunucusunu birden fazla örneğe ölçeklerken bir kullanıcıya giden mesaj doğru örneğe nasıl ulaştırılır?"
+      ],
+      "source": "Kendi derleme — RFC 6455 §1.3 Opening Handshake, §4, §10.2 Origin Considerations; MDN: The WebSocket API"
     }
   ]
 }
