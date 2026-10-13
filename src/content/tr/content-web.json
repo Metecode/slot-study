@@ -1776,6 +1776,624 @@
         "Bir API'nin Richardson olgunluk modelinde hangi seviyede olduğunu nasıl anlarsın?"
       ],
       "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.5 Uniform Interface; Martin Fowler, Richardson Maturity Model (2010)"
+    },
+    {
+      "id": "web-tcp-vs-udp",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 1,
+      "prompt": "TCP ile UDP arasındaki fark nedir? Hangi durumlarda UDP tercih edilir?",
+      "modelAnswer": "TCP bağlantı yönelimlidir; veri göndermeden önce el sıkışmayla bağlantı kurar, kaybolan paketleri yeniden gönderir ve baytları gönderildiği **sırayla** teslim eder. Ayrıca akış kontrolüyle alıcıyı, tıkanıklık kontrolüyle ağı boğmamaya çalışır; bunun bedeli ek gecikme ve başlık yüküdür. UDP ise bağlantısızdır; her datagram bağımsız gider, teslim, sıra ya da yeniden gönderme garantisi yoktur ve uygulama bunlara ihtiyaç duyarsa kendisi sağlar. Bu yüzden geç gelen verinin işe yaramadığı canlı ses, görüntülü görüşme ve oyunlarda, tek paketlik sorgu-cevaplarda (DNS) ve kendi güvenilirlik katmanını kuran QUIC gibi protokollerde UDP tercih edilir.",
+      "keyConcepts": [
+        {
+          "id": "baglanti-yonelimli",
+          "label": "TCP bağlantı yönelimlidir",
+          "aliases": [
+            "bağlantı yönelimli",
+            "bağlantı odaklı",
+            "connection-oriented",
+            "connection oriented",
+            "handshake",
+            "bağlantı kur"
+          ],
+          "anchors": [
+            "TCP veri göndermeden önce el sıkışmayla bağlantı kurar."
+          ]
+        },
+        {
+          "id": "guvenilir-sirali",
+          "label": "TCP kaybı yeniden gönderir ve sırayla teslim eder",
+          "aliases": [
+            "güvenilir",
+            "reliable",
+            "sıralı",
+            "sırayla",
+            "yeniden gönder",
+            "retransmi"
+          ],
+          "anchors": [
+            "TCP kaybolan paketleri yeniden gönderir ve baytları sırayla teslim eder."
+          ]
+        },
+        {
+          "id": "akis-tikaniklik",
+          "label": "Akış ve tıkanıklık kontrolü",
+          "aliases": [
+            "akış kontrol",
+            "flow control",
+            "tıkanıklık",
+            "congestion"
+          ],
+          "anchors": [
+            "TCP akış kontrolüyle alıcıyı, tıkanıklık kontrolüyle ağı korur."
+          ]
+        },
+        {
+          "id": "baglantisiz",
+          "label": "UDP bağlantısızdır, garanti vermez",
+          "aliases": [
+            "bağlantısız",
+            "connectionless",
+            "datagram",
+            "garanti yok",
+            "garantisi yok",
+            "garanti etmez"
+          ],
+          "anchors": [
+            "UDP bağlantısızdır; teslim, sıra ya da yeniden gönderme garantisi yoktur."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Gerçek zamanlı ses-görüntü, oyun, DNS, QUIC",
+          "aliases": [
+            "canlı yayın",
+            "canlı ses",
+            "görüntülü",
+            "video",
+            "oyunlar",
+            "gaming"
+          ],
+          "anchors": [
+            "Geç gelen verinin işe yaramadığı canlı ses, video ve oyunlarda UDP tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "UDP üzerinde çalışan bir uygulama paket kaybını ve sırayı nasıl ele alabilir?"
+      ],
+      "source": "Kendi derleme — RFC 9293 (TCP); RFC 768 (UDP)"
+    },
+    {
+      "id": "web-tcp-handshake",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 1,
+      "prompt": "TCP three-way handshake nasıl işler? Neden gereklidir?",
+      "modelAnswer": "İstemci `SYN` bayraklı bir segmentle kendi başlangıç sıra numarasını gönderir, sunucu `SYN-ACK` ile hem bunu onaylar hem kendi başlangıç sıra numarasını bildirir, istemci de son `ACK` ile sunucunun numarasını onaylar. Böylece iki taraf da karşısındakinin hem gönderebildiğini hem alabildiğini doğrular ve sıra numaralarında anlaşır; TCP'nin sıralı teslimi ve kayıp tespiti bu numaralara dayanır. Başlangıç sıra numaraları tahmin edilemeyecek şekilde seçilir; böylece eski bir bağlantıdan kalan paketler yeni bağlantıya karışmaz ve dışarıdan biri numarayı tahmin edip araya sahte segment sokamaz. Bedeli, ilk veri gönderilmeden önce bir tam gidiş-dönüş (1 RTT) beklemektir; HTTPS'te buna TLS el sıkışması da eklenir, keep-alive ve HTTP/3'ün kullandığı QUIC bu maliyeti azaltmak için vardır.",
+      "keyConcepts": [
+        {
+          "id": "syn-ack",
+          "label": "SYN, SYN-ACK, ACK",
+          "aliases": [
+            "syn-ack",
+            "syn ack",
+            "synack",
+            "syn/ack"
+          ],
+          "anchors": [
+            "İstemci SYN gönderir, sunucu SYN-ACK ile cevap verir, istemci ACK ile tamamlar."
+          ]
+        },
+        {
+          "id": "sira-numarasi",
+          "label": "Başlangıç sıra numaralarında anlaşılır",
+          "aliases": [
+            "sıra numara",
+            "sequence number",
+            "sequence numara",
+            "senkron",
+            "numaralarında anlaş"
+          ],
+          "anchors": [
+            "İki taraf başlangıç sıra numaralarını birbirine bildirip onaylar."
+          ]
+        },
+        {
+          "id": "iki-yonlu",
+          "label": "İki taraf da gönderip alabildiğini doğrular",
+          "aliases": [
+            "iki yönlü",
+            "iki taraf",
+            "hem gönder",
+            "çift yönlü",
+            "karşı taraf",
+            "alabildiğ"
+          ],
+          "anchors": [
+            "El sıkışmayla iki taraf da karşısındakinin hem gönderebildiğini hem alabildiğini doğrular."
+          ]
+        },
+        {
+          "id": "tahmin-edilemez",
+          "label": "Numaralar tahmin edilemez; eski ve sahte segment karışmaz",
+          "aliases": [
+            "rastgele",
+            "random",
+            "tahmin edile",
+            "eski paket",
+            "eski bağlantı",
+            "sahte segment"
+          ],
+          "anchors": [
+            "Başlangıç numaraları tahmin edilemez seçilir; eski paketler ve sahte segmentler bağlantıya karışmaz."
+          ]
+        },
+        {
+          "id": "rtt-maliyeti",
+          "label": "Veri öncesi bir gidiş-dönüş gecikmesi",
+          "aliases": [
+            "gidiş-dönüş",
+            "gidiş dönüş",
+            "round trip",
+            "round-trip",
+            "1 rtt",
+            "gecikme"
+          ],
+          "anchors": [
+            "El sıkışma ilk veriden önce bir tam gidiş-dönüş gecikmesi ekler."
+          ]
+        }
+      ],
+      "followUps": [
+        "SYN flood saldırısı nasıl çalışır, SYN cookie'leri bunu nasıl hafifletir?"
+      ],
+      "source": "Kendi derleme — RFC 9293 §3.4 Sequence Numbers, §3.5 Establishing a Connection; RFC 6528"
+    },
+    {
+      "id": "web-dns-resolution",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 2,
+      "prompt": "DNS çözümleme nasıl işler? Recursive resolver ile authoritative sunucunun rolü nedir?",
+      "modelAnswer": "Tarayıcı bir alan adının IP adresini önce kendi önbelleğinde, sonra işletim sisteminin önbelleğinde ve `hosts` dosyasında arar; bulamazsa sorguyu yapılandırılmış **recursive resolver**'a, genellikle internet sağlayıcısının ya da `1.1.1.1` gibi genel bir çözümleyicinin sunucusuna gönderir. Resolver cevabı bilmiyorsa zinciri iterative sorgularla dolaşır; önce kök sunuculara sorup `.com` gibi TLD sunucularının adresini alır, TLD sunucusu alan adının yetkili sunucularını söyler, yetkili (authoritative) sunucu da `A` (IPv4) ya da `AAAA` (IPv6) kaydını verir. Authoritative sunucu alan adının kayıtlarının asıl kaynağıdır; resolver ise istemci adına bu yolculuğu yapıp sonucu önbelleğe alan aracıdır. Her kayıt bir **TTL** taşır ve bu süre boyunca yol üzerindeki önbelleklerde tutulur; bu yüzden DNS değişiklikleri hemen yayılmaz, eski IP TTL dolana kadar görülebilir.",
+      "keyConcepts": [
+        {
+          "id": "yerel-onbellek",
+          "label": "Önce tarayıcı ve işletim sistemi önbelleği",
+          "aliases": [
+            "tarayıcı önbelle",
+            "işletim sistemi",
+            "os önbelle",
+            "hosts",
+            "browser cache"
+          ],
+          "anchors": [
+            "Tarayıcı önce kendi önbelleğine, sonra işletim sisteminin önbelleğine ve hosts dosyasına bakar."
+          ]
+        },
+        {
+          "id": "kok-tld",
+          "label": "Kök → TLD → yetkili sunucu zinciri",
+          "aliases": [
+            "kök sunucu",
+            "root server",
+            "root dns",
+            "tld sunucu",
+            "top-level",
+            ".com"
+          ],
+          "anchors": [
+            "Resolver önce kök sunuculara, sonra TLD sunucusuna, en son yetkili sunucuya sorar."
+          ]
+        },
+        {
+          "id": "istemci-adina",
+          "label": "Resolver istemci adına iterative sorgu yapar",
+          "aliases": [
+            "iterative",
+            "yinelemeli",
+            "istemci adına",
+            "adına sorar",
+            "zinciri dolaş",
+            "resolver'a sor"
+          ],
+          "anchors": [
+            "Recursive resolver istemci adına zinciri iterative sorgularla dolaşır ve sonucu önbelleğe alır."
+          ]
+        },
+        {
+          "id": "kayit",
+          "label": "Yetkili sunucu A/AAAA kaydını verir, asıl kaynaktır",
+          "aliases": [
+            "a kaydı",
+            "aaaa",
+            "a record",
+            "asıl kaynak",
+            "ipv4",
+            "ipv6"
+          ],
+          "anchors": [
+            "Authoritative sunucu kayıtların asıl kaynağıdır ve A ya da AAAA kaydını döner."
+          ]
+        },
+        {
+          "id": "ttl",
+          "label": "TTL boyunca önbellek; değişiklik geç yayılır",
+          "aliases": [
+            "time to live",
+            "time-to-live",
+            "ttl süre",
+            "ttl dol",
+            "yayılma",
+            "propagation"
+          ],
+          "anchors": [
+            "Kayıtlar TTL boyunca önbellekte kalır, bu yüzden DNS değişiklikleri hemen yayılmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "DNS over HTTPS (DoH) neyi çözer, neyi değiştirmez?"
+      ],
+      "source": "Kendi derleme — RFC 1034 §2.4, §5.3.1; RFC 1035; RFC 3596 (AAAA)"
+    },
+    {
+      "id": "web-url-to-page",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 2,
+      "prompt": "Tarayıcının adres çubuğuna bir URL yazıp Enter'a basınca sırasıyla neler olur?",
+      "modelAnswer": "Tarayıcı önce girileni ayrıştırır; URL değilse arama motoruna gönderir, alan adı HSTS listesindeyse `http`'yi istek çıkmadan `https`'e çevirir. Sonra sırasıyla DNS ile alan adının IP adresini bulur, sunucuyla TCP bağlantısı ve üstüne TLS el sıkışması kurar (HTTP/3'te ikisi QUIC ile birlikte yapılır) ve HTTP isteğini gönderir; yanıt bir yönlendirmeyse bu adımlar yeni adres için tekrarlanır. HTML gelmeye başladığında tarayıcı onu indirme bitmeden ayrıştırıp **DOM**'u kurar, karşılaştığı CSS, JavaScript ve görseller için ayrı istekler başlatır; CSS'ten **CSSOM** oluşur, `async` ya da `defer` taşımayan klasik bir `<script>` ise ayrıştırmayı kendisi indirilip çalışana kadar durdurur. DOM ve CSSOM birleşip render tree'yi oluşturur, ardından **layout** her öğenin konumunu ve boyutunu hesaplar, **paint** pikselleri çizer ve katmanlar ekranda birleştirilir. Bu adımların her biri önbelleklerle kısalabilir; DNS sonucu, açık bir bağlantı ya da önbellekteki bir yanıt varsa ilgili adım hiç yaşanmaz.",
+      "keyConcepts": [
+        {
+          "id": "dns",
+          "label": "Alan adı IP adresine çözülür",
+          "aliases": [
+            "dns sorgu",
+            "dns çözümle",
+            "dns ile",
+            "dns'e",
+            "dns'ten",
+            "alan adı çözümle"
+          ],
+          "anchors": [
+            "Tarayıcı önce DNS ile alan adının IP adresini bulur."
+          ]
+        },
+        {
+          "id": "baglanti",
+          "label": "TCP ve TLS ile bağlantı kurulur",
+          "aliases": [
+            "tcp bağlantı",
+            "tcp handshake",
+            "tls handshake",
+            "tls el sıkış",
+            "bağlantı kurulur",
+            "three-way"
+          ],
+          "anchors": [
+            "Sunucuyla TCP bağlantısı ve üstüne TLS el sıkışması kurulur."
+          ]
+        },
+        {
+          "id": "istek-yanit",
+          "label": "HTTP isteği gider, yanıt (gerekirse yönlendirme) gelir",
+          "aliases": [
+            "isteğini gönder",
+            "isteği gönder",
+            "istek gönder",
+            "get isteği",
+            "http request",
+            "yönlendirme"
+          ],
+          "anchors": [
+            "Bağlantı kurulunca HTTP isteği gönderilir, yanıt yönlendirmeyse adımlar tekrarlanır."
+          ]
+        },
+        {
+          "id": "dom-cssom",
+          "label": "HTML ayrıştırılır, DOM ve CSSOM kurulur",
+          "aliases": [
+            "dom ağacı",
+            "dom tree",
+            "dom'u",
+            "dom oluş",
+            "cssom",
+            "ayrıştır"
+          ],
+          "anchors": [
+            "HTML ayrıştırılıp DOM, CSS'ten CSSOM kurulur."
+          ]
+        },
+        {
+          "id": "layout-paint",
+          "label": "Render tree, layout ve paint",
+          "aliases": [
+            "render tree",
+            "render ağacı",
+            "layout",
+            "paint",
+            "ekrana çiz",
+            "render ed"
+          ],
+          "anchors": [
+            "DOM ve CSSOM render tree'yi oluşturur, ardından layout ve paint ile sayfa çizilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir <script> etiketine async ya da defer eklemek bu sırayı nasıl değiştirir?"
+      ],
+      "source": "Kendi derleme — HTML Living Standard: Parsing HTML documents; MDN: How browsers work; RFC 6797 §8.3"
+    },
+    {
+      "id": "web-http11-hol",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Sürümleri",
+      "difficulty": 2,
+      "prompt": "HTTP/1.1'de keep-alive nedir? Head-of-line blocking neden bir sorundur?",
+      "modelAnswer": "HTTP/1.1'de bağlantılar varsayılan olarak **kalıcıdır**; bir yanıt bittiğinde TCP bağlantısı kapanmaz, sonraki istek aynı bağlantıdan gider ve her istek için yeni TCP ve TLS el sıkışması ödenmez. Ama bir bağlantıda aynı anda yalnızca bir istek-yanıt yürüyebilir; yanıtlar istek sırasıyla ve bütün hâlinde geldiği için yavaş bir yanıt arkasındaki her isteği bekletir, buna **uygulama katmanında** head-of-line blocking denir. Pipelining istekleri yanıt beklemeden arka arkaya göndermeye izin verse de yanıtlar yine sırayla dönmek zorunda olduğundan sorunu çözmedi ve tarayıcılarda varsayılan olarak kapalıdır. Tarayıcılar bunu aynı host'a genellikle 6 paralel bağlantı açarak hafifletir; geliştiriciler de domain sharding, dosya birleştirme ve sprite gibi geçici çözümlere başvurdu. HTTP/2 bu sorunu tek bağlantıda multiplexing ile çözmek için geldi.",
+      "keyConcepts": [
+        {
+          "id": "kalici",
+          "label": "Bağlantı kalıcıdır, sonraki istekler aynı bağlantıdan gider",
+          "aliases": [
+            "kalıcı",
+            "persistent",
+            "yeniden kullan",
+            "açık kalır",
+            "aynı tcp bağlantı",
+            "birden fazla istek için"
+          ],
+          "anchors": [
+            "HTTP/1.1'de bağlantı yanıttan sonra kapanmaz, sonraki istekler aynı bağlantıyı kullanır."
+          ]
+        },
+        {
+          "id": "arkadakiler-bekler",
+          "label": "Yavaş yanıt arkasındaki istekleri bekletir",
+          "aliases": [
+            "yavaş yanıt",
+            "arkasındaki",
+            "arkadaki",
+            "öndeki",
+            "önündeki",
+            "sıradaki"
+          ],
+          "anchors": [
+            "Bir bağlantıda aynı anda tek istek yürür; yavaş bir yanıt arkasındaki istekleri bekletir."
+          ]
+        },
+        {
+          "id": "uygulama-katmani",
+          "label": "Blokaj uygulama katmanındadır",
+          "aliases": [
+            "uygulama katman",
+            "application layer",
+            "http katman",
+            "http seviye"
+          ],
+          "anchors": [
+            "HTTP/1.1'deki head-of-line blocking uygulama (HTTP) katmanındadır."
+          ]
+        },
+        {
+          "id": "pipelining",
+          "label": "Pipelining çözmedi, tarayıcılarda kapalı",
+          "aliases": [
+            "pipelining",
+            "pipeline",
+            "boru hattı"
+          ],
+          "anchors": [
+            "Pipelining yanıtlar yine sırayla döndüğü için sorunu çözmedi ve tarayıcılarda kapalıdır."
+          ]
+        },
+        {
+          "id": "paralel-baglanti",
+          "label": "Host başına birkaç paralel bağlantı ve geçici çözümler",
+          "aliases": [
+            "paralel bağlantı",
+            "6 bağlantı",
+            "altı bağlantı",
+            "domain sharding",
+            "sprite",
+            "birleştir"
+          ],
+          "anchors": [
+            "Tarayıcılar host başına 6 paralel bağlantı açar; domain sharding ve dosya birleştirme geçici çözümlerdir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tarayıcılar aynı host'a açtıkları bağlantı sayısını neden sınırlar?"
+      ],
+      "source": "Kendi derleme — RFC 9112 §9.3 Persistence, §9.3.2 Pipelining; MDN: Connection management in HTTP/1.x"
+    },
+    {
+      "id": "web-http2",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Sürümleri",
+      "difficulty": 2,
+      "prompt": "HTTP/2'deki multiplexing ve HPACK neyi çözer? Head-of-line blocking HTTP/2'de tamamen ortadan kalkar mı?",
+      "modelAnswer": "HTTP/2 mesajları ikili (binary) **frame**'lere böler ve her istek-yanıt çiftine bir **stream** kimliği verir; birçok stream'in frame'leri tek TCP bağlantısında iç içe akar, böylece yavaş bir yanıt diğerlerini bekletmez ve HTTP/1.1'in uygulama katmanındaki blokajı çözülür. HPACK başlıkları sıkıştırır; sık kullanılan başlıklar statik bir tablodan, aynı bağlantıda daha önce gönderilenler dinamik bir tablodan tek bir indeksle gönderilir, böylece her istekte tekrarlanan cookie ve user-agent gibi başlıkların yükü düşer. Ama tüm stream'ler tek bir TCP bağlantısını paylaştığı için sorun bir alt katmana iner; TCP bayt akışını sırayla teslim eder ve kaybolan tek bir paket yeniden gönderilene kadar ondan sonraki her şeyi, başka stream'lere ait olsa bile, bekletir. Paket kaybının yüksek olduğu mobil ağlarda HTTP/2 bu yüzden birkaç paralel HTTP/1.1 bağlantısından yavaş kalabilir. Bu TCP katmanındaki blokajı HTTP/3, QUIC ile çözer.",
+      "keyConcepts": [
+        {
+          "id": "stream-frame",
+          "label": "İkili frame'ler ve stream'ler",
+          "aliases": [
+            "stream",
+            "frame",
+            "binary",
+            "ikili",
+            "iç içe",
+            "interleav"
+          ],
+          "anchors": [
+            "HTTP/2 mesajları ikili frame'lere böler, her istek-yanıt bir stream olur."
+          ]
+        },
+        {
+          "id": "tek-baglanti",
+          "label": "Tek TCP bağlantısında eşzamanlı istekler",
+          "aliases": [
+            "tek bağlantı",
+            "tek bir bağlantı",
+            "tek tcp",
+            "tek bir tcp",
+            "aynı anda",
+            "eşzamanlı"
+          ],
+          "anchors": [
+            "Birçok istek tek TCP bağlantısında eşzamanlı yürür, yavaş yanıt diğerlerini bekletmez."
+          ]
+        },
+        {
+          "id": "hpack",
+          "label": "HPACK başlıkları tabloyla sıkıştırır",
+          "aliases": [
+            "sıkıştır",
+            "header compression",
+            "statik tablo",
+            "dinamik tablo",
+            "indeks",
+            "huffman"
+          ],
+          "anchors": [
+            "HPACK tekrarlanan başlıkları statik ve dinamik tablodaki indekslerle sıkıştırır."
+          ]
+        },
+        {
+          "id": "tcp-hol",
+          "label": "Blokaj TCP katmanına iner; kayıp paket tüm stream'leri bekletir",
+          "aliases": [
+            "tcp katman",
+            "tcp seviye",
+            "paket kayb",
+            "kayıp paket",
+            "packet loss",
+            "tcp'de kal"
+          ],
+          "anchors": [
+            "Tüm stream'ler tek TCP bağlantısında olduğu için kaybolan bir paket hepsini bekletir."
+          ]
+        },
+        {
+          "id": "kayipli-ag",
+          "label": "Kayıplı ağda HTTP/1.1'den yavaş kalabilir",
+          "aliases": [
+            "mobil ağ",
+            "kayıplı ağ",
+            "yüksek kayıp",
+            "daha yavaş",
+            "lossy",
+            "paket kaybı yüksek"
+          ],
+          "anchors": [
+            "Paket kaybı yüksek ağlarda HTTP/2 paralel HTTP/1.1 bağlantılarından yavaş kalabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tarayıcılar HTTP/2'yi neden yalnızca TLS üzerinden kullanır?"
+      ],
+      "source": "Kendi derleme — RFC 9113 §1, §5 Streams and Multiplexing; RFC 7541 (HPACK)"
+    },
+    {
+      "id": "web-http3-quic",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Sürümleri",
+      "difficulty": 3,
+      "prompt": "HTTP/3 neden TCP yerine QUIC kullanır?",
+      "modelAnswer": "QUIC, UDP üzerinde çalışan ve güvenilir teslimi, tıkanıklık kontrolünü ve şifrelemeyi kendisi sağlayan bir taşıma protokolüdür; TCP'den en önemli farkı stream'leri **taşıma katmanında** tanımasıdır. Kaybolan bir paket yalnızca kendi stream'ini bekletir, diğer stream'lerin verisi uygulamaya teslim edilmeye devam eder; HTTP/2'de TCP katmanında kalan head-of-line blocking böylece çözülür. TLS 1.3 QUIC'in içine gömülüdür, taşıma ve şifreleme el sıkışması birlikte yapılır; yeni bir bağlantı 1-RTT'de, daha önce görüşülmüş bir sunucuya ise 0-RTT ile kurulabilir. Bağlantı IP ve port yerine **connection ID** ile tanımlandığı için telefon Wi-Fi'dan mobil veriye geçtiğinde bağlantı kopmadan sürebilir (connection migration). Bazı ağlar UDP'yi engellediği için tarayıcı HTTP/3 desteğini `Alt-Svc` başlığından ya da DNS'teki HTTPS kaydından öğrenip dener, çalışmazsa HTTP/2'ye döner.",
+      "keyConcepts": [
+        {
+          "id": "udp-uzerinde",
+          "label": "QUIC UDP üzerinde, güvenilirliği kendisi sağlar",
+          "aliases": [
+            "udp üzerinde",
+            "udp tabanlı",
+            "udp üstünde",
+            "over udp",
+            "udp kullan"
+          ],
+          "anchors": [
+            "QUIC UDP üzerinde çalışır, güvenilir teslimi ve tıkanıklık kontrolünü kendisi sağlar."
+          ]
+        },
+        {
+          "id": "bagimsiz-stream",
+          "label": "Stream'ler taşıma katmanında bağımsız",
+          "aliases": [
+            "bağımsız",
+            "kendi stream",
+            "yalnızca o stream",
+            "sadece o stream",
+            "taşıma katman",
+            "diğer stream"
+          ],
+          "anchors": [
+            "QUIC'te kaybolan paket yalnızca kendi stream'ini bekletir, diğer stream'ler etkilenmez."
+          ]
+        },
+        {
+          "id": "tls-gomulu",
+          "label": "TLS 1.3 gömülü, 1-RTT ve 0-RTT",
+          "aliases": [
+            "tls 1.3",
+            "gömülü",
+            "1-rtt",
+            "0-rtt",
+            "birlikte el sıkış",
+            "tek el sıkışma"
+          ],
+          "anchors": [
+            "TLS 1.3 QUIC'e gömülüdür; bağlantı 1-RTT'de, tekrar görüşmede 0-RTT ile kurulur."
+          ]
+        },
+        {
+          "id": "migration",
+          "label": "Connection ID ile ağ değişince bağlantı sürer",
+          "aliases": [
+            "connection id",
+            "bağlantı kimliği",
+            "connection migration",
+            "wi-fi",
+            "ağ değiş",
+            "ip değiş"
+          ],
+          "anchors": [
+            "Bağlantı connection ID ile tanımlandığı için ağ değişince kopmaz."
+          ]
+        },
+        {
+          "id": "kesif-geri-donus",
+          "label": "Alt-Svc ile keşif, UDP engelliyse HTTP/2'ye dönüş",
+          "aliases": [
+            "alt-svc",
+            "https kaydı",
+            "https record",
+            "udp engel",
+            "fallback",
+            "http/2'ye dön"
+          ],
+          "anchors": [
+            "Tarayıcı HTTP/3'ü Alt-Svc ya da HTTPS kaydıyla öğrenir, UDP engelliyse HTTP/2'ye döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "HTTP/3 neden HPACK yerine QPACK kullanır?"
+      ],
+      "source": "Kendi derleme — RFC 9000 (QUIC) §9 Connection Migration; RFC 9001; RFC 9114; RFC 7838 (Alt-Svc); RFC 9460"
     }
   ]
 }
