@@ -7,6 +7,7 @@ import java from "./tr/content-java.json";
 import javascript from "./tr/content-javascript.json";
 import react from "./tr/content-react.json";
 import sql from "./tr/content-sql.json";
+import web from "./tr/content-web.json";
 
 /* ------------------------------------------------------------------ */
 /* İçerik — repo'dan gelir, her dosya parseQuestionFile ile doğrulanır. */
@@ -22,6 +23,7 @@ const FILES: ReadonlyArray<readonly [string, unknown]> = [
   ["tr/content-javascript.json", javascript],
   ["tr/content-react.json", react],
   ["tr/content-sql.json", sql],
+  ["tr/content-web.json", web],
 ];
 
 function loadQuestions(): Question[] {

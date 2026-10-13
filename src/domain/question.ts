@@ -9,6 +9,7 @@ export const CATEGORIES = [
   "javascript",
   "sql",
   "react",
+  "web",
   "koleksiyonlar",
   "algoritma",
   "tasarim-kaliplari",

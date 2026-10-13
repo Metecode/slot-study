@@ -1,0 +1,3631 @@
+{
+  "lang": "tr",
+  "category": "web",
+  "questions": [
+    {
+      "id": "web-safe-idempotent",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 2,
+      "prompt": "HTTP'de safe ve idempotent metot ne demektir? Hangi metotlar hangisine girer?",
+      "modelAnswer": "**Safe** metot sunucudaki durumu değiştirmeyi amaçlamayan, esasen salt okuma yapan metottur; `GET`, `HEAD`, `OPTIONS` ve `TRACE` safe'tir. **Idempotent** metotta aynı istek kaç kez gönderilirse gönderilsin sunucuda amaçlanan etki aynıdır; safe metotların hepsi ile `PUT` ve `DELETE` idempotent'tir. `POST` ve `PATCH` ikisine de girmez, çünkü aynı `POST` iki kez gönderilince iki kayıt oluşabilir. Bu ayrım yeniden denemeyi belirler; bağlantı yanıt gelmeden koparsa istemci ya da proxy idempotent bir isteği güvenle tekrarlayabilir ama `POST`'u kendiliğinden tekrarlamamalıdır. Tanım amaçlanan etkiyle ilgilidir; `GET` erişim logu yazabilir, `DELETE`'in ikinci çağrısı `404` dönebilir, önemli olan kaynağın son durumunun aynı kalmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "salt-okuma",
+          "label": "Safe: sunucu durumunu değiştirmez",
+          "aliases": [
+            "salt okuma",
+            "read-only",
+            "sadece okur",
+            "yalnızca okur",
+            "değiştirmez",
+            "yan etkisiz"
+          ],
+          "anchors": [
+            "Safe metot sunucudaki durumu değiştirmeyi amaçlamaz, esasen salt okuma yapar."
+          ]
+        },
+        {
+          "id": "ayni-etki",
+          "label": "Idempotent: tekrarı aynı etkiyi bırakır",
+          "aliases": [
+            "aynı etki",
+            "aynı sonuç",
+            "sonuç aynı",
+            "kaç kez",
+            "kaç kere",
+            "birden fazla kez"
+          ],
+          "anchors": [
+            "Idempotent metotta aynı isteği bir ya da birçok kez göndermenin etkisi aynıdır."
+          ]
+        },
+        {
+          "id": "post-degil",
+          "label": "PUT ve DELETE idempotent, POST ve PATCH değil",
+          "aliases": [
+            "delete",
+            "iki kayıt",
+            "çift kayıt",
+            "duplicate",
+            "post değil",
+            "post ve patch"
+          ],
+          "anchors": [
+            "PUT ve DELETE idempotent'tir; POST ve PATCH değildir, POST tekrarı iki kayıt oluşturabilir."
+          ]
+        },
+        {
+          "id": "yeniden-deneme",
+          "label": "Ayrım yeniden denemeyi belirler",
+          "aliases": [
+            "yeniden dene",
+            "tekrar dene",
+            "retry",
+            "güvenle tekrarla",
+            "kendiliğinden tekrarla",
+            "otomatik tekrar"
+          ],
+          "anchors": [
+            "Bağlantı koparsa idempotent istek güvenle tekrarlanabilir, POST kendiliğinden tekrarlanmaz."
+          ]
+        },
+        {
+          "id": "amaclanan",
+          "label": "Tanım amaçlanan etkiyle ilgilidir",
+          "aliases": [
+            "amaçlanan",
+            "son durum",
+            "intended",
+            "erişim logu",
+            "log yazabilir"
+          ],
+          "anchors": [
+            "Tanım amaçlanan etkiyle ilgilidir; log yazmak ya da ikinci DELETE'in 404 dönmesi idempotentliği bozmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Ağ hatasından sonra bir POST isteğini güvenle tekrarlamak için ne yapılabilir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.2.1 Safe Methods, §9.2.2 Idempotent Methods"
+    },
+    {
+      "id": "web-get-vs-post",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 1,
+      "prompt": "GET ile POST arasındaki fark nedir?",
+      "modelAnswer": "`GET` bir kaynağın temsilini okumak içindir; safe ve idempotent'tir, parametreleri URL'deki query string'de taşır, bu yüzden yer imine eklenebilir, paylaşılabilir ve önbelleğe alınabilir. `POST` gövdedeki veriyi sunucunun işlemesi için gönderir; kayıt oluşturma, form gönderme ya da bir işlemi tetikleme gibi durum değiştiren işlerde kullanılır ve idempotent değildir. Bu yüzden tarayıcı `POST` sonucu olan bir sayfayı yenilerken formu yeniden göndermek için onay ister. `GET` isteğindeki gövdenin tanımlı bir anlamı yoktur ve bazı sunucular ya da proxy'ler onu reddeder ya da düşürür. Query string sunucu loglarına, tarayıcı geçmişine ve `Referer` başlığına düştüğü için parola ya da token gibi hassas veri `GET` parametresiyle gönderilmez; `POST` da kendi başına şifreleme sağlamaz, gizliliği HTTPS sağlar.",
+      "keyConcepts": [
+        {
+          "id": "okuma-gonderme",
+          "label": "GET okur, POST veriyi işlenmek üzere gönderir",
+          "aliases": [
+            "okuma",
+            "kayıt oluştur",
+            "form gönder",
+            "durum değiştir",
+            "veri al",
+            "veri gönder"
+          ],
+          "anchors": [
+            "GET kaynağı okur; POST gövdedeki veriyi sunucunun işlemesi için gönderir."
+          ]
+        },
+        {
+          "id": "url-govde",
+          "label": "GET parametresi URL'de, POST verisi gövdede",
+          "aliases": [
+            "query string",
+            "url'de",
+            "sorgu parametre",
+            "gövdede",
+            "body'de",
+            "request body"
+          ],
+          "anchors": [
+            "GET parametreleri URL'deki query string'de, POST verisi gövdede taşınır."
+          ]
+        },
+        {
+          "id": "idempotent",
+          "label": "GET safe ve idempotent, POST değil",
+          "aliases": [
+            "idempotent",
+            "safe metot",
+            "safe'tir",
+            "safe bir",
+            "yeniden gönder",
+            "tekrar gönder"
+          ],
+          "anchors": [
+            "GET safe ve idempotent'tir, POST idempotent değildir."
+          ]
+        },
+        {
+          "id": "onbellek",
+          "label": "GET önbelleğe alınır ve yer imine eklenir",
+          "aliases": [
+            "önbellek",
+            "cache",
+            "yer imi",
+            "bookmark",
+            "paylaşılabilir"
+          ],
+          "anchors": [
+            "GET yanıtı önbelleğe alınabilir, URL'si yer imine eklenip paylaşılabilir."
+          ]
+        },
+        {
+          "id": "hassas-veri",
+          "label": "Hassas veri URL'ye konmaz; gizliliği HTTPS sağlar",
+          "aliases": [
+            "loglar",
+            "geçmiş",
+            "history",
+            "referer",
+            "hassas",
+            "https"
+          ],
+          "anchors": [
+            "Query string loglara ve tarayıcı geçmişine düştüğü için hassas veri GET ile gönderilmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "GET isteğindeki URL'nin uzunluğu için HTTP'de bir sınır var mı?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.3.1 GET, §9.3.3 POST; MDN: HTTP request methods"
+    },
+    {
+      "id": "web-put-vs-patch",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 1,
+      "prompt": "PUT ile PATCH arasındaki fark nedir?",
+      "modelAnswer": "`PUT` gönderilen gövdeyi kaynağın **yeni ve tam hâli** olarak kabul eder ve hedefteki durumu onunla değiştirir; kaynak yoksa oluşturabilir, bu durumda `201 Created` döner. `PATCH` ise yalnızca yapılacak **değişiklikleri** anlatan bir patch belgesi gönderir; biçimi `Content-Type` belirler, yaygın olanlar alan alan birleştiren JSON Merge Patch (`application/merge-patch+json`) ve işlem listesi taşıyan JSON Patch'tir (`application/json-patch+json`). `PUT` idempotent'tir, aynı gövde kaç kez gelirse gelsin sonuç aynıdır; `PATCH` ise idempotent sayılmaz, çünkü \"listeye ekle\" ya da \"sayacı artır\" gibi bir işlem her tekrarda sonucu değiştirir. `PUT` ile bir alanı göndermeyi unutmak o alanı silmek ya da varsayılana döndürmek anlamına gelir; kısmi güncelleme için bu yüzden `PATCH` kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "tam-hal",
+          "label": "PUT kaynağın tam hâlini gönderir ve değiştirir",
+          "aliases": [
+            "tam hâl",
+            "tam hal",
+            "tamamını",
+            "replace",
+            "eksik alan",
+            "gönderilmeyen alan"
+          ],
+          "anchors": [
+            "PUT gövdeyi kaynağın yeni ve tam hâli olarak kabul eder, gönderilmeyen alan silinir."
+          ]
+        },
+        {
+          "id": "kismi",
+          "label": "PATCH yalnızca değişiklikleri taşır",
+          "aliases": [
+            "kısmi",
+            "partial",
+            "değişiklikleri",
+            "yalnızca değişen",
+            "sadece değişen"
+          ],
+          "anchors": [
+            "PATCH yalnızca yapılacak değişiklikleri taşıyan bir patch belgesi gönderir."
+          ]
+        },
+        {
+          "id": "idempotent",
+          "label": "PUT idempotent, PATCH sayılmaz",
+          "aliases": [
+            "idempotent",
+            "aynı sonuç",
+            "sayacı artır",
+            "listeye ekle"
+          ],
+          "anchors": [
+            "PUT idempotent'tir; PATCH idempotent sayılmaz, ekleme gibi işlemler tekrarda sonucu değiştirir."
+          ]
+        },
+        {
+          "id": "bicim",
+          "label": "Patch biçimleri: JSON Merge Patch, JSON Patch",
+          "aliases": [
+            "merge patch",
+            "merge-patch",
+            "json patch",
+            "json-patch",
+            "rfc 6902",
+            "rfc 7396"
+          ],
+          "anchors": [
+            "Yaygın patch biçimleri JSON Merge Patch ve JSON Patch'tir."
+          ]
+        },
+        {
+          "id": "olusturma",
+          "label": "PUT kaynak yoksa oluşturabilir (201)",
+          "aliases": [
+            "201",
+            "created",
+            "oluşturabilir",
+            "yoksa oluştur",
+            "upsert"
+          ],
+          "anchors": [
+            "PUT hedef kaynak yoksa onu oluşturabilir ve 201 Created döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir PATCH isteğini idempotent hâle getirmek için ne yapabilirsin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.3.4 PUT; RFC 5789 (PATCH); RFC 7396 (JSON Merge Patch); RFC 6902 (JSON Patch)"
+    },
+    {
+      "id": "web-head-options",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Metotları",
+      "difficulty": 1,
+      "prompt": "HEAD ve OPTIONS metotları ne işe yarar?",
+      "modelAnswer": "`HEAD`, `GET` ile aynı isteği yapar ama sunucu gövdeyi göndermez, yalnızca başlıkları döner; bir dosyanın boyutunu (`Content-Length`), değişip değişmediğini (`ETag`, `Last-Modified`) ya da bir linkin hâlâ çalışıp çalışmadığını gövdeyi indirmeden öğrenmek için kullanılır. `OPTIONS` hedef kaynağın hangi iletişim seçeneklerini desteklediğini sorar; sunucu desteklenen metotları `Allow` başlığında bildirebilir, istek hedefi `*` olursa soru belirli bir kaynak için değil sunucunun geneli içindir. Tarayıcıda en sık görüldüğü yer CORS preflight'tır; tarayıcı asıl istekten önce `OPTIONS` göndererek başka bir origin'e yapılacak isteğe izin verilip verilmediğini sorar. İkisi de safe ve idempotent'tir, sunucudaki durumu değiştirmez.",
+      "keyConcepts": [
+        {
+          "id": "govdesiz",
+          "label": "HEAD gövdesiz, yalnızca başlıklar",
+          "aliases": [
+            "gövdesiz",
+            "gövdeyi göndermez",
+            "body dönmez",
+            "body olmadan",
+            "sadece header",
+            "sadece başlık"
+          ],
+          "anchors": [
+            "HEAD GET ile aynıdır ama sunucu gövdeyi göndermez, yalnızca başlıkları döner."
+          ]
+        },
+        {
+          "id": "head-kullanim",
+          "label": "HEAD ile indirmeden boyut ve değişiklik kontrolü",
+          "aliases": [
+            "content-length",
+            "boyut",
+            "değişip değişmediğ",
+            "link kontrol",
+            "linkin",
+            "indirmeden"
+          ],
+          "anchors": [
+            "HEAD dosyanın boyutunu ya da değişip değişmediğini gövdeyi indirmeden öğrenmek için kullanılır."
+          ]
+        },
+        {
+          "id": "allow",
+          "label": "OPTIONS desteklenen metotları sorar (Allow)",
+          "aliases": [
+            "allow başlığ",
+            "allow header",
+            "desteklenen metot",
+            "hangi metot",
+            "iletişim seçenek",
+            "desteklediği"
+          ],
+          "anchors": [
+            "OPTIONS kaynağın desteklediği iletişim seçeneklerini sorar, sunucu Allow başlığıyla bildirir."
+          ]
+        },
+        {
+          "id": "preflight",
+          "label": "OPTIONS en sık CORS preflight'ta görülür",
+          "aliases": [
+            "preflight",
+            "cors",
+            "ön kontrol",
+            "ön istek",
+            "cross-origin"
+          ],
+          "anchors": [
+            "Tarayıcı CORS preflight'ta asıl istekten önce OPTIONS gönderir."
+          ]
+        },
+        {
+          "id": "safe",
+          "label": "İkisi de safe ve idempotent",
+          "aliases": [
+            "safe metot",
+            "safe'tir",
+            "safe ve",
+            "idempotent",
+            "durumu değiştirmez"
+          ],
+          "anchors": [
+            "HEAD ve OPTIONS safe ve idempotent'tir, sunucu durumunu değiştirmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucu HEAD yanıtında Content-Length göndermek zorunda mı?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.3.2 HEAD, §9.3.7 OPTIONS; MDN: OPTIONS"
+    },
+    {
+      "id": "web-status-classes",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 1,
+      "prompt": "HTTP durum kodu sınıfları nelerdir? 4xx ile 5xx ayrımı istemci için neden önemlidir?",
+      "modelAnswer": "Durum kodunun ilk rakamı sınıfını belirler; `1xx` bilgilendirme, `2xx` başarı, `3xx` yönlendirme, `4xx` istemci hatası, `5xx` sunucu hatasıdır. İstemci tanımadığı bir kodu sınıfının `x00` koduna eşdeğer sayar, yani bilinmeyen bir `4xx`'i `400` gibi işler. `4xx` sorunun istekte olduğunu söyler; `429` gibi birkaç istisna dışında aynı istek düzeltilmeden tekrarlanırsa sonuç değişmez. `5xx` ise sorunun sunucu tarafında olduğunu ve isteğin geçerli olabileceğini söyler; `502`, `503`, `504` gibi geçici durumlarda bekleyip yeniden denemek anlamlıdır. İzleme de bu ayrıma dayanır; `5xx` oranındaki artış sunucu tarafında bir arızaya işaret eder ve alarm üretir, `4xx` artışı ise çoğu zaman istemci ya da entegrasyon hatasına işaret eder.",
+      "keyConcepts": [
+        {
+          "id": "siniflar",
+          "label": "1xx bilgi, 2xx başarı, 3xx yönlendirme",
+          "aliases": [
+            "bilgilendirme",
+            "informational",
+            "başarı",
+            "success",
+            "yönlendirme",
+            "redirect"
+          ],
+          "anchors": [
+            "1xx bilgilendirme, 2xx başarı, 3xx yönlendirme sınıfıdır."
+          ]
+        },
+        {
+          "id": "istemci-hatasi",
+          "label": "4xx istemci hatası, istek düzeltilmeli",
+          "aliases": [
+            "istemci hata",
+            "client hata",
+            "client error",
+            "hatalı istek",
+            "isteği düzelt",
+            "hata istemcide"
+          ],
+          "anchors": [
+            "4xx istemci hatasıdır; istek düzeltilmeden tekrarlanırsa sonuç değişmez."
+          ]
+        },
+        {
+          "id": "sunucu-hatasi",
+          "label": "5xx sunucu hatası",
+          "aliases": [
+            "sunucu hata",
+            "server hata",
+            "server error",
+            "sunucu tarafında",
+            "server side",
+            "hata sunucuda"
+          ],
+          "anchors": [
+            "5xx sunucu hatasıdır; sorun sunucu tarafındadır, istek geçerli olabilir."
+          ]
+        },
+        {
+          "id": "yeniden-deneme",
+          "label": "Geçici 5xx'te yeniden denenebilir",
+          "aliases": [
+            "yeniden dene",
+            "tekrar dene",
+            "retry",
+            "bekleyip",
+            "geçici"
+          ],
+          "anchors": [
+            "Geçici 5xx durumlarında bekleyip yeniden denemek anlamlıdır, 4xx'te değil."
+          ]
+        },
+        {
+          "id": "izleme",
+          "label": "İzleme ve alarm 5xx oranına bakar",
+          "aliases": [
+            "izleme",
+            "monitoring",
+            "alarm",
+            "alert",
+            "hata oranı",
+            "metrik"
+          ],
+          "anchors": [
+            "5xx oranındaki artış sunucu arızası olarak alarm üretir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API doğrulama hatasında 200 dönüp gövdeye success: false yazarsa ne kaybeder?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15 Status Codes"
+    },
+    {
+      "id": "web-redirect-codes",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "301, 302, 307 ve 308 yönlendirme kodları arasındaki fark nedir?",
+      "modelAnswer": "`301 Moved Permanently` ve `308 Permanent Redirect` **kalıcıdır**; istemciler ve arama motorları yeni adresi kalıcı kabul eder ve bu yanıtlar varsayılan olarak önbelleğe alınabilir. `302 Found` ve `307 Temporary Redirect` **geçicidir**; istemci sonraki isteklerde yine eski adresi kullanmalıdır. Tarihsel nedenle tarayıcılar 301 ve 302'de POST'u GET'e çevirip gövdeyi düşürebilir, 307 ve 308 ise metodu ve gövdeyi **aynen korur**; form gönderimi ya da API çağrısı yönlendirilecekse bu yüzden 307 ya da 308 seçilir. POST sonrası kullanıcıyı sonuç sayfasına GET ile göndermek içinse bilerek `303 See Other` kullanılır; bu Post/Redirect/Get kalıbı sayfa yenilendiğinde formun yeniden gönderilmesini önler.",
+      "keyConcepts": [
+        {
+          "id": "kalici",
+          "label": "301 ve 308 kalıcı",
+          "aliases": [
+            "kalıcı",
+            "permanent",
+            "moved permanently",
+            "arama motoru"
+          ],
+          "anchors": [
+            "301 ve 308 kalıcı yönlendirmedir; istemci ve arama motorları yeni adresi kalıcı kabul eder."
+          ]
+        },
+        {
+          "id": "gecici",
+          "label": "302 ve 307 geçici",
+          "aliases": [
+            "geçici",
+            "temporary",
+            "eski adres",
+            "eski url"
+          ],
+          "anchors": [
+            "302 ve 307 geçici yönlendirmedir; istemci sonraki isteklerde eski adresi kullanır."
+          ]
+        },
+        {
+          "id": "metot-donusumu",
+          "label": "301 ve 302'de POST GET'e dönüşebilir",
+          "aliases": [
+            "get'e çevir",
+            "get'e dön",
+            "post'u get",
+            "metot değiş",
+            "metodu değiş",
+            "gövdeyi düş"
+          ],
+          "anchors": [
+            "Tarayıcılar tarihsel nedenle 301 ve 302'de POST'u GET'e çevirebilir."
+          ]
+        },
+        {
+          "id": "metot-korunur",
+          "label": "307 ve 308 metodu ve gövdeyi korur",
+          "aliases": [
+            "aynen korur",
+            "metodu korur",
+            "metot korunur",
+            "gövdeyi korur",
+            "metodu değiştirmez",
+            "method preserv"
+          ],
+          "anchors": [
+            "307 ve 308 istek metodunu ve gövdesini değiştirmeden korur."
+          ]
+        },
+        {
+          "id": "see-other",
+          "label": "POST sonrası GET için 303",
+          "aliases": [
+            "303",
+            "see other",
+            "post/redirect/get",
+            "post-redirect-get",
+            "redirect/get"
+          ],
+          "anchors": [
+            "POST sonrası sonuç sayfasına GET ile yönlendirmek için 303 See Other kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API'nin adresini kalıcı olarak taşırken POST yapan istemcilerin bozulmaması için hangi kodu seçersin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.4 Redirection 3xx"
+    },
+    {
+      "id": "web-400-vs-422",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "400 Bad Request ile 422 Unprocessable Content arasındaki fark nedir?",
+      "modelAnswer": "`400 Bad Request` sunucunun isteği istemci kaynaklı bir sorun yüzünden işlemediğini söyler; tipik örnek bozuk JSON, ayrıştırılamayan sözdizimi ya da geçersiz bir başlıktır. `422` ise sunucunun içerik türünü anladığını ve gövdenin sözdizimsel olarak doğru olduğunu, ama içindeki talimatları işleyemediğini söyler; JSON düzgün ayrışır ama `email` alanı geçersizdir ya da bitiş tarihi başlangıçtan öncedir. 422 aslında WebDAV için tanımlanmıştı, RFC 9110 onu genel HTTP'ye taşıdı ve adını Unprocessable Entity'den Unprocessable Content'e çevirdi. Pratikte birçok API doğrulama hatalarında da 400 döner; önemli olan bir API içinde tutarlı olmak ve hangi alanın neden reddedildiğini gövdede, örneğin RFC 9457 Problem Details biçiminde, makinenin okuyabileceği şekilde bildirmektir.",
+      "keyConcepts": [
+        {
+          "id": "sozdizimi",
+          "label": "400: istek bozuk, ayrıştırılamıyor",
+          "aliases": [
+            "sözdizimi",
+            "syntax",
+            "bozuk json",
+            "malformed",
+            "ayrıştırıla",
+            "parse edile"
+          ],
+          "anchors": [
+            "400 isteğin bozuk olduğunu, örneğin JSON'un ayrıştırılamadığını söyler."
+          ]
+        },
+        {
+          "id": "anlamsal",
+          "label": "422: sözdizimi doğru, içerik işlenemiyor",
+          "aliases": [
+            "anlamsal",
+            "semantic",
+            "doğrulama",
+            "validation",
+            "iş kuralı",
+            "geçersiz alan"
+          ],
+          "anchors": [
+            "422'de gövde sözdizimsel olarak doğrudur ama içeriği doğrulamadan geçmez."
+          ]
+        },
+        {
+          "id": "tutarlilik",
+          "label": "Birçok API ikisi için de 400 döner; tutarlılık önemli",
+          "aliases": [
+            "tutarlı",
+            "consistent",
+            "birçok api",
+            "çoğu api",
+            "ikisi de kullanıl"
+          ],
+          "anchors": [
+            "Birçok API doğrulama hatasında da 400 döner; önemli olan tutarlı olmaktır."
+          ]
+        },
+        {
+          "id": "problem-details",
+          "label": "Hata ayrıntısı gövdede (Problem Details)",
+          "aliases": [
+            "problem details",
+            "problem+json",
+            "rfc 9457",
+            "rfc 7807",
+            "hangi alan",
+            "alan bazlı"
+          ],
+          "anchors": [
+            "Hangi alanın neden reddedildiği gövdede, örneğin Problem Details biçiminde bildirilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Aynı e-posta adresiyle ikinci kez kayıt olmaya çalışan bir istek için 400, 409 ve 422'den hangisini seçersin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.5.1 400, §15.5.21 422; RFC 9457 (Problem Details for HTTP APIs)"
+    },
+    {
+      "id": "web-409-vs-412",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "409 Conflict hangi durumda döner? 412 Precondition Failed'dan farkı nedir?",
+      "modelAnswer": "`409 Conflict` isteğin kaynağın **mevcut durumuyla çeliştiğini** söyler; tipik örnekler zaten var olan bir kaydı yeniden oluşturmak, başkasının az önce değiştirdiği bir sürümün üzerine yazmaya çalışmak ya da kaynağın o anki durumunda izin verilmeyen bir geçiştir. Sunucu çakışmayı istemcinin çözebileceği kadar açıklamalıdır, örneğin hangi alanın ya da hangi sürümün çakıştığını gövdede belirterek. `412 Precondition Failed` ise istemcinin kendi koyduğu bir **koşulun** sunucuda yanlış çıktığını söyler; istemci `If-Match: \"v7\"` gönderir, kaynağın `ETag`'i artık `\"v8\"` ise sunucu işlemi hiç yapmaz ve 412 döner. Fark kararın kaynağındadır; 409'da çakışmayı sunucu kendi kurallarıyla tespit eder, 412'de istemci isteği bir koşula bağlamıştır ve HTTP'de iyimser kilitleme (optimistic locking) en temiz bu yolla kurulur. İki durumda da istemci kaynağın güncel hâlini yeniden okuyup değişikliğini onun üzerine uygulamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "mevcut-durum",
+          "label": "409: istek kaynağın mevcut durumuyla çelişir",
+          "aliases": [
+            "mevcut durum",
+            "çeliş",
+            "çakış",
+            "zaten var",
+            "duplicate",
+            "state conflict"
+          ],
+          "anchors": [
+            "409 isteğin kaynağın mevcut durumuyla çeliştiğini söyler, örneğin kayıt zaten vardır."
+          ]
+        },
+        {
+          "id": "kosul",
+          "label": "412: istemcinin koyduğu koşul yanlış çıktı",
+          "aliases": [
+            "if-match",
+            "if-unmodified-since",
+            "koşullu",
+            "ön koşul",
+            "önkoşul",
+            "koşulun"
+          ],
+          "anchors": [
+            "412 istemcinin If-Match gibi bir başlıkla koyduğu koşulun sunucuda yanlış çıktığını söyler."
+          ]
+        },
+        {
+          "id": "etag-surum",
+          "label": "ETag ile sürüm karşılaştırması",
+          "aliases": [
+            "etag",
+            "entity tag",
+            "sürüm",
+            "version"
+          ],
+          "anchors": [
+            "İstemcinin gönderdiği ETag kaynağın güncel ETag'iyle eşleşmezse işlem yapılmaz."
+          ]
+        },
+        {
+          "id": "iyimser-kilit",
+          "label": "İyimser kilitleme, kaybolan güncellemeyi önler",
+          "aliases": [
+            "iyimser kilit",
+            "optimistic lock",
+            "optimistic concurrency",
+            "lost update",
+            "kaybolan güncelleme",
+            "üzerine yaz"
+          ],
+          "anchors": [
+            "If-Match ile koşullu istek HTTP'de iyimser kilitlemeyi kurar ve başkasının değişikliğinin üzerine yazılmasını önler."
+          ]
+        },
+        {
+          "id": "yeniden-oku",
+          "label": "İstemci güncel hâli okuyup yeniden uygular",
+          "aliases": [
+            "yeniden oku",
+            "tekrar oku",
+            "güncel hâl",
+            "güncel hal",
+            "son hâli",
+            "son hali"
+          ],
+          "anchors": [
+            "İstemci kaynağın güncel hâlini yeniden okuyup değişikliğini onun üzerine uygular."
+          ]
+        }
+      ],
+      "followUps": [
+        "PUT isteklerinde If-Match'i zorunlu tutan bir sunucu, başlıksız gelen isteğe hangi kodu döner?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §13.1.1 If-Match, §15.5.10 409, §15.5.13 412"
+    },
+    {
+      "id": "web-429",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 1,
+      "prompt": "429 Too Many Requests nedir? Bu yanıtı alan istemci ne yapmalı?",
+      "modelAnswer": "`429 Too Many Requests` istemcinin belirli bir sürede çok fazla istek gönderdiğini, yani **rate limiting**'e takıldığını söyler. Sunucu yanıta, ne kadar beklenmesi gerektiğini saniye ya da tarih olarak bildiren `Retry-After` başlığını ekleyebilir; istemci bu başlık varsa ona uymalıdır. Başlık yoksa istemci aynı isteği hemen tekrarlamak yerine **exponential backoff** ile, her denemede bekleme süresini katlayarak ve araya rastgele bir **jitter** ekleyerek yeniden denemelidir; jitter, aynı anda reddedilen çok sayıda istemcinin hep birlikte geri dönmesini önler. Limitin kullanıcıya, API anahtarına ya da IP adresine göre mi sayıldığını standart belirlemez, sunucuya bırakır.",
+      "keyConcepts": [
+        {
+          "id": "rate-limit",
+          "label": "Rate limiting'e takıldı",
+          "aliases": [
+            "rate limit",
+            "rate-limit",
+            "hız sınır",
+            "istek sınır",
+            "kota",
+            "quota"
+          ],
+          "anchors": [
+            "429 istemcinin belirli sürede çok fazla istek gönderip rate limiting'e takıldığını söyler."
+          ]
+        },
+        {
+          "id": "retry-after",
+          "label": "Retry-After varsa ona uyulur",
+          "aliases": [
+            "retry-after",
+            "retry after",
+            "ne kadar bekle",
+            "bekleme süresi"
+          ],
+          "anchors": [
+            "Sunucu Retry-After başlığıyla ne kadar beklenmesi gerektiğini bildirebilir."
+          ]
+        },
+        {
+          "id": "backoff",
+          "label": "Exponential backoff ile yeniden deneme",
+          "aliases": [
+            "backoff",
+            "back-off",
+            "katlayarak",
+            "üstel",
+            "exponential",
+            "giderek artan"
+          ],
+          "anchors": [
+            "İstemci bekleme süresini her denemede katlayarak, exponential backoff ile yeniden dener."
+          ]
+        },
+        {
+          "id": "jitter",
+          "label": "Jitter ile istemcilerin aynı anda dönmesi önlenir",
+          "aliases": [
+            "jitter",
+            "rastgele",
+            "random",
+            "hep birlikte",
+            "aynı anda geri",
+            "thundering herd"
+          ],
+          "anchors": [
+            "Rastgele jitter, reddedilen istemcilerin hep birlikte geri dönmesini önler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucu tarafında rate limiting için token bucket ile fixed window yaklaşımları nasıl ayrışır?"
+      ],
+      "source": "Kendi derleme — RFC 6585 §4 (429 Too Many Requests); RFC 9110 §10.2.3 Retry-After"
+    },
+    {
+      "id": "web-5xx",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "500, 502, 503 ve 504 durum kodları arasındaki fark nedir?",
+      "modelAnswer": "`500 Internal Server Error` uygulamanın kendisinde beklenmeyen bir durum oluştuğunu söyler; yakalanmamış bir exception tipik sebeptir. `502 Bad Gateway` ve `504 Gateway Timeout`'u ise isteği arkadaki sunucuya ileten bir ara katman, yani reverse proxy, load balancer ya da API gateway üretir; 502'de arkadaki sunucudan geçersiz bir yanıt gelmiş ya da bağlantı reddedilmiştir, 504'te ise yanıt zamanında hiç gelmemiştir. `503 Service Unavailable` sunucunun aşırı yük ya da bakım yüzünden isteği **geçici olarak** karşılayamadığını söyler ve ne zaman tekrar denenebileceğini `Retry-After` ile bildirebilir. Hata ayıklamada bu ayrım yeri gösterir; 500 uygulama loguna, 502 arkadaki sürecin ayakta olup olmadığına ya da yanlış porta, 504 ise yavaş bir sorguya ya da proxy'nin zaman aşımı ayarına bakmayı söyler.",
+      "keyConcepts": [
+        {
+          "id": "beklenmeyen",
+          "label": "500: uygulamada beklenmeyen hata",
+          "aliases": [
+            "beklenmeyen",
+            "yakalanmamış",
+            "unhandled",
+            "exception",
+            "genel sunucu hata",
+            "uygulama hata"
+          ],
+          "anchors": [
+            "500 uygulamanın kendisinde beklenmeyen bir durum, örneğin yakalanmamış bir exception oluştuğunu söyler."
+          ]
+        },
+        {
+          "id": "ara-katman",
+          "label": "502 ve 504'ü ara katman üretir",
+          "aliases": [
+            "reverse proxy",
+            "load balancer",
+            "gateway",
+            "ara katman",
+            "proxy",
+            "nginx"
+          ],
+          "anchors": [
+            "502 ve 504'ü isteği arkadaki sunucuya ileten proxy ya da gateway üretir."
+          ]
+        },
+        {
+          "id": "gecersiz-yanit",
+          "label": "502: arkadan geçersiz yanıt ya da bağlantı reddi",
+          "aliases": [
+            "geçersiz yanıt",
+            "invalid response",
+            "bağlantı reddedil",
+            "connection refused",
+            "bad gateway"
+          ],
+          "anchors": [
+            "502'de gateway arkadaki sunucudan geçersiz bir yanıt almıştır ya da bağlantı reddedilmiştir."
+          ]
+        },
+        {
+          "id": "zaman-asimi",
+          "label": "504: arkadan zamanında yanıt gelmedi",
+          "aliases": [
+            "zaman aşımı",
+            "timeout",
+            "time out",
+            "zamanında",
+            "gateway timeout"
+          ],
+          "anchors": [
+            "504'te gateway arkadaki sunucudan zamanında yanıt alamamıştır."
+          ]
+        },
+        {
+          "id": "gecici",
+          "label": "503: geçici olarak hizmet dışı",
+          "aliases": [
+            "geçici",
+            "temporar",
+            "aşırı yük",
+            "overload",
+            "bakım",
+            "maintenance"
+          ],
+          "anchors": [
+            "503 sunucunun aşırı yük ya da bakım yüzünden geçici olarak hizmet veremediğini söyler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sağlık kontrolü (health check) ucu, bakım sırasında hangi kodu dönmeli?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §15.6 Server Error 5xx"
+    },
+    {
+      "id": "web-401-www-authenticate",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Durum Kodları",
+      "difficulty": 2,
+      "prompt": "401 yanıtı neden WWW-Authenticate başlığı taşımalıdır? Bir sunucu kaynağın varlığını gizlemek için 403 yerine ne zaman 404 döner?",
+      "modelAnswer": "RFC 9110'a göre 401 üreten sunucu, hedef kaynağa uygulanabilecek en az bir **challenge** içeren `WWW-Authenticate` başlığı göndermek zorundadır; istemci hangi şemayla (`Basic`, `Bearer` gibi) ve hangi parametrelerle kimlik doğrulaması yapacağını buradan öğrenir. OAuth 2.0 bearer token kullanan bir API'de bu başlık `error=\"invalid_token\"` gibi parametrelerle token'ın geçersiz ya da süresi dolmuş olduğunu da söyler, istemci de token'ı yenileyip isteği tekrarlar. 403'te ise sunucu isteği anlamış ama reddetmiştir; kimlik bilgisi gönderildiyse onları yetersiz bulmuştur ve istemci aynı kimlik bilgileriyle isteği kendiliğinden tekrarlamamalıdır. Kaynağın var olduğunu bilmek bile saldırgana bilgi veriyorsa, örneğin başka bir kullanıcının özel deposu ya da bir yönetim adresi söz konusuysa, RFC 9110 sunucunun 403 yerine 404 dönmesine açıkça izin verir. Böylece yetkisiz kullanıcı yasaklanmış bir kaynakla hiç var olmayan bir kaynağı ayırt edemez ve geçerli adresleri tek tek deneyerek çıkaramaz.",
+      "keyConcepts": [
+        {
+          "id": "challenge",
+          "label": "401 en az bir challenge taşımak zorunda",
+          "aliases": [
+            "challenge",
+            "kimlik doğrulama yöntem",
+            "kimlik doğrulama şema",
+            "hangi yöntem",
+            "hangi şema",
+            "authentication scheme"
+          ],
+          "anchors": [
+            "401 üreten sunucu en az bir challenge içeren WWW-Authenticate başlığı göndermek zorundadır."
+          ]
+        },
+        {
+          "id": "bearer",
+          "label": "Şema ve parametreler: Basic, Bearer, invalid_token",
+          "aliases": [
+            "bearer",
+            "basic",
+            "invalid_token",
+            "realm"
+          ],
+          "anchors": [
+            "Başlık Basic ya da Bearer gibi şemayı ve invalid_token gibi parametreleri bildirir."
+          ]
+        },
+        {
+          "id": "tekrarlamaz",
+          "label": "403: yetki yetersiz, aynı bilgilerle tekrarlanmaz",
+          "aliases": [
+            "tekrarlamamalı",
+            "aynı kimlik",
+            "tekrar denememeli",
+            "yetkisi yok",
+            "yetki yetersiz",
+            "yetersiz bul"
+          ],
+          "anchors": [
+            "403'te istemci aynı kimlik bilgileriyle isteği kendiliğinden tekrarlamamalıdır."
+          ]
+        },
+        {
+          "id": "bilgi-sizintisi",
+          "label": "Varlığını bilmek bilgi veriyorsa 404",
+          "aliases": [
+            "bilgi sız",
+            "information leak",
+            "enumeration",
+            "ayırt edemez",
+            "var olup olmadığ",
+            "var olduğunu bil"
+          ],
+          "anchors": [
+            "Kaynağın var olduğunu bilmek bilgi sızdırıyorsa sunucu 403 yerine 404 döner, yetkisiz kullanıcı ayırt edemez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Herkese açık bir uca süresi dolmuş bir Bearer token ile istek gelirse sunucu 401 mi dönmeli, isteği anonim olarak mı işlemeli?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §11.6.1 WWW-Authenticate, §15.5.2 401, §15.5.4 403; RFC 6750 §3"
+    },
+    {
+      "id": "web-content-negotiation",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Header'lar",
+      "difficulty": 1,
+      "prompt": "Content negotiation nedir? Accept ile Content-Type başlıkları nasıl ayrışır?",
+      "modelAnswer": "Content negotiation, aynı kaynağın birden fazla temsili olduğunda (JSON ya da XML, Türkçe ya da İngilizce, sıkıştırılmış ya da düz) sunucunun istemcinin tercihine göre birini seçmesidir. İstemci tercihlerini `Accept`, `Accept-Language` ve `Accept-Encoding` ile bildirir ve `q` ağırlığıyla sıralayabilir, örneğin `Accept: application/json, application/xml;q=0.5`. `Content-Type` ise tercih değil **beyandır**; mesajın gövdesinde gerçekte ne olduğunu söyler, bu yüzden istemcinin gönderdiği gövdede de sunucunun yanıtında da bulunur. Sunucu istenen temsillerin hiçbirini üretemiyorsa `406 Not Acceptable` dönebilir ya da varsayılan bir temsil gönderebilir; istekteki gövdenin `Content-Type`'ını desteklemiyorsa `415 Unsupported Media Type` döner.",
+      "keyConcepts": [
+        {
+          "id": "temsil",
+          "label": "Aynı kaynağın birden fazla temsilinden seçim",
+          "aliases": [
+            "temsil",
+            "representation",
+            "json ya da xml",
+            "json veya xml",
+            "farklı biçim",
+            "farklı format"
+          ],
+          "anchors": [
+            "Content negotiation aynı kaynağın birden fazla temsilinden istemcinin tercihine uyanı seçmektir."
+          ]
+        },
+        {
+          "id": "accept-tercih",
+          "label": "Accept istemcinin yanıtta kabul ettiklerini bildirir",
+          "aliases": [
+            "kabul ettiği",
+            "beklediği",
+            "tercih ettiği",
+            "tercihleri",
+            "istediği format",
+            "hangi format"
+          ],
+          "anchors": [
+            "Accept istemcinin yanıtta kabul edeceği türleri, gerekirse q ağırlığıyla, bildirir."
+          ]
+        },
+        {
+          "id": "beyan",
+          "label": "Content-Type gövdenin gerçek türünü beyan eder",
+          "aliases": [
+            "beyan",
+            "gövdenin türü",
+            "gövdenin format",
+            "body'nin format",
+            "body'nin türü",
+            "media type"
+          ],
+          "anchors": [
+            "Content-Type mesaj gövdesinin gerçekte ne olduğunu söyler, istekte de yanıtta da bulunur."
+          ]
+        },
+        {
+          "id": "accept-ailesi",
+          "label": "Accept-Language ve Accept-Encoding",
+          "aliases": [
+            "accept-language",
+            "accept-encoding",
+            "accept-charset"
+          ],
+          "anchors": [
+            "Dil ve sıkıştırma tercihi Accept-Language ve Accept-Encoding ile bildirilir."
+          ]
+        },
+        {
+          "id": "hata-kodlari",
+          "label": "406 Not Acceptable ve 415 Unsupported Media Type",
+          "aliases": [
+            "406",
+            "415",
+            "not acceptable",
+            "unsupported media type"
+          ],
+          "anchors": [
+            "Uygun temsil yoksa 406, istek gövdesinin türü desteklenmiyorsa 415 döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucu yanıtı Accept-Language'e göre seçiyorsa önbelleğin yanlış dilde yanıt vermemesi için ne eklemelidir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §8.3 Content-Type, §12 Content Negotiation, §15.5.7 406, §15.5.16 415"
+    },
+    {
+      "id": "web-content-encoding-chunked",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Header'lar",
+      "difficulty": 3,
+      "prompt": "Content-Encoding ile Transfer-Encoding: chunked arasındaki fark nedir?",
+      "modelAnswer": "`Content-Encoding` temsilin kendisine uygulanmış bir dönüşümdür, örneğin `gzip` ya da `br` ile sıkıştırma; istemci `Accept-Encoding` ile neyi çözebildiğini bildirir, kodlama uçtan uca korunur ve sıkıştırılmış temsilin `ETag`'i düz olanınkinden farklı olmalıdır. `Transfer-Encoding: chunked` ise HTTP/1.1'e özgü, yalnızca o bağlantıyı (hop-by-hop) ilgilendiren bir **çerçeveleme** yöntemidir; gövde, her biri kendi uzunluğuyla başlayan parçalar hâlinde gönderilir ve sıfır uzunluklu bir parçayla biter. Bu sayede sunucu toplam boyutu bilmeden, `Content-Length` vermeden yanıtı akış hâlinde göndermeye başlayabilir. HTTP/2 ve HTTP/3'te chunked yoktur ve `Transfer-Encoding` başlığı kullanılamaz; gövde zaten protokolün kendi `DATA` frame'leriyle taşınır, bitişini HTTP/2'de `END_STREAM` bayrağı, HTTP/3'te QUIC stream'inin kapanması bildirir. İkisi birlikte de kullanılabilir; HTTP/1.1'de bir proxy gzip'li bir gövdeyi açmadan chunked olarak iletebilir.",
+      "keyConcepts": [
+        {
+          "id": "sikistirma",
+          "label": "Content-Encoding temsili sıkıştırır (gzip, br)",
+          "aliases": [
+            "gzip",
+            "brotli",
+            "sıkıştır",
+            "compression",
+            "deflate",
+            "zstd"
+          ],
+          "anchors": [
+            "Content-Encoding temsile uygulanan gzip ya da br gibi bir sıkıştırmadır."
+          ]
+        },
+        {
+          "id": "uctan-uca",
+          "label": "Content-Encoding uçtan uca, Accept-Encoding ile seçilir",
+          "aliases": [
+            "accept-encoding",
+            "uçtan uca",
+            "end-to-end",
+            "end to end",
+            "temsilin parçası"
+          ],
+          "anchors": [
+            "Content-Encoding uçtan uca korunur ve istemcinin Accept-Encoding tercihine göre seçilir."
+          ]
+        },
+        {
+          "id": "hop-by-hop",
+          "label": "chunked HTTP/1.1'de bağlantıya özgü çerçevelemedir",
+          "aliases": [
+            "hop-by-hop",
+            "çerçeveleme",
+            "framing",
+            "parça parça",
+            "parçalar hâlinde",
+            "parçalar halinde"
+          ],
+          "anchors": [
+            "chunked yalnızca o bağlantıyı ilgilendiren, gövdeyi parçalara bölen bir çerçeveleme yöntemidir."
+          ]
+        },
+        {
+          "id": "boyut-bilinmeden",
+          "label": "Boyut bilinmeden akış, Content-Length yok",
+          "aliases": [
+            "content-length",
+            "boyutu bilmeden",
+            "uzunluğu bilmeden",
+            "akış hâlinde",
+            "akış halinde",
+            "streaming"
+          ],
+          "anchors": [
+            "chunked sayesinde sunucu toplam boyutu bilmeden, Content-Length vermeden göndermeye başlar."
+          ]
+        },
+        {
+          "id": "h2-frame",
+          "label": "HTTP/2 ve HTTP/3'te chunked yok, DATA frame'leri var",
+          "aliases": [
+            "data frame",
+            "end_stream",
+            "frame'ler",
+            "kendi çerçeve",
+            "http/2",
+            "http/3"
+          ],
+          "anchors": [
+            "HTTP/2 ve HTTP/3'te chunked kullanılmaz; gövde protokolün DATA frame'leriyle taşınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir HTTP/1.1 isteğinde hem Content-Length hem Transfer-Encoding: chunked bulunursa neden güvenlik sorunu doğabilir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §8.4 Content-Encoding; RFC 9112 §7 Transfer Codings; RFC 9113 §8.1; RFC 9114 §4.1"
+    },
+    {
+      "id": "web-no-cache-vs-no-store",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 2,
+      "prompt": "Cache-Control'de no-cache ile no-store arasındaki fark nedir?",
+      "modelAnswer": "`no-store` yanıtın hiçbir önbellekte, tarayıcıda da proxy'de de saklanmamasını ister; her istek sunucuya tam olarak gider. `no-cache` ise adının düşündürdüğünün aksine saklamayı yasaklamaz; önbellek yanıtı tutabilir ama her kullanımdan önce sunucuya **yeniden doğrulatmak** zorundadır. Doğrulama `ETag` ya da `Last-Modified` ile koşullu istek olarak gider ve içerik değişmemişse sunucu gövdesiz bir `304` döner, böylece veri yeniden indirilmez. Bu yüzden her açılışta güncel olması gereken ama sık değişmeyen bir HTML sayfası için `no-cache`, banka ekstresi ya da kişisel veri gibi hiç diske yazılmaması gereken yanıtlar için `no-store` seçilir.",
+      "keyConcepts": [
+        {
+          "id": "saklanmaz",
+          "label": "no-store: hiçbir önbellekte saklanmaz",
+          "aliases": [
+            "saklamaz",
+            "saklanmaz",
+            "saklanmama",
+            "cache'lenmez",
+            "cache'lemez",
+            "önbelleğe alınmaz"
+          ],
+          "anchors": [
+            "no-store yanıtın tarayıcı ya da proxy, hiçbir önbellekte saklanmamasını ister."
+          ]
+        },
+        {
+          "id": "yeniden-dogrula",
+          "label": "no-cache: saklanır ama her kullanımda doğrulanır",
+          "aliases": [
+            "yeniden doğrula",
+            "doğrulat",
+            "revalidat",
+            "her kullanımda",
+            "her seferinde sor",
+            "validation"
+          ],
+          "anchors": [
+            "no-cache'te önbellek yanıtı tutabilir ama her kullanımdan önce sunucuya doğrulatır."
+          ]
+        },
+        {
+          "id": "yanilgi",
+          "label": "no-cache saklamayı yasaklamaz",
+          "aliases": [
+            "yasaklamaz",
+            "aksine",
+            "saklayabilir",
+            "saklanır ama",
+            "cache'lenir ama",
+            "tutabilir"
+          ],
+          "anchors": [
+            "Adının aksine no-cache saklamayı yasaklamaz."
+          ]
+        },
+        {
+          "id": "kosullu-304",
+          "label": "Doğrulama koşullu istekle, değişmediyse 304",
+          "aliases": [
+            "304",
+            "not modified",
+            "etag",
+            "if-none-match",
+            "koşullu"
+          ],
+          "anchors": [
+            "Doğrulama koşullu istekle yapılır; içerik değişmediyse sunucu 304 döner."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Hassas veri için no-store",
+          "aliases": [
+            "hassas",
+            "kişisel veri",
+            "sensitive",
+            "gizli veri",
+            "banka"
+          ],
+          "anchors": [
+            "Hiç saklanmaması gereken hassas ya da kişisel veriler için no-store seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "must-revalidate ile no-cache arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — RFC 9111 §5.2.2.4 no-cache, §5.2.2.5 no-store; MDN: Cache-Control"
+    },
+    {
+      "id": "web-cache-control",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 2,
+      "prompt": "Cache-Control'deki max-age, s-maxage, public, private ve immutable ne işe yarar?",
+      "modelAnswer": "`max-age=N` yanıtın N saniye boyunca **taze** sayılacağını söyler; bu sürede önbellek sunucuya hiç sormadan yanıtı kullanır. `private` yanıtın yalnızca tek kullanıcıya ait tarayıcı önbelleğinde saklanabileceğini, CDN ya da proxy gibi **paylaşılan önbelleklerde** (shared cache) saklanamayacağını söyler; kişiye özel sayfalar için gerekir. `public` ise yanıtı normalde saklanmayacağı durumlarda bile, örneğin `Authorization` başlığı taşıyan bir isteğin yanıtıyken, paylaşılan önbelleğe açar. `s-maxage` yalnızca paylaşılan önbellekler için `max-age`'i geçersiz kılar; böylece CDN'de 10 dakika, tarayıcıda 1 dakika gibi iki ayrı süre verilebilir. `immutable` tazelik süresi boyunca içeriğin değişmeyeceğini söyler ve tarayıcının sayfa yenilemede bile yeniden doğrulama göndermemesini ister; dosya adında içerik hash'i taşıyan JS ve CSS dosyalarında `max-age=31536000, immutable` ile kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "taze",
+          "label": "max-age: saniye cinsinden tazelik",
+          "aliases": [
+            "taze",
+            "freshness",
+            "saniye",
+            "sormadan",
+            "sunucuya gitmeden"
+          ],
+          "anchors": [
+            "max-age yanıtın kaç saniye taze sayılacağını, sunucuya sorulmadan kullanılacağını söyler."
+          ]
+        },
+        {
+          "id": "paylasilan",
+          "label": "private: yalnızca tarayıcı, paylaşılan önbellek saklamaz",
+          "aliases": [
+            "paylaşılan",
+            "shared",
+            "ortak cache",
+            "ortak önbellek",
+            "sadece tarayıcı",
+            "kişiye özel"
+          ],
+          "anchors": [
+            "private yanıt yalnızca tarayıcı önbelleğinde saklanır, CDN gibi paylaşılan önbelleklerde saklanmaz."
+          ]
+        },
+        {
+          "id": "authorization",
+          "label": "public: normalde saklanmayacak yanıtı paylaşılan önbelleğe açar",
+          "aliases": [
+            "authorization",
+            "normalde saklanmayacak",
+            "kimlik doğrulamalı",
+            "her önbellek",
+            "tüm önbellek",
+            "herkese açık"
+          ],
+          "anchors": [
+            "public, Authorization taşıyan istek gibi normalde saklanmayacak bir yanıtı paylaşılan önbelleğe açar."
+          ]
+        },
+        {
+          "id": "cdn-suresi",
+          "label": "s-maxage: yalnızca paylaşılan önbelleğin süresi",
+          "aliases": [
+            "cdn'de",
+            "cdn için",
+            "proxy için",
+            "geçersiz kılar",
+            "override",
+            "ayrı süre"
+          ],
+          "anchors": [
+            "s-maxage yalnızca CDN ve proxy gibi paylaşılan önbellekler için max-age'i geçersiz kılar."
+          ]
+        },
+        {
+          "id": "hash-dosya",
+          "label": "immutable: hash'li dosyada yenilemede bile doğrulama yok",
+          "aliases": [
+            "içerik hash",
+            "hash'li",
+            "dosya adında",
+            "fingerprint",
+            "yenilemede",
+            "reload"
+          ],
+          "anchors": [
+            "immutable, adında içerik hash'i olan dosyanın sayfa yenilemede bile yeniden doğrulanmamasını ister."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kullanıcının profil sayfası yanlışlıkla public olarak CDN'de önbelleğe alınırsa ne olur?"
+      ],
+      "source": "Kendi derleme — RFC 9111 §3.5, §5.2.2 (max-age, private, public, s-maxage); RFC 8246 (immutable)"
+    },
+    {
+      "id": "web-conditional-request",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 2,
+      "prompt": "ETag ve Last-Modified ile koşullu istek nasıl çalışır? 304 Not Modified ne zaman döner?",
+      "modelAnswer": "Sunucu yanıtla birlikte temsilin sürüm etiketini (`ETag`) ya da son değişiklik zamanını (`Last-Modified`) gönderir. Önbellekteki kopyanın tazelik süresi dolduğunda istemci onu atmak yerine sunucuya `If-None-Match` ya da `If-Modified-Since` ile sorar; temsil değişmemişse sunucu gövdesiz bir `304` döner ve istemci elindeki kopyayı, yanıttaki başlıklarla tazeleyerek kullanmaya devam eder. Değişmişse normal bir `200` ile yeni gövde gelir. `Last-Modified` saniye çözünürlüklüdür ve aynı saniyedeki iki değişikliği ayırt edemez, `ETag` ise içerikten ya da sürümden türetildiği için daha kesindir; ikisi birlikte gelirse sunucu `If-Modified-Since`'i yok sayar ve `If-None-Match`'e bakar. 304 bant genişliğini kurtarır ama gidiş-dönüşü kurtarmaz, istek yine sunucuya kadar gider.",
+      "keyConcepts": [
+        {
+          "id": "if-none-match",
+          "label": "İstemci If-None-Match ya da If-Modified-Since ile sorar",
+          "aliases": [
+            "if-none-match",
+            "if-modified-since",
+            "if none match",
+            "doğrula",
+            "revalidat"
+          ],
+          "anchors": [
+            "İstemci elindeki kopyayı If-None-Match ya da If-Modified-Since başlığıyla sunucuya doğrulatır."
+          ]
+        },
+        {
+          "id": "govdesiz",
+          "label": "304 gövdesizdir, elindeki kopya kullanılır",
+          "aliases": [
+            "gövdesiz",
+            "gövde olmadan",
+            "body gelmez",
+            "body olmadan",
+            "elindeki kopya",
+            "cache'teki"
+          ],
+          "anchors": [
+            "Temsil değişmemişse sunucu gövdesiz bir 304 döner ve istemci elindeki kopyayı kullanır."
+          ]
+        },
+        {
+          "id": "saniye",
+          "label": "Last-Modified saniye çözünürlüklü, ETag daha kesin",
+          "aliases": [
+            "saniye",
+            "çözünürlük",
+            "resolution",
+            "daha kesin",
+            "daha hassas",
+            "aynı saniye"
+          ],
+          "anchors": [
+            "Last-Modified saniye çözünürlüklüdür; ETag daha kesin bir doğrulayıcıdır."
+          ]
+        },
+        {
+          "id": "oncelik",
+          "label": "İkisi varsa If-None-Match öncelikli",
+          "aliases": [
+            "öncelik",
+            "precedence",
+            "yok sayar",
+            "ignore"
+          ],
+          "anchors": [
+            "İkisi birlikte gelirse sunucu If-Modified-Since'i yok sayar, If-None-Match'e bakar."
+          ]
+        },
+        {
+          "id": "bant",
+          "label": "Bant genişliği kazanılır, gidiş-dönüş kazanılmaz",
+          "aliases": [
+            "bant genişliği",
+            "bandwidth",
+            "gidiş-dönüş",
+            "gidiş dönüş",
+            "round trip",
+            "round-trip"
+          ],
+          "anchors": [
+            "304 bant genişliğini kurtarır ama istek yine sunucuya gider, gidiş-dönüş kalır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Zayıf ETag (W/ önekli) ile güçlü ETag arasındaki fark nedir, hangisi ne zaman kullanılır?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §8.8 Validator Fields, §13.1 Preconditions, §15.4.5 304; RFC 9111 §4.3"
+    },
+    {
+      "id": "web-vary",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Önbellek",
+      "difficulty": 3,
+      "prompt": "Vary başlığı ne işe yarar? Yanlış kullanıldığında önbellekte ne olur?",
+      "modelAnswer": "`Vary` yanıtın, URL dışında hangi istek başlıklarına göre seçildiğini söyler ve önbelleğe bu başlıkları **anahtarın parçası** yapmasını bildirir; sunucu gövdeyi `Accept-Encoding`'e göre sıkıştırıyorsa `Vary: Accept-Encoding` göndermelidir. Eksik bırakılırsa paylaşılan bir önbellek ilk gelen temsili herkese verir; sıkıştırmayı çözemeyen bir istemci gzip'li gövde alır ya da Türkçe isteyen kullanıcı İngilizce sayfa görür. Aşırı kullanıldığında da sorun çıkar; `Vary: User-Agent` ya da `Vary: Cookie` neredeyse her istemci için ayrı bir kopya demektir ve önbellek isabet oranı çöker. `Vary: *` ise saklanan yanıtın hiçbir istekle eşleşmeyeceği anlamına gelir, yanıt pratikte önbellekten hiç sunulamaz.",
+      "keyConcepts": [
+        {
+          "id": "anahtar",
+          "label": "İstek başlıklarını önbellek anahtarına ekler",
+          "aliases": [
+            "anahtar",
+            "cache key",
+            "hangi istek başlık",
+            "başlıklarına göre",
+            "header'lara göre",
+            "farklı versiyon"
+          ],
+          "anchors": [
+            "Vary hangi istek başlıklarının önbellek anahtarının parçası olacağını söyler."
+          ]
+        },
+        {
+          "id": "accept-encoding",
+          "label": "Tipik örnek: Accept-Encoding ve Accept-Language",
+          "aliases": [
+            "accept-encoding",
+            "accept-language",
+            "gzip",
+            "sıkıştır"
+          ],
+          "anchors": [
+            "Gövde Accept-Encoding ya da Accept-Language'e göre değişiyorsa Vary'de belirtilir."
+          ]
+        },
+        {
+          "id": "yanlis-temsil",
+          "label": "Eksikse yanlış temsil herkese verilir",
+          "aliases": [
+            "yanlış temsil",
+            "yanlış dil",
+            "yanlış içerik",
+            "herkese ver",
+            "ilk gelen",
+            "başka kullanıcı"
+          ],
+          "anchors": [
+            "Vary eksikse paylaşılan önbellek ilk gelen temsili herkese verir."
+          ]
+        },
+        {
+          "id": "isabet",
+          "label": "User-Agent ya da Cookie ile isabet oranı çöker",
+          "aliases": [
+            "user-agent",
+            "isabet oran",
+            "hit ratio",
+            "hit rate",
+            "ayrı kopya",
+            "parçalan"
+          ],
+          "anchors": [
+            "Vary: User-Agent ya da Cookie neredeyse her istemci için ayrı kopya demektir, isabet oranı düşer."
+          ]
+        },
+        {
+          "id": "yildiz",
+          "label": "Vary: * hiçbir istekle eşleşmez",
+          "aliases": [
+            "vary: *",
+            "yıldız",
+            "hiç eşleşmez",
+            "eşleşmeyeceği",
+            "asla eşleşmez"
+          ],
+          "anchors": [
+            "Vary: * içeren saklı yanıt hiçbir istekle eşleşmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "CORS yanıtında Access-Control-Allow-Origin isteğe göre değişiyorsa Vary'ye ne eklenmelidir?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §12.5.5 Vary; RFC 9111 §4.1"
+    },
+    {
+      "id": "web-rest-constraints",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 2,
+      "prompt": "REST'in mimari kısıtları nelerdir?",
+      "modelAnswer": "Roy Fielding'in 2000 tarihli tezinde tanımladığı REST altı kısıttan oluşur; istemci-sunucu ayrımı, stateless iletişim, önbelleğe alınabilirlik, uniform interface, katmanlı sistem ve isteğe bağlı code-on-demand. **Uniform interface** REST'i diğer mimarilerden ayıran kısıttır; kaynaklar URI ile tanımlanır, temsiller üzerinden değiştirilir, mesajlar kendini açıklar ve uygulamanın durumu hypermedia ile ilerler (HATEOAS). Stateless kısıtı her isteğin anlaşılmak için gereken her şeyi taşımasını, önbellek kısıtı da yanıtların önbelleğe alınabilir olup olmadığını açıkça belirtmesini ister. Katmanlı sistem istemcinin arada proxy, CDN ya da load balancer olup olmadığını bilmek zorunda olmamasıdır; code-on-demand ise sunucunun istemciye çalıştırılabilir kod gönderebilmesidir ve tek isteğe bağlı kısıttır. Bu kısıtların hepsini uygulamayan, HTTP üzerinden JSON dönen API'lere günlük dilde REST denir, ama Fielding'in tanımına göre çoğu tam REST değildir.",
+      "keyConcepts": [
+        {
+          "id": "istemci-sunucu",
+          "label": "İstemci-sunucu ayrımı",
+          "aliases": [
+            "istemci-sunucu",
+            "istemci sunucu",
+            "client-server",
+            "client server",
+            "sorumlulukların ayrı"
+          ],
+          "anchors": [
+            "REST'in ilk kısıtı istemci ile sunucunun sorumluluklarının ayrılmasıdır."
+          ]
+        },
+        {
+          "id": "stateless",
+          "label": "Stateless iletişim",
+          "aliases": [
+            "stateless",
+            "durumsuz",
+            "oturum tutmaz",
+            "gereken her şey"
+          ],
+          "anchors": [
+            "Her istek anlaşılmak için gereken her şeyi taşır, sunucu oturum durumu tutmaz."
+          ]
+        },
+        {
+          "id": "onbellek",
+          "label": "Önbelleğe alınabilirlik",
+          "aliases": [
+            "önbellek",
+            "cacheable",
+            "cache"
+          ],
+          "anchors": [
+            "Yanıtlar önbelleğe alınabilir olup olmadıklarını açıkça belirtir."
+          ]
+        },
+        {
+          "id": "uniform",
+          "label": "Uniform interface (HATEOAS dahil)",
+          "aliases": [
+            "uniform interface",
+            "tek tip arayüz",
+            "tekdüze arayüz",
+            "ortak arayüz",
+            "hateoas",
+            "hypermedia"
+          ],
+          "anchors": [
+            "Uniform interface REST'i ayıran kısıttır; kaynaklar URI ile tanımlanır, durum hypermedia ile ilerler."
+          ]
+        },
+        {
+          "id": "katmanli",
+          "label": "Katmanlı sistem ve isteğe bağlı code-on-demand",
+          "aliases": [
+            "katmanlı",
+            "layered",
+            "code-on-demand",
+            "code on demand"
+          ],
+          "anchors": [
+            "Katmanlı sistemde istemci aradaki proxy'leri bilmez; code-on-demand isteğe bağlı kısıttır."
+          ]
+        }
+      ],
+      "followUps": [
+        "HTTP üzerinden JSON dönen RPC tarzı bir API'yi REST'ten ayıran nedir?"
+      ],
+      "source": "Kendi derleme — Roy T. Fielding, Architectural Styles and the Design of Network-based Software Architectures (2000), Bölüm 5"
+    },
+    {
+      "id": "web-rest-stateless",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 2,
+      "prompt": "REST'te stateless ne demektir? Veritabanında veri tutan bir API stateless sayılır mı?",
+      "modelAnswer": "Stateless, sunucunun iki istek arasında istemciye ait **oturum durumu** tutmaması demektir; her istek, kimlik bilgisi dahil, anlaşılmak için gereken her şeyi kendisi taşır. Siparişler, kullanıcılar gibi veritabanındaki **kaynak durumu** bu kısıtın konusu değildir; bir API veritabanına yazıp okuyarak da stateless olabilir. Önemli olan bir isteğin, önceki isteklerin sunucu belleğinde bıraktığı bir bağlama dayanmamasıdır; \"önce sepeti seç, sonra öde\" akışında seçili sepet sunucu belleğinde değil, istekte ya da veritabanında bir kaynak olarak durmalıdır. Kazanç ölçeklemededir; her istek herhangi bir sunucu örneğine gidebilir, sticky session ya da örnekler arası oturum paylaşımı gerekmez ve bir örnek çöktüğünde oturum kaybolmaz. Bedeli, kimlik bilgisi gibi bağlamın her istekte yeniden gönderilip doğrulanmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "oturum-durumu",
+          "label": "Sunucu istekler arası oturum durumu tutmaz",
+          "aliases": [
+            "oturum durumu",
+            "oturum tutmaz",
+            "session state",
+            "session tutmaz",
+            "bilgisini tutmaz",
+            "bilgi tutmaz"
+          ],
+          "anchors": [
+            "Stateless sunucu iki istek arasında istemciye ait oturum durumu tutmaz."
+          ]
+        },
+        {
+          "id": "her-istek",
+          "label": "Her istek gereken her şeyi taşır",
+          "aliases": [
+            "gereken her şey",
+            "gerekli tüm",
+            "tüm bilgi",
+            "self-contained",
+            "kendi başına anlaşıl",
+            "kendisi taşır"
+          ],
+          "anchors": [
+            "Her istek kimlik bilgisi dahil anlaşılmak için gereken her şeyi taşır."
+          ]
+        },
+        {
+          "id": "kaynak-durumu",
+          "label": "Kaynak durumu kısıtın konusu değildir",
+          "aliases": [
+            "kaynak durumu",
+            "resource state",
+            "kalıcı veri",
+            "konusu değil",
+            "ayrı şey",
+            "fark etmez"
+          ],
+          "anchors": [
+            "Veritabanındaki kaynak durumu stateless kısıtının konusu değildir; böyle bir API de stateless olabilir."
+          ]
+        },
+        {
+          "id": "olcekleme",
+          "label": "Her istek herhangi bir örneğe gidebilir",
+          "aliases": [
+            "ölçekle",
+            "scaling",
+            "scale",
+            "yatay",
+            "herhangi bir sunucu",
+            "herhangi bir örne"
+          ],
+          "anchors": [
+            "Stateless API'de her istek herhangi bir sunucu örneğine gidebilir, yatay ölçekleme kolaylaşır."
+          ]
+        },
+        {
+          "id": "sticky",
+          "label": "Sticky session ya da oturum paylaşımı gerekmez",
+          "aliases": [
+            "sticky",
+            "oturum paylaş",
+            "session replication",
+            "sunucu belleğ",
+            "bellekte tut"
+          ],
+          "anchors": [
+            "Sticky session ya da örnekler arası oturum paylaşımı gerekmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "JWT kullanan her API stateless mıdır; sunucuda bir token iptal listesi tutmak bu kısıtı bozar mı?"
+      ],
+      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.3 Stateless"
+    },
+    {
+      "id": "web-idempotency-key",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 3,
+      "prompt": "Idempotency key nedir? POST isteklerinde neden kullanılır?",
+      "modelAnswer": "`POST` idempotent olmadığı için bir ödeme isteği gönderildikten sonra bağlantı koparsa istemci isteğin işlenip işlenmediğini bilemez; tekrar gönderirse ödeme iki kez alınabilir. Idempotency key bu belirsizliği çözer; istemci her mantıksal işlem için benzersiz bir anahtar (genellikle UUID) üretir, isteği `Idempotency-Key` başlığıyla gönderir ve yeniden denemelerde **aynı anahtarı** kullanır. Sunucu anahtarı ilk işlemin sonucuyla birlikte saklar; aynı anahtarla gelen tekrar istekte işlemi yeniden yapmaz, kaydedilen yanıtı aynen döner. Aynı anahtar farklı bir gövdeyle gelirse ya da ilk istek hâlâ işlenirken ikincisi gelirse sunucu onu hatayla reddetmeli, anahtarları da belirli bir süre sonra siler. Stripe gibi ödeme API'lerinde yaygın olan bu başlık için IETF'te bir standart taslağı var (draft-ietf-httpapi-idempotency-key-header).",
+      "keyConcepts": [
+        {
+          "id": "cift-islem",
+          "label": "Kopan bağlantıda tekrar POST çift işlem yaratır",
+          "aliases": [
+            "iki kez",
+            "çift ödeme",
+            "çift işlem",
+            "double charge",
+            "mükerrer",
+            "duplicate"
+          ],
+          "anchors": [
+            "Bağlantı koptuktan sonra tekrarlanan POST ödemenin iki kez alınmasına yol açabilir."
+          ]
+        },
+        {
+          "id": "benzersiz",
+          "label": "İstemci benzersiz anahtar üretir, tekrarda aynısını gönderir",
+          "aliases": [
+            "benzersiz",
+            "uuid",
+            "unique",
+            "aynı anahtar",
+            "istemci üretir"
+          ],
+          "anchors": [
+            "İstemci her işlem için benzersiz bir anahtar üretir ve yeniden denemelerde aynı anahtarı gönderir."
+          ]
+        },
+        {
+          "id": "kayitli-yanit",
+          "label": "Sunucu sonucu saklar, tekrarda aynı yanıtı döner",
+          "aliases": [
+            "kaydedilen yanıt",
+            "saklanan yanıt",
+            "önceki yanıt",
+            "önceki cevab",
+            "yeniden yapmaz",
+            "tekrar yapmaz"
+          ],
+          "anchors": [
+            "Sunucu anahtarı sonuçla saklar; aynı anahtarla gelen istekte işlemi yapmaz, kaydedilen yanıtı döner."
+          ]
+        },
+        {
+          "id": "farkli-govde",
+          "label": "Farklı gövde ya da eşzamanlı tekrar reddedilir",
+          "aliases": [
+            "farklı gövde",
+            "farklı bir gövde",
+            "farklı payload",
+            "hâlâ işlenirken",
+            "hala işlenirken",
+            "eşzamanlı tekrar"
+          ],
+          "anchors": [
+            "Aynı anahtar farklı gövdeyle ya da ilk istek sürerken gelirse sunucu reddeder."
+          ]
+        }
+      ],
+      "followUps": [
+        "Sunucuda aynı anahtarla gelen iki eşzamanlı isteğin ikisinin de işlenmesini nasıl önlersin?"
+      ],
+      "source": "Kendi derleme — RFC 9110 §9.2.2 Idempotent Methods; IETF draft-ietf-httpapi-idempotency-key-header"
+    },
+    {
+      "id": "web-hateoas",
+      "category": "web",
+      "kind": "definition",
+      "topic": "REST",
+      "difficulty": 3,
+      "prompt": "HATEOAS nedir? Pratikte neden nadiren tam uygulanır?",
+      "modelAnswer": "HATEOAS (Hypermedia as the Engine of Application State), istemcinin bir sonraki adımda ne yapabileceğini yanıttaki **bağlantılardan** öğrenmesidir; örneğin bir sipariş yanıtı, siparişin durumuna göre `cancel` ya da `pay` linklerini içerir ve istemci URL'leri kendi kodunda kurmaz. Böylece sunucu URL yapısını ya da iş akışını değiştirdiğinde istemci kırılmaz, bağlantıları takip etmeye devam eder; HAL gibi biçimler ve Spring HATEOAS bu linkleri standart bir yapıda verir. Richardson olgunluk modelinde en üst seviye budur. Pratikte nadiren tam uygulanır, çünkü istemciler zaten OpenAPI gibi bir sözleşmeye göre yazılır ve hangi alanı nasıl göstereceğini bilmek zorundadır; linkler yanıtı büyütür, getirdiği esneklik de çoğu ekipte tek bir istemci için ek karmaşıklıktan öteye geçmez.",
+      "keyConcepts": [
+        {
+          "id": "linkler",
+          "label": "Yanıt sonraki adımların linklerini içerir",
+          "aliases": [
+            "link",
+            "hypermedia",
+            "hipermedya",
+            "_links",
+            "sonraki adım",
+            "yanıttaki bağlantı"
+          ],
+          "anchors": [
+            "HATEOAS'ta istemci sonraki adımları yanıttaki bağlantılardan öğrenir."
+          ]
+        },
+        {
+          "id": "url-kurmaz",
+          "label": "İstemci URL kurmaz, değişiklikte kırılmaz",
+          "aliases": [
+            "url'leri kendi",
+            "url kurmaz",
+            "hardcode",
+            "ezber",
+            "kırılmaz",
+            "gevşek bağ"
+          ],
+          "anchors": [
+            "İstemci URL'leri kendi kodunda kurmadığı için sunucu değişince kırılmaz."
+          ]
+        },
+        {
+          "id": "richardson",
+          "label": "Richardson olgunluk modelinin en üst seviyesi",
+          "aliases": [
+            "richardson",
+            "olgunluk",
+            "maturity",
+            "seviye 3",
+            "level 3",
+            "en üst seviye"
+          ],
+          "anchors": [
+            "HATEOAS Richardson olgunluk modelinin en üst seviyesidir."
+          ]
+        },
+        {
+          "id": "hal",
+          "label": "HAL ve Spring HATEOAS gibi biçimler",
+          "aliases": [
+            "hal+json",
+            "spring hateoas",
+            "json:api",
+            "siren"
+          ],
+          "anchors": [
+            "HAL gibi biçimler ve Spring HATEOAS linkleri standart bir yapıda verir."
+          ]
+        },
+        {
+          "id": "neden-nadir",
+          "label": "İstemciler zaten bir sözleşmeye göre yazılır",
+          "aliases": [
+            "openapi",
+            "swagger",
+            "sözleşme",
+            "contract",
+            "karmaşıklık",
+            "yanıtı büyüt"
+          ],
+          "anchors": [
+            "İstemciler OpenAPI gibi bir sözleşmeye göre yazıldığı için HATEOAS'ın getirisi azdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API'nin Richardson olgunluk modelinde hangi seviyede olduğunu nasıl anlarsın?"
+      ],
+      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.5 Uniform Interface; Martin Fowler, Richardson Maturity Model (2010)"
+    },
+    {
+      "id": "web-tcp-vs-udp",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 1,
+      "prompt": "TCP ile UDP arasındaki fark nedir? Hangi durumlarda UDP tercih edilir?",
+      "modelAnswer": "TCP bağlantı yönelimlidir; veri göndermeden önce el sıkışmayla bağlantı kurar, kaybolan paketleri yeniden gönderir ve baytları gönderildiği **sırayla** teslim eder. Ayrıca akış kontrolüyle alıcıyı, tıkanıklık kontrolüyle ağı boğmamaya çalışır; bunun bedeli ek gecikme ve başlık yüküdür. UDP ise bağlantısızdır; her datagram bağımsız gider, teslim, sıra ya da yeniden gönderme garantisi yoktur ve uygulama bunlara ihtiyaç duyarsa kendisi sağlar. Bu yüzden geç gelen verinin işe yaramadığı canlı ses, görüntülü görüşme ve oyunlarda, tek paketlik sorgu-cevaplarda (DNS) ve kendi güvenilirlik katmanını kuran QUIC gibi protokollerde UDP tercih edilir.",
+      "keyConcepts": [
+        {
+          "id": "baglanti-yonelimli",
+          "label": "TCP bağlantı yönelimlidir",
+          "aliases": [
+            "bağlantı yönelimli",
+            "bağlantı odaklı",
+            "connection-oriented",
+            "connection oriented",
+            "handshake",
+            "bağlantı kur"
+          ],
+          "anchors": [
+            "TCP veri göndermeden önce el sıkışmayla bağlantı kurar."
+          ]
+        },
+        {
+          "id": "guvenilir-sirali",
+          "label": "TCP kaybı yeniden gönderir ve sırayla teslim eder",
+          "aliases": [
+            "güvenilir",
+            "reliable",
+            "sıralı",
+            "sırayla",
+            "yeniden gönder",
+            "retransmi"
+          ],
+          "anchors": [
+            "TCP kaybolan paketleri yeniden gönderir ve baytları sırayla teslim eder."
+          ]
+        },
+        {
+          "id": "akis-tikaniklik",
+          "label": "Akış ve tıkanıklık kontrolü",
+          "aliases": [
+            "akış kontrol",
+            "flow control",
+            "tıkanıklık",
+            "congestion"
+          ],
+          "anchors": [
+            "TCP akış kontrolüyle alıcıyı, tıkanıklık kontrolüyle ağı korur."
+          ]
+        },
+        {
+          "id": "baglantisiz",
+          "label": "UDP bağlantısızdır, garanti vermez",
+          "aliases": [
+            "bağlantısız",
+            "connectionless",
+            "datagram",
+            "garanti yok",
+            "garantisi yok",
+            "garanti etmez"
+          ],
+          "anchors": [
+            "UDP bağlantısızdır; teslim, sıra ya da yeniden gönderme garantisi yoktur."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Gerçek zamanlı ses-görüntü, oyun, DNS, QUIC",
+          "aliases": [
+            "canlı yayın",
+            "canlı ses",
+            "görüntülü",
+            "video",
+            "oyunlar",
+            "gaming"
+          ],
+          "anchors": [
+            "Geç gelen verinin işe yaramadığı canlı ses, video ve oyunlarda UDP tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "UDP üzerinde çalışan bir uygulama paket kaybını ve sırayı nasıl ele alabilir?"
+      ],
+      "source": "Kendi derleme — RFC 9293 (TCP); RFC 768 (UDP)"
+    },
+    {
+      "id": "web-tcp-handshake",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 1,
+      "prompt": "TCP three-way handshake nasıl işler? Neden gereklidir?",
+      "modelAnswer": "İstemci `SYN` bayraklı bir segmentle kendi başlangıç sıra numarasını gönderir, sunucu `SYN-ACK` ile hem bunu onaylar hem kendi başlangıç sıra numarasını bildirir, istemci de son `ACK` ile sunucunun numarasını onaylar. Böylece iki taraf da karşısındakinin hem gönderebildiğini hem alabildiğini doğrular ve sıra numaralarında anlaşır; TCP'nin sıralı teslimi ve kayıp tespiti bu numaralara dayanır. Başlangıç sıra numaraları tahmin edilemeyecek şekilde seçilir; böylece eski bir bağlantıdan kalan paketler yeni bağlantıya karışmaz ve dışarıdan biri numarayı tahmin edip araya sahte segment sokamaz. Bedeli, ilk veri gönderilmeden önce bir tam gidiş-dönüş (1 RTT) beklemektir; HTTPS'te buna TLS el sıkışması da eklenir, keep-alive ve HTTP/3'ün kullandığı QUIC bu maliyeti azaltmak için vardır.",
+      "keyConcepts": [
+        {
+          "id": "syn-ack",
+          "label": "SYN, SYN-ACK, ACK",
+          "aliases": [
+            "syn-ack",
+            "syn ack",
+            "synack",
+            "syn/ack"
+          ],
+          "anchors": [
+            "İstemci SYN gönderir, sunucu SYN-ACK ile cevap verir, istemci ACK ile tamamlar."
+          ]
+        },
+        {
+          "id": "sira-numarasi",
+          "label": "Başlangıç sıra numaralarında anlaşılır",
+          "aliases": [
+            "sıra numara",
+            "sequence number",
+            "sequence numara",
+            "senkron",
+            "numaralarında anlaş"
+          ],
+          "anchors": [
+            "İki taraf başlangıç sıra numaralarını birbirine bildirip onaylar."
+          ]
+        },
+        {
+          "id": "iki-yonlu",
+          "label": "İki taraf da gönderip alabildiğini doğrular",
+          "aliases": [
+            "iki yönlü",
+            "iki taraf",
+            "hem gönder",
+            "çift yönlü",
+            "karşı taraf",
+            "alabildiğ"
+          ],
+          "anchors": [
+            "El sıkışmayla iki taraf da karşısındakinin hem gönderebildiğini hem alabildiğini doğrular."
+          ]
+        },
+        {
+          "id": "tahmin-edilemez",
+          "label": "Numaralar tahmin edilemez; eski ve sahte segment karışmaz",
+          "aliases": [
+            "rastgele",
+            "random",
+            "tahmin edile",
+            "eski paket",
+            "eski bağlantı",
+            "sahte segment"
+          ],
+          "anchors": [
+            "Başlangıç numaraları tahmin edilemez seçilir; eski paketler ve sahte segmentler bağlantıya karışmaz."
+          ]
+        },
+        {
+          "id": "rtt-maliyeti",
+          "label": "Veri öncesi bir gidiş-dönüş gecikmesi",
+          "aliases": [
+            "gidiş-dönüş",
+            "gidiş dönüş",
+            "round trip",
+            "round-trip",
+            "1 rtt",
+            "gecikme"
+          ],
+          "anchors": [
+            "El sıkışma ilk veriden önce bir tam gidiş-dönüş gecikmesi ekler."
+          ]
+        }
+      ],
+      "followUps": [
+        "SYN flood saldırısı nasıl çalışır, SYN cookie'leri bunu nasıl hafifletir?"
+      ],
+      "source": "Kendi derleme — RFC 9293 §3.4 Sequence Numbers, §3.5 Establishing a Connection; RFC 6528"
+    },
+    {
+      "id": "web-dns-resolution",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 2,
+      "prompt": "DNS çözümleme nasıl işler? Recursive resolver ile authoritative sunucunun rolü nedir?",
+      "modelAnswer": "Tarayıcı bir alan adının IP adresini önce kendi önbelleğinde, sonra işletim sisteminin önbelleğinde ve `hosts` dosyasında arar; bulamazsa sorguyu yapılandırılmış **recursive resolver**'a, genellikle internet sağlayıcısının ya da `1.1.1.1` gibi genel bir çözümleyicinin sunucusuna gönderir. Resolver cevabı bilmiyorsa zinciri iterative sorgularla dolaşır; önce kök sunuculara sorup `.com` gibi TLD sunucularının adresini alır, TLD sunucusu alan adının yetkili sunucularını söyler, yetkili (authoritative) sunucu da `A` (IPv4) ya da `AAAA` (IPv6) kaydını verir. Authoritative sunucu alan adının kayıtlarının asıl kaynağıdır; resolver ise istemci adına bu yolculuğu yapıp sonucu önbelleğe alan aracıdır. Her kayıt bir **TTL** taşır ve bu süre boyunca yol üzerindeki önbelleklerde tutulur; bu yüzden DNS değişiklikleri hemen yayılmaz, eski IP TTL dolana kadar görülebilir.",
+      "keyConcepts": [
+        {
+          "id": "yerel-onbellek",
+          "label": "Önce tarayıcı ve işletim sistemi önbelleği",
+          "aliases": [
+            "tarayıcı önbelle",
+            "işletim sistemi",
+            "os önbelle",
+            "hosts",
+            "browser cache"
+          ],
+          "anchors": [
+            "Tarayıcı önce kendi önbelleğine, sonra işletim sisteminin önbelleğine ve hosts dosyasına bakar."
+          ]
+        },
+        {
+          "id": "kok-tld",
+          "label": "Kök → TLD → yetkili sunucu zinciri",
+          "aliases": [
+            "kök sunucu",
+            "root server",
+            "root dns",
+            "tld sunucu",
+            "top-level",
+            ".com"
+          ],
+          "anchors": [
+            "Resolver önce kök sunuculara, sonra TLD sunucusuna, en son yetkili sunucuya sorar."
+          ]
+        },
+        {
+          "id": "istemci-adina",
+          "label": "Resolver istemci adına iterative sorgu yapar",
+          "aliases": [
+            "iterative",
+            "yinelemeli",
+            "istemci adına",
+            "adına sorar",
+            "zinciri dolaş",
+            "resolver'a sor"
+          ],
+          "anchors": [
+            "Recursive resolver istemci adına zinciri iterative sorgularla dolaşır ve sonucu önbelleğe alır."
+          ]
+        },
+        {
+          "id": "kayit",
+          "label": "Yetkili sunucu A/AAAA kaydını verir, asıl kaynaktır",
+          "aliases": [
+            "a kaydı",
+            "aaaa",
+            "a record",
+            "asıl kaynak",
+            "ipv4",
+            "ipv6"
+          ],
+          "anchors": [
+            "Authoritative sunucu kayıtların asıl kaynağıdır ve A ya da AAAA kaydını döner."
+          ]
+        },
+        {
+          "id": "ttl",
+          "label": "TTL boyunca önbellek; değişiklik geç yayılır",
+          "aliases": [
+            "time to live",
+            "time-to-live",
+            "ttl süre",
+            "ttl dol",
+            "yayılma",
+            "propagation"
+          ],
+          "anchors": [
+            "Kayıtlar TTL boyunca önbellekte kalır, bu yüzden DNS değişiklikleri hemen yayılmaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "DNS over HTTPS (DoH) neyi çözer, neyi değiştirmez?"
+      ],
+      "source": "Kendi derleme — RFC 1034 §2.4, §5.3.1; RFC 1035; RFC 3596 (AAAA)"
+    },
+    {
+      "id": "web-url-to-page",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Ağ Temelleri",
+      "difficulty": 2,
+      "prompt": "Tarayıcının adres çubuğuna bir URL yazıp Enter'a basınca sırasıyla neler olur?",
+      "modelAnswer": "Tarayıcı önce girileni ayrıştırır; URL değilse arama motoruna gönderir, alan adı HSTS listesindeyse `http`'yi istek çıkmadan `https`'e çevirir. Sonra sırasıyla DNS ile alan adının IP adresini bulur, sunucuyla TCP bağlantısı ve üstüne TLS el sıkışması kurar (HTTP/3'te ikisi QUIC ile birlikte yapılır) ve HTTP isteğini gönderir; yanıt bir yönlendirmeyse bu adımlar yeni adres için tekrarlanır. HTML gelmeye başladığında tarayıcı onu indirme bitmeden ayrıştırıp **DOM**'u kurar, karşılaştığı CSS, JavaScript ve görseller için ayrı istekler başlatır; CSS'ten **CSSOM** oluşur, `async` ya da `defer` taşımayan klasik bir `<script>` ise ayrıştırmayı kendisi indirilip çalışana kadar durdurur. DOM ve CSSOM birleşip render tree'yi oluşturur, ardından **layout** her öğenin konumunu ve boyutunu hesaplar, **paint** pikselleri çizer ve katmanlar ekranda birleştirilir. Bu adımların her biri önbelleklerle kısalabilir; DNS sonucu, açık bir bağlantı ya da önbellekteki bir yanıt varsa ilgili adım hiç yaşanmaz.",
+      "keyConcepts": [
+        {
+          "id": "dns",
+          "label": "Alan adı IP adresine çözülür",
+          "aliases": [
+            "dns sorgu",
+            "dns çözümle",
+            "dns ile",
+            "dns'e",
+            "dns'ten",
+            "alan adı çözümle"
+          ],
+          "anchors": [
+            "Tarayıcı önce DNS ile alan adının IP adresini bulur."
+          ]
+        },
+        {
+          "id": "baglanti",
+          "label": "TCP ve TLS ile bağlantı kurulur",
+          "aliases": [
+            "tcp bağlantı",
+            "tcp handshake",
+            "tls handshake",
+            "tls el sıkış",
+            "bağlantı kurulur",
+            "three-way"
+          ],
+          "anchors": [
+            "Sunucuyla TCP bağlantısı ve üstüne TLS el sıkışması kurulur."
+          ]
+        },
+        {
+          "id": "istek-yanit",
+          "label": "HTTP isteği gider, yanıt (gerekirse yönlendirme) gelir",
+          "aliases": [
+            "isteğini gönder",
+            "isteği gönder",
+            "istek gönder",
+            "get isteği",
+            "http request",
+            "yönlendirme"
+          ],
+          "anchors": [
+            "Bağlantı kurulunca HTTP isteği gönderilir, yanıt yönlendirmeyse adımlar tekrarlanır."
+          ]
+        },
+        {
+          "id": "dom-cssom",
+          "label": "HTML ayrıştırılır, DOM ve CSSOM kurulur",
+          "aliases": [
+            "dom ağacı",
+            "dom tree",
+            "dom'u",
+            "dom oluş",
+            "cssom",
+            "ayrıştır"
+          ],
+          "anchors": [
+            "HTML ayrıştırılıp DOM, CSS'ten CSSOM kurulur."
+          ]
+        },
+        {
+          "id": "layout-paint",
+          "label": "Render tree, layout ve paint",
+          "aliases": [
+            "render tree",
+            "render ağacı",
+            "layout",
+            "paint",
+            "ekrana çiz",
+            "render ed"
+          ],
+          "anchors": [
+            "DOM ve CSSOM render tree'yi oluşturur, ardından layout ve paint ile sayfa çizilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir <script> etiketine async ya da defer eklemek bu sırayı nasıl değiştirir?"
+      ],
+      "source": "Kendi derleme — HTML Living Standard: Parsing HTML documents; MDN: How browsers work; RFC 6797 §8.3"
+    },
+    {
+      "id": "web-http11-hol",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Sürümleri",
+      "difficulty": 2,
+      "prompt": "HTTP/1.1'de keep-alive nedir? Head-of-line blocking neden bir sorundur?",
+      "modelAnswer": "HTTP/1.1'de bağlantılar varsayılan olarak **kalıcıdır**; bir yanıt bittiğinde TCP bağlantısı kapanmaz, sonraki istek aynı bağlantıdan gider ve her istek için yeni TCP ve TLS el sıkışması ödenmez. Ama bir bağlantıda aynı anda yalnızca bir istek-yanıt yürüyebilir; yanıtlar istek sırasıyla ve bütün hâlinde geldiği için yavaş bir yanıt arkasındaki her isteği bekletir, buna **uygulama katmanında** head-of-line blocking denir. Pipelining istekleri yanıt beklemeden arka arkaya göndermeye izin verse de yanıtlar yine sırayla dönmek zorunda olduğundan sorunu çözmedi ve tarayıcılarda varsayılan olarak kapalıdır. Tarayıcılar bunu aynı host'a genellikle 6 paralel bağlantı açarak hafifletir; geliştiriciler de domain sharding, dosya birleştirme ve sprite gibi geçici çözümlere başvurdu. HTTP/2 bu sorunu tek bağlantıda multiplexing ile çözmek için geldi.",
+      "keyConcepts": [
+        {
+          "id": "kalici",
+          "label": "Bağlantı kalıcıdır, sonraki istekler aynı bağlantıdan gider",
+          "aliases": [
+            "kalıcı",
+            "persistent",
+            "yeniden kullan",
+            "açık kalır",
+            "aynı tcp bağlantı",
+            "birden fazla istek için"
+          ],
+          "anchors": [
+            "HTTP/1.1'de bağlantı yanıttan sonra kapanmaz, sonraki istekler aynı bağlantıyı kullanır."
+          ]
+        },
+        {
+          "id": "arkadakiler-bekler",
+          "label": "Yavaş yanıt arkasındaki istekleri bekletir",
+          "aliases": [
+            "yavaş yanıt",
+            "arkasındaki",
+            "arkadaki",
+            "öndeki",
+            "önündeki",
+            "sıradaki"
+          ],
+          "anchors": [
+            "Bir bağlantıda aynı anda tek istek yürür; yavaş bir yanıt arkasındaki istekleri bekletir."
+          ]
+        },
+        {
+          "id": "uygulama-katmani",
+          "label": "Blokaj uygulama katmanındadır",
+          "aliases": [
+            "uygulama katman",
+            "application layer",
+            "http katman",
+            "http seviye"
+          ],
+          "anchors": [
+            "HTTP/1.1'deki head-of-line blocking uygulama (HTTP) katmanındadır."
+          ]
+        },
+        {
+          "id": "pipelining",
+          "label": "Pipelining çözmedi, tarayıcılarda kapalı",
+          "aliases": [
+            "pipelining",
+            "pipeline",
+            "boru hattı"
+          ],
+          "anchors": [
+            "Pipelining yanıtlar yine sırayla döndüğü için sorunu çözmedi ve tarayıcılarda kapalıdır."
+          ]
+        },
+        {
+          "id": "paralel-baglanti",
+          "label": "Host başına birkaç paralel bağlantı ve geçici çözümler",
+          "aliases": [
+            "paralel bağlantı",
+            "6 bağlantı",
+            "altı bağlantı",
+            "domain sharding",
+            "sprite",
+            "birleştir"
+          ],
+          "anchors": [
+            "Tarayıcılar host başına 6 paralel bağlantı açar; domain sharding ve dosya birleştirme geçici çözümlerdir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tarayıcılar aynı host'a açtıkları bağlantı sayısını neden sınırlar?"
+      ],
+      "source": "Kendi derleme — RFC 9112 §9.3 Persistence, §9.3.2 Pipelining; MDN: Connection management in HTTP/1.x"
+    },
+    {
+      "id": "web-http2",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Sürümleri",
+      "difficulty": 2,
+      "prompt": "HTTP/2'deki multiplexing ve HPACK neyi çözer? Head-of-line blocking HTTP/2'de tamamen ortadan kalkar mı?",
+      "modelAnswer": "HTTP/2 mesajları ikili (binary) **frame**'lere böler ve her istek-yanıt çiftine bir **stream** kimliği verir; birçok stream'in frame'leri tek TCP bağlantısında iç içe akar, böylece yavaş bir yanıt diğerlerini bekletmez ve HTTP/1.1'in uygulama katmanındaki blokajı çözülür. HPACK başlıkları sıkıştırır; sık kullanılan başlıklar statik bir tablodan, aynı bağlantıda daha önce gönderilenler dinamik bir tablodan tek bir indeksle gönderilir, böylece her istekte tekrarlanan cookie ve user-agent gibi başlıkların yükü düşer. Ama tüm stream'ler tek bir TCP bağlantısını paylaştığı için sorun bir alt katmana iner; TCP bayt akışını sırayla teslim eder ve kaybolan tek bir paket yeniden gönderilene kadar ondan sonraki her şeyi, başka stream'lere ait olsa bile, bekletir. Paket kaybının yüksek olduğu mobil ağlarda HTTP/2 bu yüzden birkaç paralel HTTP/1.1 bağlantısından yavaş kalabilir. Bu TCP katmanındaki blokajı HTTP/3, QUIC ile çözer.",
+      "keyConcepts": [
+        {
+          "id": "stream-frame",
+          "label": "İkili frame'ler ve stream'ler",
+          "aliases": [
+            "stream",
+            "frame",
+            "binary",
+            "ikili",
+            "iç içe",
+            "interleav"
+          ],
+          "anchors": [
+            "HTTP/2 mesajları ikili frame'lere böler, her istek-yanıt bir stream olur."
+          ]
+        },
+        {
+          "id": "tek-baglanti",
+          "label": "Tek TCP bağlantısında eşzamanlı istekler",
+          "aliases": [
+            "tek bağlantı",
+            "tek bir bağlantı",
+            "tek tcp",
+            "tek bir tcp",
+            "aynı anda",
+            "eşzamanlı"
+          ],
+          "anchors": [
+            "Birçok istek tek TCP bağlantısında eşzamanlı yürür, yavaş yanıt diğerlerini bekletmez."
+          ]
+        },
+        {
+          "id": "hpack",
+          "label": "HPACK başlıkları tabloyla sıkıştırır",
+          "aliases": [
+            "sıkıştır",
+            "header compression",
+            "statik tablo",
+            "dinamik tablo",
+            "indeks",
+            "huffman"
+          ],
+          "anchors": [
+            "HPACK tekrarlanan başlıkları statik ve dinamik tablodaki indekslerle sıkıştırır."
+          ]
+        },
+        {
+          "id": "tcp-hol",
+          "label": "Blokaj TCP katmanına iner; kayıp paket tüm stream'leri bekletir",
+          "aliases": [
+            "tcp katman",
+            "tcp seviye",
+            "paket kayb",
+            "kayıp paket",
+            "packet loss",
+            "tcp'de kal"
+          ],
+          "anchors": [
+            "Tüm stream'ler tek TCP bağlantısında olduğu için kaybolan bir paket hepsini bekletir."
+          ]
+        },
+        {
+          "id": "kayipli-ag",
+          "label": "Kayıplı ağda HTTP/1.1'den yavaş kalabilir",
+          "aliases": [
+            "mobil ağ",
+            "kayıplı ağ",
+            "yüksek kayıp",
+            "daha yavaş",
+            "lossy",
+            "paket kaybı yüksek"
+          ],
+          "anchors": [
+            "Paket kaybı yüksek ağlarda HTTP/2 paralel HTTP/1.1 bağlantılarından yavaş kalabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tarayıcılar HTTP/2'yi neden yalnızca TLS üzerinden kullanır?"
+      ],
+      "source": "Kendi derleme — RFC 9113 §1, §5 Streams and Multiplexing; RFC 7541 (HPACK)"
+    },
+    {
+      "id": "web-http3-quic",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTP Sürümleri",
+      "difficulty": 3,
+      "prompt": "HTTP/3 neden TCP yerine QUIC kullanır?",
+      "modelAnswer": "QUIC, UDP üzerinde çalışan ve güvenilir teslimi, tıkanıklık kontrolünü ve şifrelemeyi kendisi sağlayan bir taşıma protokolüdür; TCP'den en önemli farkı stream'leri **taşıma katmanında** tanımasıdır. Kaybolan bir paket yalnızca kendi stream'ini bekletir, diğer stream'lerin verisi uygulamaya teslim edilmeye devam eder; HTTP/2'de TCP katmanında kalan head-of-line blocking böylece çözülür. TLS 1.3 QUIC'in içine gömülüdür, taşıma ve şifreleme el sıkışması birlikte yapılır; yeni bir bağlantı 1-RTT'de, daha önce görüşülmüş bir sunucuya ise 0-RTT ile kurulabilir. Bağlantı IP ve port yerine **connection ID** ile tanımlandığı için telefon Wi-Fi'dan mobil veriye geçtiğinde bağlantı kopmadan sürebilir (connection migration). Bazı ağlar UDP'yi engellediği için tarayıcı HTTP/3 desteğini `Alt-Svc` başlığından ya da DNS'teki HTTPS kaydından öğrenip dener, çalışmazsa HTTP/2'ye döner.",
+      "keyConcepts": [
+        {
+          "id": "udp-uzerinde",
+          "label": "QUIC UDP üzerinde, güvenilirliği kendisi sağlar",
+          "aliases": [
+            "udp üzerinde",
+            "udp tabanlı",
+            "udp üstünde",
+            "over udp",
+            "udp kullan"
+          ],
+          "anchors": [
+            "QUIC UDP üzerinde çalışır, güvenilir teslimi ve tıkanıklık kontrolünü kendisi sağlar."
+          ]
+        },
+        {
+          "id": "bagimsiz-stream",
+          "label": "Stream'ler taşıma katmanında bağımsız",
+          "aliases": [
+            "bağımsız",
+            "kendi stream",
+            "yalnızca o stream",
+            "sadece o stream",
+            "taşıma katman",
+            "diğer stream"
+          ],
+          "anchors": [
+            "QUIC'te kaybolan paket yalnızca kendi stream'ini bekletir, diğer stream'ler etkilenmez."
+          ]
+        },
+        {
+          "id": "tls-gomulu",
+          "label": "TLS 1.3 gömülü, 1-RTT ve 0-RTT",
+          "aliases": [
+            "tls 1.3",
+            "gömülü",
+            "1-rtt",
+            "0-rtt",
+            "birlikte el sıkış",
+            "tek el sıkışma"
+          ],
+          "anchors": [
+            "TLS 1.3 QUIC'e gömülüdür; bağlantı 1-RTT'de, tekrar görüşmede 0-RTT ile kurulur."
+          ]
+        },
+        {
+          "id": "migration",
+          "label": "Connection ID ile ağ değişince bağlantı sürer",
+          "aliases": [
+            "connection id",
+            "bağlantı kimliği",
+            "connection migration",
+            "wi-fi",
+            "ağ değiş",
+            "ip değiş"
+          ],
+          "anchors": [
+            "Bağlantı connection ID ile tanımlandığı için ağ değişince kopmaz."
+          ]
+        },
+        {
+          "id": "kesif-geri-donus",
+          "label": "Alt-Svc ile keşif, UDP engelliyse HTTP/2'ye dönüş",
+          "aliases": [
+            "alt-svc",
+            "https kaydı",
+            "https record",
+            "udp engel",
+            "fallback",
+            "http/2'ye dön"
+          ],
+          "anchors": [
+            "Tarayıcı HTTP/3'ü Alt-Svc ya da HTTPS kaydıyla öğrenir, UDP engelliyse HTTP/2'ye döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "HTTP/3 neden HPACK yerine QPACK kullanır?"
+      ],
+      "source": "Kendi derleme — RFC 9000 (QUIC) §9 Connection Migration; RFC 9001; RFC 9114; RFC 7838 (Alt-Svc); RFC 9460"
+    },
+    {
+      "id": "web-tls13-handshake",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 3,
+      "prompt": "TLS 1.3 handshake nasıl işler? TLS 1.2'ye göre ne kazandırır?",
+      "modelAnswer": "İstemci `ClientHello`'da desteklediği şifre takımlarıyla birlikte, sunucunun seçeceğini tahmin ettiği gruplar için (EC)DHE anahtar payını (`key_share`) da gönderir; sunucu `ServerHello`'da kendi payını döner ve iki taraf ortak anahtarı hemen türetir. Bundan sonraki her mesaj, sunucunun sertifikası (`Certificate`), sertifikanın özel anahtarıyla atılan imza (`CertificateVerify`) ve `Finished` dahil, şifreli gider ve istemci kendi `Finished`'ını gönderdiği anda uygulama verisini yollayabilir; yani tam el sıkışma TLS 1.2'deki iki gidiş-dönüş yerine **1-RTT**'de biter. TLS 1.3 statik RSA ve statik Diffie-Hellman anahtar değişimini kaldırdı; her bağlantı geçici (ephemeral) anahtar kullandığı için **forward secrecy** zorunludur ve zayıf şifreleme algoritmaları listeden çıkarıldı. Daha önce görüşülmüş bir sunucuya **0-RTT** ile ilk mesajda veri de gönderilebilir, ama bu veri **replay**'e açıktır; ağdaki biri aynı veriyi tekrar gönderebilir ve TLS bağlantılar arası tekrara karşı garanti vermez. Bu yüzden HTTP istemcileri 0-RTT'de yalnızca safe metotları gönderebilir; durum değiştiren bir istek tekrarlanırsa, idempotency key'in uygulama düzeyinde önlediği çift işlem sorunu ağ katmanında ortaya çıkar.",
+      "keyConcepts": [
+        {
+          "id": "key-share",
+          "label": "Anahtar payı ilk mesajda gönderilir",
+          "aliases": [
+            "key_share",
+            "key share",
+            "anahtar payı",
+            "ecdhe",
+            "diffie-hellman",
+            "clienthello"
+          ],
+          "anchors": [
+            "İstemci ClientHello'da (EC)DHE anahtar payını hemen gönderir, sunucu ServerHello'da kendi payını döner."
+          ]
+        },
+        {
+          "id": "1-rtt",
+          "label": "Tam el sıkışma 1-RTT",
+          "aliases": [
+            "1-rtt",
+            "1 rtt",
+            "tek gidiş",
+            "tek round trip",
+            "bir round trip",
+            "bir gidiş-dönüş"
+          ],
+          "anchors": [
+            "TLS 1.3'te tam el sıkışma TLS 1.2'deki iki gidiş-dönüş yerine 1-RTT'de biter."
+          ]
+        },
+        {
+          "id": "sifreli-handshake",
+          "label": "ServerHello sonrası mesajlar şifreli, sertifika dahil",
+          "aliases": [
+            "sertifika şifreli",
+            "şifreli gider",
+            "serverhello'dan sonra",
+            "certificateverify",
+            "handshake şifreli",
+            "encrypted extensions"
+          ],
+          "anchors": [
+            "ServerHello'dan sonraki tüm el sıkışma mesajları, sertifika dahil, şifreli gider."
+          ]
+        },
+        {
+          "id": "forward-secrecy",
+          "label": "Statik RSA kalktı, forward secrecy zorunlu",
+          "aliases": [
+            "forward secrecy",
+            "perfect forward",
+            "statik rsa",
+            "ephemeral",
+            "geçici anahtar",
+            "zayıf algoritma"
+          ],
+          "anchors": [
+            "TLS 1.3 statik RSA anahtar değişimini kaldırdı, forward secrecy zorunludur."
+          ]
+        },
+        {
+          "id": "0-rtt-replay",
+          "label": "0-RTT replay'e açıktır, yalnızca safe istekler",
+          "aliases": [
+            "0-rtt",
+            "0 rtt",
+            "replay",
+            "tekrar oynat",
+            "early data",
+            "zero rtt"
+          ],
+          "anchors": [
+            "0-RTT verisi replay'e açıktır; bu yüzden yalnızca safe istekler 0-RTT ile gönderilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sunucu 0-RTT ile gelen bir isteği işlemeyi riskli bulursa istemciye ne söyleyebilir?"
+      ],
+      "source": "Kendi derleme — RFC 8446 §1.2, §2, §2.3, §8; RFC 8470 (Using Early Data in HTTP)"
+    },
+    {
+      "id": "web-certificate-chain",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 2,
+      "prompt": "Sertifika zinciri nedir? Tarayıcı bir sunucunun sertifikasına nasıl güvenir?",
+      "modelAnswer": "Sunucunun sertifikasını (leaf) genellikle doğrudan kök sertifika otoritesi (root CA) değil, bir ara sertifika (intermediate CA) imzalar; ara sertifikayı da kök imzalar ve bu imza sırası zinciri oluşturur. Tarayıcı ya da işletim sistemi güvendiği kök sertifikaların listesini (trust store) önceden yüklü taşır; sunucu el sıkışmada kendi sertifikasını ve ara sertifikaları gönderir, istemci her imzayı bir üsttekinin açık anahtarıyla doğrulayarak güvendiği bir köke ulaşmaya çalışır. Zincirin sağlam olması yetmez; sertifikadaki alan adının (Subject Alternative Name) bağlanılan adla eşleşmesi ve sertifikanın geçerlilik tarihleri içinde olması da gerekir. Kök anahtarlar çevrimdışı saklanır ve günlük imzalar ara sertifikalarla atılır; bir ara sertifika sızarsa kökü değiştirmeden yalnızca o geri çekilir. Sunucu ara sertifikayı göndermeyi unutursa bazı istemciler zinciri kuramaz ve hata verir; tarayıcıda sorunsuz açılan bir site başka bir istemcide bu yüzden kırılabilir.",
+      "keyConcepts": [
+        {
+          "id": "zincir",
+          "label": "Leaf → ara sertifika → kök",
+          "aliases": [
+            "ara sertifika",
+            "intermediate",
+            "leaf",
+            "kök sertifika",
+            "root ca",
+            "kök ca"
+          ],
+          "anchors": [
+            "Sunucu sertifikasını ara sertifika, ara sertifikayı kök imzalar; bu zinciri oluşturur."
+          ]
+        },
+        {
+          "id": "trust-store",
+          "label": "Güvenilen kökler önceden yüklüdür",
+          "aliases": [
+            "trust store",
+            "güven deposu",
+            "önceden yüklü",
+            "güvenilen kök",
+            "güvenilen root",
+            "root store"
+          ],
+          "anchors": [
+            "Tarayıcı ya da işletim sistemi güvendiği kök sertifikaları önceden yüklü taşır."
+          ]
+        },
+        {
+          "id": "imza-dogrulama",
+          "label": "Her imza bir üsttekinin açık anahtarıyla doğrulanır",
+          "aliases": [
+            "imza",
+            "signature",
+            "açık anahtar",
+            "public key",
+            "imzala"
+          ],
+          "anchors": [
+            "İstemci her sertifikanın imzasını bir üsttekinin açık anahtarıyla doğrular."
+          ]
+        },
+        {
+          "id": "ad-ve-tarih",
+          "label": "Alan adı eşleşmeli, sertifika geçerlilik süresinde olmalı",
+          "aliases": [
+            "subject alternative name",
+            "alan adı eşleş",
+            "domain adı",
+            "hostname",
+            "geçerlilik",
+            "sertifikanın süresi"
+          ],
+          "anchors": [
+            "Sertifikadaki alan adı bağlanılan adla eşleşmeli ve sertifika geçerlilik süresinde olmalıdır."
+          ]
+        },
+        {
+          "id": "eksik-ara",
+          "label": "Ara sertifika gönderilmezse bazı istemciler hata verir",
+          "aliases": [
+            "eksik ara",
+            "ara sertifikayı gönder",
+            "zinciri kuramaz",
+            "incomplete chain",
+            "missing intermediate",
+            "fullchain"
+          ],
+          "anchors": [
+            "Sunucu ara sertifikayı göndermezse bazı istemciler zinciri kuramaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sertifika süresi dolmadan geri çekilirse istemciler bunu nasıl öğrenir?"
+      ],
+      "source": "Kendi derleme — RFC 5280 §6 Certification Path Validation; RFC 9525 (hizmet kimliği doğrulama); RFC 8446 §4.4.2"
+    },
+    {
+      "id": "web-hsts",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 2,
+      "prompt": "HSTS nedir? Hangi saldırıyı önler?",
+      "modelAnswer": "HSTS (HTTP Strict Transport Security), sunucunun HTTPS yanıtında `Strict-Transport-Security: max-age=31536000; includeSubDomains` gibi bir başlık göndererek tarayıcıya bu alan adına belirtilen süre boyunca **yalnızca HTTPS** ile bağlanmasını söylemesidir. Tarayıcı bundan sonra kullanıcı `http://` yazsa ya da bir link öyle olsa bile adresi istek çıkmadan `https://`'e çevirir ve sertifika hatasında kullanıcının \"yine de devam et\" demesine izin vermez. Böylece saldırganın ilk düz HTTP isteğini yakalayıp kullanıcıyı şifresiz bağlantıda tuttuğu **SSL stripping** gibi araya girme saldırıları önlenir. Ama başlık yalnızca HTTPS üzerinden alınırsa geçerlidir; tarayıcının siteyi henüz hiç görmediği **ilk ziyaret** bu yüzden korumasızdır. Bu açığı kapatmak için alan adı tarayıcıların içine gömülü **preload** listesine eklenir; başvuru için `max-age` en az bir yıl olmalı, `includeSubDomains` ve `preload` yönergeleri bulunmalıdır ve listeden çıkmak aylar sürer.",
+      "keyConcepts": [
+        {
+          "id": "yalnizca-https",
+          "label": "Belirtilen süre boyunca yalnızca HTTPS",
+          "aliases": [
+            "yalnızca https",
+            "sadece https",
+            "only https",
+            "strict-transport-security",
+            "max-age",
+            "zorunlu https"
+          ],
+          "anchors": [
+            "HSTS başlığı tarayıcıya alan adına belirtilen süre boyunca yalnızca HTTPS ile bağlanmasını söyler."
+          ]
+        },
+        {
+          "id": "https-e-cevirme",
+          "label": "http adresleri istek çıkmadan https'e çevrilir; hata geçilemez",
+          "aliases": [
+            "https'e çevir",
+            "https'e yönlendir",
+            "otomatik https",
+            "devam et",
+            "click-through",
+            "sertifika hatası"
+          ],
+          "anchors": [
+            "Tarayıcı http adreslerini istek çıkmadan https'e çevirir ve sertifika hatasında devam etmeye izin vermez."
+          ]
+        },
+        {
+          "id": "ssl-stripping",
+          "label": "SSL stripping ve araya girme saldırıları",
+          "aliases": [
+            "ssl strip",
+            "sslstrip",
+            "downgrade",
+            "araya gir",
+            "man-in-the-middle",
+            "mitm"
+          ],
+          "anchors": [
+            "HSTS saldırganın kullanıcıyı şifresiz HTTP'de tuttuğu SSL stripping saldırısını önler."
+          ]
+        },
+        {
+          "id": "ilk-ziyaret",
+          "label": "İlk ziyaret korumasızdır",
+          "aliases": [
+            "ilk ziyaret",
+            "ilk istek",
+            "first visit",
+            "ilk bağlantı",
+            "ilk kez",
+            "hiç görmediği"
+          ],
+          "anchors": [
+            "Başlık ancak HTTPS üzerinden alınınca geçerli olduğu için ilk ziyaret korumasızdır."
+          ]
+        },
+        {
+          "id": "preload",
+          "label": "Preload listesi ilk ziyareti korur",
+          "aliases": [
+            "preload",
+            "önceden yüklü liste",
+            "hstspreload",
+            "gömülü liste",
+            "tarayıcıya gömülü"
+          ],
+          "anchors": [
+            "Alan adı tarayıcılara gömülü preload listesine eklenirse ilk ziyaret de korunur."
+          ]
+        }
+      ],
+      "followUps": [
+        "includeSubDomains içeren bir HSTS başlığı yanlışlıkla canlıya çıkarsa hangi alt alan adları etkilenir, geri almak neden zordur?"
+      ],
+      "source": "Kendi derleme — RFC 6797 §6.1, §8.1, §8.3, §12.1, §14.6; hstspreload.org"
+    },
+    {
+      "id": "web-sni",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 2,
+      "prompt": "SNI nedir, neden gereklidir?",
+      "modelAnswer": "SNI (Server Name Indication), istemcinin TLS el sıkışmasının ilk mesajı olan `ClientHello`'da hangi alan adına bağlanmak istediğini bildirdiği uzantıdır. Aynı IP adresinde birçok HTTPS sitesi barındırıldığında sunucu hangi sertifikayı göstereceğini HTTP isteğindeki `Host` başlığından öğrenemez, çünkü sertifika HTTP isteği gelmeden el sıkışmada gönderilmelidir. SNI bu bilgiyi el sıkışmanın başına taşıyarak tek IP'de çok sayıda sertifikalı siteyi, paylaşımlı hosting'i ve CDN'leri mümkün kılar; reverse proxy'ler de gelen bağlantıyı şifreyi çözmeden SNI'ya bakarak doğru arka uca yönlendirebilir. Bedeli gizliliktir; `ClientHello` şifresiz gittiği için ağı izleyen biri içeriği göremese de hangi siteye bağlanıldığını görebilir, bunu kapatmak için geliştirilen Encrypted Client Hello (ECH) Mart 2026'da RFC 9849 olarak yayımlandı.",
+      "keyConcepts": [
+        {
+          "id": "clienthello",
+          "label": "Alan adı ClientHello'da bildirilir",
+          "aliases": [
+            "clienthello",
+            "client hello",
+            "hangi domain",
+            "hangi alan adı",
+            "alan adını bildir",
+            "handshake sırasında"
+          ],
+          "anchors": [
+            "İstemci TLS'in ilk mesajı ClientHello'da bağlanmak istediği alan adını bildirir."
+          ]
+        },
+        {
+          "id": "ayni-ip",
+          "label": "Aynı IP'de birden fazla HTTPS sitesi",
+          "aliases": [
+            "aynı ip",
+            "tek ip",
+            "birden fazla site",
+            "virtual host",
+            "vhost",
+            "shared hosting"
+          ],
+          "anchors": [
+            "SNI aynı IP adresinde birden fazla sertifikalı HTTPS sitesini mümkün kılar."
+          ]
+        },
+        {
+          "id": "host-gec-kalir",
+          "label": "Sertifika HTTP isteğinden önce seçilmeli",
+          "aliases": [
+            "host başlığı",
+            "host header",
+            "http isteğinden önce",
+            "istek gelmeden",
+            "hangi sertifika",
+            "doğru sertifika"
+          ],
+          "anchors": [
+            "Sertifika HTTP isteği gelmeden seçilmek zorunda olduğu için Host başlığı işe yaramaz."
+          ]
+        },
+        {
+          "id": "sifresiz",
+          "label": "SNI şifresiz gider, hangi siteye gidildiği görünür",
+          "aliases": [
+            "şifresiz",
+            "açık metin",
+            "plaintext",
+            "plain text",
+            "gizlilik",
+            "hangi siteye"
+          ],
+          "anchors": [
+            "SNI şifresiz gittiği için ağı izleyen biri hangi siteye bağlanıldığını görebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir reverse proxy TLS'i sonlandırmadan gelen bağlantıyı doğru arka uca nasıl yönlendirir?"
+      ],
+      "source": "Kendi derleme — RFC 6066 §3 Server Name Indication; RFC 8446 §4.1.2; RFC 9849 (TLS Encrypted Client Hello)"
+    },
+    {
+      "id": "web-samesite",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Cookie ve Oturum",
+      "difficulty": 2,
+      "prompt": "Cookie'deki SameSite özelliğinin Strict, Lax ve None değerleri arasındaki fark nedir?",
+      "modelAnswer": "SameSite, cookie'nin **cross-site** isteklerde gönderilip gönderilmeyeceğini belirler; buradaki site, scheme ile registrable domain'in (eTLD+1) birlikte oluşturduğu birimdir, yani `https://a.example.com` ile `https://b.example.com` aynı site, `http://example.com` ile `https://example.com` ise farklı sitedir. `Strict` cookie'yi yalnızca aynı siteden başlayan isteklerde gönderir; başka bir sitedeki linke tıklayıp gelen kullanıcı bile ilk sayfada oturumsuz görünür. `Lax` buna bir istisna ekler, başka siteden üst düzey gezinmeyle ve safe bir metotla, yani linke tıklayıp `GET` ile gelindiğinde cookie gider; cross-site `POST`, `iframe` ya da `fetch` isteklerinde gitmez, bu da CSRF'in yaygın biçimlerini keser. `None` cookie'yi her istekte gönderir ve `Secure` ile birlikte kullanılmalıdır. Özellik hiç yazılmazsa Chromium tabanlı tarayıcılar (Chrome 80'den beri) cookie'yi `Lax` sayar, Firefox ve Safari ise 2026 itibarıyla bu varsayılanı uygulamaz ve cookie `None` gibi davranır; bu yüzden değer her zaman açıkça yazılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "site-tanimi",
+          "label": "Site: scheme + registrable domain",
+          "aliases": [
+            "registrable domain",
+            "etld+1",
+            "etld",
+            "schemeful",
+            "scheme",
+            "kayıt edilebilir alan"
+          ],
+          "anchors": [
+            "Site, scheme ile registrable domain'in (eTLD+1) birlikte oluşturduğu birimdir; alt alan adları aynı sitedir."
+          ]
+        },
+        {
+          "id": "strict",
+          "label": "Strict: yalnızca aynı siteden başlayan istekler",
+          "aliases": [
+            "yalnızca aynı site",
+            "sadece aynı site",
+            "aynı siteden",
+            "oturumsuz",
+            "hiçbir cross-site",
+            "asla gönderilmez"
+          ],
+          "anchors": [
+            "Strict cookie yalnızca aynı siteden başlayan isteklerde gider, başka siteden linkle gelişte bile gitmez."
+          ]
+        },
+        {
+          "id": "lax",
+          "label": "Lax: üst düzey gezinme ve safe metotla gider",
+          "aliases": [
+            "üst düzey",
+            "top-level",
+            "navigasyon",
+            "gezinme",
+            "link ile",
+            "linkle"
+          ],
+          "anchors": [
+            "Lax cookie başka siteden üst düzey gezinmede GET ile gider, cross-site POST ve fetch'te gitmez."
+          ]
+        },
+        {
+          "id": "none-secure",
+          "label": "None: her istekte gider, Secure şart",
+          "aliases": [
+            "secure",
+            "her istekte",
+            "her yerde",
+            "tüm isteklerde",
+            "cross-site istek",
+            "kısıtlama yok"
+          ],
+          "anchors": [
+            "None cookie her istekte gider ve Secure ile birlikte kullanılmalıdır."
+          ]
+        },
+        {
+          "id": "varsayilan",
+          "label": "Belirtilmezse yalnızca Chromium Lax sayar",
+          "aliases": [
+            "chromium",
+            "chrome",
+            "varsayılan",
+            "default",
+            "firefox",
+            "safari"
+          ],
+          "anchors": [
+            "SameSite yazılmazsa Chromium cookie'yi Lax sayar, Firefox ve Safari bu varsayılanı uygulamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Ana sitesi example.com, API'si api.example.com olan bir uygulamada SameSite=Strict bir cookie API isteklerinde gönderilir mi?"
+      ],
+      "source": "Kendi derleme — RFC 6265bis taslağı (SameSite, same-site tanımı); MDN: Set-Cookie ve browser-compat-data (Ekim 2026)"
+    },
+    {
+      "id": "web-cookie-domain-path",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Cookie ve Oturum",
+      "difficulty": 3,
+      "prompt": "Cookie'nin Domain ve Path özellikleri nasıl çalışır? Domain belirtmemek neden daha güvenlidir?",
+      "modelAnswer": "`Domain` belirtilmezse cookie **host-only** olur ve yalnızca onu yazan host'a, örneğin `app.example.com`'a gider; `Domain=example.com` yazılırsa `example.com` ile birlikte onun bütün alt alan adlarına gönderilir. Bu yüzden Domain vermek cookie'nin kapsamını genişletir; aynı üst alan altındaki bir pazarlama sitesi, kullanıcı içeriği barındıran bir alt alan ya da ele geçirilmiş bir alt alan adı bu cookie'yi okuyabilir veya kendi değeriyle üzerine yazabilir. Tarayıcılar `com` ya da `co.uk` gibi public suffix'lere cookie yazılmasını reddeder, ama kendi alan adının alt alanlarına karşı koruma sağlamaz. `Path` cookie'nin hangi URL yolu altındaki isteklerde gönderileceğini sınırlar ama güvenlik sınırı değildir; aynı origin'de başka bir yoldan çalışan JavaScript cookie'ye yine ulaşabilir. En sıkı kapsam için `__Host-` öneki kullanılır; tarayıcı bu önekli cookie'yi yalnızca `Secure` ise, `Domain` yoksa ve `Path=/` ise kabul eder.",
+      "keyConcepts": [
+        {
+          "id": "host-only",
+          "label": "Domain yoksa yalnızca yazan host'a gider",
+          "aliases": [
+            "host-only",
+            "host only",
+            "yalnızca o host",
+            "sadece o host",
+            "yazan host",
+            "alt alanlara gitmez"
+          ],
+          "anchors": [
+            "Domain belirtilmezse cookie host-only olur, yalnızca onu yazan host'a gider."
+          ]
+        },
+        {
+          "id": "alt-alanlar",
+          "label": "Domain verilirse bütün alt alan adlarına gider",
+          "aliases": [
+            "alt alan",
+            "subdomain",
+            "sub-domain",
+            "alt domain",
+            "tüm alt"
+          ],
+          "anchors": [
+            "Domain verilirse cookie o alan adının bütün alt alan adlarına gönderilir."
+          ]
+        },
+        {
+          "id": "kapsam-riski",
+          "label": "Başka bir alt alan okuyabilir ya da üzerine yazabilir",
+          "aliases": [
+            "üzerine yaz",
+            "okuyabil",
+            "ele geçiril",
+            "takeover",
+            "cookie tossing",
+            "kapsam"
+          ],
+          "anchors": [
+            "Domain kapsamı genişlettiği için başka ya da ele geçirilmiş bir alt alan cookie'yi okuyup üzerine yazabilir."
+          ]
+        },
+        {
+          "id": "path-sinir-degil",
+          "label": "Path güvenlik sınırı değildir",
+          "aliases": [
+            "güvenlik sınırı değil",
+            "güvenlik önlemi değil",
+            "güvenlik için kullanılmamalı",
+            "security boundary",
+            "başka yoldan",
+            "sınır değil"
+          ],
+          "anchors": [
+            "Path güvenlik sınırı değildir; aynı origin'deki başka bir yoldan cookie'ye ulaşılabilir."
+          ]
+        },
+        {
+          "id": "host-oneki",
+          "label": "__Host- öneki: Secure, Domain yok, Path=/",
+          "aliases": [
+            "__host-",
+            "__host",
+            "host öneki",
+            "host prefix",
+            "cookie prefix",
+            "önek"
+          ],
+          "anchors": [
+            "__Host- önekli cookie yalnızca Secure, Domain'siz ve Path=/ ise kabul edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcıların kendi alt alan adında içerik yayımladığı bir platformda oturum cookie'si nasıl yapılandırılmalı?"
+      ],
+      "source": "Kendi derleme — RFC 6265 §4.1.2.3, §4.1.2.4, §5.3; RFC 6265bis taslağı (cookie prefixes); MDN: Set-Cookie"
+    },
+    {
+      "id": "web-session-vs-token",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Cookie ve Oturum",
+      "difficulty": 2,
+      "prompt": "Sunucu tarafı session ile token tabanlı (JWT gibi) kimlik doğrulama arasındaki fark nedir?",
+      "modelAnswer": "Session yaklaşımında sunucu oturum bilgisini kendi tarafında (bellekte, Redis'te ya da veritabanında) tutar ve istemciye yalnızca anlamsız, rastgele bir **session id** verir; her istekte oturum bu id ile aranır. Token yaklaşımında ise kimlik ve yetki bilgisi imzalı bir token'ın içinde taşınır; sunucu her istekte yalnızca imzayı ve süreyi doğrular, bir oturum deposuna gitmez. Fark en çok iptalde görülür; session'ı silmek kullanıcıyı anında çıkarır, ama süresi dolmamış bir JWT imzası geçerli kaldıkça kabul edilir, bu yüzden access token'lar kısa ömürlü tutulup refresh token'la yenilenir ya da sunucuda bir iptal listesi tutulur. Token, örnekler arası paylaşımlı bir oturum deposu gerektirmediği için ölçeklemede avantajlıdır; buna karşılık büyüktür, her istekte taşınır ve içindeki bilgi süre dolana kadar güncellenemez, örneğin kullanıcıdan alınan bir rol token yenilenene kadar geçerli kalır. Hangi yolun seçildiği token'ın nerede taşındığından bağımsızdır; ikisi de cookie'de ya da `Authorization` başlığında gönderilebilir.",
+      "keyConcepts": [
+        {
+          "id": "sunucuda-durum",
+          "label": "Session: durum sunucuda, istemcide yalnızca id",
+          "aliases": [
+            "session id",
+            "oturum kimliği",
+            "sunucu tarafında tut",
+            "redis",
+            "oturum deposu",
+            "session store"
+          ],
+          "anchors": [
+            "Session yaklaşımında oturum sunucuda tutulur, istemcide yalnızca bir session id bulunur."
+          ]
+        },
+        {
+          "id": "imzali-token",
+          "label": "Token: bilgi imzalı token'da, depoya gidilmez",
+          "aliases": [
+            "imzalı",
+            "signed",
+            "self-contained",
+            "kendi içinde",
+            "claim",
+            "imzayı doğrula"
+          ],
+          "anchors": [
+            "Token yaklaşımında bilgi imzalı token'ın içindedir, sunucu yalnızca imzayı doğrular."
+          ]
+        },
+        {
+          "id": "iptal",
+          "label": "İptal: session anında, JWT süre dolana kadar geçerli",
+          "aliases": [
+            "iptal",
+            "revoke",
+            "revocation",
+            "anında çıkar",
+            "süresi dolana",
+            "kara liste"
+          ],
+          "anchors": [
+            "Session silinince kullanıcı anında çıkar, süresi dolmamış bir JWT ise geçerli kalır."
+          ]
+        },
+        {
+          "id": "kisa-omur",
+          "label": "Kısa ömürlü access token ve refresh token",
+          "aliases": [
+            "kısa ömürlü",
+            "short-lived",
+            "refresh token",
+            "kısa süreli",
+            "token yenile"
+          ],
+          "anchors": [
+            "Bu yüzden access token'lar kısa ömürlü tutulur ve refresh token ile yenilenir."
+          ]
+        },
+        {
+          "id": "olcekleme",
+          "label": "Token paylaşımlı oturum deposu gerektirmez",
+          "aliases": [
+            "ölçekle",
+            "scale",
+            "paylaşımlı depo",
+            "paylaşımlı oturum",
+            "merkezi depo",
+            "depo gerektirmez"
+          ],
+          "anchors": [
+            "Token örnekler arası paylaşımlı oturum deposu gerektirmediği için ölçeklemede avantajlıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kullanıcının yetkisi alındığında bunun JWT kullanan bir sistemde hemen etkili olması için ne yapılabilir?"
+      ],
+      "source": "Kendi derleme — RFC 7519 (JWT); OWASP Session Management Cheat Sheet; OWASP JSON Web Token Cheat Sheet"
+    },
+    {
+      "id": "web-same-origin-policy",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 1,
+      "prompt": "Same-origin policy nedir? İki URL ne zaman aynı origin sayılır?",
+      "modelAnswer": "Origin, bir URL'nin **scheme**, **host** ve **port** üçlüsüdür; `https://example.com` ile `https://example.com:8443`, `http://example.com` ya da `https://api.example.com` farklı origin'lerdir, yol ise origin'e dahil değildir. Same-origin policy, bir origin'den yüklenen sayfanın başka bir origin'in verisine erişimini tarayıcının sınırlamasıdır; sayfadaki JavaScript başka origin'e yaptığı `fetch` isteğinin yanıtını okuyamaz, başka origin'den gelen bir `iframe`'in DOM'una erişemez. Kural okumayı kısıtlar, göndermeyi değil; sayfa başka origin'e form gönderebilir, görsel ve script yükleyebilir, CSRF bu yüzden bu politikaya rağmen mümkündür. Amaç, kullanıcının giriş yaptığı bir sitedeki verinin aynı tarayıcıda açık kötü niyetli bir sitenin kodu tarafından okunmasını önlemektir; kontrollü bir istisna gerektiğinde sunucu CORS başlıklarıyla izin verir.",
+      "keyConcepts": [
+        {
+          "id": "uclu",
+          "label": "Origin: scheme, host ve port",
+          "aliases": [
+            "port",
+            "protokol",
+            "scheme",
+            "host",
+            "domain ve port",
+            "alan adı ve port"
+          ],
+          "anchors": [
+            "İki URL'nin aynı origin sayılması için scheme, host ve port'un aynı olması gerekir."
+          ]
+        },
+        {
+          "id": "okuyamaz",
+          "label": "Başka origin'in yanıtı ve DOM'u okunamaz",
+          "aliases": [
+            "okuyamaz",
+            "erişemez",
+            "okumasını engel",
+            "yanıtı oku",
+            "cevabı oku",
+            "dom'una"
+          ],
+          "anchors": [
+            "Sayfadaki kod başka origin'den gelen yanıtı okuyamaz, başka origin'in DOM'una erişemez."
+          ]
+        },
+        {
+          "id": "gondermek-serbest",
+          "label": "Gönderme kısıtlanmaz: form, görsel, script",
+          "aliases": [
+            "göndermeyi değil",
+            "gönderebilir",
+            "form gönder",
+            "görsel",
+            "script yükle",
+            "embed"
+          ],
+          "anchors": [
+            "Kural okumayı kısıtlar; sayfa başka origin'e form gönderebilir, görsel ve script yükleyebilir."
+          ]
+        },
+        {
+          "id": "kullanici-verisi",
+          "label": "Kullanıcının oturumlu verisi kötü siteden korunur",
+          "aliases": [
+            "kötü niyetli",
+            "kötü amaçlı",
+            "malicious",
+            "giriş yaptığı",
+            "oturumlu",
+            "kullanıcı verisi"
+          ],
+          "anchors": [
+            "Amaç kullanıcının giriş yaptığı sitedeki verinin kötü niyetli bir site tarafından okunmasını önlemektir."
+          ]
+        },
+        {
+          "id": "cors-istisna",
+          "label": "Kontrollü istisna CORS ile tanınır",
+          "aliases": [
+            "cors",
+            "access-control",
+            "izin verir",
+            "istisna"
+          ],
+          "anchors": [
+            "Sunucu CORS başlıklarıyla belirli origin'lere kontrollü istisna tanıyabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sayfa başka origin'den <script> yükleyebiliyorsa, JSONP bir zamanlar CORS'un yerine nasıl kullanıldı?"
+      ],
+      "source": "Kendi derleme — RFC 6454 (The Web Origin Concept); HTML Living Standard: Origin; MDN: Same-origin policy"
+    },
+    {
+      "id": "web-cors-preflight",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 2,
+      "prompt": "CORS'ta simple request ile preflight request arasındaki fark nedir? Preflight ne zaman gönderilir?",
+      "modelAnswer": "Tarayıcı başka bir origin'e yapılan isteklerin bir kısmını ön kontrolsüz gönderir; metodu `GET`, `HEAD` ya da `POST` olan, yalnızca güvenli sayılan (safelisted) başlıkları taşıyan ve `Content-Type`'ı `application/x-www-form-urlencoded`, `multipart/form-data` ya da `text/plain` olan istekler bu sınıftadır. Bunun dışındaki her istekte, örneğin metot `PUT` ya da `DELETE` ise, gövde `application/json` ise ya da `Authorization` gibi özel bir başlık varsa, tarayıcı önce `OPTIONS` metoduyla bir **ön kontrol** isteği yollar ve `Access-Control-Request-Method` ile `Access-Control-Request-Headers` başlıklarıyla ne yapmak istediğini sorar. Sunucu `Access-Control-Allow-Origin`, `Access-Control-Allow-Methods` ve `Access-Control-Allow-Headers` ile izin verirse asıl istek gönderilir; vermezse tarayıcı asıl isteği hiç göndermez ve sayfadaki kod yalnızca genel bir ağ hatası görür. Sunucu `Access-Control-Max-Age` ile preflight sonucunun ne kadar önbellekte tutulacağını bildirebilir; başlık yoksa bu süre 5 saniyedir ve tarayıcılar ayrıca üst sınır koyar (Ekim 2026 itibarıyla Chromium'da 2 saat, Firefox'ta 24 saat).",
+      "keyConcepts": [
+        {
+          "id": "simple-kosullar",
+          "label": "Simple: GET/HEAD/POST, güvenli başlıklar, üç Content-Type",
+          "aliases": [
+            "form-urlencoded",
+            "multipart/form-data",
+            "text/plain",
+            "safelisted",
+            "güvenli sayılan",
+            "basit istek"
+          ],
+          "anchors": [
+            "Simple request GET, HEAD ya da POST olur, yalnızca güvenli başlık ve üç Content-Type'tan birini taşır."
+          ]
+        },
+        {
+          "id": "options-on-kontrol",
+          "label": "Önce OPTIONS ile ön kontrol",
+          "aliases": [
+            "options",
+            "ön kontrol",
+            "access-control-request-method",
+            "access-control-request-headers",
+            "önce sor"
+          ],
+          "anchors": [
+            "Preflight'ta tarayıcı önce OPTIONS isteğiyle yapmak istediği metodu ve başlıkları sorar."
+          ]
+        },
+        {
+          "id": "tetikleyen",
+          "label": "JSON gövde, PUT/DELETE ya da özel başlık tetikler",
+          "aliases": [
+            "application/json",
+            "authorization",
+            "özel başlık",
+            "custom header",
+            "put ya da delete",
+            "put/delete"
+          ],
+          "anchors": [
+            "application/json gövde, PUT ya da DELETE ve Authorization gibi özel başlıklar preflight tetikler."
+          ]
+        },
+        {
+          "id": "izin",
+          "label": "Allow başlıklarıyla izin, yoksa asıl istek gitmez",
+          "aliases": [
+            "access-control-allow-methods",
+            "access-control-allow-headers",
+            "allow-methods",
+            "izin verirse",
+            "asıl istek",
+            "hiç göndermez"
+          ],
+          "anchors": [
+            "Sunucu Access-Control-Allow başlıklarıyla izin vermezse tarayıcı asıl isteği göndermez."
+          ]
+        },
+        {
+          "id": "max-age",
+          "label": "Preflight sonucu Access-Control-Max-Age ile önbelleğe alınır",
+          "aliases": [
+            "access-control-max-age",
+            "max-age",
+            "preflight cache",
+            "önbelleğe al",
+            "her seferinde",
+            "tekrar sorma"
+          ],
+          "anchors": [
+            "Access-Control-Max-Age preflight sonucunun ne kadar önbellekte tutulacağını söyler."
+          ]
+        }
+      ],
+      "followUps": [
+        "Preflight isteğine sunucu 401 dönerse ne olur; kimlik doğrulama katmanı OPTIONS isteklerini nasıl ele almalı?"
+      ],
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol, CORS-safelisted method ve request-header; MDN: Access-Control-Max-Age"
+    },
+    {
+      "id": "web-cors-credentials",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 3,
+      "prompt": "CORS'ta credentials ile yapılan bir istekte Access-Control-Allow-Origin: * neden kullanılamaz?",
+      "modelAnswer": "Cookie, HTTP kimlik doğrulaması ya da istemci sertifikası taşıyan bir cross-origin istek için istemcide `fetch(url, { credentials: \"include\" })` ya da `xhr.withCredentials = true` gerekir; bu durumda Fetch standardı `*` joker değerini kabul etmez. Sunucu isteğin `Origin` başlığındaki değeri bir izin listesine göre kontrol edip aynen geri yazmalı (`Access-Control-Allow-Origin: https://app.example.com`) ve `Access-Control-Allow-Credentials: true` göndermelidir, yoksa tarayıcı yanıtı sayfaya vermez. Kısıtın amacı \"her site okuyabilir\" ile \"kullanıcının oturumuyla okunur\" durumlarının birleşmesini, yani herhangi bir sitenin kullanıcının hesabındaki veriyi okuyabilmesini önlemektir. Yanıt isteğe göre değiştiği için önbelleklerin bir origin'e verilen yanıtı başkasına sunmaması için `Vary: Origin` eklenir; `Allow-Headers`, `Allow-Methods` ve `Expose-Headers`'taki `*` da credentials'lı isteklerde joker sayılmaz. Gelen her `Origin`'i doğrulamadan geri yazmak `*`'ın yasakladığı durumu yeniden yaratır ve bilinen bir CORS açığıdır.",
+      "keyConcepts": [
+        {
+          "id": "include",
+          "label": "İstemcide credentials: include ya da withCredentials",
+          "aliases": [
+            "include",
+            "withcredentials",
+            "with credentials",
+            "cookie gönder",
+            "cookie'ler gider",
+            "kimlik bilgisi"
+          ],
+          "anchors": [
+            "İstemci cookie göndermek için fetch'te credentials include ya da withCredentials kullanır."
+          ]
+        },
+        {
+          "id": "origin-yaz",
+          "label": "Sunucu izinli Origin'i aynen geri yazar",
+          "aliases": [
+            "origin başlığı",
+            "aynen geri",
+            "izin listesi",
+            "allowlist",
+            "origin'i açıkça",
+            "belirli origin"
+          ],
+          "anchors": [
+            "Sunucu isteğin Origin değerini izin listesine göre kontrol edip aynen geri yazar."
+          ]
+        },
+        {
+          "id": "allow-credentials",
+          "label": "Access-Control-Allow-Credentials: true",
+          "aliases": [
+            "allow-credentials",
+            "access-control-allow-credentials",
+            "credentials: true"
+          ],
+          "anchors": [
+            "Sunucu ayrıca Access-Control-Allow-Credentials: true göndermelidir."
+          ]
+        },
+        {
+          "id": "vary-origin",
+          "label": "Vary: Origin",
+          "aliases": [
+            "vary: origin",
+            "vary origin",
+            "vary"
+          ],
+          "anchors": [
+            "Yanıt origin'e göre değiştiği için Vary: Origin eklenir."
+          ]
+        },
+        {
+          "id": "korunan-veri",
+          "label": "Her sitenin kullanıcı verisini okuması önlenir; körü körüne yansıtmak açıktır",
+          "aliases": [
+            "körü körüne",
+            "doğrulamadan",
+            "reflect",
+            "herhangi bir site",
+            "her site",
+            "kullanıcının verisi"
+          ],
+          "anchors": [
+            "Kısıt herhangi bir sitenin kullanıcının oturumuyla veri okumasını önler; Origin'i doğrulamadan yansıtmak açıktır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Birden fazla frontend origin'ine izin vermesi gereken bir API, credentials'lı CORS'u güvenli biçimde nasıl yapılandırır?"
+      ],
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol and credentials, HTTP responses; MDN: Cross-Origin Resource Sharing"
+    },
+    {
+      "id": "web-cors-not-protection",
+      "category": "web",
+      "kind": "definition",
+      "topic": "CORS",
+      "difficulty": 2,
+      "prompt": "CORS sunucuyu korur mu? CORS ayarı neden bir yetkilendirme mekanizması yerine geçmez?",
+      "modelAnswer": "Hayır; CORS sunucunun değil **tarayıcıdaki kullanıcının** korunması için vardır, kuralı sunucu yazar ama tarayıcı uygular. curl, Postman ya da başka bir sunucu `Origin` başlığını istediği gibi yazabilir ya da hiç göndermeyebilir ve CORS yanıt başlıklarını tamamen yok sayar; API'ye bu yollarla yapılan her istek, CORS ayarı ne olursa olsun işlenir. Tarayıcıda bile simple request'ler sunucuya ulaşır ve işlenir, tarayıcı yalnızca yanıtın sayfa tarafından okunmasını engeller; durum değiştiren bir form `POST`'u bu yüzden CORS'tan bağımsız olarak CSRF korumasıyla ele alınmalıdır. CORS gevşetilmiş bir same-origin policy'dir, yani hangi sitelerin kullanıcının tarayıcısı üzerinden yanıtı okuyabileceğini söyler; kimin hangi veriye erişebileceğine ise her istekte kimlik doğrulama ve yetkilendirme karar vermelidir.",
+      "keyConcepts": [
+        {
+          "id": "tarayici-uygular",
+          "label": "CORS'u tarayıcı uygular, kullanıcıyı korur",
+          "aliases": [
+            "tarayıcı uygular",
+            "tarayıcının uygula",
+            "tarayıcıda uygulan",
+            "browser enforce",
+            "kullanıcıyı korur",
+            "tarayıcı kuralı"
+          ],
+          "anchors": [
+            "CORS kuralını sunucu yazar ama tarayıcı uygular; amacı tarayıcıdaki kullanıcıyı korumaktır."
+          ]
+        },
+        {
+          "id": "tarayici-disi",
+          "label": "Tarayıcı dışı istemciler CORS'u yok sayar",
+          "aliases": [
+            "curl",
+            "postman",
+            "sunucudan sunucuya",
+            "server-to-server",
+            "tarayıcı dışı",
+            "yok sayar"
+          ],
+          "anchors": [
+            "curl, Postman ya da başka bir sunucu CORS başlıklarını yok sayar."
+          ]
+        },
+        {
+          "id": "istek-ulasir",
+          "label": "Simple request sunucuya ulaşır, yalnızca okuma engellenir",
+          "aliases": [
+            "sunucuya ulaşır",
+            "sunucuya gider",
+            "istek gider",
+            "yanıtı okuyamaz",
+            "okunmasını engeller",
+            "okumayı engeller"
+          ],
+          "anchors": [
+            "Tarayıcıda bile simple request sunucuya ulaşıp işlenir; yalnızca yanıtın okunması engellenir."
+          ]
+        },
+        {
+          "id": "csrf",
+          "label": "Durum değiştiren istekler için CSRF koruması ayrıca gerekir",
+          "aliases": [
+            "csrf",
+            "cross-site request forgery",
+            "csrf token",
+            "samesite"
+          ],
+          "anchors": [
+            "Durum değiştiren istekler CORS'tan bağımsız olarak CSRF korumasıyla ele alınır."
+          ]
+        },
+        {
+          "id": "yetki-ayri",
+          "label": "Erişim kararını kimlik doğrulama ve yetkilendirme verir",
+          "aliases": [
+            "kimlik doğrulama",
+            "authentication",
+            "erişim kontrol",
+            "access control",
+            "yetki kontrol",
+            "auth kontrol"
+          ],
+          "anchors": [
+            "Kimin hangi veriye erişeceğine her istekte kimlik doğrulama ve yetkilendirme karar verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Origin başlığını tarayıcıdaki bir sayfa değiştiremiyorsa, sunucu tarafında Origin kontrolü CSRF'e karşı ne kadar işe yarar?"
+      ],
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol; MDN: Cross-Origin Resource Sharing; OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+    },
+    {
+      "id": "web-polling",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Gerçek Zamanlı",
+      "difficulty": 1,
+      "prompt": "Polling ile long polling arasındaki fark nedir?",
+      "modelAnswer": "Polling'de istemci sunucuya belirli aralıklarla, örneğin her 5 saniyede bir \"yeni bir şey var mı?\" diye sorar; yanıtların çoğu boş döner, bu da gereksiz istek ve sunucu yükü demektir, yeni veri ise en kötü durumda bir aralık kadar gecikir. Long polling'de istemci isteği gönderir ve sunucu yeni veri olana ya da bir zaman aşımına kadar yanıtı **bekletir**; veri gelir gelmez yanıt döner ve istemci hemen yeni bir istek açar. Böylece gecikme neredeyse sıfıra iner ve boş yanıtlar azalır, ama sunucu bekleyen her istemci için bir bağlantıyı açık tutmak zorundadır ve aradaki proxy ile load balancer'ın zaman aşımları bu bekleme süresinden uzun olmalıdır. İkisi de sıradan HTTP istekleri olduğu için her ortamda çalışır; sık ve iki yönlü mesajlaşma gerekiyorsa WebSocket, yalnızca sunucudan akış gerekiyorsa Server-Sent Events daha uygundur.",
+      "keyConcepts": [
+        {
+          "id": "araliklarla",
+          "label": "Polling belirli aralıklarla sorar",
+          "aliases": [
+            "aralıklarla",
+            "periyodik",
+            "her saniye",
+            "interval",
+            "düzenli aralık",
+            "belirli aralık"
+          ],
+          "anchors": [
+            "Polling'de istemci sunucuya belirli aralıklarla yeni veri olup olmadığını sorar."
+          ]
+        },
+        {
+          "id": "bos-yanit",
+          "label": "Yanıtların çoğu boş, gereksiz yük",
+          "aliases": [
+            "boş yanıt",
+            "boş cevap",
+            "boş döner",
+            "gereksiz istek",
+            "gereksiz yük",
+            "israf"
+          ],
+          "anchors": [
+            "Polling'de yanıtların çoğu boş döner, gereksiz istek ve sunucu yükü oluşur."
+          ]
+        },
+        {
+          "id": "bekletir",
+          "label": "Long polling'de sunucu veri olana kadar bekletir",
+          "aliases": [
+            "bekletir",
+            "bekletil",
+            "açık tutar",
+            "veri gelene kadar",
+            "veri olana kadar",
+            "yanıtı tutar"
+          ],
+          "anchors": [
+            "Long polling'de sunucu yeni veri olana ya da zaman aşımına kadar yanıtı bekletir."
+          ]
+        },
+        {
+          "id": "yeni-istek",
+          "label": "Yanıttan sonra istemci hemen yeni istek açar",
+          "aliases": [
+            "yeni istek",
+            "hemen tekrar",
+            "yeniden istek",
+            "tekrar istek",
+            "yeni bir istek"
+          ],
+          "anchors": [
+            "Yanıt gelince istemci hemen yeni bir istek açar."
+          ]
+        },
+        {
+          "id": "maliyet",
+          "label": "Açık bağlantı maliyeti ve zaman aşımı ayarları",
+          "aliases": [
+            "açık bağlantı",
+            "bağlantıyı açık",
+            "zaman aşımı",
+            "timeout",
+            "kaynak tüket"
+          ],
+          "anchors": [
+            "Long polling sunucuda bekleyen her istemci için açık bağlantı tutar, proxy zaman aşımları buna göre ayarlanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Long polling yapan istemcilerin sayısı on binlere çıkınca sunucu tarafında ne gibi sorunlar çıkar?"
+      ],
+      "source": "Kendi derleme — RFC 6202 (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)"
+    },
+    {
+      "id": "web-sse",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Gerçek Zamanlı",
+      "difficulty": 2,
+      "prompt": "Server-Sent Events nedir? WebSocket yerine ne zaman tercih edilir?",
+      "modelAnswer": "Server-Sent Events, sunucunun tek bir uzun süreli HTTP yanıtı üzerinden istemciye sürekli olay göndermesidir; yanıt `text/event-stream` türündedir ve tarayıcıda `EventSource` API'siyle dinlenir. Akış **tek yönlüdür**, yalnızca sunucudan istemciye gider; istemcinin sunucuya bir şey göndermesi gerekirse normal HTTP istekleri kullanılır. Bağlantı koparsa tarayıcı kendiliğinden yeniden bağlanır ve son aldığı olayın kimliğini `Last-Event-ID` başlığıyla gönderir, böylece sunucu kaçırılan olayları tekrar yollayabilir. Sıradan HTTP olduğu için proxy, load balancer, cookie ile kimlik doğrulama ve HTTP/2 ile ek bir şey gerektirmeden çalışır; bildirim, canlı skor, log akışı ya da bir yapay zekâ cevabının parça parça gelmesi gibi yalnızca sunucudan veri akan durumlarda WebSocket'ten daha basittir. Sınırları da vardır; yalnızca metin taşır ve HTTP/1.1'de tarayıcının alan adı başına 6 bağlantı sınırına takılır, bu yüzden çok sekme açılan uygulamalarda HTTP/2 üzerinden sunulmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "event-stream",
+          "label": "text/event-stream ve EventSource",
+          "aliases": [
+            "text/event-stream",
+            "event-stream",
+            "eventsource",
+            "event source",
+            "uzun süreli http",
+            "açık kalan http"
+          ],
+          "anchors": [
+            "SSE text/event-stream türünde uzun süreli bir HTTP yanıtıdır ve EventSource ile dinlenir."
+          ]
+        },
+        {
+          "id": "tek-yonlu",
+          "label": "Tek yönlü, sunucudan istemciye",
+          "aliases": [
+            "tek yönlü",
+            "tek yön",
+            "one-way",
+            "unidirectional",
+            "sadece sunucudan",
+            "yalnızca sunucudan"
+          ],
+          "anchors": [
+            "SSE akışı tek yönlüdür, yalnızca sunucudan istemciye gider."
+          ]
+        },
+        {
+          "id": "yeniden-baglanma",
+          "label": "Otomatik yeniden bağlanma ve Last-Event-ID",
+          "aliases": [
+            "yeniden bağlan",
+            "otomatik bağlan",
+            "reconnect",
+            "last-event-id",
+            "kaçırılan olay"
+          ],
+          "anchors": [
+            "Bağlantı koparsa tarayıcı kendiliğinden yeniden bağlanır ve Last-Event-ID gönderir."
+          ]
+        },
+        {
+          "id": "sade-http",
+          "label": "Sıradan HTTP: proxy, cookie ve HTTP/2 ile çalışır",
+          "aliases": [
+            "sıradan http",
+            "normal http",
+            "düz http",
+            "standart http",
+            "ek protokol",
+            "http üzerinden"
+          ],
+          "anchors": [
+            "SSE sıradan HTTP olduğu için proxy, cookie ve HTTP/2 ile ek bir şey gerektirmeden çalışır."
+          ]
+        },
+        {
+          "id": "kullanim",
+          "label": "Bildirim, canlı skor, log ve yanıt akışı",
+          "aliases": [
+            "bildirim",
+            "notification",
+            "canlı skor",
+            "log akışı",
+            "borsa",
+            "fiyat"
+          ],
+          "anchors": [
+            "Bildirim, canlı skor ve log akışı gibi yalnızca sunucudan veri akan durumlarda SSE tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tarayıcının EventSource API'siyle Authorization başlığı gönderilemiyorsa SSE ucunda kimlik doğrulama nasıl yapılır?"
+      ],
+      "source": "Kendi derleme — HTML Living Standard: Server-sent events; MDN: Using server-sent events"
+    },
+    {
+      "id": "web-websocket",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Gerçek Zamanlı",
+      "difficulty": 2,
+      "prompt": "WebSocket bağlantısı nasıl kurulur? HTTP'den farkı nedir?",
+      "modelAnswer": "WebSocket bağlantısı sıradan bir HTTP/1.1 isteğiyle başlar; istemci `Upgrade: websocket` ve `Connection: Upgrade` başlıklarıyla rastgele bir `Sec-WebSocket-Key` gönderir, sunucu `101 Switching Protocols` ve bu anahtardan türettiği `Sec-WebSocket-Accept` ile cevap verir. Bundan sonra aynı TCP bağlantısı HTTP olmaktan çıkar ve iki tarafın da istediği an mesaj gönderebildiği **full-duplex**, kalıcı bir kanala dönüşür; mesajlar küçük başlıklı frame'lerle taşınır, her mesaj için istek-yanıt döngüsü ve tekrarlanan HTTP başlıkları yoktur. HTTP'nin sağladığı birçok şey burada uygulamaya kalır; kopan bağlantıyı yeniden kurmak, mesajın ulaştığını onaylamak, ölçeklerken bağlantının hangi sunucu örneğinde olduğunu bilmek gibi. WebSocket CORS'a tabi değildir ve el sıkışma isteği sıradan bir HTTP isteği gibi cookie taşıyabilir; bu yüzden sunucu `Origin` başlığını kontrol etmezse başka bir site kullanıcının oturumuyla bağlantı açabilir (cross-site WebSocket hijacking). Yanıtı akış hâlinde almak yetiyorsa SSE, sık ve iki yönlü mesajlaşma, örneğin sohbet, çok oyunculu oyun ya da ortak düzenleme gerekiyorsa WebSocket seçilir.",
+      "keyConcepts": [
+        {
+          "id": "upgrade",
+          "label": "HTTP Upgrade ile başlar, 101 ile geçilir",
+          "aliases": [
+            "upgrade",
+            "101",
+            "switching protocols",
+            "sec-websocket-key",
+            "sec-websocket-accept",
+            "el sıkışma"
+          ],
+          "anchors": [
+            "WebSocket HTTP Upgrade isteğiyle başlar, sunucu 101 Switching Protocols ile cevap verir."
+          ]
+        },
+        {
+          "id": "full-duplex",
+          "label": "Full-duplex, iki taraf da istediği an gönderir",
+          "aliases": [
+            "full-duplex",
+            "full duplex",
+            "çift yönlü",
+            "iki yönlü",
+            "bidirectional",
+            "iki taraf da"
+          ],
+          "anchors": [
+            "Bağlantı iki tarafın da istediği an mesaj gönderebildiği full-duplex bir kanaldır."
+          ]
+        },
+        {
+          "id": "kalici-kanal",
+          "label": "Kalıcı bağlantı, istek-yanıt döngüsü yok",
+          "aliases": [
+            "kalıcı",
+            "sürekli açık",
+            "açık kalır",
+            "persistent",
+            "istek-cevap",
+            "istek-yanıt döngüsü"
+          ],
+          "anchors": [
+            "Bağlantı açık kalır; mesajlar frame'lerle gider, her mesaj için istek-yanıt döngüsü yoktur."
+          ]
+        },
+        {
+          "id": "uygulamaya-kalir",
+          "label": "Yeniden bağlanma, onay ve ölçekleme uygulamaya kalır",
+          "aliases": [
+            "yeniden bağlan",
+            "reconnect",
+            "ping",
+            "heartbeat",
+            "hangi sunucu",
+            "sticky"
+          ],
+          "anchors": [
+            "Kopan bağlantıyı yeniden kurmak ve ölçeklerken bağlantının yerini bilmek uygulamaya kalır."
+          ]
+        },
+        {
+          "id": "origin-kontrol",
+          "label": "CORS yok; sunucu Origin'i kontrol etmeli",
+          "aliases": [
+            "origin kontrol",
+            "origin başlığını kontrol",
+            "hijacking",
+            "cswsh",
+            "cors'a tabi değil",
+            "cors yok"
+          ],
+          "anchors": [
+            "WebSocket CORS'a tabi değildir; sunucu Origin başlığını kontrol etmezse başka site bağlantı açabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir WebSocket sunucusunu birden fazla örneğe ölçeklerken bir kullanıcıya giden mesaj doğru örneğe nasıl ulaştırılır?"
+      ],
+      "source": "Kendi derleme — RFC 6455 §1.3 Opening Handshake, §4, §10.2 Origin Considerations; MDN: The WebSocket API"
+    }
+  ]
+}
