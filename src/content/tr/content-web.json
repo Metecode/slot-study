@@ -135,7 +135,9 @@
           "label": "GET safe ve idempotent, POST değil",
           "aliases": [
             "idempotent",
-            "safe",
+            "safe metot",
+            "safe'tir",
+            "safe bir",
             "yeniden gönder",
             "tekrar gönder"
           ],
@@ -307,7 +309,8 @@
           "id": "allow",
           "label": "OPTIONS desteklenen metotları sorar (Allow)",
           "aliases": [
-            "allow",
+            "allow başlığ",
+            "allow header",
             "desteklenen metot",
             "hangi metot",
             "iletişim seçenek",
@@ -335,7 +338,9 @@
           "id": "safe",
           "label": "İkisi de safe ve idempotent",
           "aliases": [
-            "safe",
+            "safe metot",
+            "safe'tir",
+            "safe ve",
             "idempotent",
             "durumu değiştirmez"
           ],
@@ -1540,11 +1545,11 @@
           "label": "Sunucu istekler arası oturum durumu tutmaz",
           "aliases": [
             "oturum durumu",
-            "oturum bilgi",
             "oturum tutmaz",
             "session state",
-            "session bilgi",
-            "session tutmaz"
+            "session tutmaz",
+            "bilgisini tutmaz",
+            "bilgi tutmaz"
           ],
           "anchors": [
             "Stateless sunucu iki istek arasında istemciye ait oturum durumu tutmaz."
@@ -1558,8 +1563,8 @@
             "gerekli tüm",
             "tüm bilgi",
             "self-contained",
-            "her istekte",
-            "kimlik bilgisi"
+            "kendi başına anlaşıl",
+            "kendisi taşır"
           ],
           "anchors": [
             "Her istek kimlik bilgisi dahil anlaşılmak için gereken her şeyi taşır."
