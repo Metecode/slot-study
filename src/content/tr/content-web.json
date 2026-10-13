@@ -2394,6 +2394,617 @@
         "HTTP/3 neden HPACK yerine QPACK kullanır?"
       ],
       "source": "Kendi derleme — RFC 9000 (QUIC) §9 Connection Migration; RFC 9001; RFC 9114; RFC 7838 (Alt-Svc); RFC 9460"
+    },
+    {
+      "id": "web-tls13-handshake",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 3,
+      "prompt": "TLS 1.3 handshake nasıl işler? TLS 1.2'ye göre ne kazandırır?",
+      "modelAnswer": "İstemci `ClientHello`'da desteklediği şifre takımlarıyla birlikte, sunucunun seçeceğini tahmin ettiği gruplar için (EC)DHE anahtar payını (`key_share`) da gönderir; sunucu `ServerHello`'da kendi payını döner ve iki taraf ortak anahtarı hemen türetir. Bundan sonraki her mesaj, sunucunun sertifikası (`Certificate`), sertifikanın özel anahtarıyla atılan imza (`CertificateVerify`) ve `Finished` dahil, şifreli gider ve istemci kendi `Finished`'ını gönderdiği anda uygulama verisini yollayabilir; yani tam el sıkışma TLS 1.2'deki iki gidiş-dönüş yerine **1-RTT**'de biter. TLS 1.3 statik RSA ve statik Diffie-Hellman anahtar değişimini kaldırdı; her bağlantı geçici (ephemeral) anahtar kullandığı için **forward secrecy** zorunludur ve zayıf şifreleme algoritmaları listeden çıkarıldı. Daha önce görüşülmüş bir sunucuya **0-RTT** ile ilk mesajda veri de gönderilebilir, ama bu veri **replay**'e açıktır; ağdaki biri aynı veriyi tekrar gönderebilir ve TLS bağlantılar arası tekrara karşı garanti vermez. Bu yüzden HTTP istemcileri 0-RTT'de yalnızca safe metotları gönderebilir; durum değiştiren bir istek tekrarlanırsa, idempotency key'in uygulama düzeyinde önlediği çift işlem sorunu ağ katmanında ortaya çıkar.",
+      "keyConcepts": [
+        {
+          "id": "key-share",
+          "label": "Anahtar payı ilk mesajda gönderilir",
+          "aliases": [
+            "key_share",
+            "key share",
+            "anahtar payı",
+            "ecdhe",
+            "diffie-hellman",
+            "clienthello"
+          ],
+          "anchors": [
+            "İstemci ClientHello'da (EC)DHE anahtar payını hemen gönderir, sunucu ServerHello'da kendi payını döner."
+          ]
+        },
+        {
+          "id": "1-rtt",
+          "label": "Tam el sıkışma 1-RTT",
+          "aliases": [
+            "1-rtt",
+            "1 rtt",
+            "tek gidiş",
+            "tek round trip",
+            "bir round trip",
+            "bir gidiş-dönüş"
+          ],
+          "anchors": [
+            "TLS 1.3'te tam el sıkışma TLS 1.2'deki iki gidiş-dönüş yerine 1-RTT'de biter."
+          ]
+        },
+        {
+          "id": "sifreli-handshake",
+          "label": "ServerHello sonrası mesajlar şifreli, sertifika dahil",
+          "aliases": [
+            "sertifika şifreli",
+            "şifreli gider",
+            "serverhello'dan sonra",
+            "certificateverify",
+            "handshake şifreli",
+            "encrypted extensions"
+          ],
+          "anchors": [
+            "ServerHello'dan sonraki tüm el sıkışma mesajları, sertifika dahil, şifreli gider."
+          ]
+        },
+        {
+          "id": "forward-secrecy",
+          "label": "Statik RSA kalktı, forward secrecy zorunlu",
+          "aliases": [
+            "forward secrecy",
+            "perfect forward",
+            "statik rsa",
+            "ephemeral",
+            "geçici anahtar",
+            "zayıf algoritma"
+          ],
+          "anchors": [
+            "TLS 1.3 statik RSA anahtar değişimini kaldırdı, forward secrecy zorunludur."
+          ]
+        },
+        {
+          "id": "0-rtt-replay",
+          "label": "0-RTT replay'e açıktır, yalnızca safe istekler",
+          "aliases": [
+            "0-rtt",
+            "0 rtt",
+            "replay",
+            "tekrar oynat",
+            "early data",
+            "zero rtt"
+          ],
+          "anchors": [
+            "0-RTT verisi replay'e açıktır; bu yüzden yalnızca safe istekler 0-RTT ile gönderilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sunucu 0-RTT ile gelen bir isteği işlemeyi riskli bulursa istemciye ne söyleyebilir?"
+      ],
+      "source": "Kendi derleme — RFC 8446 §1.2, §2, §2.3, §8; RFC 8470 (Using Early Data in HTTP)"
+    },
+    {
+      "id": "web-certificate-chain",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 2,
+      "prompt": "Sertifika zinciri nedir? Tarayıcı bir sunucunun sertifikasına nasıl güvenir?",
+      "modelAnswer": "Sunucunun sertifikasını (leaf) genellikle doğrudan kök sertifika otoritesi (root CA) değil, bir ara sertifika (intermediate CA) imzalar; ara sertifikayı da kök imzalar ve bu imza sırası zinciri oluşturur. Tarayıcı ya da işletim sistemi güvendiği kök sertifikaların listesini (trust store) önceden yüklü taşır; sunucu el sıkışmada kendi sertifikasını ve ara sertifikaları gönderir, istemci her imzayı bir üsttekinin açık anahtarıyla doğrulayarak güvendiği bir köke ulaşmaya çalışır. Zincirin sağlam olması yetmez; sertifikadaki alan adının (Subject Alternative Name) bağlanılan adla eşleşmesi ve sertifikanın geçerlilik tarihleri içinde olması da gerekir. Kök anahtarlar çevrimdışı saklanır ve günlük imzalar ara sertifikalarla atılır; bir ara sertifika sızarsa kökü değiştirmeden yalnızca o geri çekilir. Sunucu ara sertifikayı göndermeyi unutursa bazı istemciler zinciri kuramaz ve hata verir; tarayıcıda sorunsuz açılan bir site başka bir istemcide bu yüzden kırılabilir.",
+      "keyConcepts": [
+        {
+          "id": "zincir",
+          "label": "Leaf → ara sertifika → kök",
+          "aliases": [
+            "ara sertifika",
+            "intermediate",
+            "leaf",
+            "kök sertifika",
+            "root ca",
+            "kök ca"
+          ],
+          "anchors": [
+            "Sunucu sertifikasını ara sertifika, ara sertifikayı kök imzalar; bu zinciri oluşturur."
+          ]
+        },
+        {
+          "id": "trust-store",
+          "label": "Güvenilen kökler önceden yüklüdür",
+          "aliases": [
+            "trust store",
+            "güven deposu",
+            "önceden yüklü",
+            "güvenilen kök",
+            "güvenilen root",
+            "root store"
+          ],
+          "anchors": [
+            "Tarayıcı ya da işletim sistemi güvendiği kök sertifikaları önceden yüklü taşır."
+          ]
+        },
+        {
+          "id": "imza-dogrulama",
+          "label": "Her imza bir üsttekinin açık anahtarıyla doğrulanır",
+          "aliases": [
+            "imza",
+            "signature",
+            "açık anahtar",
+            "public key",
+            "imzala"
+          ],
+          "anchors": [
+            "İstemci her sertifikanın imzasını bir üsttekinin açık anahtarıyla doğrular."
+          ]
+        },
+        {
+          "id": "ad-ve-tarih",
+          "label": "Alan adı eşleşmeli, sertifika geçerlilik süresinde olmalı",
+          "aliases": [
+            "subject alternative name",
+            "alan adı eşleş",
+            "domain adı",
+            "hostname",
+            "geçerlilik",
+            "sertifikanın süresi"
+          ],
+          "anchors": [
+            "Sertifikadaki alan adı bağlanılan adla eşleşmeli ve sertifika geçerlilik süresinde olmalıdır."
+          ]
+        },
+        {
+          "id": "eksik-ara",
+          "label": "Ara sertifika gönderilmezse bazı istemciler hata verir",
+          "aliases": [
+            "eksik ara",
+            "ara sertifikayı gönder",
+            "zinciri kuramaz",
+            "incomplete chain",
+            "missing intermediate",
+            "fullchain"
+          ],
+          "anchors": [
+            "Sunucu ara sertifikayı göndermezse bazı istemciler zinciri kuramaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sertifika süresi dolmadan geri çekilirse istemciler bunu nasıl öğrenir?"
+      ],
+      "source": "Kendi derleme — RFC 5280 §6 Certification Path Validation; RFC 9525 (hizmet kimliği doğrulama); RFC 8446 §4.4.2"
+    },
+    {
+      "id": "web-hsts",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 2,
+      "prompt": "HSTS nedir? Hangi saldırıyı önler?",
+      "modelAnswer": "HSTS (HTTP Strict Transport Security), sunucunun HTTPS yanıtında `Strict-Transport-Security: max-age=31536000; includeSubDomains` gibi bir başlık göndererek tarayıcıya bu alan adına belirtilen süre boyunca **yalnızca HTTPS** ile bağlanmasını söylemesidir. Tarayıcı bundan sonra kullanıcı `http://` yazsa ya da bir link öyle olsa bile adresi istek çıkmadan `https://`'e çevirir ve sertifika hatasında kullanıcının \"yine de devam et\" demesine izin vermez. Böylece saldırganın ilk düz HTTP isteğini yakalayıp kullanıcıyı şifresiz bağlantıda tuttuğu **SSL stripping** gibi araya girme saldırıları önlenir. Ama başlık yalnızca HTTPS üzerinden alınırsa geçerlidir; tarayıcının siteyi henüz hiç görmediği **ilk ziyaret** bu yüzden korumasızdır. Bu açığı kapatmak için alan adı tarayıcıların içine gömülü **preload** listesine eklenir; başvuru için `max-age` en az bir yıl olmalı, `includeSubDomains` ve `preload` yönergeleri bulunmalıdır ve listeden çıkmak aylar sürer.",
+      "keyConcepts": [
+        {
+          "id": "yalnizca-https",
+          "label": "Belirtilen süre boyunca yalnızca HTTPS",
+          "aliases": [
+            "yalnızca https",
+            "sadece https",
+            "only https",
+            "strict-transport-security",
+            "max-age",
+            "zorunlu https"
+          ],
+          "anchors": [
+            "HSTS başlığı tarayıcıya alan adına belirtilen süre boyunca yalnızca HTTPS ile bağlanmasını söyler."
+          ]
+        },
+        {
+          "id": "https-e-cevirme",
+          "label": "http adresleri istek çıkmadan https'e çevrilir; hata geçilemez",
+          "aliases": [
+            "https'e çevir",
+            "https'e yönlendir",
+            "otomatik https",
+            "devam et",
+            "click-through",
+            "sertifika hatası"
+          ],
+          "anchors": [
+            "Tarayıcı http adreslerini istek çıkmadan https'e çevirir ve sertifika hatasında devam etmeye izin vermez."
+          ]
+        },
+        {
+          "id": "ssl-stripping",
+          "label": "SSL stripping ve araya girme saldırıları",
+          "aliases": [
+            "ssl strip",
+            "sslstrip",
+            "downgrade",
+            "araya gir",
+            "man-in-the-middle",
+            "mitm"
+          ],
+          "anchors": [
+            "HSTS saldırganın kullanıcıyı şifresiz HTTP'de tuttuğu SSL stripping saldırısını önler."
+          ]
+        },
+        {
+          "id": "ilk-ziyaret",
+          "label": "İlk ziyaret korumasızdır",
+          "aliases": [
+            "ilk ziyaret",
+            "ilk istek",
+            "first visit",
+            "ilk bağlantı",
+            "ilk kez",
+            "hiç görmediği"
+          ],
+          "anchors": [
+            "Başlık ancak HTTPS üzerinden alınınca geçerli olduğu için ilk ziyaret korumasızdır."
+          ]
+        },
+        {
+          "id": "preload",
+          "label": "Preload listesi ilk ziyareti korur",
+          "aliases": [
+            "preload",
+            "önceden yüklü liste",
+            "hstspreload",
+            "gömülü liste",
+            "tarayıcıya gömülü"
+          ],
+          "anchors": [
+            "Alan adı tarayıcılara gömülü preload listesine eklenirse ilk ziyaret de korunur."
+          ]
+        }
+      ],
+      "followUps": [
+        "includeSubDomains içeren bir HSTS başlığı yanlışlıkla canlıya çıkarsa hangi alt alan adları etkilenir, geri almak neden zordur?"
+      ],
+      "source": "Kendi derleme — RFC 6797 §6.1, §8.1, §8.3, §12.1, §14.6; hstspreload.org"
+    },
+    {
+      "id": "web-sni",
+      "category": "web",
+      "kind": "definition",
+      "topic": "HTTPS ve TLS",
+      "difficulty": 2,
+      "prompt": "SNI nedir, neden gereklidir?",
+      "modelAnswer": "SNI (Server Name Indication), istemcinin TLS el sıkışmasının ilk mesajı olan `ClientHello`'da hangi alan adına bağlanmak istediğini bildirdiği uzantıdır. Aynı IP adresinde birçok HTTPS sitesi barındırıldığında sunucu hangi sertifikayı göstereceğini HTTP isteğindeki `Host` başlığından öğrenemez, çünkü sertifika HTTP isteği gelmeden el sıkışmada gönderilmelidir. SNI bu bilgiyi el sıkışmanın başına taşıyarak tek IP'de çok sayıda sertifikalı siteyi, paylaşımlı hosting'i ve CDN'leri mümkün kılar; reverse proxy'ler de gelen bağlantıyı şifreyi çözmeden SNI'ya bakarak doğru arka uca yönlendirebilir. Bedeli gizliliktir; `ClientHello` şifresiz gittiği için ağı izleyen biri içeriği göremese de hangi siteye bağlanıldığını görebilir, bunu kapatmak için geliştirilen Encrypted Client Hello (ECH) Mart 2026'da RFC 9849 olarak yayımlandı.",
+      "keyConcepts": [
+        {
+          "id": "clienthello",
+          "label": "Alan adı ClientHello'da bildirilir",
+          "aliases": [
+            "clienthello",
+            "client hello",
+            "hangi domain",
+            "hangi alan adı",
+            "alan adını bildir",
+            "handshake sırasında"
+          ],
+          "anchors": [
+            "İstemci TLS'in ilk mesajı ClientHello'da bağlanmak istediği alan adını bildirir."
+          ]
+        },
+        {
+          "id": "ayni-ip",
+          "label": "Aynı IP'de birden fazla HTTPS sitesi",
+          "aliases": [
+            "aynı ip",
+            "tek ip",
+            "birden fazla site",
+            "virtual host",
+            "vhost",
+            "shared hosting"
+          ],
+          "anchors": [
+            "SNI aynı IP adresinde birden fazla sertifikalı HTTPS sitesini mümkün kılar."
+          ]
+        },
+        {
+          "id": "host-gec-kalir",
+          "label": "Sertifika HTTP isteğinden önce seçilmeli",
+          "aliases": [
+            "host başlığı",
+            "host header",
+            "http isteğinden önce",
+            "istek gelmeden",
+            "hangi sertifika",
+            "doğru sertifika"
+          ],
+          "anchors": [
+            "Sertifika HTTP isteği gelmeden seçilmek zorunda olduğu için Host başlığı işe yaramaz."
+          ]
+        },
+        {
+          "id": "sifresiz",
+          "label": "SNI şifresiz gider, hangi siteye gidildiği görünür",
+          "aliases": [
+            "şifresiz",
+            "açık metin",
+            "plaintext",
+            "plain text",
+            "gizlilik",
+            "hangi siteye"
+          ],
+          "anchors": [
+            "SNI şifresiz gittiği için ağı izleyen biri hangi siteye bağlanıldığını görebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir reverse proxy TLS'i sonlandırmadan gelen bağlantıyı doğru arka uca nasıl yönlendirir?"
+      ],
+      "source": "Kendi derleme — RFC 6066 §3 Server Name Indication; RFC 8446 §4.1.2; RFC 9849 (TLS Encrypted Client Hello)"
+    },
+    {
+      "id": "web-samesite",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Cookie ve Oturum",
+      "difficulty": 2,
+      "prompt": "Cookie'deki SameSite özelliğinin Strict, Lax ve None değerleri arasındaki fark nedir?",
+      "modelAnswer": "SameSite, cookie'nin **cross-site** isteklerde gönderilip gönderilmeyeceğini belirler; buradaki site, scheme ile registrable domain'in (eTLD+1) birlikte oluşturduğu birimdir, yani `https://a.example.com` ile `https://b.example.com` aynı site, `http://example.com` ile `https://example.com` ise farklı sitedir. `Strict` cookie'yi yalnızca aynı siteden başlayan isteklerde gönderir; başka bir sitedeki linke tıklayıp gelen kullanıcı bile ilk sayfada oturumsuz görünür. `Lax` buna bir istisna ekler, başka siteden üst düzey gezinmeyle ve safe bir metotla, yani linke tıklayıp `GET` ile gelindiğinde cookie gider; cross-site `POST`, `iframe` ya da `fetch` isteklerinde gitmez, bu da CSRF'in yaygın biçimlerini keser. `None` cookie'yi her istekte gönderir ve `Secure` ile birlikte kullanılmalıdır. Özellik hiç yazılmazsa Chromium tabanlı tarayıcılar (Chrome 80'den beri) cookie'yi `Lax` sayar, Firefox ve Safari ise 2026 itibarıyla bu varsayılanı uygulamaz ve cookie `None` gibi davranır; bu yüzden değer her zaman açıkça yazılmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "site-tanimi",
+          "label": "Site: scheme + registrable domain",
+          "aliases": [
+            "registrable domain",
+            "etld+1",
+            "etld",
+            "schemeful",
+            "scheme",
+            "kayıt edilebilir alan"
+          ],
+          "anchors": [
+            "Site, scheme ile registrable domain'in (eTLD+1) birlikte oluşturduğu birimdir; alt alan adları aynı sitedir."
+          ]
+        },
+        {
+          "id": "strict",
+          "label": "Strict: yalnızca aynı siteden başlayan istekler",
+          "aliases": [
+            "yalnızca aynı site",
+            "sadece aynı site",
+            "aynı siteden",
+            "oturumsuz",
+            "hiçbir cross-site",
+            "asla gönderilmez"
+          ],
+          "anchors": [
+            "Strict cookie yalnızca aynı siteden başlayan isteklerde gider, başka siteden linkle gelişte bile gitmez."
+          ]
+        },
+        {
+          "id": "lax",
+          "label": "Lax: üst düzey gezinme ve safe metotla gider",
+          "aliases": [
+            "üst düzey",
+            "top-level",
+            "navigasyon",
+            "gezinme",
+            "link ile",
+            "linkle"
+          ],
+          "anchors": [
+            "Lax cookie başka siteden üst düzey gezinmede GET ile gider, cross-site POST ve fetch'te gitmez."
+          ]
+        },
+        {
+          "id": "none-secure",
+          "label": "None: her istekte gider, Secure şart",
+          "aliases": [
+            "secure",
+            "her istekte",
+            "her yerde",
+            "tüm isteklerde",
+            "cross-site istek",
+            "kısıtlama yok"
+          ],
+          "anchors": [
+            "None cookie her istekte gider ve Secure ile birlikte kullanılmalıdır."
+          ]
+        },
+        {
+          "id": "varsayilan",
+          "label": "Belirtilmezse yalnızca Chromium Lax sayar",
+          "aliases": [
+            "chromium",
+            "chrome",
+            "varsayılan",
+            "default",
+            "firefox",
+            "safari"
+          ],
+          "anchors": [
+            "SameSite yazılmazsa Chromium cookie'yi Lax sayar, Firefox ve Safari bu varsayılanı uygulamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "Ana sitesi example.com, API'si api.example.com olan bir uygulamada SameSite=Strict bir cookie API isteklerinde gönderilir mi?"
+      ],
+      "source": "Kendi derleme — RFC 6265bis taslağı (SameSite, same-site tanımı); MDN: Set-Cookie ve browser-compat-data (Ekim 2026)"
+    },
+    {
+      "id": "web-cookie-domain-path",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Cookie ve Oturum",
+      "difficulty": 3,
+      "prompt": "Cookie'nin Domain ve Path özellikleri nasıl çalışır? Domain belirtmemek neden daha güvenlidir?",
+      "modelAnswer": "`Domain` belirtilmezse cookie **host-only** olur ve yalnızca onu yazan host'a, örneğin `app.example.com`'a gider; `Domain=example.com` yazılırsa `example.com` ile birlikte onun bütün alt alan adlarına gönderilir. Bu yüzden Domain vermek cookie'nin kapsamını genişletir; aynı üst alan altındaki bir pazarlama sitesi, kullanıcı içeriği barındıran bir alt alan ya da ele geçirilmiş bir alt alan adı bu cookie'yi okuyabilir veya kendi değeriyle üzerine yazabilir. Tarayıcılar `com` ya da `co.uk` gibi public suffix'lere cookie yazılmasını reddeder, ama kendi alan adının alt alanlarına karşı koruma sağlamaz. `Path` cookie'nin hangi URL yolu altındaki isteklerde gönderileceğini sınırlar ama güvenlik sınırı değildir; aynı origin'de başka bir yoldan çalışan JavaScript cookie'ye yine ulaşabilir. En sıkı kapsam için `__Host-` öneki kullanılır; tarayıcı bu önekli cookie'yi yalnızca `Secure` ise, `Domain` yoksa ve `Path=/` ise kabul eder.",
+      "keyConcepts": [
+        {
+          "id": "host-only",
+          "label": "Domain yoksa yalnızca yazan host'a gider",
+          "aliases": [
+            "host-only",
+            "host only",
+            "yalnızca o host",
+            "sadece o host",
+            "yazan host",
+            "alt alanlara gitmez"
+          ],
+          "anchors": [
+            "Domain belirtilmezse cookie host-only olur, yalnızca onu yazan host'a gider."
+          ]
+        },
+        {
+          "id": "alt-alanlar",
+          "label": "Domain verilirse bütün alt alan adlarına gider",
+          "aliases": [
+            "alt alan",
+            "subdomain",
+            "sub-domain",
+            "alt domain",
+            "tüm alt"
+          ],
+          "anchors": [
+            "Domain verilirse cookie o alan adının bütün alt alan adlarına gönderilir."
+          ]
+        },
+        {
+          "id": "kapsam-riski",
+          "label": "Başka bir alt alan okuyabilir ya da üzerine yazabilir",
+          "aliases": [
+            "üzerine yaz",
+            "okuyabil",
+            "ele geçiril",
+            "takeover",
+            "cookie tossing",
+            "kapsam"
+          ],
+          "anchors": [
+            "Domain kapsamı genişlettiği için başka ya da ele geçirilmiş bir alt alan cookie'yi okuyup üzerine yazabilir."
+          ]
+        },
+        {
+          "id": "path-sinir-degil",
+          "label": "Path güvenlik sınırı değildir",
+          "aliases": [
+            "güvenlik sınırı değil",
+            "güvenlik önlemi değil",
+            "güvenlik için kullanılmamalı",
+            "security boundary",
+            "başka yoldan",
+            "sınır değil"
+          ],
+          "anchors": [
+            "Path güvenlik sınırı değildir; aynı origin'deki başka bir yoldan cookie'ye ulaşılabilir."
+          ]
+        },
+        {
+          "id": "host-oneki",
+          "label": "__Host- öneki: Secure, Domain yok, Path=/",
+          "aliases": [
+            "__host-",
+            "__host",
+            "host öneki",
+            "host prefix",
+            "cookie prefix",
+            "önek"
+          ],
+          "anchors": [
+            "__Host- önekli cookie yalnızca Secure, Domain'siz ve Path=/ ise kabul edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcıların kendi alt alan adında içerik yayımladığı bir platformda oturum cookie'si nasıl yapılandırılmalı?"
+      ],
+      "source": "Kendi derleme — RFC 6265 §4.1.2.3, §4.1.2.4, §5.3; RFC 6265bis taslağı (cookie prefixes); MDN: Set-Cookie"
+    },
+    {
+      "id": "web-session-vs-token",
+      "category": "web",
+      "kind": "definition",
+      "topic": "Cookie ve Oturum",
+      "difficulty": 2,
+      "prompt": "Sunucu tarafı session ile token tabanlı (JWT gibi) kimlik doğrulama arasındaki fark nedir?",
+      "modelAnswer": "Session yaklaşımında sunucu oturum bilgisini kendi tarafında (bellekte, Redis'te ya da veritabanında) tutar ve istemciye yalnızca anlamsız, rastgele bir **session id** verir; her istekte oturum bu id ile aranır. Token yaklaşımında ise kimlik ve yetki bilgisi imzalı bir token'ın içinde taşınır; sunucu her istekte yalnızca imzayı ve süreyi doğrular, bir oturum deposuna gitmez. Fark en çok iptalde görülür; session'ı silmek kullanıcıyı anında çıkarır, ama süresi dolmamış bir JWT imzası geçerli kaldıkça kabul edilir, bu yüzden access token'lar kısa ömürlü tutulup refresh token'la yenilenir ya da sunucuda bir iptal listesi tutulur. Token, örnekler arası paylaşımlı bir oturum deposu gerektirmediği için ölçeklemede avantajlıdır; buna karşılık büyüktür, her istekte taşınır ve içindeki bilgi süre dolana kadar güncellenemez, örneğin kullanıcıdan alınan bir rol token yenilenene kadar geçerli kalır. Hangi yolun seçildiği token'ın nerede taşındığından bağımsızdır; ikisi de cookie'de ya da `Authorization` başlığında gönderilebilir.",
+      "keyConcepts": [
+        {
+          "id": "sunucuda-durum",
+          "label": "Session: durum sunucuda, istemcide yalnızca id",
+          "aliases": [
+            "session id",
+            "oturum kimliği",
+            "sunucu tarafında tut",
+            "redis",
+            "oturum deposu",
+            "session store"
+          ],
+          "anchors": [
+            "Session yaklaşımında oturum sunucuda tutulur, istemcide yalnızca bir session id bulunur."
+          ]
+        },
+        {
+          "id": "imzali-token",
+          "label": "Token: bilgi imzalı token'da, depoya gidilmez",
+          "aliases": [
+            "imzalı",
+            "signed",
+            "self-contained",
+            "kendi içinde",
+            "claim",
+            "imzayı doğrula"
+          ],
+          "anchors": [
+            "Token yaklaşımında bilgi imzalı token'ın içindedir, sunucu yalnızca imzayı doğrular."
+          ]
+        },
+        {
+          "id": "iptal",
+          "label": "İptal: session anında, JWT süre dolana kadar geçerli",
+          "aliases": [
+            "iptal",
+            "revoke",
+            "revocation",
+            "anında çıkar",
+            "süresi dolana",
+            "kara liste"
+          ],
+          "anchors": [
+            "Session silinince kullanıcı anında çıkar, süresi dolmamış bir JWT ise geçerli kalır."
+          ]
+        },
+        {
+          "id": "kisa-omur",
+          "label": "Kısa ömürlü access token ve refresh token",
+          "aliases": [
+            "kısa ömürlü",
+            "short-lived",
+            "refresh token",
+            "kısa süreli",
+            "token yenile"
+          ],
+          "anchors": [
+            "Bu yüzden access token'lar kısa ömürlü tutulur ve refresh token ile yenilenir."
+          ]
+        },
+        {
+          "id": "olcekleme",
+          "label": "Token paylaşımlı oturum deposu gerektirmez",
+          "aliases": [
+            "ölçekle",
+            "scale",
+            "paylaşımlı depo",
+            "paylaşımlı oturum",
+            "merkezi depo",
+            "depo gerektirmez"
+          ],
+          "anchors": [
+            "Token örnekler arası paylaşımlı oturum deposu gerektirmediği için ölçeklemede avantajlıdır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kullanıcının yetkisi alındığında bunun JWT kullanan bir sistemde hemen etkili olması için ne yapılabilir?"
+      ],
+      "source": "Kendi derleme — RFC 7519 (JWT); OWASP Session Management Cheat Sheet; OWASP JSON Web Token Cheat Sheet"
     }
   ]
 }
