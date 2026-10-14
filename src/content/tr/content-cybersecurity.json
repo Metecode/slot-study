@@ -399,7 +399,7 @@
       "topic": "Erişim Kontrolü",
       "difficulty": 2,
       "prompt": "Path traversal açığı nasıl oluşur, nasıl önlenir?",
-      "modelAnswer": "Path traversal, uygulamanın kullanıcıdan gelen bir dosya adını ya da yolunu doğrudan dosya sistemi yoluna eklemesiyle oluşur; girdide üst dizine çıkan yol parçaları ya da mutlak bir yol varsa uygulama izin verilen klasörün dışındaki dosyaları, örneğin yapılandırma dosyalarını ya da anahtarları okuyabilir veya üzerine yazabilir. En güvenli çözüm kullanıcının hiç yol vermemesidir; kullanıcı bir id gönderir, sunucu bu id'yi kendi tuttuğu dosya adıyla eşler. Yol gerçekten girdiden kurulmak zorundaysa önce kanonik hâle getirilir, yani `..` parçaları ve sembolik linkler çözülür, sonra sonucun izin verilen kök dizinin içinde kalıp kalmadığı kontrol edilir. Bu kontrol URL kodlaması çözüldükten (decode) sonra yapılır, çünkü yol parçaları kodlanmış hâlde de gelebilir; uygulamanın süreci de yalnızca gereken klasörlere erişebilecek yetkiyle çalıştırılır.",
+      "modelAnswer": "Path traversal, uygulamanın kullanıcıdan gelen bir dosya adını ya da yolunu doğrudan dosya sistemi yoluna eklemesiyle oluşur; girdide üst dizine çıkan yol parçaları ya da mutlak bir yol varsa uygulama izin verilen klasörün dışındaki dosyaları, örneğin yapılandırma dosyalarını ya da anahtarları okuyabilir veya üzerine yazabilir. En güvenli çözüm kullanıcının hiç yol vermemesidir; kullanıcı bir id gönderir, sunucu bu id'yi kendi tuttuğu dosya adıyla eşler. Yol gerçekten girdiden kurulmak zorundaysa sıra önemlidir; önce girdinin URL kodlaması çözülür (decode), çünkü yol parçaları kodlanmış hâlde de gelebilir, sonra yol kanonik hâle getirilir, yani `..` parçaları ve sembolik linkler çözülür, en son da sonucun izin verilen kök dizinin içinde kalıp kalmadığı kontrol edilir. Uygulamanın süreci de yalnızca gereken klasörlere erişebilecek yetkiyle çalıştırılır.",
       "keyConcepts": [
         {
           "id": "klasor-disi",
@@ -448,7 +448,7 @@
         },
         {
           "id": "decode-sonra",
-          "label": "Kontrol kod çözme işleminden sonra yapılır",
+          "label": "Önce decode, sonra kanonikleştirme ve kök kontrolü",
           "aliases": [
             "decode",
             "kod çözme",
@@ -458,7 +458,7 @@
             "kodlanmış"
           ],
           "anchors": [
-            "Yol parçaları kodlanmış gelebileceği için kontrol URL kodlaması çözüldükten sonra yapılır."
+            "Sıra önce URL kodlamasını çözmek, sonra yolu kanonik hâle getirmek, en son kök dizin kontrolü yapmaktır."
           ]
         }
       ],
@@ -1029,7 +1029,7 @@
       "topic": "Injection",
       "difficulty": 3,
       "prompt": "Server-side template injection (SSTI) nedir? Nasıl önlenir?",
-      "modelAnswer": "SSTI, kullanıcı girdisinin bir şablon motoruna şablonun verisi olarak değil şablon metninin parçası olarak verilmesiyle oluşur; örneğin bir e-posta şablonu kullanıcının yazdığı metinle birleştirilip sonra derlendiğinde girdideki şablon ifadeleri de değerlendirilir. Thymeleaf, FreeMarker, Jinja2 ya da Twig gibi motorların ifade dilleri nesnelere, metotlara ve bazen çalışma ortamına erişebildiği için sonuç basit bir XSS'ten sunucuda kod çalıştırmaya kadar gidebilir. Temel önlem şablonları yalnızca geliştiricinin yazdığı sabit dosyalardan yüklemek ve kullanıcı girdisini her zaman şablona model değişkeni olarak geçirmektir; motor bu değeri ifade olarak değerlendirmez, yalnızca basar ve kendi kurallarıyla kodlar. Kullanıcıların kendi şablonlarını yazması bir ürün özelliğiyse mantık içermeyen (logic-less) bir motor ya da yetenekleri kısıtlanmış bir sandbox kullanılır ve şablonu işleyen süreç yalıtılır.",
+      "modelAnswer": "SSTI, kullanıcı girdisinin bir şablon motoruna şablonun verisi olarak değil şablon metninin parçası olarak verilmesiyle oluşur; örneğin bir e-posta şablonu kullanıcının yazdığı metinle birleştirilip sonra derlendiğinde girdideki şablon ifadeleri de değerlendirilir. Thymeleaf, FreeMarker, Jinja2 ya da Twig gibi motorların ifade dilleri nesnelere, metotlara ve bazen çalışma ortamına erişebildiği için sonuç basit bir XSS'ten sunucuda kod çalıştırmaya kadar gidebilir. Temel önlem şablonları yalnızca geliştiricinin yazdığı sabit dosyalardan yüklemek ve kullanıcı girdisini her zaman şablona model değişkeni olarak geçirmektir; motor bu değeri ifade olarak değerlendirmez, yalnızca basar ve kendi kurallarıyla kodlar. Kullanıcıların kendi şablonlarını yazması bir ürün özelliğiyse mantık içermeyen (logic-less) bir motor ya da yetenekleri kısıtlanmış bir sandbox ek katman olarak kullanılır; sandbox kaçışları sık bulunduğu için bunlar asıl savunmanın yerine geçmez ve şablonu işleyen süreç ayrıca yalıtılır.",
       "keyConcepts": [
         {
           "id": "sablon-metni",
@@ -1078,7 +1078,7 @@
         },
         {
           "id": "sandbox",
-          "label": "Kullanıcı şablonu gerekiyorsa logic-less motor ya da sandbox",
+          "label": "Logic-less motor ve sandbox yalnızca ek katman",
           "aliases": [
             "sandbox",
             "logic-less",
@@ -1088,14 +1088,14 @@
             "kısıtlı motor"
           ],
           "anchors": [
-            "Kullanıcı şablon yazacaksa mantık içermeyen bir motor ya da kısıtlanmış bir sandbox kullanılır."
+            "Kullanıcı şablon yazacaksa logic-less motor ya da sandbox ek katman olarak kullanılır; sandbox kaçışları yaygın olduğu için asıl savunmanın yerine geçmez."
           ]
         }
       ],
       "followUps": [
         "Kullanıcının adını içeren bir e-postayı şablon motoruyla üretirken adı şablona nasıl vermelisin?"
       ],
-      "source": "Kendi derleme — OWASP WSTG: Testing for Server-side Template Injection"
+      "source": "Kendi derleme — OWASP WSTG: Testing for Server-side Template Injection; PortSwigger Web Security Academy: Server-side template injection"
     },
     {
       "id": "cybersecurity-xxe",
