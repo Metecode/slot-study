@@ -2206,6 +2206,336 @@
         "Bir webhook'un gerçekten beklenen servisten geldiğini HMAC ile nasıl doğrularsın; karşılaştırmayı neden sabit zamanlı yaparsın?"
       ],
       "source": "Kendi derleme — RFC 2104 (HMAC); NIST FIPS 186-5 (Digital Signature Standard)"
+    },
+    {
+      "id": "cybersecurity-mfa-phishing",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "MFA nedir? Her MFA yöntemi phishing'e karşı korur mu?",
+      "modelAnswer": "MFA, kimliği birbirinden bağımsız en az iki farklı faktörle doğrulamaktır; bilinen bir şey (parola), sahip olunan bir şey (telefon, güvenlik anahtarı) ve olunan bir şey (biyometri) bu faktörlerdir, iki ayrı parola istemek MFA sayılmaz. Her yöntem phishing'e karşı korumaz; SMS ile gelen ya da bir uygulamanın ürettiği tek kullanımlık kodu kullanıcı elle girdiği için sahte bir sayfa kodu da alıp aynı anda gerçek siteye aktarabilir, NIST SP 800-63B-4 de elle girilen kodları ve out-of-band yöntemleri phishing'e dayanıklı saymaz. Yalnızca bir bildirimi onaylamaya dayanan push yöntemi, saldırganın art arda istek gönderip kullanıcının birini onaylamasını beklediği authentication fatigue saldırılarına açıktır; NIST bu yüzden yalnızca onaya dayanan yöntemi artık kabul edilebilir saymaz ve iki kanal arasında bir değerin aktarılmasını ister. Phishing'e dayanıklı yöntemler, örneğin WebAuthn/FIDO2 güvenlik anahtarları ve passkey'ler, doğrulayıcının çıktısını bağlanılan sitenin kimliğine kriptografik olarak bağlar; sahte bir alan adında üretilen yanıt gerçek sitede işe yaramaz.",
+      "keyConcepts": [
+        {
+          "id": "farkli-faktorler",
+          "label": "Farklı türden en az iki faktör",
+          "aliases": [
+            "bilinen bir şey",
+            "sahip olunan",
+            "farklı faktör",
+            "farklı bir faktör",
+            "ek bir faktör",
+            "two-factor"
+          ],
+          "anchors": [
+            "MFA kimliği bilinen, sahip olunan ve olunan bir şey gibi farklı türden en az iki faktörle doğrular."
+          ]
+        },
+        {
+          "id": "kod-aktarilir",
+          "label": "Elle girilen kodu sahte sayfa gerçek siteye aktarabilir",
+          "aliases": [
+            "sahte bir sayfa",
+            "sahte site",
+            "kodu da",
+            "aktarabilir",
+            "relay",
+            "gerçek zamanlı"
+          ],
+          "anchors": [
+            "Kullanıcı tek kullanımlık kodu elle girdiği için sahte bir sayfa kodu alıp gerçek siteye aktarabilir."
+          ]
+        },
+        {
+          "id": "onay-yorgunlugu",
+          "label": "Yalnızca onaylamaya dayanan push, fatigue saldırısına açık",
+          "aliases": [
+            "fatigue",
+            "yorgunlu",
+            "art arda",
+            "sürekli bildirim",
+            "onaylat",
+            "push bomb"
+          ],
+          "anchors": [
+            "Yalnızca onaylamaya dayanan push yöntemi, art arda gönderilen isteklerle yapılan fatigue saldırılarına açıktır."
+          ]
+        },
+        {
+          "id": "siteye-bagli",
+          "label": "Phishing'e dayanıklı yöntem çıktıyı sitenin kimliğine bağlar",
+          "aliases": [
+            "webauthn",
+            "fido",
+            "passkey",
+            "sitenin kimliğine",
+            "alan adına bağlı",
+            "domaine bağlı"
+          ],
+          "anchors": [
+            "WebAuthn/FIDO2 ve passkey'ler doğrulayıcının çıktısını bağlanılan sitenin kimliğine kriptografik olarak bağlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcılarının bir kısmı yalnızca SMS ile doğrulama yapabiliyorsa bu yöntemin riskini nasıl azaltırsın?"
+      ],
+      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.3 (Out-of-Band), §3.2.5 (Phishing Resistance); OWASP Multifactor Authentication Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-passkeys",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "Passkey (WebAuthn) nasıl çalışır? Parolaya göre neden phishing'e dayanıklıdır?",
+      "modelAnswer": "Passkey, kullanıcının cihazında ya da parola yöneticisinde her site için ayrı üretilen bir anahtar çiftidir; site yalnızca açık anahtarı saklar, özel anahtar kullanıcı tarafında kalır, bu yüzden sunucuda çalınabilecek ya da başka sitelerde denenebilecek paylaşılan bir sır yoktur. Girişte sunucu rastgele bir challenge gönderir, kullanıcının cihazı bunu özel anahtarla imzalar ve sunucu imzayı kayıtlı açık anahtarla doğrular; kullanıcı yalnızca cihazın kilidini parmak izi, yüz tanıma ya da PIN ile açar ve biyometrik veri cihazdan çıkmaz. Anahtarın kullanımı kaydedildiği alan adıyla sınırlıdır; sahte bir alan adındaki sayfa bu anahtarı kullandıramaz, bu yüzden koruma kullanıcının adresi dikkatle kontrol etmesine bağlı değildir. Passkey'ler cihazlar arasında senkronize edilebilir ya da tek bir cihaza, örneğin bir donanım güvenlik anahtarına bağlı kalabilir; NIST SP 800-63B-4 senkronize edilebilen authenticator'ları AAL2'ye kadar kabul eder, anahtar dışa aktarılabildiği için AAL3'te kullanılmalarına izin vermez.",
+      "keyConcepts": [
+        {
+          "id": "sunucuda-sir-yok",
+          "label": "Sunucuda yalnızca açık anahtar, paylaşılan sır yok",
+          "aliases": [
+            "paylaşılan bir sır",
+            "paylaşılan sır yok",
+            "yalnızca açık anahtar",
+            "sadece public key",
+            "sızsa bile",
+            "no shared secret"
+          ],
+          "anchors": [
+            "Site yalnızca açık anahtarı saklar; sunucuda çalınabilecek paylaşılan bir sır yoktur."
+          ]
+        },
+        {
+          "id": "challenge-imza",
+          "label": "Sunucunun challenge'ı özel anahtarla imzalanır",
+          "aliases": [
+            "challenge",
+            "imzalar",
+            "imzalanır",
+            "özel anahtarla imza",
+            "private key ile imza",
+            "imzayı doğrula"
+          ],
+          "anchors": [
+            "Sunucu rastgele bir challenge gönderir, cihaz bunu özel anahtarla imzalar, sunucu açık anahtarla doğrular."
+          ]
+        },
+        {
+          "id": "alan-adina-sinirli",
+          "label": "Anahtar kaydedildiği alan adıyla sınırlı",
+          "aliases": [
+            "alan adıyla sınırlı",
+            "alan adına bağlı",
+            "domain'e bağlı",
+            "siteye bağlı",
+            "rp id",
+            "sahte bir alan"
+          ],
+          "anchors": [
+            "Anahtarın kullanımı kaydedildiği alan adıyla sınırlıdır; sahte bir alan adı onu kullandıramaz."
+          ]
+        },
+        {
+          "id": "biyometri-cihazda",
+          "label": "Biyometri yalnızca cihazın kilidini açar, cihazdan çıkmaz",
+          "aliases": [
+            "parmak izi",
+            "yüz tanıma",
+            "biyometri",
+            "cihazdan çıkmaz",
+            "cihazın kilidi",
+            "yerel doğrula"
+          ],
+          "anchors": [
+            "Kullanıcı cihazın kilidini biyometriyle ya da PIN'le açar; biyometrik veri cihazdan çıkmaz."
+          ]
+        },
+        {
+          "id": "senkron-aal2",
+          "label": "Senkronize ya da cihaza bağlı; senkronize olan AAL2'ye kadar",
+          "aliases": [
+            "senkronize ed",
+            "cihazlar arasında",
+            "device-bound",
+            "cihaza bağlı",
+            "aal2",
+            "aal3"
+          ],
+          "anchors": [
+            "Passkey senkronize edilebilir ya da tek cihaza bağlı kalabilir; NIST senkronize olanları AAL2'ye kadar kabul eder."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcı passkey'inin bulunduğu tek cihazını kaybederse hesap kurtarma akışı phishing direncini nasıl bozabilir?"
+      ],
+      "source": "Kendi derleme — FIDO Alliance: Passkeys; NIST SP 800-63B-4 §3.2.5 ve Ek B (Syncable Authenticators); W3C Web Authentication"
+    },
+    {
+      "id": "cybersecurity-session-fixation",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "Session fixation saldırısı nedir? Nasıl önlenir?",
+      "modelAnswer": "Session fixation'da saldırgan önceden bildiği bir session id'yi kurbanın tarayıcısına yerleştirir, örneğin bu id'yi taşıyan bir linkle; kurban bu oturumla giriş yaptığında uygulama aynı id'yi kimliği doğrulanmış oturuma çevirirse saldırgan da elindeki id ile kurbanın hesabına girmiş olur. Temel önlem kimlik doğrulamadan hemen sonra, genel olarak her yetki seviyesi değişiminde, eski session id'yi geçersiz kılıp yeni bir id üretmektir; OWASP bunu session fixation'a karşı zorunlu sayar. Uygulama session id'yi yalnızca cookie'den kabul etmeli, URL parametresindeki id'yi reddetmeli ve kendisinin üretmediği bir id geldiğinde onu kullanmak yerine yenisini vermelidir. Spring Security gibi framework'ler girişte id'yi varsayılan olarak değiştirir; çıkışta da oturum yalnızca tarayıcıdaki cookie silinerek değil, sunucu tarafında geçersiz kılınarak kapatılır.",
+      "keyConcepts": [
+        {
+          "id": "bilinen-id",
+          "label": "Saldırganın bildiği id kurbana yerleştirilir",
+          "aliases": [
+            "önceden bildiği",
+            "bildiği bir session",
+            "kendi session id",
+            "id'yi yerleştir",
+            "aynı id ile",
+            "aynı session id"
+          ],
+          "anchors": [
+            "Saldırgan önceden bildiği bir session id'yi kurbanın tarayıcısına yerleştirir."
+          ]
+        },
+        {
+          "id": "giriste-yeni-id",
+          "label": "Girişte ve yetki değişiminde yeni session id",
+          "aliases": [
+            "yeni bir id",
+            "yeni session id",
+            "yeni bir session",
+            "id'yi yenile",
+            "regenerat",
+            "changesessionid"
+          ],
+          "anchors": [
+            "Kimlik doğrulamadan hemen sonra eski session id geçersiz kılınır ve yeni bir id üretilir."
+          ]
+        },
+        {
+          "id": "yalnizca-cookie",
+          "label": "Id yalnızca cookie'den, URL'den ya da üretilmemişse kabul edilmez",
+          "aliases": [
+            "url parametre",
+            "url'deki id",
+            "yalnızca cookie",
+            "sadece cookie",
+            "kendisinin üretmediği",
+            "üretmediği bir id"
+          ],
+          "anchors": [
+            "Session id yalnızca cookie'den kabul edilir; URL'deki ya da uygulamanın üretmediği id reddedilir."
+          ]
+        },
+        {
+          "id": "sunucuda-sonlandir",
+          "label": "Çıkışta oturum sunucu tarafında geçersiz kılınır",
+          "aliases": [
+            "sunucu tarafında geçersiz",
+            "sunucuda geçersiz",
+            "invalidate",
+            "çıkışta",
+            "logout",
+            "oturumu sonlandır"
+          ],
+          "anchors": [
+            "Çıkışta oturum yalnızca cookie silinerek değil, sunucu tarafında geçersiz kılınarak kapatılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Token kullanan stateless bir API'de session fixation'a benzeyen bir risk var mı?"
+      ],
+      "source": "Kendi derleme — OWASP Session Management Cheat Sheet (Session ID renewal, Session Fixation)"
+    },
+    {
+      "id": "cybersecurity-credential-stuffing",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "Brute force, credential stuffing ve password spraying arasındaki fark nedir? Giriş ekranında hangi önlemler alınır?",
+      "modelAnswer": "Brute force tek bir hesaba çok sayıda parola denemektir; credential stuffing başka sitelerin sızıntılarından elde edilen kullanıcı adı ve parola çiftlerini, insanlar aynı parolayı birçok yerde kullandığı için toplu olarak denemektir; password spraying ise az sayıda yaygın parolayı çok sayıda hesapta, hesap başına birkaç denemeyle sınar ve böylece hesap bazlı limitlere takılmaz. OWASP'a göre en etkili önlem MFA'dır, çünkü doğru parola tek başına yetmez; yeni parolaların bilinen sızıntı listeleriyle karşılaştırılması da yeniden kullanılmış parolaları baştan engeller. Deneme sayısı hem hesap hem de IP ya da cihaz bazında, kısa ve uzun zaman pencerelerinde üst sınıra bağlanır ve şüpheli girişlerde CAPTCHA ya da ek doğrulama istenir; OWASP engellerin geçici olmasını önerir, kalıcı bir kilit saldırganın meşru kullanıcıyı hesabından dışarıda bırakmasının yolunu açar. Hata mesajları kullanıcı adının mı parolanın mı yanlış olduğunu söylemez; aksi hâlde saldırgan önce geçerli kullanıcı adlarını listeleyip (user enumeration) sonra denemeyi yalnızca onlara yöneltir.",
+      "keyConcepts": [
+        {
+          "id": "sizinti-ciftleri",
+          "label": "Credential stuffing: başka sızıntılardan gelen çiftler, parola tekrarı",
+          "aliases": [
+            "başka sitelerin sızıntı",
+            "başka sitelerden",
+            "sızan kullanıcı adı",
+            "sızdırılmış",
+            "aynı parolayı",
+            "parola tekrar"
+          ],
+          "anchors": [
+            "Credential stuffing başka sitelerin sızıntılarından gelen kullanıcı adı ve parola çiftlerini dener."
+          ]
+        },
+        {
+          "id": "tek-hesap-cok-hesap",
+          "label": "Brute force tek hesaba, spraying çok hesaba az parola",
+          "aliases": [
+            "tek bir hesaba",
+            "tek hesaba",
+            "yaygın parola",
+            "çok sayıda hesap",
+            "birçok hesap",
+            "hesap başına"
+          ],
+          "anchors": [
+            "Brute force tek bir hesaba çok parola dener; password spraying az sayıda yaygın parolayı çok sayıda hesapta dener."
+          ]
+        },
+        {
+          "id": "mfa",
+          "label": "En etkili önlem MFA",
+          "aliases": [
+            "çok faktörlü",
+            "multi-factor",
+            "iki faktör",
+            "mfa kullan",
+            "mfa'dır",
+            "olarak mfa"
+          ],
+          "anchors": [
+            "En etkili önlem MFA'dır; doğru parola tek başına yetmez."
+          ]
+        },
+        {
+          "id": "hiz-siniri",
+          "label": "Hesap ve IP bazlı hız sınırı, CAPTCHA, geçici engel",
+          "aliases": [
+            "rate limit",
+            "rate-limit",
+            "hız sınır",
+            "deneme sayısı",
+            "throttl",
+            "captcha"
+          ],
+          "anchors": [
+            "Deneme sayısı hesap ve IP bazında sınırlanır, şüpheli girişlerde CAPTCHA istenir, engeller geçicidir."
+          ]
+        },
+        {
+          "id": "genel-hata",
+          "label": "Hata mesajı hangi alanın yanlış olduğunu söylemez",
+          "aliases": [
+            "genel bir hata",
+            "aynı hata mesajı",
+            "enumeration",
+            "kullanıcı adının mı",
+            "kullanıcı adı mı",
+            "hangisinin yanlış"
+          ],
+          "anchors": [
+            "Hata mesajı kullanıcı adının mı parolanın mı yanlış olduğunu söylemez; böylece user enumeration önlenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Giriş ucunu IP bazlı hız sınırıyla koruyorsan binlerce farklı IP'den gelen dağıtık bir denemeyi nasıl fark edersin?"
+      ],
+      "source": "Kendi derleme — OWASP Credential Stuffing Prevention Cheat Sheet; OWASP Authentication Cheat Sheet; NIST SP 800-63B-4 §3.2.2"
     }
   ]
 }
