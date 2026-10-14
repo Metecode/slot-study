@@ -5,78 +5,93 @@
     {
       "id": "cybersecurity-jwt-xss",
       "category": "cybersecurity",
-      "kind": "definition",
-      "topic": "JWT Saklama (XSS)",
+      "kind": "applied",
+      "topic": "JWT",
       "difficulty": 2,
       "prompt": "React tabanlı bir Single Page Application'da kimlik doğrulama için JWT kullanılıyor. JWT'nin XSS (Cross-Site Scripting) saldırılarıyla çalınmasını önlemek için mimaride token nerede saklanmalıdır ve bu tercihin getirdiği yeni risk nedir?",
-      "modelAnswer": "JWT'yi tarayıcının LocalStorage veya SessionStorage alanlarında saklamak, JavaScript üzerinden erişilebildiği için XSS saldırılarına karşı tamamen savunmasızdır. Sayfaya sızan zararlı bir JS kodu token'ı okuyup saldırganın sunucusuna gönderebilir.\n\nSık atlanan nokta: Çözüm olarak token, backend tarafından HttpOnly ve Secure bayrakları işaretlenmiş bir çerez (cookie) içine yazılmalıdır. HttpOnly bayrağı çerezin tarayıcıdaki JavaScript kodları tarafından okunmasını donanımsal olarak engeller. Ancak token'ı Cookie'ye taşıdığınızda, sistem otomatik olarak gönderilen çerezler yüzünden CSRF (Cross-Site Request Forgery) saldırılarına açık hale gelir. Bu yeni riski kapatmak için SameSite attribute'u kullanılmalı veya Anti-CSRF token mimarisi kurulmalıdır.",
+      "modelAnswer": "Token `localStorage` ya da `sessionStorage`'da tutulursa aynı origin'de çalışan her JavaScript onu okuyabilir; bir XSS açığında enjekte edilen kod token'ı alıp dışarı gönderir ve saldırgan onu kendi makinesinden, süresi dolana kadar kullanır. Yaygın tercih access token'ı yalnızca bellekte, bir JavaScript değişkeninde tutmak, uzun ömürlü refresh token'ı ise sunucunun `HttpOnly` ve `Secure` öznitelikleriyle yazdığı bir cookie'de taşımaktır; `HttpOnly` cookie'yi sayfadaki JavaScript'e kapatır, `Secure` yalnızca HTTPS üzerinden gönderilmesini sağlar, bellekteki access token da sayfa yenilenince kaybolur ve refresh ile yeniden alınır. Bu tercih maruziyeti azaltır ama XSS'i çözmez; enjekte edilen kod uygulamayla aynı yetkiye sahip olduğu için sayfa açıkken kullanıcı adına istek atabilir, RFC 10017'ye göre de hiçbir tarayıcı saklama yöntemi token'ın dışarı sızdırılmasını tamamen engellemez, asıl savunma XSS'i önlemektir. Getirdiği yeni risk CSRF'tir; tarayıcı cookie'yi isteğe kendiliğinden eklediği için başka bir site cookie ile çalışan bir uca kullanıcı adına istek attırabilir, bu yüzey de refresh cookie'si yalnızca yenileme ucuna gönderilip `SameSite=Strict` ya da `Lax` ile yazıldığında küçük kalır.",
       "keyConcepts": [
         {
           "id": "localstorage-xss-risk",
-          "label": "LocalStorage'ın XSS zafiyeti",
+          "label": "localStorage'daki token'ı her script okuyabilir",
           "aliases": [
             "localstorage",
             "sessionstorage",
-            "js erişimi",
-            "javascript",
-            "okunabilir"
+            "her javascript",
+            "javascript okuyabilir",
+            "dışarı gönder",
+            "kendi makinesinden"
           ],
           "anchors": [
-            "Token'ları LocalStorage'da tutmak zararlı JavaScript kodlarının bunlara kolayca erişmesine olanak tanır.",
-            "XSS zafiyeti olan bir sayfada LocalStorage içindeki veriler saldırganlar tarafından rahatlıkla çalınabilir."
+            "localStorage ya da sessionStorage'daki token'ı aynı origin'de çalışan her JavaScript, XSS ile enjekte edilen kod da okuyabilir."
+          ]
+        },
+        {
+          "id": "bellekte-access-token",
+          "label": "Access token yalnızca bellekte",
+          "aliases": [
+            "bellekte tut",
+            "bellekte sakla",
+            "yalnızca bellekte",
+            "in-memory",
+            "memory'de tut",
+            "javascript değişken"
+          ],
+          "anchors": [
+            "Access token yalnızca bellekte, bir JavaScript değişkeninde tutulur; sayfa yenilenince refresh ile yeniden alınır."
           ]
         },
         {
           "id": "httponly-cookie",
-          "label": "HttpOnly Cookie kullanımı",
+          "label": "Refresh token HttpOnly ve Secure bir cookie'de",
           "aliases": [
             "httponly",
-            "çerez",
-            "cookie",
-            "javascript okuyamaz",
-            "gizli"
+            "http-only",
+            "http only",
+            "refresh cookie",
+            "javascript'e kapat",
+            "cookie'de taşı"
           ],
           "anchors": [
-            "Token hırsızlığını engellemek için JWT'ler JavaScript'in okuyamayacağı HttpOnly çerezlerde saklanmalıdır.",
-            "Backend, token'ı HttpOnly flag'i ile bir cookie olarak dönerse istemci tarafındaki kodlar bu çerezi göremez."
+            "Refresh token sunucunun HttpOnly ve Secure öznitelikleriyle yazdığı, JavaScript'in okuyamadığı bir cookie'de taşınır."
           ]
         },
         {
-          "id": "secure-flag",
-          "label": "Secure bayrağı",
+          "id": "xss-cozulmez",
+          "label": "XSS çözülmez, kod kullanıcı adına istek atabilir",
           "aliases": [
-            "secure",
-            "https",
-            "sadece şifreli",
-            "ssl",
-            "ağ dinleme"
+            "kullanıcı adına istek",
+            "xss'i çözmez",
+            "aynı yetkiye sahip",
+            "maruziyeti azalt",
+            "tamamen engellemez",
+            "xss'i önlemek"
           ],
           "anchors": [
-            "Cookie ayarlarında Secure bayrağının açılması, çerezin yalnızca şifrelenmiş HTTPS bağlantıları üzerinden taşınmasını şart koşar.",
-            "Ağ üzerinden token dinlenmesini (Man in the middle) önlemek için Secure cookie kullanmak zorunludur."
+            "Bu tercih XSS'i çözmez; enjekte edilen kod uygulamayla aynı yetkiyle kullanıcı adına istek atabilir."
           ]
         },
         {
           "id": "csrf-tradeoff",
-          "label": "CSRF riski değişimi",
+          "label": "Yeni risk CSRF, SameSite ile sınırlanır",
           "aliases": [
             "csrf",
-            "cross site",
+            "cross-site request forgery",
             "samesite",
-            "anti-csrf",
-            "yeni zafiyet"
+            "kendiliğinden ekle",
+            "otomatik ekle",
+            "csrf token"
           ],
           "anchors": [
-            "HttpOnly cookie kullanıldığında XSS çözülür ancak tarayıcı çerezi her isteğe otomatik eklediği için CSRF zafiyeti doğar.",
-            "Cookie tabanlı mimariye geçildiğinde sistemin Cross-Site Request Forgery (CSRF) saldırılarına karşı ayrıca korunması gerekir."
+            "Cookie isteğe kendiliğinden eklendiği için yeni risk CSRF'tir; SameSite ve yalnızca yenileme ucuna gönderim bu yüzeyi küçültür."
           ]
         }
       ],
       "followUps": [
-        "Aynı etki alanında olmayan (Cross-Origin) farklı bir backend servisine HttpOnly cookie'yi nasıl iletirsin?",
-        "Eğer XSS açığı olan bir sitede HttpOnly kullanılıyorsa, saldırgan token'ı çalamasa bile kullanıcı adına istek atabilir mi?"
+        "Frontend ile API farklı origin'lerdeyse HttpOnly refresh cookie'sini API'ye nasıl iletirsin?",
+        "XSS açığı olan bir sitede HttpOnly kullanılıyorsa saldırgan token'ı çalamasa bile kullanıcı adına neler yapabilir?"
       ],
-      "source": "Banka Güvenlik Mühendisliği Mülakatı, Eylül 2026"
+      "source": "Kendi derleme — OWASP HTML5 Security Cheat Sheet (Local Storage); RFC 10017 (OAuth 2.0 for Browser-Based Applications) §5, §8; MDN: Set-Cookie"
     },
     {
       "id": "cybersecurity-owasp-top10",
