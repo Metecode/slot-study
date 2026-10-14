@@ -1246,6 +1246,486 @@
         "Bir oturum nesnesini serileştirip istemcide cookie olarak taşımak hangi koşulda kabul edilebilir?"
       ],
       "source": "Kendi derleme — OWASP Deserialization Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-xss-types",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "XSS",
+      "difficulty": 1,
+      "prompt": "Stored, reflected ve DOM tabanlı XSS arasındaki fark nedir?",
+      "modelAnswer": "Üç türde de saldırganın kodu kurbanın tarayıcısında sitenin kendi origin'iyle çalışır; bu yüzden sayfanın gördüğü her şeyi okuyabilir ve kullanıcının oturumuyla istek atabilir. Stored XSS'te zararlı içerik uygulamada kalıcı olarak saklanır, örneğin bir yorum alanında ya da profil bilgisinde, ve o sayfayı açan her kullanıcıya gösterilir. Reflected XSS'te içerik saklanmaz; istekteki bir parametre, örneğin arama terimi, kodlanmadan aynı yanıtın içine geri yazılır ve kurbanın hazırlanmış bir linke tıklaması gerekir. DOM tabanlı XSS'te sorun tamamen istemci kodundadır; sayfanın JavaScript'i URL'deki bir parçayı ya da başka bir kaynağı alıp `innerHTML` gibi tehlikeli bir API'ye yazar ve değer çoğu zaman sunucuya hiç uğramadığı için sunucu tarafındaki kontroller onu görmez.",
+      "keyConcepts": [
+        {
+          "id": "sitenin-adina",
+          "label": "Kod kurbanın tarayıcısında sitenin origin'iyle çalışır",
+          "aliases": [
+            "kurbanın tarayıcısında",
+            "kullanıcının tarayıcısında",
+            "sitenin kendi",
+            "sitenin adına",
+            "origin'iyle çalış",
+            "cookie'lerine eriş"
+          ],
+          "anchors": [
+            "Üç türde de saldırganın kodu kurbanın tarayıcısında sitenin kendi origin'iyle çalışır."
+          ]
+        },
+        {
+          "id": "kalici",
+          "label": "Stored: içerik kalıcı saklanır, herkese gösterilir",
+          "aliases": [
+            "kalıcı olarak saklan",
+            "kalıcı xss",
+            "persistent",
+            "veritabanına kaydedil",
+            "veritabanında saklan",
+            "yorum alan"
+          ],
+          "anchors": [
+            "Stored XSS'te zararlı içerik kalıcı olarak saklanır ve sayfayı açan her kullanıcıya gösterilir."
+          ]
+        },
+        {
+          "id": "istekten-yansir",
+          "label": "Reflected: istekteki değer yanıta geri yazılır, link gerekir",
+          "aliases": [
+            "geri yansıt",
+            "yanıta yansı",
+            "istekteki",
+            "url parametre",
+            "arama terim",
+            "linke tıkla"
+          ],
+          "anchors": [
+            "Reflected XSS'te istekteki bir parametre kodlanmadan yanıta geri yazılır ve kurbanın linke tıklaması gerekir."
+          ]
+        },
+        {
+          "id": "istemci-kodunda",
+          "label": "DOM tabanlı: sorun istemci kodunda, sunucuya uğramayabilir",
+          "aliases": [
+            "istemci kodu",
+            "client-side",
+            "client side",
+            "sunucuya uğramadan",
+            "sunucuya hiç uğramadığı",
+            "innerhtml"
+          ],
+          "anchors": [
+            "DOM tabanlı XSS'te sayfanın JavaScript'i değeri tehlikeli bir API'ye yazar; değer sunucuya uğramayabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir XSS açığı HttpOnly cookie kullanan bir uygulamada hâlâ ne yapabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP DOM based XSS Prevention Cheat Sheet; OWASP Types of XSS"
+    },
+    {
+      "id": "cybersecurity-xss-output-encoding",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "XSS",
+      "difficulty": 2,
+      "prompt": "XSS'e karşı neden asıl savunma output encoding'dir? Input validation tek başına neden yetmez?",
+      "modelAnswer": "XSS, verinin sayfada HTML ya da JavaScript olarak yorumlanmasıyla çalışır ve aynı değer yazıldığı yere göre farklı karakterlerle tehlikeli hâle gelir; bu yüzden asıl savunma veriyi çıktıya yazıldığı noktada o bağlamın kurallarıyla kodlamaktır. HTML gövdesinde `<` ve `&` gibi karakterler HTML entity'ye çevrilir, attribute değeri tırnak içinde attribute kurallarıyla, URL parçası URL kodlamasıyla kodlanır; `<script>` bloğunun içine kullanıcı verisi yazmaktan ise hiç kaçınılır. Girdi doğrulama yardımcı olur ama yetmez, çünkü geçerli bir girdi de tehlikeli olabilir, örneğin kesme işareti içeren bir soyadı bir JavaScript dizesini kapatabilir; ayrıca girdiyi alan katman verinin sonra hangi bağlamda gösterileceğini bilemez. React, Angular ya da Thymeleaf gibi şablon sistemleri değerleri varsayılan olarak kodlar; açık genellikle bu korumayı atlayan kaçış kapılarında, örneğin `dangerouslySetInnerHTML`'de ya da bir `href`'e verilen kullanıcı adresinde çıkar. Kullanıcının biçimli HTML girmesi gerçekten gerekiyorsa kodlama yerine DOMPurify gibi bir sanitizer kütüphanesiyle temizleme kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "baglama-gore",
+          "label": "Kodlama çıktı bağlamına göre yapılır",
+          "aliases": [
+            "bağlama göre",
+            "bağlamına göre",
+            "bağlamın kuralları",
+            "context-aware",
+            "context aware",
+            "html entity"
+          ],
+          "anchors": [
+            "Veri yazıldığı bağlamın, HTML gövdesi, attribute ya da URL kurallarıyla kodlanır."
+          ]
+        },
+        {
+          "id": "cikti-noktasinda",
+          "label": "Veri çıktıya yazıldığı noktada kodlanır",
+          "aliases": [
+            "escape",
+            "encode et",
+            "yazıldığı noktada",
+            "yazıldığı yerde",
+            "ekrana basarken",
+            "çıktıya yazarken"
+          ],
+          "anchors": [
+            "Asıl savunma veriyi çıktıya yazıldığı noktada kodlamaktır."
+          ]
+        },
+        {
+          "id": "baglami-bilemez",
+          "label": "Geçerli girdi de tehlikeli olabilir, giriş katmanı bağlamı bilemez",
+          "aliases": [
+            "geçerli bir girdi",
+            "geçerli girdi",
+            "hangi bağlamda",
+            "nerede gösterileceğ",
+            "nerede kullanılacağ",
+            "kesme işareti"
+          ],
+          "anchors": [
+            "Geçerli bir girdi de tehlikeli olabilir ve girdiyi alan katman verinin hangi bağlamda gösterileceğini bilemez."
+          ]
+        },
+        {
+          "id": "framework-kacis-kapisi",
+          "label": "Framework varsayılan olarak kodlar, açık kaçış kapılarında",
+          "aliases": [
+            "varsayılan olarak kod",
+            "auto-escap",
+            "autoescap",
+            "dangerouslysetinnerhtml",
+            "v-html",
+            "kaçış kapı"
+          ],
+          "anchors": [
+            "Şablon sistemleri değerleri varsayılan olarak kodlar; açık bu korumayı atlayan kaçış kapılarında çıkar."
+          ]
+        },
+        {
+          "id": "sanitizer",
+          "label": "Biçimli HTML için sanitizer",
+          "aliases": [
+            "sanitiz",
+            "dompurify",
+            "html temizle",
+            "temizleme",
+            "zengin metin",
+            "rich text"
+          ],
+          "anchors": [
+            "Kullanıcının biçimli HTML girmesi gerekiyorsa DOMPurify gibi bir sanitizer kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcı verisini sayfadaki bir JavaScript değişkenine aktarman gerekirse bunu güvenle nasıl yaparsın?"
+      ],
+      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP Input Validation Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-dom-xss",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "XSS",
+      "difficulty": 3,
+      "prompt": "DOM tabanlı XSS'te source ve sink kavramları ne anlama gelir? Nasıl önlenir?",
+      "modelAnswer": "Source, saldırganın etkileyebildiği ve sayfanın JavaScript'inin okuduğu değerdir; `location.hash`, `location.search`, `document.referrer`, `postMessage` ile gelen mesajlar ya da `localStorage`'daki bir değer buna örnektir. Sink ise kendisine verilen dizeyi HTML ya da kod olarak işleyen API'dir; `innerHTML`, `outerHTML`, `document.write`, `eval` ya da `setTimeout`'a verilen bir dize tehlikeli sink'lerdir ve açık, bir source'tan gelen değerin kodlanmadan bir sink'e ulaşmasıdır. Önlemin temeli güvenli API'yi seçmektir; metin göstermek için değeri metin olarak yazan `textContent` kullanılır, HTML gerçekten gerekiyorsa değer bir sanitizer'dan geçirilir ve kullanıcıdan gelen adreslerin `https:` gibi izin verilen bir şemayla başladığı kontrol edilir. CSP'nin `require-trusted-types-for 'script'` yönergesiyle açılan **Trusted Types** ise tehlikeli sink'lerin düz dize kabul etmesini engeller; değer yalnızca uygulamanın tanımladığı bir politika fonksiyonundan geçerse yazılabilir.",
+      "keyConcepts": [
+        {
+          "id": "kaynaklar",
+          "label": "Source: saldırganın etkileyebildiği değer (URL, mesaj, depolama)",
+          "aliases": [
+            "location.hash",
+            "location.search",
+            "document.referrer",
+            "postmessage",
+            "fragment",
+            "hash parça"
+          ],
+          "anchors": [
+            "Source, location.hash ya da postMessage gibi saldırganın etkileyebildiği ve sayfanın okuduğu değerdir."
+          ]
+        },
+        {
+          "id": "tehlikeli-api",
+          "label": "Sink: dizeyi HTML ya da kod olarak işleyen API",
+          "aliases": [
+            "innerhtml",
+            "outerhtml",
+            "document.write",
+            "eval",
+            "settimeout",
+            "insertadjacenthtml"
+          ],
+          "anchors": [
+            "Sink, innerHTML ya da eval gibi kendisine verilen dizeyi HTML ya da kod olarak işleyen API'dir."
+          ]
+        },
+        {
+          "id": "guvenli-api",
+          "label": "Değeri metin olarak yazan güvenli API",
+          "aliases": [
+            "textcontent",
+            "innertext",
+            "createtextnode",
+            "metin olarak yaz",
+            "güvenli api",
+            "safe sink"
+          ],
+          "anchors": [
+            "Metin göstermek için değeri metin olarak yazan textContent gibi güvenli bir API kullanılır."
+          ]
+        },
+        {
+          "id": "trusted-types",
+          "label": "Trusted Types sink'lere düz dize verilmesini engeller",
+          "aliases": [
+            "trusted types",
+            "trusted-types",
+            "trustedtypes",
+            "trustedhtml",
+            "politika fonksiyon",
+            "require-trusted"
+          ],
+          "anchors": [
+            "Trusted Types açıkken tehlikeli sink'ler yalnızca bir politika fonksiyonundan geçmiş değeri kabul eder."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir SPA'da route parametresini sayfaya basarken framework kullanıyorsan DOM XSS riski nerede kalır?"
+      ],
+      "source": "Kendi derleme — OWASP DOM based XSS Prevention Cheat Sheet; MDN: Trusted Types API"
+    },
+    {
+      "id": "cybersecurity-csp",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "CSP ve Clickjacking",
+      "difficulty": 2,
+      "prompt": "Content Security Policy (CSP) nedir? XSS'e karşı nasıl bir koruma sağlar?",
+      "modelAnswer": "CSP, sunucunun `Content-Security-Policy` yanıt başlığıyla tarayıcıya sayfanın hangi kaynaklardan script, stil, görsel ya da bağlantı yükleyebileceğini söylediği bir politikadır; `script-src` ve `default-src` gibi yönergelerle tanımlanır ve tarayıcı politikaya uymayan yüklemeleri engeller. Politika açıkça izin verilmedikçe satır içi script'leri, `onclick` gibi olay attribute'larını ve `eval` ile dizeden kod üretmeyi de engeller; XSS'te enjekte edilen kod çoğunlukla bu yollardan çalıştığı için açık bulunsa bile istismarı zorlaşır. CSP ek bir savunma katmanıdır, açığın kendisini kapatmaz; çıktı kodlaması ve sanitization yine gerekir, CSP ise bunlar bir yerde atlandığında hasarı sınırlar. Mevcut bir uygulamada politika önce `Content-Security-Policy-Report-Only` başlığıyla devreye alınır; tarayıcı bu modda hiçbir şeyi engellemez, yalnızca ihlalleri raporlar ve uygulamanın neyi kıracağı görülerek politika sıkılaştırılır.",
+      "keyConcepts": [
+        {
+          "id": "izinli-kaynaklar",
+          "label": "Yanıt başlığıyla izinli kaynakları tanımlar",
+          "aliases": [
+            "yanıt başlığı",
+            "response header",
+            "script-src",
+            "default-src",
+            "hangi kaynak",
+            "izin verilen kaynak"
+          ],
+          "anchors": [
+            "CSP yanıt başlığıyla sayfanın hangi kaynaklardan script ve diğer içerikleri yükleyebileceğini tanımlar."
+          ]
+        },
+        {
+          "id": "inline-engel",
+          "label": "Satır içi script, olay attribute'ları ve eval engellenir",
+          "aliases": [
+            "satır içi",
+            "inline",
+            "onclick",
+            "olay attribute",
+            "event handler",
+            "eval"
+          ],
+          "anchors": [
+            "CSP açıkça izin verilmedikçe satır içi script'leri, olay attribute'larını ve eval'i engeller."
+          ]
+        },
+        {
+          "id": "ek-katman",
+          "label": "Ek savunma katmanı, kodlamanın yerine geçmez",
+          "aliases": [
+            "defense in depth",
+            "derinlemesine savunma",
+            "ek bir savunma",
+            "ek bir katman",
+            "ek katman",
+            "hasarı sınırla"
+          ],
+          "anchors": [
+            "CSP açığı kapatmaz; çıktı kodlaması yine gerekir, CSP bir yer atlandığında hasarı sınırlar."
+          ]
+        },
+        {
+          "id": "report-only",
+          "label": "Report-Only ile engellemeden kademeli geçiş",
+          "aliases": [
+            "report-only",
+            "report only",
+            "raporla",
+            "report-uri",
+            "report-to",
+            "engellemez"
+          ],
+          "anchors": [
+            "Politika önce Report-Only modunda devreye alınır; tarayıcı engellemez, yalnızca ihlalleri raporlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "CSP'yi `<meta>` etiketiyle vermek ile yanıt başlığıyla vermek arasında ne fark vardır?"
+      ],
+      "source": "Kendi derleme — MDN: Content Security Policy (CSP); OWASP Content Security Policy Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-csp-nonce-hash",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "CSP ve Clickjacking",
+      "difficulty": 3,
+      "prompt": "CSP'de nonce ve hash tabanlı politikalar nasıl çalışır? 'unsafe-inline' neden kaçınılması gereken bir ayardır?",
+      "modelAnswer": "Nonce tabanlı politikada sunucu her yanıt için tahmin edilemeyen yeni bir rastgele değer üretir, bunu `script-src` yönergesine ve yalnızca kendi yazdığı `<script>` etiketlerinin `nonce` attribute'una koyar; tarayıcı yalnızca değeri eşleşen script'leri çalıştırır, sayfaya sonradan enjekte edilen bir script bu değeri bilemez. Hash tabanlı politikada başlıkta izin verilen script içeriğinin SHA-256 gibi bir özeti bulunur; içerik değişmediği sürece politika da sabit kalır, bu yüzden statik sayfalara uygundur ama script her değiştiğinde özet yeniden hesaplanır. `'unsafe-inline'` her satır içi script'e izin verir; XSS'te enjekte edilen kod da çoğunlukla satır içi olduğu için CSP'nin bu açığa karşı sağladığı korumanın büyük kısmını ortadan kaldırır, politika nonce ya da hash içeriyorsa tarayıcılar onu zaten yok sayar. `'strict-dynamic'` nonce ya da hash ile güvenilen bir script'in yüklediği script'lere de güven aktarır ve üçüncü taraf script'lerle politikayı yönetilebilir kılar; alan adı allowlist'lerine dayanan politikalar ise kolayca güvensiz bir alan adını da kapsadığı için tek başına zayıf kalır.",
+      "keyConcepts": [
+        {
+          "id": "her-yanitta-yeni",
+          "label": "Nonce her yanıtta yeni ve tahmin edilemez",
+          "aliases": [
+            "her yanıt için",
+            "her istekte rastgele",
+            "her istekte farklı",
+            "rastgele bir değer",
+            "rastgele değer",
+            "tahmin edileme"
+          ],
+          "anchors": [
+            "Sunucu her yanıt için tahmin edilemeyen yeni bir rastgele değer üretir."
+          ]
+        },
+        {
+          "id": "enjekte-bilemez",
+          "label": "Enjekte edilen script değeri bilemez",
+          "aliases": [
+            "bilemez",
+            "bilemediği",
+            "bilmediği",
+            "eşleşen script",
+            "sonradan eklenen",
+            "değeri bilmeyen"
+          ],
+          "anchors": [
+            "Tarayıcı yalnızca değeri eşleşen script'leri çalıştırır, enjekte edilen script bu değeri bilemez."
+          ]
+        },
+        {
+          "id": "icerik-ozeti",
+          "label": "Hash: içeriğin özeti, statik sayfalara uygun",
+          "aliases": [
+            "sha-256",
+            "sha256",
+            "içeriğin özeti",
+            "içeriğinin hash",
+            "içeriğin hash",
+            "statik sayfa"
+          ],
+          "anchors": [
+            "Hash tabanlı politikada izin verilen script içeriğinin özeti başlıkta bulunur; statik sayfalara uygundur."
+          ]
+        },
+        {
+          "id": "korumayi-kaldirir",
+          "label": "Satır içi her script'e izin vermek korumayı kaldırır",
+          "aliases": [
+            "satır içi",
+            "inline script",
+            "inline kod",
+            "korumanın büyük kısmı",
+            "korumayı kaldır",
+            "etkisiz"
+          ],
+          "anchors": [
+            "unsafe-inline her satır içi script'e izin verdiği için CSP'nin XSS korumasının büyük kısmını kaldırır."
+          ]
+        },
+        {
+          "id": "strict-dynamic",
+          "label": "strict-dynamic güveni aktarır; alan adı allowlist'i zayıf",
+          "aliases": [
+            "strict-dynamic",
+            "strict dynamic",
+            "güven aktar",
+            "alan adı allowlist",
+            "host allowlist",
+            "host listesi"
+          ],
+          "anchors": [
+            "strict-dynamic güvenilen script'in yüklediklerine güven aktarır; alan adı allowlist'leri tek başına zayıftır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Önbellekten sunulan bir HTML sayfasında nonce tabanlı CSP neden sorun çıkarır?"
+      ],
+      "source": "Kendi derleme — MDN: Content Security Policy (CSP) — strict CSP, nonces, hashes, strict-dynamic; OWASP Content Security Policy Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-clickjacking",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "CSP ve Clickjacking",
+      "difficulty": 2,
+      "prompt": "Clickjacking nedir? frame-ancestors ve X-Frame-Options buna karşı nasıl korur?",
+      "modelAnswer": "Clickjacking'de saldırgan hedef sayfayı kendi sitesinde görünmez bir `iframe` içine yerleştirir ve üstüne zararsız görünen bir arayüz koyar; kullanıcı saldırganın sayfasına tıkladığını sanırken aslında oturumu açık olduğu hedef sitedeki bir düğmeye, örneğin bir ödeme ya da ayar onayına tıklar. Savunma sayfanın başka siteler tarafından çerçevelenmesini yanıt başlığıyla yasaklamaktır; CSP'nin `frame-ancestors 'none'` ya da yalnızca kendi origin'ine izin veren `'self'` değeri bunun güncel yoludur ve gerekirse belirli origin'lere de izin verebilir. Eski `X-Frame-Options` başlığı yalnızca `DENY` ve `SAMEORIGIN` değerlerini destekler, belirli bir siteye izin veren `ALLOW-FROM` modern tarayıcılarda çalışmaz; CSP standardına göre `frame-ancestors` uygulanıyorsa `X-Frame-Options` yok sayılır, eski tarayıcılar için ikisi birlikte gönderilebilir. İki başlık da `<meta>` etiketiyle verilemez, yanıt başlığı olmak zorundadır; JavaScript ile çerçeveden kaçmaya çalışan kodlar güvenilir değildir, en fazla ek önlemdir.",
+      "keyConcepts": [
+        {
+          "id": "gorunmez-cerceve",
+          "label": "Görünmez çerçeve içinde kullanıcıya tıklatma",
+          "aliases": [
+            "görünmez",
+            "invisible",
+            "iframe",
+            "şeffaf",
+            "ui redress",
+            "tıklat"
+          ],
+          "anchors": [
+            "Saldırgan hedef sayfayı görünmez bir iframe'e koyar ve kullanıcıya farkında olmadan tıklatır."
+          ]
+        },
+        {
+          "id": "yanit-basligi",
+          "label": "Çerçeveleme yanıt başlığıyla yasaklanır, meta çalışmaz",
+          "aliases": [
+            "çerçevelen",
+            "iframe içinde açıl",
+            "iframe'e konma",
+            "yanıt başlığı",
+            "response header",
+            "meta etiket"
+          ],
+          "anchors": [
+            "Sayfanın çerçevelenmesi yanıt başlığıyla yasaklanır; meta etiketi bu başlıklar için çalışmaz."
+          ]
+        },
+        {
+          "id": "deger-secenekleri",
+          "label": "DENY/SAMEORIGIN ya da 'none'/'self'; ALLOW-FROM çalışmaz",
+          "aliases": [
+            "deny",
+            "sameorigin",
+            "allow-from",
+            "allow from",
+            "'none'",
+            "'self'"
+          ],
+          "anchors": [
+            "X-Frame-Options yalnızca DENY ve SAMEORIGIN destekler; frame-ancestors 'none' ya da 'self' alır."
+          ]
+        },
+        {
+          "id": "csp-oncelikli",
+          "label": "CSP yolu güncel; uygulanırsa X-Frame-Options yok sayılır",
+          "aliases": [
+            "content security policy",
+            "csp ile",
+            "csp'de",
+            "csp'nin",
+            "yok sayılır",
+            "eski tarayıcı"
+          ],
+          "anchors": [
+            "frame-ancestors güncel yoldur; uygulanıyorsa X-Frame-Options yok sayılır, eski tarayıcılar için ikisi birlikte gönderilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Uygulamanın yalnızca kendi alt alan adlarında çerçevelenmesine izin vermesi gerekiyorsa başlığı nasıl yazarsın?"
+      ],
+      "source": "Kendi derleme — OWASP Clickjacking Defense Cheat Sheet; MDN: X-Frame-Options, CSP frame-ancestors"
     }
   ]
 }
