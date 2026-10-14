@@ -1726,6 +1726,486 @@
         "Uygulamanın yalnızca kendi alt alan adlarında çerçevelenmesine izin vermesi gerekiyorsa başlığı nasıl yazarsın?"
       ],
       "source": "Kendi derleme — OWASP Clickjacking Defense Cheat Sheet; MDN: X-Frame-Options, CSP frame-ancestors"
+    },
+    {
+      "id": "cybersecurity-hash-vs-encryption",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 1,
+      "prompt": "Hash, encryption ve encoding arasındaki fark nedir? Parolalar neden şifrelenmez de hash'lenir?",
+      "modelAnswer": "Encoding, veriyi başka bir sistemin taşıyabileceği bir biçime çevirir, örneğin Base64 ya da URL kodlaması; anahtar yoktur ve herkes geri çevirebilir, bu yüzden gizlilik sağlamaz. Encryption veriyi bir anahtarla okunamaz hâle getirir ve anahtarı bilen geri çözebilir; amaç gizliliktir ve işlem iki yönlüdür. Hash ise tek yönlüdür; girdiden sabit uzunlukta bir özet üretir, özetten girdiye geri dönülemez ve aynı girdi her zaman aynı özeti verir. Parolanın kendisini geri elde etmeye gerek yoktur, yalnızca girilen parolanın doğru olup olmadığını bilmek yeter, bu yüzden parola hash'lenir ve girişte hesaplanan değer saklanan hash'iyle karşılaştırılır; şifrelenmiş parolalar anahtar sızarsa topluca çözülür, hash'ten ise parola ancak tahmin edilerek bulunabilir.",
+      "keyConcepts": [
+        {
+          "id": "encoding-gizlilik-degil",
+          "label": "Encoding anahtarsızdır, gizlilik sağlamaz",
+          "aliases": [
+            "base64",
+            "anahtar yok",
+            "herkes geri çevir",
+            "gizlilik sağlamaz",
+            "biçime çevir",
+            "format değiş"
+          ],
+          "anchors": [
+            "Encoding veriyi anahtarsız başka bir biçime çevirir, herkes geri çevirebilir ve gizlilik sağlamaz."
+          ]
+        },
+        {
+          "id": "encryption-iki-yonlu",
+          "label": "Encryption anahtarla iki yönlüdür",
+          "aliases": [
+            "anahtarla",
+            "anahtarı bilen",
+            "iki yönlü",
+            "two-way",
+            "geri çözül",
+            "geri çözebilir"
+          ],
+          "anchors": [
+            "Encryption veriyi bir anahtarla okunamaz yapar, anahtarı bilen geri çözebilir."
+          ]
+        },
+        {
+          "id": "hash-tek-yonlu",
+          "label": "Hash tek yönlüdür, geri dönülemez",
+          "aliases": [
+            "tek yönlü",
+            "one-way",
+            "one way",
+            "geri dönülemez",
+            "geri döndürülemez",
+            "sabit uzunluk"
+          ],
+          "anchors": [
+            "Hash tek yönlüdür; sabit uzunlukta bir özet üretir ve özetten girdiye geri dönülemez."
+          ]
+        },
+        {
+          "id": "geri-almaya-gerek-yok",
+          "label": "Parolayı geri almaya gerek yok, hash karşılaştırılır",
+          "aliases": [
+            "geri almaya gerek",
+            "geri almamıza gerek",
+            "geri elde etmeye gerek",
+            "doğru olup olmadığ",
+            "hash'iyle karşılaştır",
+            "veritabanındakiyle karşılaştır"
+          ],
+          "anchors": [
+            "Parolanın kendisini geri almaya gerek yoktur; girişte hesaplanan değer saklanan hash'le karşılaştırılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sistem parolanı unuttuğunda sana mevcut parolanı e-postayla gönderebiliyorsa bu, parolaların nasıl saklandığı hakkında ne söyler?"
+      ],
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Hashing vs Encryption)"
+    },
+    {
+      "id": "cybersecurity-salt-pepper",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 2,
+      "prompt": "Parola hash'lerken salt ve pepper ne işe yarar? Hangisi gizli tutulur?",
+      "modelAnswer": "Salt her parola için ayrı üretilen rastgele bir değerdir ve parolayla birlikte hash'lenir; aynı parolayı kullanan iki kullanıcının hash'leri bu sayede farklı olur, önceden hesaplanmış tablolar (rainbow table) ya da tek bir tahminin tüm kullanıcılara birden denenmesi işe yaramaz. Salt gizli değildir; doğrulamada gerektiği için hash'in yanında, aynı kayıtta saklanır ve NIST SP 800-63B-4 de salt'ın ve hash'in her parola için birlikte saklanmasını ister. Pepper ise tüm parolalar için ortak, gizli bir anahtardır ve hash'e anahtarlı bir işlemle, örneğin HMAC ile eklenir; parola veritabanından ayrı, bir secret manager'da ya da tercihen bir HSM'de tutulur, böylece yalnızca veritabanı sızdığında hash'ler çevrimdışı denenemez. Bedeli rotasyondur; pepper değişirse mevcut hash'ler parolaların kendisi bilinmeden yeniden hesaplanamaz, bu yüzden pepper ele geçirildiğinde kullanıcıların parolalarını sıfırlaması gerekir.",
+      "keyConcepts": [
+        {
+          "id": "her-parolaya-ayri",
+          "label": "Salt her parola için ayrı ve rastgeledir",
+          "aliases": [
+            "her parola için ayrı",
+            "her kullanıcı için ayrı",
+            "her kullanıcı için rastgele",
+            "her kullanıcı için farklı",
+            "kullanıcıya özel",
+            "rastgele bir değer"
+          ],
+          "anchors": [
+            "Salt her parola için ayrı üretilen rastgele bir değerdir ve parolayla birlikte hash'lenir."
+          ]
+        },
+        {
+          "id": "on-hesaplama",
+          "label": "Aynı parola aynı hash'i vermez, ön hesaplanmış tablolar işe yaramaz",
+          "aliases": [
+            "rainbow",
+            "önceden hesaplan",
+            "ön hesaplama",
+            "precomputed",
+            "aynı parola",
+            "aynı hash"
+          ],
+          "anchors": [
+            "Salt sayesinde aynı parolanın hash'leri farklı olur ve rainbow table gibi ön hesaplamalar işe yaramaz."
+          ]
+        },
+        {
+          "id": "salt-gizli-degil",
+          "label": "Salt gizli değildir, hash'in yanında saklanır",
+          "aliases": [
+            "salt gizli değil",
+            "salt'ın gizli",
+            "gizli tutulmaz",
+            "hash'in yanında",
+            "hash ile birlikte",
+            "birlikte saklan"
+          ],
+          "anchors": [
+            "Salt gizli değildir; doğrulamada gerektiği için hash'in yanında, aynı kayıtta saklanır."
+          ]
+        },
+        {
+          "id": "pepper-ayri-yerde",
+          "label": "Pepper veritabanı dışında, secret manager ya da HSM'de",
+          "aliases": [
+            "secret manager",
+            "vault",
+            "hardware security module",
+            "hsm'de",
+            "veritabanı dışında",
+            "veritabanından ayrı"
+          ],
+          "anchors": [
+            "Pepper parola veritabanından ayrı, bir secret manager'da ya da tercihen bir HSM'de tutulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Pepper'ı uygulamanın yapılandırma dosyasına koymak neden HSM'de tutmaktan daha zayıftır?"
+      ],
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Salting, Peppering); NIST SP 800-63B-4 §3.1.1.2"
+    },
+    {
+      "id": "cybersecurity-slow-password-hash",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 2,
+      "prompt": "Parolaları saklarken neden SHA-256 değil bcrypt, scrypt ya da Argon2 kullanılır?",
+      "modelAnswer": "SHA-256 gibi genel amaçlı hash fonksiyonları hızlı olmak için tasarlanmıştır; veritabanını ele geçiren biri GPU ile çok sayıda tahmini kısa sürede deneyebilir ve yaygın parolaların büyük kısmını bulur. Parola hash fonksiyonları ise bilerek yavaştır ve maliyetleri bir parametreyle, work factor ya da iterasyon sayısıyla ayarlanır; donanım hızlandıkça bu maliyet artırılır, meşru kullanıcı tek bir girişte farkı hissetmezken saldırganın milyonlarca denemesi pahalı hâle gelir. scrypt ve Argon2 ayrıca memory-hard'dır, yani her deneme belirli bir miktar bellek ister; bu da paralel denemeye dayanan GPU ve özel donanım (ASIC) saldırılarını zorlaştırır. OWASP bugün ilk tercih olarak Argon2id'yi, o yoksa scrypt'i, eski sistemlerde bcrypt'i, FIPS-140 uyumu gerektiğinde PBKDF2'yi önerir; önerilen parametreler zamanla değiştiği için güncel rehberden alınır, bcrypt'in girdisi de en fazla 72 bayt olduğu için uzun parolalarda bu sınır ayrıca ele alınır.",
+      "keyConcepts": [
+        {
+          "id": "hizli-tasarlanmis",
+          "label": "Genel amaçlı hash hızlıdır, tahmin ucuzdur",
+          "aliases": [
+            "genel amaçlı",
+            "hızlı olmak için",
+            "gpu ile",
+            "gpu'lar",
+            "brute force",
+            "kaba kuvvet"
+          ],
+          "anchors": [
+            "SHA-256 gibi genel amaçlı hash'ler hızlı olduğu için saldırgan GPU ile çok sayıda tahmini kısa sürede dener."
+          ]
+        },
+        {
+          "id": "ayarlanabilir-maliyet",
+          "label": "Bilerek yavaş, maliyeti ayarlanabilir",
+          "aliases": [
+            "bilerek yavaş",
+            "kasıtlı olarak yavaş",
+            "yavaş olduğu için",
+            "work factor",
+            "cost factor",
+            "iterasyon sayısı"
+          ],
+          "anchors": [
+            "Parola hash fonksiyonları bilerek yavaştır ve maliyetleri work factor ya da iterasyon sayısıyla ayarlanır."
+          ]
+        },
+        {
+          "id": "memory-hard",
+          "label": "scrypt ve Argon2 memory-hard'dır",
+          "aliases": [
+            "memory-hard",
+            "memory hard",
+            "bellek iste",
+            "bellek yoğun",
+            "asic",
+            "paralel deneme"
+          ],
+          "anchors": [
+            "scrypt ve Argon2 her denemede bellek ister; bu GPU ve ASIC ile paralel denemeyi zorlaştırır."
+          ]
+        },
+        {
+          "id": "owasp-tercih",
+          "label": "OWASP sırası: Argon2id, scrypt, bcrypt; FIPS için PBKDF2",
+          "aliases": [
+            "argon2id",
+            "ilk tercih",
+            "pbkdf2",
+            "fips",
+            "güncel rehber",
+            "owasp öner"
+          ],
+          "anchors": [
+            "OWASP ilk tercih olarak Argon2id'yi, o yoksa scrypt'i, eski sistemlerde bcrypt'i, FIPS gerekirse PBKDF2'yi önerir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Parolaları hâlâ tuzsuz MD5 ile saklayan eski bir sistemde, kullanıcıları zorla sıfırlatmadan daha güçlü bir algoritmaya nasıl geçersin?"
+      ],
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-password-policy",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 2,
+      "prompt": "NIST SP 800-63B parola politikası için ne önerir? Periyodik parola değiştirme ve karmaşıklık kuralları neden önerilmez?",
+      "modelAnswer": "NIST SP 800-63B-4 parolanın gücünü karmaşıklıkta değil uzunlukta arar; parola tek başına kullanılıyorsa en az 15, çok faktörlü doğrulamanın bir parçasıysa en az 8 karakter ister ve en az 64 karakterlik parolalara, boşluğa ve Unicode karakterlere izin verilmesini önerir. Büyük harf, rakam ya da sembol zorunluluğu gibi kompozisyon kurallarını yasaklar, çünkü kullanıcılar bu kurallara tahmin edilebilir biçimde uyar ve `password` yerine `Password1` seçer; onun yerine her yeni parola yaygın, beklenen ya da daha önce sızmış parolalardan oluşan bir blocklist'le karşılaştırılır ve reddedilirse nedeni söylenir. Periyodik değiştirme de istenmez; NIST'e göre değiştireceğini bilen kullanıcı daha zayıf parola seçer ve yenisini eskisinden tahmin edilebilir dönüşümlerle türetir, bu yüzden değişim yalnızca parolanın ele geçirildiğine dair bir kanıt olduğunda zorunlu tutulur. Ayrıca parola yöneticilerine ve otomatik doldurmaya izin verilmesi zorunludur, parola ipucu ve güvenlik soruları kullanılmaz, başarısız denemeler de hız sınırıyla en fazla 100 ardışık denemeyle sınırlanır.",
+      "keyConcepts": [
+        {
+          "id": "uzunluk",
+          "label": "Güç uzunluktan gelir: 15, MFA'da 8, en az 64'e izin",
+          "aliases": [
+            "uzunluk",
+            "15 karakter",
+            "en az 15",
+            "64 karakter",
+            "uzun parola",
+            "passphrase"
+          ],
+          "anchors": [
+            "Tek başına kullanılan parola en az 15, MFA'nın parçasıysa en az 8 karakter olur; en az 64 karaktere izin verilir."
+          ]
+        },
+        {
+          "id": "kompozisyon-yok",
+          "label": "Kompozisyon kuralları konmaz",
+          "aliases": [
+            "kompozisyon",
+            "composition",
+            "büyük harf",
+            "sembol zorunlu",
+            "rakam zorunlu",
+            "karakter türü"
+          ],
+          "anchors": [
+            "Büyük harf, rakam ya da sembol zorunluluğu gibi kompozisyon kuralları konmaz; kullanıcılar tahmin edilebilir biçimde uyar."
+          ]
+        },
+        {
+          "id": "blocklist",
+          "label": "Yaygın ve sızmış parolalar blocklist ile reddedilir",
+          "aliases": [
+            "blocklist",
+            "blacklist",
+            "sızmış parola",
+            "yaygın parola",
+            "breach",
+            "pwned"
+          ],
+          "anchors": [
+            "Her yeni parola yaygın, beklenen ya da sızmış parolalardan oluşan bir blocklist ile karşılaştırılır."
+          ]
+        },
+        {
+          "id": "kanit-olunca-degisim",
+          "label": "Değişim yalnızca ele geçirilme kanıtı varsa",
+          "aliases": [
+            "ele geçirildiğ",
+            "kanıt varsa",
+            "kanıt olduğunda",
+            "sızdığında",
+            "compromise",
+            "tahmin edilebilir dönüşüm"
+          ],
+          "anchors": [
+            "Parola yalnızca ele geçirildiğine dair bir kanıt olduğunda değiştirilir; zorla değişim tahmin edilebilir dönüşümlere yol açar."
+          ]
+        },
+        {
+          "id": "parola-yoneticisi",
+          "label": "Parola yöneticisi ve otomatik doldurma serbest",
+          "aliases": [
+            "parola yöneticisi",
+            "password manager",
+            "yapıştır",
+            "paste",
+            "autofill",
+            "otomatik doldur"
+          ],
+          "anchors": [
+            "Parola yöneticilerine ve otomatik doldurmaya izin verilmesi zorunludur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Yeni bir parolayı sızmış parola listesiyle karşılaştırırken parolanın kendisini üçüncü bir servise göndermeden bunu nasıl yaparsın?"
+      ],
+      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.1, §3.2.2, Ek A; NIST SP 800-63 FAQ (Q-B05)"
+    },
+    {
+      "id": "cybersecurity-symmetric-vs-asymmetric",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kriptografi",
+      "difficulty": 1,
+      "prompt": "Simetrik ve asimetrik şifreleme arasındaki fark nedir? Pratikte neden ikisi birlikte kullanılır?",
+      "modelAnswer": "Simetrik şifrelemede, örneğin AES'te, şifreleyen ve çözen aynı gizli anahtarı kullanır; hızlıdır ve büyük veriler için uygundur, ama anahtarın iki tarafa güvenli bir yoldan ulaştırılması gerekir. Asimetrik şifrelemede, örneğin RSA'da ya da eliptik eğri algoritmalarında, her tarafın bir anahtar çifti vardır; açık anahtar herkese verilebilir, onunla şifrelenen veri yalnızca eşi olan özel anahtarla çözülür. Asimetrik işlemler simetriğe göre çok daha yavaştır, bu yüzden pratikte asimetrik kriptografi yalnızca taraflar arasında güvenle bir simetrik oturum anahtarı üzerinde anlaşmak ve karşı tarafın kimliğini doğrulamak için kullanılır, verinin kendisi o simetrik anahtarla şifrelenir. TLS bu hibrit modelle çalışır; asimetrik anahtar çiftleri ayrıca dijital imza için de kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "ayni-anahtar",
+          "label": "Simetrikte iki taraf aynı gizli anahtarı kullanır",
+          "aliases": [
+            "aynı gizli anahtar",
+            "aynı anahtar",
+            "tek anahtar",
+            "tek bir anahtar",
+            "paylaşılan anahtar",
+            "shared key"
+          ],
+          "anchors": [
+            "Simetrik şifrelemede şifreleyen ve çözen aynı gizli anahtarı kullanır."
+          ]
+        },
+        {
+          "id": "anahtar-cifti",
+          "label": "Asimetrikte açık ve özel anahtar çifti",
+          "aliases": [
+            "anahtar çifti",
+            "key pair",
+            "açık anahtar",
+            "public key",
+            "özel anahtar",
+            "private key"
+          ],
+          "anchors": [
+            "Asimetrik şifrelemede açık anahtarla şifrelenen veri yalnızca eşi olan özel anahtarla çözülür."
+          ]
+        },
+        {
+          "id": "anahtar-dagitimi",
+          "label": "Simetrik anahtarın güvenle ulaştırılması sorunu",
+          "aliases": [
+            "güvenli bir yoldan",
+            "güvenli şekilde ilet",
+            "karşı tarafa ilet",
+            "anahtar dağıtım",
+            "key distribution",
+            "key exchange"
+          ],
+          "anchors": [
+            "Simetrik anahtarın iki tarafa güvenli bir yoldan ulaştırılması gerekir."
+          ]
+        },
+        {
+          "id": "hibrit",
+          "label": "Asimetrik yavaş; anahtar anlaşması için, veri simetrikle",
+          "aliases": [
+            "hibrit",
+            "hybrid",
+            "asimetrik yavaş",
+            "çok daha yavaş",
+            "simetrik anahtar paylaş",
+            "oturum anahtar"
+          ],
+          "anchors": [
+            "Asimetrik kriptografi simetrik bir oturum anahtarı üzerinde anlaşmak için, veri ise simetrik anahtarla şifrelenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Veritabanında bir kolonu şifreliyorsan şifreleme anahtarını nerede tutar, nasıl döndürürsün?"
+      ],
+      "source": "Kendi derleme — OWASP Cryptographic Storage Cheat Sheet; RFC 8446 §1.2"
+    },
+    {
+      "id": "cybersecurity-hmac-vs-signature",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kriptografi",
+      "difficulty": 2,
+      "prompt": "HMAC ile dijital imza arasındaki fark nedir? Düz bir hash neden bütünlük için yetmez?",
+      "modelAnswer": "Düz bir hash, örneğin SHA-256, yalnızca verinin özetidir; mesajı değiştiren biri özeti de yeniden hesaplayıp yanına koyabileceği için tek başına verinin yolda değişmediğini ya da kimin gönderdiğini kanıtlamaz. HMAC özeti gizli bir anahtarla birlikte hesaplar; anahtarı bilmeyen geçerli bir değer üretemez, bu yüzden hem bütünlüğü hem de mesajın anahtarı bilen biri tarafından üretildiğini doğrular. Ama anahtar paylaşıldığı için doğrulayan taraf da aynı değeri üretebilir; HMAC iki taraf arasında güven sağlar, mesajı kimin yazdığını üçüncü bir kişiye kanıtlamaz. Dijital imza ise özel anahtarla atılır ve açık anahtarla herkes doğrulayabilir; imzayı yalnızca özel anahtarın sahibi üretebildiği için inkâr edilemezlik (non-repudiation) sağlar, buna karşılık HMAC'ten daha yavaştır ve açık anahtarın gerçekten o kişiye ait olduğunun, örneğin bir sertifikayla, ayrıca bilinmesi gerekir.",
+      "keyConcepts": [
+        {
+          "id": "yeniden-hesaplanir",
+          "label": "Düz hash'i değiştiren de yeniden hesaplar",
+          "aliases": [
+            "yeniden hesapla",
+            "tekrar hesapla",
+            "anahtarsız",
+            "değiştiren biri",
+            "herkes hesaplayabilir",
+            "kimin gönderdiğ"
+          ],
+          "anchors": [
+            "Mesajı değiştiren biri düz hash'i de yeniden hesaplayabildiği için hash tek başına bütünlüğü kanıtlamaz."
+          ]
+        },
+        {
+          "id": "gizli-anahtarla",
+          "label": "HMAC gizli bir anahtarla hesaplanır",
+          "aliases": [
+            "gizli bir anahtarla",
+            "gizli anahtarla",
+            "paylaşılan anahtar",
+            "shared secret",
+            "secret key",
+            "anahtarı bilmeyen"
+          ],
+          "anchors": [
+            "HMAC özeti gizli bir anahtarla hesaplar; anahtarı bilmeyen geçerli bir değer üretemez."
+          ]
+        },
+        {
+          "id": "dogrulayan-da-uretir",
+          "label": "HMAC'te doğrulayan da üretebilir, üçüncü kişiye kanıt değildir",
+          "aliases": [
+            "doğrulayan taraf da",
+            "iki taraf da aynı anahtar",
+            "aynı değeri üret",
+            "kimin ürettiğini",
+            "ispatlayamaz",
+            "üçüncü bir kişi"
+          ],
+          "anchors": [
+            "Anahtar paylaşıldığı için doğrulayan da aynı değeri üretebilir; HMAC üçüncü bir kişiye kimin yazdığını kanıtlamaz."
+          ]
+        },
+        {
+          "id": "imza-acik-anahtar",
+          "label": "İmza özel anahtarla atılır, açık anahtarla herkes doğrular",
+          "aliases": [
+            "özel anahtarla",
+            "private key ile",
+            "açık anahtarla",
+            "public key ile",
+            "herkes doğrula",
+            "asimetrik"
+          ],
+          "anchors": [
+            "Dijital imza özel anahtarla atılır ve açık anahtarla herkes doğrulayabilir."
+          ]
+        },
+        {
+          "id": "inkar-edilemezlik",
+          "label": "İmza inkâr edilemezlik sağlar",
+          "aliases": [
+            "inkar edilemez",
+            "inkâr edilemez",
+            "inkar edemez",
+            "inkâr edemez",
+            "non-repudiation",
+            "non repudiation"
+          ],
+          "anchors": [
+            "İmzayı yalnızca özel anahtarın sahibi üretebildiği için dijital imza inkâr edilemezlik sağlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir webhook'un gerçekten beklenen servisten geldiğini HMAC ile nasıl doğrularsın; karşılaştırmayı neden sabit zamanlı yaparsın?"
+      ],
+      "source": "Kendi derleme — RFC 2104 (HMAC); NIST FIPS 186-5 (Digital Signature Standard)"
     }
   ]
 }
