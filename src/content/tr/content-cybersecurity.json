@@ -2536,6 +2536,531 @@
         "Giriş ucunu IP bazlı hız sınırıyla koruyorsan binlerce farklı IP'den gelen dağıtık bir denemeyi nasıl fark edersin?"
       ],
       "source": "Kendi derleme — OWASP Credential Stuffing Prevention Cheat Sheet; OWASP Authentication Cheat Sheet; NIST SP 800-63B-4 §3.2.2"
+    },
+    {
+      "id": "cybersecurity-oauth-vs-oidc",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "OAuth ve OIDC",
+      "difficulty": 2,
+      "prompt": "OAuth 2.0 neden bir kimlik doğrulama protokolü değildir? OpenID Connect buna ne ekler?",
+      "modelAnswer": "OAuth 2.0 bir yetki devri çerçevesidir; kullanıcı bir uygulamaya parolasını vermeden, kendi adına belirli bir kaynağa sınırlı erişim izni verir ve uygulama bu izni bir access token olarak alır. Access token kaynak sunucusu, yani API için yazılmıştır ve istemci için genellikle opaktır; istemciye kullanıcının kim olduğunu, ne zaman ve nasıl giriş yaptığını söyleme garantisi vermez, bu yüzden yalnızca token alınabildi diye kullanıcının giriş yaptığını varsaymak, başka bir uygulama için verilmiş bir token'ın kabul edilmesi gibi açıklara yol açar. OpenID Connect, OAuth 2.0'ın üzerine bir kimlik katmanı ekler; `openid` scope'uyla başlayan akışta istemci access token'ın yanında bir ID token da alır. ID token istemci için üretilmiş imzalı bir JWT'dir; kimin giriş yaptığını (`sub`), kimin ürettiğini (`iss`), kimin için üretildiğini (`aud`, istemcinin client_id'si) ve geçerlilik süresini (`exp`) taşır ve istemci bunları doğrulamak zorundadır. ID token API çağrılarında kullanılmaz; API access token'ı, istemci ID token'ı doğrular, kullanıcı hakkında ek bilgi gerekiyorsa UserInfo uç noktası access token'la çağrılır.",
+      "keyConcepts": [
+        {
+          "id": "yetki-devri",
+          "label": "OAuth yetki devridir",
+          "aliases": [
+            "yetki devri",
+            "delegat",
+            "kendi adına",
+            "kullanıcı adına",
+            "authorization için",
+            "parolasını vermeden"
+          ],
+          "anchors": [
+            "OAuth 2.0'da kullanıcı bir uygulamaya parolasını vermeden kendi adına sınırlı erişim izni verir."
+          ]
+        },
+        {
+          "id": "access-token-api-icin",
+          "label": "Access token API içindir, kim olduğunu söylemez",
+          "aliases": [
+            "kim olduğunu söylemez",
+            "kim olduğunu göstermez",
+            "opak",
+            "opaque",
+            "kaynak sunucu",
+            "resource server"
+          ],
+          "anchors": [
+            "Access token kaynak sunucusu için yazılmıştır, istemci için opaktır ve kullanıcının kim olduğunu söylemez."
+          ]
+        },
+        {
+          "id": "id-token",
+          "label": "OIDC kimlik katmanı ve ID token ekler",
+          "aliases": [
+            "id token",
+            "id_token",
+            "kimlik token",
+            "identity token",
+            "kimlik katmanı",
+            "identity layer"
+          ],
+          "anchors": [
+            "OpenID Connect OAuth 2.0'ın üzerine bir kimlik katmanı ekler ve istemciye bir ID token verir."
+          ]
+        },
+        {
+          "id": "claim-dogrulama",
+          "label": "ID token'daki iss, sub, aud, exp istemcide doğrulanır",
+          "aliases": [
+            "audience",
+            "client_id",
+            "issuer",
+            "sub claim",
+            "aud claim",
+            "iss claim"
+          ],
+          "anchors": [
+            "İstemci ID token'ın yayıncısını, hedef kitlesinin kendi client_id'si olduğunu ve süresini doğrular."
+          ]
+        },
+        {
+          "id": "api-ye-gitmez",
+          "label": "ID token API'ye gönderilmez, ek bilgi UserInfo'dan",
+          "aliases": [
+            "api çağrılarında kullanılmaz",
+            "api'ye gönderilmez",
+            "apiye gönderilmez",
+            "api'ye gönderme",
+            "userinfo",
+            "istemci id token"
+          ],
+          "anchors": [
+            "ID token API çağrılarında kullanılmaz; ek kullanıcı bilgisi UserInfo uç noktasından access token'la alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir SPA kullanıcı adını göstermek için access token'ın içini çözüp okuyorsa bu neden kırılgan bir tasarımdır?"
+      ],
+      "source": "Kendi derleme — RFC 6749 §1; OpenID Connect Core 1.0 §1, §2, §3.1.3.7, §5.3"
+    },
+    {
+      "id": "cybersecurity-auth-code-pkce",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "OAuth ve OIDC",
+      "difficulty": 3,
+      "prompt": "Authorization code akışında PKCE hangi saldırıyı önler, nasıl çalışır?",
+      "modelAnswer": "Authorization code akışında yetkilendirme sunucusu kullanıcıyı tarayıcı üzerinden kısa ömürlü bir code ile istemciye geri yönlendirir, istemci bu code'u arka kanalda, token uç noktasında access token ile değiştirir. Mobil ve tarayıcıdaki uygulamalar gibi public client'lar bir client secret saklayamaz; yönlendirme sırasında code'u ele geçiren biri, örneğin aynı özel URL şemasını kaydetmiş kötü niyetli bir uygulama, onu token'a çevirebilir. PKCE bunu önler; istemci her istek için rastgele bir `code_verifier` üretir, yetkilendirme isteğine onun SHA-256 özetini `code_challenge` olarak koyar ve token isteğinde `code_verifier`'ın kendisini gönderir, sunucu ikisinin eşleştiğini doğrular. Code'u çalan ama verifier'ı bilmeyen biri token alamaz; S256 kullanabilen istemcinin onu kullanması zorunludur, değeri olduğu gibi gönderen `plain` yöntemi ise yalnızca S256 teknik olarak mümkün değilse kabul edilir. RFC 9700 PKCE'yi public client'lar için zorunlu, confidential client'lar için önerilen kılar; yetkilendirme sunucusu da redirect URI'leri kayıtlı değerlerle birebir karşılaştırmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "code-ele-gecirme",
+          "label": "Public client'ta yönlendirmedeki code ele geçirilebilir",
+          "aliases": [
+            "ele geçiren",
+            "intercept",
+            "code'u çal",
+            "özel url şeması",
+            "custom url scheme",
+            "secret saklayamaz"
+          ],
+          "anchors": [
+            "Public client secret saklayamaz; yönlendirmede code'u ele geçiren biri onu token'a çevirebilir."
+          ]
+        },
+        {
+          "id": "verifier-challenge",
+          "label": "code_verifier ve ondan türeyen code_challenge",
+          "aliases": [
+            "code_verifier",
+            "code_challenge",
+            "code verifier",
+            "code challenge",
+            "verifier",
+            "doğrulayıcı değer"
+          ],
+          "anchors": [
+            "İstemci rastgele bir code_verifier üretir ve yetkilendirme isteğine onun özetini code_challenge olarak koyar."
+          ]
+        },
+        {
+          "id": "token-isteginde",
+          "label": "Verifier token isteğinde gönderilir, sunucu eşleştirir",
+          "aliases": [
+            "token isteğinde",
+            "token alırken",
+            "token uç noktası",
+            "token endpoint",
+            "eşleştiğini doğrula",
+            "eşleşip eşleşmediğ"
+          ],
+          "anchors": [
+            "Token isteğinde code_verifier gönderilir ve sunucu onun challenge ile eşleştiğini doğrular."
+          ]
+        },
+        {
+          "id": "s256",
+          "label": "S256 kullanılır, plain yalnızca zorunlu kalınca",
+          "aliases": [
+            "s256",
+            "sha-256 özeti",
+            "sha256 özeti",
+            "hash'ini",
+            "plain yöntem",
+            "özetini koy"
+          ],
+          "anchors": [
+            "S256 kullanabilen istemci onu kullanmak zorundadır; plain yalnızca S256 mümkün değilse kabul edilir."
+          ]
+        },
+        {
+          "id": "rfc9700",
+          "label": "RFC 9700: public client'ta zorunlu, redirect URI birebir",
+          "aliases": [
+            "public client",
+            "confidential client",
+            "rfc 9700",
+            "tüm istemciler",
+            "bütün istemciler",
+            "birebir karşılaştır"
+          ],
+          "anchors": [
+            "RFC 9700 PKCE'yi public client'lar için zorunlu kılar ve redirect URI'lerin birebir karşılaştırılmasını ister."
+          ]
+        }
+      ],
+      "followUps": [
+        "PKCE kullanılan bir akışta `state` parametresine hâlâ ihtiyaç var mı?"
+      ],
+      "source": "Kendi derleme — RFC 7636 §1, §4; RFC 9700 §2.1, §2.1.1; RFC 6749 §4.1"
+    },
+    {
+      "id": "cybersecurity-implicit-flow",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "OAuth ve OIDC",
+      "difficulty": 2,
+      "prompt": "OAuth'taki implicit flow neden artık önerilmiyor?",
+      "modelAnswer": "Implicit flow, tarayıcıdaki uygulamaların arka kanal gerektirmeden token alabilmesi için tasarlanmıştı; yetkilendirme sunucusu access token'ı doğrudan yönlendirme adresinin fragment kısmında istemciye verir. Token bu yüzden adres çubuğunda ve tarayıcı geçmişinde kalır, Referer başlığı ya da açık yönlendirmeler üzerinden sızabilir; ayrıca token'ın gerçekten bu istemci için verildiği güvenle doğrulanamadığı için başka bir istemciye verilmiş bir token akışa enjekte edilebilir. Akış refresh token vermez ve token'ı gönderen istemciye bağlamayı (sender-constrained token) desteklemez, bu yüzden çalınan bir token süresi dolana kadar her yerden kullanılabilir. RFC 9700 bu yüzden implicit grant'in kullanılmamasını (SHOULD NOT) ister ve yerine authorization code akışını PKCE ile önerir. Hâlâ taslak olan OAuth 2.1 (son sürümü Eylül 2026 tarihli draft-ietf-oauth-v2-1-16) implicit ve resource owner password credentials akışlarını hiç tanımlamaz ve PKCE'yi zorunlu tutar.",
+      "keyConcepts": [
+        {
+          "id": "fragment",
+          "label": "Token yönlendirme adresinin fragment'ında gelir",
+          "aliases": [
+            "fragment",
+            "adres çubuğu",
+            "#access_token",
+            "url'deki token",
+            "url'de token",
+            "url içinde"
+          ],
+          "anchors": [
+            "Implicit flow'da access token doğrudan yönlendirme adresinin fragment kısmında verilir."
+          ]
+        },
+        {
+          "id": "sizinti",
+          "label": "Geçmiş, Referer ve yönlendirmelerle sızar",
+          "aliases": [
+            "tarayıcı geçmiş",
+            "browser history",
+            "referer",
+            "referrer",
+            "geçmişte kal",
+            "token sızar"
+          ],
+          "anchors": [
+            "Token tarayıcı geçmişinde kalır, Referer başlığı ya da açık yönlendirmeler üzerinden sızabilir."
+          ]
+        },
+        {
+          "id": "enjeksiyon",
+          "label": "Token'ın bu istemciye verildiği doğrulanamaz, enjekte edilebilir",
+          "aliases": [
+            "token injection",
+            "enjekte edilebilir",
+            "başka bir istemci",
+            "kime verildiğ",
+            "kime ait",
+            "bu istemci için"
+          ],
+          "anchors": [
+            "Token'ın bu istemci için verildiği doğrulanamadığından başka bir istemciye verilmiş token akışa enjekte edilebilir."
+          ]
+        },
+        {
+          "id": "code-pkce-yerine",
+          "label": "RFC 9700: kullanılmamalı, yerine code + PKCE",
+          "aliases": [
+            "authorization code",
+            "code akışı",
+            "code flow",
+            "pkce",
+            "should not",
+            "code + pkce"
+          ],
+          "anchors": [
+            "RFC 9700 implicit grant'in kullanılmamasını ister ve yerine PKCE'li authorization code akışını önerir."
+          ]
+        },
+        {
+          "id": "oauth21",
+          "label": "Taslak OAuth 2.1 implicit'i hiç tanımlamaz",
+          "aliases": [
+            "oauth 2.1",
+            "oauth2.1",
+            "taslak",
+            "draft",
+            "tanımlamaz",
+            "ropc"
+          ],
+          "anchors": [
+            "Hâlâ taslak olan OAuth 2.1 implicit ve password grant'leri tanımlamaz, PKCE'yi zorunlu tutar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Implicit flow kullanan eski bir SPA'yı authorization code + PKCE'ye geçirirken token'ları tarayıcıda nerede tutarsın?"
+      ],
+      "source": "Kendi derleme — RFC 9700 §2.1.2, §4.2, §4.3, §4.6; RFC 6749 §4.2; draft-ietf-oauth-v2-1-16"
+    },
+    {
+      "id": "cybersecurity-jwt-signature",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "JWT",
+      "difficulty": 1,
+      "prompt": "JWT'nin imzası neyi garanti eder, neyi etmez?",
+      "modelAnswer": "İmza, token'ın içeriğinin imzalandıktan sonra değiştirilmediğini ve onu doğru anahtara sahip bir tarafın ürettiğini garanti eder; header ya da payload'da tek bir karakter değişirse doğrulama başarısız olur. Gizlilik garanti etmez; header ve payload yalnızca Base64url ile kodlanmıştır ve token'ı gören herkes içeriğini okuyabilir, bu yüzden token'a parola, kişisel veri ya da iç sistem bilgisi gibi hassas bilgiler konmaz, gizlilik gerekiyorsa token JWE ile şifrelenir. İmzanın geçerli olması token'ın kabul edilmesi için de yetmez; `exp` ile süresi, `iss` ile beklenen yayıncıdan geldiği, `aud` ile bu servis için üretildiği ayrıca kontrol edilir, aksi hâlde başka bir servis için verilmiş geçerli bir token kabul edilebilir.",
+      "keyConcepts": [
+        {
+          "id": "butunluk",
+          "label": "İçeriğin değiştirilmediğini ve doğru anahtarla üretildiğini garanti eder",
+          "aliases": [
+            "değiştirilmediğ",
+            "bütünlük",
+            "integrity",
+            "kurcalan",
+            "tamper",
+            "doğru anahtara sahip"
+          ],
+          "anchors": [
+            "İmza token'ın içeriğinin değiştirilmediğini ve doğru anahtara sahip bir tarafça üretildiğini garanti eder."
+          ]
+        },
+        {
+          "id": "herkes-okur",
+          "label": "Payload şifreli değildir, herkes okuyabilir",
+          "aliases": [
+            "base64",
+            "herkes okuyabilir",
+            "şifreli değil",
+            "şifrelenmemiş",
+            "decode edil",
+            "içeriğini okuyabilir"
+          ],
+          "anchors": [
+            "Header ve payload yalnızca Base64url ile kodlanmıştır; token'ı gören herkes içeriğini okuyabilir."
+          ]
+        },
+        {
+          "id": "hassas-bilgi-konmaz",
+          "label": "Hassas bilgi konmaz, gizlilik için JWE",
+          "aliases": [
+            "hassas bilgi",
+            "hassas veri",
+            "kişisel veri",
+            "jwe ile",
+            "şifrelenmiş jwt",
+            "confidentiality"
+          ],
+          "anchors": [
+            "Token'a hassas bilgi konmaz; gizlilik gerekiyorsa token JWE ile şifrelenir."
+          ]
+        },
+        {
+          "id": "claim-kontrolu",
+          "label": "Süre, yayıncı ve hedef kitle ayrıca doğrulanır",
+          "aliases": [
+            "expiration",
+            "issuer",
+            "audience",
+            "beklenen yayıncı",
+            "bu servis için",
+            "claim'leri doğrula"
+          ],
+          "anchors": [
+            "Geçerli imza yetmez; süre, beklenen yayıncı ve bu servis için üretildiği ayrıca kontrol edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir mikroservis yalnızca imzayı doğrulayıp `aud`'u kontrol etmezse hangi senaryoda başka bir servisin token'ını kabul eder?"
+      ],
+      "source": "Kendi derleme — RFC 7519 (JWT); RFC 8725 §3.8, §3.9; OWASP JSON Web Token Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-jwt-algorithm",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "JWT",
+      "difficulty": 3,
+      "prompt": "JWT doğrulanırken algoritma neden token'ın header'ından okunmamalıdır? HS256 ile RS256 arasındaki fark nedir?",
+      "modelAnswer": "HS256 bir HMAC'tir; imzalayan ve doğrulayan tek bir ortak sırrı paylaşır, bu yüzden token'ı doğrulayabilen her servis yeni bir token da üretebilir ve anahtar tüm doğrulayıcılara dağıtılmak zorundadır; anahtar ayrıca bir parola gibi tahmin edilebilir değil, yeterince uzun rastgele bir değer olmalıdır, çünkü ele geçirilen tek bir token üzerinden çevrimdışı denenebilir. RS256 ya da ES256 gibi asimetrik algoritmalarda token yalnızca özel anahtarı tutan yayıncıda imzalanır, servisler açık anahtarla, genellikle yayıncının JWKS adresinden alarak doğrular; bir servisin ele geçirilmesi başkası adına token üretmeye yetmez. Header'daki `alg` alanı token'ı gönderen tarafın kontrolündedir; doğrulayıcı algoritmayı oradan seçerse imzasız (`none`) bir token'ı ya da açık anahtarın HMAC sırrı gibi kullanıldığı bir doğrulamayı kabul edebilir, RFC 8725 bu iki açığı da tarif eder. Bu yüzden kabul edilen algoritmalar doğrulayıcıda açıkça sabitlenir, her anahtar yalnızca tek bir algoritmayla kullanılır ve `kid` ya da `jku` gibi header alanları da güvenilmeyen girdi sayılır.",
+      "keyConcepts": [
+        {
+          "id": "hs-paylasilan",
+          "label": "HS256'da doğrulayan da token üretebilir",
+          "aliases": [
+            "ortak sır",
+            "ortak bir sır",
+            "paylaşılan anahtar",
+            "shared secret",
+            "doğrulayan da üret",
+            "token da üretebilir"
+          ],
+          "anchors": [
+            "HS256'da imzalayan ve doğrulayan tek bir ortak sırrı paylaşır; doğrulayan her servis token da üretebilir."
+          ]
+        },
+        {
+          "id": "rs-ozel-anahtar",
+          "label": "RS256'da özel anahtar yalnızca yayıncıda",
+          "aliases": [
+            "özel anahtarı tutan",
+            "yalnızca yayıncı",
+            "jwks",
+            "açık anahtarla doğrula",
+            "public key ile doğrula",
+            "private key yalnızca"
+          ],
+          "anchors": [
+            "RS256'da token yalnızca özel anahtarı tutan yayıncıda imzalanır, servisler açık anahtarla doğrular."
+          ]
+        },
+        {
+          "id": "alg-gonderenin",
+          "label": "alg alanı gönderenin kontrolünde; none ve karışıklık",
+          "aliases": [
+            "alg alanı",
+            "alg header",
+            "alg: none",
+            "imzasız",
+            "algoritma karışıklığı",
+            "algorithm confusion"
+          ],
+          "anchors": [
+            "alg alanı gönderenin kontrolündedir; doğrulayıcı oradan seçerse imzasız ya da karıştırılmış bir doğrulamayı kabul edebilir."
+          ]
+        },
+        {
+          "id": "algoritma-sabit",
+          "label": "Kabul edilen algoritma doğrulayıcıda sabitlenir",
+          "aliases": [
+            "sabitle",
+            "allowlist",
+            "beklenen algoritma",
+            "izin verilen algoritma",
+            "tek bir algoritma",
+            "whitelist"
+          ],
+          "anchors": [
+            "Kabul edilen algoritmalar doğrulayıcıda sabitlenir ve her anahtar tek bir algoritmayla kullanılır."
+          ]
+        },
+        {
+          "id": "anahtar-gucu",
+          "label": "HMAC anahtarı uzun ve rastgele olmalı",
+          "aliases": [
+            "yeterince uzun",
+            "zayıf anahtar",
+            "çevrimdışı",
+            "offline",
+            "parola gibi",
+            "tahmin edilebilir anahtar"
+          ],
+          "anchors": [
+            "HS256 anahtarı parola gibi değil, yeterince uzun rastgele bir değer olmalıdır; aksi hâlde çevrimdışı denenebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Yayıncı imzalama anahtarını döndürdüğünde doğrulayıcı servisler kesintisiz nasıl geçiş yapar?"
+      ],
+      "source": "Kendi derleme — RFC 8725 §2.1, §2.2, §3.1, §3.2, §3.5, §3.10; RFC 7518 (JWA)"
+    },
+    {
+      "id": "cybersecurity-refresh-token-rotation",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "JWT",
+      "difficulty": 3,
+      "prompt": "Refresh token rotation nedir? Yeniden kullanım tespiti nasıl çalışır?",
+      "modelAnswer": "Rotation'da her yenileme isteğinde yetkilendirme sunucusu yeni bir access token'ın yanında yeni bir refresh token da verir ve kullanılan eski refresh token'ı geçersiz kılar; her refresh token böylece tek kullanımlık olur. Bir refresh token çalınırsa saldırgan ve meşru istemci aynı token'ı er geç kullanmaya çalışır ve ikisinden biri zaten geçersiz kılınmış bir token sunar; sunucu bunu çalınma işareti sayar. Hangisinin saldırgan olduğunu bilemediği için o yetkiye bağlı aktif refresh token'ı, çoğu uygulamada da aynı aileden bütün token'ları iptal eder; saldırı durur, meşru kullanıcı da yeniden giriş yapmak zorunda kalır. Tespit iptal edilen token'ın kaydına dayandığı için bu kayıt hemen silinmez; iki sekme ya da eşzamanlı istek aynı token'ı aynı anda gönderebildiği için uygulamalar kısa bir tolerans penceresi de tanıyabilir. RFC 9700 public client'lar için refresh token'ların ya rotation kullanmasını ya da sender-constrained olmasını, yani DPoP ya da mTLS ile istemciye kriptografik olarak bağlanmasını zorunlu tutar.",
+      "keyConcepts": [
+        {
+          "id": "tek-kullanimlik",
+          "label": "Her yenilemede yeni refresh token, eskisi geçersiz",
+          "aliases": [
+            "tek kullanımlık",
+            "single-use",
+            "single use",
+            "yeni bir refresh token",
+            "eskisi geçersiz",
+            "eski refresh token"
+          ],
+          "anchors": [
+            "Her yenilemede yeni bir refresh token verilir ve eskisi geçersiz kılınır; token tek kullanımlıktır."
+          ]
+        },
+        {
+          "id": "calinma-isareti",
+          "label": "Geçersiz token'ın tekrar gelmesi çalınma işaretidir",
+          "aliases": [
+            "çalınma işareti",
+            "çalındığ",
+            "kopyalan",
+            "reuse detection",
+            "zaten geçersiz",
+            "zaten kullanılmış"
+          ],
+          "anchors": [
+            "Zaten geçersiz kılınmış bir refresh token'ın tekrar gelmesi çalınma işareti sayılır."
+          ]
+        },
+        {
+          "id": "aileyi-iptal",
+          "label": "Hangisinin saldırgan olduğu bilinmediği için hepsi iptal",
+          "aliases": [
+            "hepsini iptal",
+            "bütün refresh token",
+            "tüm refresh token",
+            "token ailesi",
+            "token family",
+            "aynı aileden"
+          ],
+          "anchors": [
+            "Sunucu hangisinin saldırgan olduğunu bilemediği için aynı aileden bütün token'ları iptal eder."
+          ]
+        },
+        {
+          "id": "tolerans",
+          "label": "Eşzamanlı istekler için kısa tolerans penceresi",
+          "aliases": [
+            "tolerans",
+            "grace period",
+            "grace",
+            "eşzamanlı",
+            "iki sekme",
+            "kısa bir pencere"
+          ],
+          "anchors": [
+            "İki sekme aynı token'ı aynı anda gönderebildiği için kısa bir tolerans penceresi tanınabilir."
+          ]
+        },
+        {
+          "id": "sender-constrained",
+          "label": "Alternatif: sender-constrained refresh token (DPoP, mTLS)",
+          "aliases": [
+            "sender-constrained",
+            "sender constrained",
+            "dpop",
+            "mtls",
+            "istemciye bağla",
+            "kriptografik olarak bağla"
+          ],
+          "anchors": [
+            "RFC 9700 public client'larda rotation ya da DPoP/mTLS ile sender-constrained refresh token ister."
+          ]
+        }
+      ],
+      "followUps": [
+        "Rotation kullanan bir sistemde kullanıcının iki sekmesi aynı anda yenileme yaparsa ne olur, bunu nasıl ele alırsın?"
+      ],
+      "source": "Kendi derleme — RFC 9700 §2.2.2, §4.14.2; RFC 9449 (DPoP); RFC 8705 (OAuth mTLS)"
     }
   ]
 }
