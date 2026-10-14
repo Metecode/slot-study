@@ -527,6 +527,336 @@
         "Kullanıcının yüklediği bir ZIP arşivi açılırken path traversal nasıl ortaya çıkabilir?"
       ],
       "source": "Kendi derleme — OWASP Path Traversal (Attacks); OWASP Input Validation Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-allowlist-validation",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 1,
+      "prompt": "Girdi doğrulamada allowlist yaklaşımı neden denylist'ten daha güvenlidir?",
+      "modelAnswer": "Allowlist neyin kabul edileceğini tanımlar ve geri kalan her şeyi reddeder; örneğin bir posta kodu için yalnızca beş rakam, bir sıralama alanı için yalnızca bilinen kolon adları kabul edilir. Denylist ise tehlikeli bilinen karakterleri ya da kalıpları yakalamaya çalışır; aynı girdi farklı kodlamalar, büyük-küçük harf varyantları ya da beklenmedik bir yazımla gelebildiği için liste hiçbir zaman tam olmaz, üstelik kesme işareti içeren bir soyadı gibi meşru girdiyi de reddedebilir. Doğrulama sunucu tarafında yapılır, istemcideki kontrol kolayca atlandığı için yalnızca kullanıcıya hızlı geri bildirim içindir; biçimin yanında anlamın da doğrulanması gerekir, örneğin bitiş tarihinin başlangıçtan sonra olması. Girdi doğrulama injection ve XSS'e karşı asıl savunma değildir; SQL için parametreli sorgu, HTML için bağlama uygun çıktı kodlaması gerekir, doğrulama bunların önüne konan ek bir katmandır.",
+      "keyConcepts": [
+        {
+          "id": "kabul-edileni-tanimlar",
+          "label": "Kabul edileni tanımlar, gerisini reddeder",
+          "aliases": [
+            "kabul edile",
+            "sadece izin verilen",
+            "yalnızca izin verilen",
+            "beklenen biçim",
+            "gerisini redde",
+            "geri kalanı redde"
+          ],
+          "anchors": [
+            "Allowlist neyin kabul edileceğini tanımlar ve geri kalan her şeyi reddeder."
+          ]
+        },
+        {
+          "id": "liste-tam-olmaz",
+          "label": "Denylist varyantlarla aşılır, hiçbir zaman tam olmaz",
+          "aliases": [
+            "farklı kodlama",
+            "varyant",
+            "atlatıl",
+            "bypass",
+            "hiçbir zaman tam",
+            "her kötü girdiyi"
+          ],
+          "anchors": [
+            "Aynı girdi farklı kodlama ve varyantlarla gelebildiği için denylist hiçbir zaman tam olmaz."
+          ]
+        },
+        {
+          "id": "sunucu-tarafinda",
+          "label": "Doğrulama sunucuda yapılır, istemci kontrolü atlanır",
+          "aliases": [
+            "sunucu tarafında",
+            "server-side",
+            "server side",
+            "backend'de",
+            "backendde",
+            "istemcideki kontrol"
+          ],
+          "anchors": [
+            "İstemcideki kontrol kolayca atlandığı için doğrulama sunucu tarafında yapılır."
+          ]
+        },
+        {
+          "id": "asil-savunma-degil",
+          "label": "Injection ve XSS'e karşı asıl savunma değil",
+          "aliases": [
+            "parametreli sorgu",
+            "prepared statement",
+            "output encoding",
+            "çıktı kodlama",
+            "asıl savunma değil",
+            "ek bir katman"
+          ],
+          "anchors": [
+            "Injection için parametreli sorgu, XSS için çıktı kodlaması gerekir; girdi doğrulama ek bir katmandır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının serbest metin girdiği bir yorum alanında allowlist nasıl uygulanır?"
+      ],
+      "source": "Kendi derleme — OWASP Input Validation Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-file-upload",
+      "category": "cybersecurity",
+      "kind": "applied",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 2,
+      "prompt": "Kullanıcıların dosya yükleyebildiği bir özellik nasıl güvenli hâle getirilir?",
+      "modelAnswer": "Dosyanın adına, uzantısına ve istemcinin gönderdiği `Content-Type` başlığına güvenilmez, çünkü üçü de kullanıcının kontrolündedir; izin verilen uzantılar bir allowlist'le sınırlanır ve dosya türü içeriğin kendisinden, örneğin dosya imzasından (magic bytes) doğrulanır. Dosya kullanıcının verdiği adla değil uygulamanın ürettiği rastgele bir adla, web kök dizininin dışında ve mümkünse ayrı bir depolama alanında ya da alan adında saklanır; böylece yüklenen bir betik sunucuda çalıştırılamaz, yüklenen bir HTML dosyası da uygulamanın origin'inde açılamaz. Boyut için, arşivlerde açılmış hâlin boyutu için de sınır konur ve dosyalar antivirüs taramasından geçirilir; görseller yeniden kodlanarak içlerindeki metadata ve gizlenmiş içerik temizlenebilir. Yükleme ve indirme uçları da diğer uçlar gibi yetki kontrolünden geçer, bir kullanıcı başkasının dosyasına adresini bilerek ulaşamamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "uzantiya-guvenme",
+          "label": "Ada, uzantıya ve Content-Type'a güvenilmez",
+          "aliases": [
+            "dosya uzantı",
+            "uzantısına",
+            "uzantıya güven",
+            "extension",
+            "content-type",
+            "mime"
+          ],
+          "anchors": [
+            "Dosyanın adı, uzantısı ve Content-Type başlığı kullanıcının kontrolünde olduğu için bunlara güvenilmez."
+          ]
+        },
+        {
+          "id": "icerikten-tur",
+          "label": "Tür içerikten, dosya imzasından doğrulanır",
+          "aliases": [
+            "magic byte",
+            "magic number",
+            "dosya imza",
+            "file signature",
+            "içeriğine bak",
+            "içeriğinden"
+          ],
+          "anchors": [
+            "Dosya türü içeriğin kendisinden, örneğin magic bytes ile dosya imzasından doğrulanır."
+          ]
+        },
+        {
+          "id": "rastgele-ad",
+          "label": "Uygulamanın ürettiği rastgele bir adla saklanır",
+          "aliases": [
+            "rastgele ad",
+            "rastgele bir ad",
+            "rastgele isim",
+            "rastgele bir isim",
+            "yeniden adlandır",
+            "rename"
+          ],
+          "anchors": [
+            "Dosya kullanıcının verdiği adla değil, uygulamanın ürettiği rastgele bir adla saklanır."
+          ]
+        },
+        {
+          "id": "web-koku-disi",
+          "label": "Web kök dizininin dışında, ayrı alanda saklanır",
+          "aliases": [
+            "web kök",
+            "webroot",
+            "web root",
+            "ayrı alan adı",
+            "ayrı bir depolama",
+            "object storage"
+          ],
+          "anchors": [
+            "Dosyalar web kök dizininin dışında, mümkünse ayrı bir depolama alanında ya da alan adında saklanır."
+          ]
+        },
+        {
+          "id": "boyut-tarama",
+          "label": "Boyut sınırı ve zararlı yazılım taraması",
+          "aliases": [
+            "boyut sınır",
+            "dosya boyutu",
+            "size limit",
+            "antivir",
+            "virüs tara",
+            "malware"
+          ],
+          "anchors": [
+            "Dosya boyutuna sınır konur ve dosyalar zararlı yazılım taramasından geçirilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcıların yüklediği görselleri uygulamanın kendi alan adından sunmak neden risklidir?"
+      ],
+      "source": "Kendi derleme — OWASP File Upload Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-open-redirect",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 2,
+      "prompt": "Open redirect nedir, neden önemsenmelidir?",
+      "modelAnswer": "Open redirect, uygulamanın kullanıcıyı bir parametrede gelen adrese, örneğin girişten sonra dönülecek sayfaya, hedefi doğrulamadan yönlendirmesidir; saldırgan uygulamanın kendi alan adıyla başlayan ama kullanıcıyı herhangi bir siteye götüren bir link üretebilir. Link güvenilen bir alan adıyla başladığı için kullanıcı da e-posta filtreleri de ona güvenir; açık bu yüzden en çok phishing'de, kullanıcıyı sahte bir giriş sayfasına taşımak için kullanılır. Daha ciddi sonucu başka açıklarla birleştiğinde ortaya çıkar; OAuth'ta yönlendirme adresi kayıtlı alan adının altındaki herhangi bir yola izin veriyorsa, o alandaki bir open redirect authorization code'un ya da token'ın saldırganın sitesine taşınmasına yol açabilir. Önlem hedefi kullanıcıdan almamak ya da yalnızca uygulama içi göreli yollara ve bir allowlist'teki adreslere izin vermektir; en sağlamı kullanıcıya adres yerine sunucunun kendi tablosunda karşılığını bulduğu bir anahtar göndermektir.",
+      "keyConcepts": [
+        {
+          "id": "dogrulanmamis-hedef",
+          "label": "Parametredeki hedef doğrulanmadan yönlendirilir",
+          "aliases": [
+            "hedefi doğrulamadan",
+            "kontrol etmeden yönlendir",
+            "doğrulamadan yönlendir",
+            "redirect parametre",
+            "returnurl",
+            "herhangi bir siteye"
+          ],
+          "anchors": [
+            "Uygulama kullanıcıyı parametrede gelen adrese hedefi doğrulamadan yönlendirir."
+          ]
+        },
+        {
+          "id": "phishing",
+          "label": "Güvenilen alan adıyla phishing",
+          "aliases": [
+            "phishing",
+            "oltalama",
+            "sahte giriş",
+            "sahte site",
+            "sahte bir",
+            "güvenilen alan"
+          ],
+          "anchors": [
+            "Link güvenilen alan adıyla başladığı için açık kullanıcıyı sahte bir giriş sayfasına taşımak için kullanılır."
+          ]
+        },
+        {
+          "id": "oauth-sizinti",
+          "label": "OAuth'ta kod ya da token sızıntısına zincirlenir",
+          "aliases": [
+            "oauth",
+            "authorization code",
+            "redirect_uri",
+            "redirect uri",
+            "token'ın saldırgan",
+            "kodun sız"
+          ],
+          "anchors": [
+            "OAuth'ta open redirect authorization code'un ya da token'ın saldırganın sitesine taşınmasına yol açabilir."
+          ]
+        },
+        {
+          "id": "goreli-allowlist",
+          "label": "Göreli yol, allowlist ya da anahtar eşleme",
+          "aliases": [
+            "göreli yol",
+            "relative path",
+            "relative url",
+            "allowlist",
+            "whitelist",
+            "izin verilen adres"
+          ],
+          "anchors": [
+            "Yalnızca uygulama içi göreli yollara ve bir allowlist'teki adreslere izin verilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Girişten sonra kullanıcıyı geldiği sayfaya döndürmek için göreli bir yol kabul ederken nelere dikkat edersin?"
+      ],
+      "source": "Kendi derleme — OWASP Unvalidated Redirects and Forwards Cheat Sheet; RFC 9700 §4.11 (Open Redirection)"
+    },
+    {
+      "id": "cybersecurity-ssrf",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 3,
+      "prompt": "SSRF (Server-Side Request Forgery) nedir? Neden tehlikelidir ve nasıl önlenir?",
+      "modelAnswer": "SSRF, uygulamanın kullanıcının verdiği bir adrese, örneğin bir webhook adresine ya da önizlemesi alınacak bir linke, sunucunun kendisinden istek atmasıyla oluşur; istek sunucunun ağ konumundan çıktığı için dışarıdan erişilemeyen iç servislere, yönetim panellerine ya da `localhost`'a ulaşabilir. Bulut ortamlarında en bilinen hedef, sunucuya geçici kimlik bilgileri veren instance metadata servisidir; tek bir SSRF bu yüzden bütün bulut hesabına yayılabilen bir kimlik bilgisi sızıntısına dönüşebilir. Önlemin temeli hedefleri bir allowlist'le sınırlamaktır; alan adının yanında çözümlenen IP adresi de iç ve özel ağ aralıklarına karşı kontrol edilir ve bağlantı doğrulanan IP'ye kurulur, çünkü doğrulama ile bağlantı arasında DNS yanıtı değişebilir. HTTP istemcisinde yönlendirme takibi kapatılır ve ağ katmanında uygulamanın çıkış trafiği yalnızca gereken hedeflerle sınırlanır; SSRF, OWASP Top 10:2025'te ayrı bir kategori olmaktan çıkıp Broken Access Control'ün altına alındı.",
+      "keyConcepts": [
+        {
+          "id": "sunucudan-istek",
+          "label": "Sunucu kullanıcının verdiği adrese istek atar",
+          "aliases": [
+            "verdiği adres",
+            "verdiği url",
+            "belirlediği",
+            "webhook",
+            "sunucu adına",
+            "sunucunun kendisi"
+          ],
+          "anchors": [
+            "SSRF'te sunucu, kullanıcının verdiği bir adrese kendi ağ konumundan istek atar."
+          ]
+        },
+        {
+          "id": "ic-ag",
+          "label": "Dışarıdan erişilemeyen iç servislere ulaşır",
+          "aliases": [
+            "iç ağ",
+            "iç servis",
+            "internal",
+            "localhost",
+            "127.0.0.1",
+            "intranet"
+          ],
+          "anchors": [
+            "İstek sunucudan çıktığı için dışarıdan erişilemeyen iç servislere ve localhost'a ulaşabilir."
+          ]
+        },
+        {
+          "id": "metadata",
+          "label": "Bulut metadata servisi ve geçici kimlik bilgileri",
+          "aliases": [
+            "metadata",
+            "169.254.169.254",
+            "imds",
+            "bulut",
+            "cloud",
+            "geçici kimlik bilgi"
+          ],
+          "anchors": [
+            "Bulutta en bilinen hedef, geçici kimlik bilgileri veren instance metadata servisidir."
+          ]
+        },
+        {
+          "id": "allowlist-ip",
+          "label": "Hedef allowlist'i ve çözümlenen IP kontrolü",
+          "aliases": [
+            "allowlist",
+            "whitelist",
+            "çözümlenen ip",
+            "özel ip",
+            "private ip",
+            "dns rebinding"
+          ],
+          "anchors": [
+            "Hedefler allowlist ile sınırlanır, çözümlenen IP adresi de özel ağ aralıklarına karşı kontrol edilir."
+          ]
+        },
+        {
+          "id": "yonlendirme-cikis",
+          "label": "Yönlendirme takibi kapalı, çıkış trafiği sınırlı",
+          "aliases": [
+            "yönlendirme takib",
+            "redirect takib",
+            "redirect'leri takip",
+            "follow redirect",
+            "egress",
+            "çıkış trafiği"
+          ],
+          "anchors": [
+            "HTTP istemcisinde yönlendirme takibi kapatılır, ağ katmanında çıkış trafiği sınırlanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının verdiği bir adresten görsel indiren bir özellikte DNS rebinding riskini nasıl kapatırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Server-Side Request Forgery Prevention Cheat Sheet; OWASP Top 10:2025 A01 Broken Access Control"
     }
   ]
 }
