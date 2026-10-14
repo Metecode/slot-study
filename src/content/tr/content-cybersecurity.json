@@ -44,7 +44,13 @@
         {
           "id": "secure-flag",
           "label": "Secure bayrağı",
-          "aliases": ["secure", "https", "sadece şifreli", "ssl", "ağ dinleme"],
+          "aliases": [
+            "secure",
+            "https",
+            "sadece şifreli",
+            "ssl",
+            "ağ dinleme"
+          ],
           "anchors": [
             "Cookie ayarlarında Secure bayrağının açılması, çerezin yalnızca şifrelenmiş HTTPS bağlantıları üzerinden taşınmasını şart koşar.",
             "Ağ üzerinden token dinlenmesini (Man in the middle) önlemek için Secure cookie kullanmak zorunludur."
@@ -132,6 +138,395 @@
         "Stored Procedure kullanmak SQL Injection'ı her durumda yüzde yüz engeller mi?"
       ],
       "source": "Banka Güvenlik Mühendisliği Mülakatı, Eylül 2026"
+    },
+    {
+      "id": "cybersecurity-owasp-top10",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "OWASP Top 10 nedir, ne değildir?",
+      "modelAnswer": "OWASP Top 10, web uygulamalarındaki en kritik güvenlik risklerini kategoriler hâlinde sıralayan bir **farkındalık belgesidir**; geliştiricilere ve ekiplere nereden başlayacaklarını göstermek için yazılır. Liste birkaç yılda bir güncellenir ve kategoriler katkı verilen test verilerinden ve bir topluluk anketinden derlenir; 2025 sürümünde on kategorinin sekizi veriden, ikisi anketten geldi. Her kategori tek bir açığı değil, ortak bir kök nedeni paylaşan zayıflık türlerini (CWE) toplar; bu yüzden geniştir ve olduğu gibi test edilemez. Top 10'u bir uygulamanın güvenli olduğunu kanıtlayan bir kontrol listesi gibi kullanmak bu yüzden yanlıştır; OWASP test edilebilir gereksinimler için **ASVS**'i (Application Security Verification Standard) önerir ve Top 10'u yalnızca asgari bir başlangıç noktası sayar.",
+      "keyConcepts": [
+        {
+          "id": "farkindalik",
+          "label": "En kritik riskleri gösteren farkındalık belgesi",
+          "aliases": [
+            "farkındalık",
+            "awareness",
+            "en kritik",
+            "en yaygın",
+            "en sık görülen",
+            "en önemli risk"
+          ],
+          "anchors": [
+            "OWASP Top 10, web uygulamalarındaki en kritik riskleri gösteren bir farkındalık belgesidir."
+          ]
+        },
+        {
+          "id": "veri-ve-anket",
+          "label": "Test verisi ve topluluk anketiyle derlenir, periyodik güncellenir",
+          "aliases": [
+            "anket",
+            "survey",
+            "toplulu",
+            "test verisi",
+            "güncellen",
+            "birkaç yılda"
+          ],
+          "anchors": [
+            "Kategoriler katkı verilen test verilerinden ve topluluk anketinden derlenir, liste birkaç yılda bir güncellenir."
+          ]
+        },
+        {
+          "id": "kontrol-listesi-degil",
+          "label": "Kontrol listesi ya da standart değil, asgari başlangıç",
+          "aliases": [
+            "kontrol listesi değil",
+            "checklist değil",
+            "standart değil",
+            "asgari",
+            "başlangıç noktası",
+            "olduğu gibi test edilemez"
+          ],
+          "anchors": [
+            "Top 10 bir uygulamanın güvenli olduğunu kanıtlayan bir kontrol listesi değil, asgari bir başlangıç noktasıdır."
+          ]
+        },
+        {
+          "id": "asvs",
+          "label": "Test edilebilir gereksinimler için ASVS",
+          "aliases": [
+            "asvs",
+            "verification standard",
+            "doğrulama standard",
+            "test edilebilir gereksinim",
+            "verifiable"
+          ],
+          "anchors": [
+            "Test edilebilir güvenlik gereksinimleri için OWASP, Application Security Verification Standard'ı (ASVS) önerir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Top 10'daki bir kategoriyi kod incelemesinde nasıl somut kontrollere çevirirsin?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 (Introduction); OWASP Top 10:2021 — How to use the OWASP Top 10 as a standard; OWASP ASVS"
+    },
+    {
+      "id": "cybersecurity-broken-access-control",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "Broken access control neden en sık görülen güvenlik risklerinden biridir? Nasıl önlenir?",
+      "modelAnswer": "Erişim kararı her uçta ve her nesnede ayrı ayrı verilmesi gereken bir karardır; tek bir uçta ya da tek bir sorguda unutulan kontrol açık yaratır ve kuralın kendisi iş mantığına bağlı olduğu için otomatik tarayıcılar bu eksikliği çoğu zaman yakalayamaz. Sık görülen biçimleri adresteki numarayı değiştirerek başkasının kaydına ulaşmak, arayüzde gizlenen bir yönetim adresini doğrudan çağırmak ya da yalnızca `GET`'i korunan bir kaynağa `PUT` veya `DELETE` göndermektir; düğmeyi gizlemek bir kontrol değildir, çünkü istek curl ile de gelir. Korunmanın temeli **deny by default**'tur, yani herkese açık olması bilerek seçilmemiş her kaynak reddedilir ve kontrol sunucu tarafında, tek ve yeniden kullanılan bir mekanizmada yapılır. Kayıt sahipliği her sorguda zorlanır, yetki reddleri loglanır ve erişim kuralları otomatik testlerle doğrulanır; kategori OWASP Top 10:2025'te de birinci sıradaki yerini korudu.",
+      "keyConcepts": [
+        {
+          "id": "her-uc-ayri",
+          "label": "Her uç ve nesne için ayrı karar, kolay unutulur",
+          "aliases": [
+            "her uç",
+            "her endpoint",
+            "her nesne",
+            "her istekte",
+            "unutulan kontrol",
+            "kontrolü unut"
+          ],
+          "anchors": [
+            "Erişim kararı her uçta ve her nesnede ayrı verildiği için tek bir yerde unutulan kontrol açık yaratır."
+          ]
+        },
+        {
+          "id": "is-mantigi",
+          "label": "İş mantığına bağlı, otomatik araçlar yakalayamaz",
+          "aliases": [
+            "iş mantığı",
+            "iş kuralı",
+            "business logic",
+            "yakalayamaz",
+            "otomatik araç",
+            "otomatik tarayıcı"
+          ],
+          "anchors": [
+            "Kural iş mantığına bağlı olduğu için otomatik tarayıcılar eksik erişim kontrolünü çoğu zaman yakalayamaz."
+          ]
+        },
+        {
+          "id": "istemcide-gizlemek",
+          "label": "Arayüzde gizlemek kontrol değildir",
+          "aliases": [
+            "düğmeyi gizle",
+            "butonu gizle",
+            "frontend'de",
+            "istemci tarafı",
+            "client-side",
+            "curl"
+          ],
+          "anchors": [
+            "Düğmeyi arayüzde gizlemek bir kontrol değildir, istek doğrudan da gönderilebilir."
+          ]
+        },
+        {
+          "id": "deny-by-default",
+          "label": "Deny by default",
+          "aliases": [
+            "deny by default",
+            "default deny",
+            "varsayılan olarak red",
+            "varsayılan olarak her şeyi",
+            "varsayılan red",
+            "açıkça izin verilme"
+          ],
+          "anchors": [
+            "Herkese açık olması bilerek seçilmemiş her kaynak varsayılan olarak reddedilir."
+          ]
+        },
+        {
+          "id": "sunucuda-tek-yerde",
+          "label": "Kontrol sunucuda, tek bir mekanizmada ve testli",
+          "aliases": [
+            "sunucu tarafında",
+            "server-side",
+            "server side",
+            "merkezi",
+            "tek bir mekanizma",
+            "yetki test"
+          ],
+          "anchors": [
+            "Erişim kontrolü sunucu tarafında tek ve yeniden kullanılan bir mekanizmada yapılır ve testlerle doğrulanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Yetki kontrolünün yeni eklenen bir uçta unutulmadığını kod tabanında nasıl güvenceye alırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 A01 Broken Access Control; OWASP Authorization Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-idor",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "IDOR nedir? Tahmin edilemeyen id'ler kullanmak neden tek başına çözüm değildir?",
+      "modelAnswer": "IDOR (Insecure Direct Object Reference), uygulamanın istekteki bir nesne kimliğini, örneğin adresteki sipariş numarasını, o nesnenin isteği yapan kullanıcıya ait olup olmadığına bakmadan kullanmasıdır; kullanıcı numarayı değiştirerek başkasının kaydını okuyabilir ya da değiştirebilir. Sorun kimliğin görünmesi değil, **nesne düzeyinde yetki kontrolünün** eksik olmasıdır; OWASP API Security Top 10 aynı açığı bu yüzden Broken Object Level Authorization adıyla anar. UUID gibi rastgele kimlikler tahmini zorlaştırır ama kimlikler loglarda, paylaşılan linklerde ve başka yanıtlarda sızabildiği için yalnızca ek bir katmandır, yetkilendirmenin yerine geçmez. Doğru çözüm her erişimde sahipliği ya da yetkiyi sunucuda kontrol etmektir; en sağlam yol sorguyu oturumdaki kullanıcıyla kapsamak, yani kaydı yalnızca id ile değil kullanıcının kimliğiyle birlikte aramaktır.",
+      "keyConcepts": [
+        {
+          "id": "baskasinin-kaydi",
+          "label": "Kimliği değiştirerek başkasının kaydına ulaşmak",
+          "aliases": [
+            "başkasının",
+            "başka bir kullanıcının",
+            "başka kullanıcının",
+            "numarayı değiştir",
+            "id'yi değiştir",
+            "idyi değiştir"
+          ],
+          "anchors": [
+            "Kullanıcı istekteki numarayı değiştirerek başkasının kaydını okuyabilir ya da değiştirebilir."
+          ]
+        },
+        {
+          "id": "nesne-duzeyinde",
+          "label": "Nesne düzeyinde yetki kontrolü eksik",
+          "aliases": [
+            "nesne düzeyinde",
+            "object level",
+            "object-level",
+            "sahipli",
+            "kime ait",
+            "ait olup olmadığ"
+          ],
+          "anchors": [
+            "Sorun, nesnenin isteği yapan kullanıcıya ait olup olmadığının kontrol edilmemesidir."
+          ]
+        },
+        {
+          "id": "uuid-ek-katman",
+          "label": "Rastgele kimlik sızabilir, yalnızca ek katman",
+          "aliases": [
+            "uuid",
+            "rastgele kimlik",
+            "rastgele id",
+            "sızabil",
+            "ek bir katman",
+            "defense in depth"
+          ],
+          "anchors": [
+            "UUID gibi rastgele kimlikler sızabildiği için yalnızca ek bir katmandır, yetkilendirmenin yerini tutmaz."
+          ]
+        },
+        {
+          "id": "sorguyu-kapsamla",
+          "label": "Sorgu oturumdaki kullanıcıyla kapsanır",
+          "aliases": [
+            "oturumdaki kullanıcı",
+            "kullanıcının kimliğiyle",
+            "user_id",
+            "owner_id",
+            "kullanıcıya göre filtre",
+            "her erişimde"
+          ],
+          "anchors": [
+            "Kayıt yalnızca id ile değil, oturumdaki kullanıcının kimliğiyle birlikte aranır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir dosya indirme ucunda IDOR riskini azaltmak için isteği nasıl tasarlarsın?"
+      ],
+      "source": "Kendi derleme — OWASP Insecure Direct Object Reference Prevention Cheat Sheet; OWASP API Security Top 10 2023 (API1 Broken Object Level Authorization)"
+    },
+    {
+      "id": "cybersecurity-mass-assignment",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "Mass assignment açığı nedir, nasıl önlenir?",
+      "modelAnswer": "Framework'ler istekteki alanları otomatik olarak bir nesneye bağlayabilir; istek gövdesi doğrudan entity'ye bağlanırsa kullanıcı formda hiç olmayan bir alanı, örneğin `isAdmin`, rol ya da fiyat değerini de gönderip değiştirebilir. Spring MVC ve ASP.NET MVC'de bu davranışa **autobinding** de denir; OWASP API Security Top 10 aynı sorunu, yanıtta gereğinden fazla alan döndürmekle birlikte Broken Object Property Level Authorization başlığında toplar. Temel çözüm girdiyi yalnızca kullanıcının değiştirebileceği alanları içeren ayrı bir istek DTO'suna bağlamak ya da bağlanabilecek alanları açıkça bir allowlist'le sınırlamaktır; hassas alanları tek tek yasaklayan bir denylist, entity'ye yeni bir alan eklendiğinde sessizce eskir. DTO alan düzeyindeki yazmayı sınırlar, ama kullanıcının o nesneyi değiştirmeye yetkili olup olmadığı yine ayrıca kontrol edilir.",
+      "keyConcepts": [
+        {
+          "id": "otomatik-baglama",
+          "label": "İstek gövdesi doğrudan entity'ye bağlanır",
+          "aliases": [
+            "autobinding",
+            "auto binding",
+            "bind edil",
+            "entity'ye bağla",
+            "doğrudan bağla",
+            "binding"
+          ],
+          "anchors": [
+            "İstek gövdesi doğrudan entity'ye bağlandığında kullanıcı beklenmeyen alanları da gönderebilir."
+          ]
+        },
+        {
+          "id": "hassas-alan",
+          "label": "Formda olmayan hassas bir alan değiştirilir",
+          "aliases": [
+            "isadmin",
+            "is_admin",
+            "admin",
+            "fiyat",
+            "price",
+            "rol değeri"
+          ],
+          "anchors": [
+            "Kullanıcı formda hiç olmayan isAdmin, rol ya da fiyat gibi bir alanı da gönderip değiştirebilir."
+          ]
+        },
+        {
+          "id": "istek-dto",
+          "label": "Yalnızca düzenlenebilir alanları içeren istek DTO'su",
+          "aliases": [
+            "data transfer object",
+            "dto'su",
+            "dto kullan",
+            "dto ile",
+            "dto'ya",
+            "istek nesnesi"
+          ],
+          "anchors": [
+            "Girdi yalnızca kullanıcının değiştirebileceği alanları içeren ayrı bir istek DTO'suna bağlanır."
+          ]
+        },
+        {
+          "id": "alan-allowlist",
+          "label": "Bağlanabilecek alanlar allowlist ile sınırlanır, denylist eskir",
+          "aliases": [
+            "allowlist",
+            "allow-list",
+            "whitelist",
+            "setallowedfields",
+            "izin verilen alan",
+            "denylist"
+          ],
+          "anchors": [
+            "Bağlanabilecek alanlar açıkça bir allowlist ile sınırlanır; hassas alanları yasaklayan denylist kolayca eskir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Aynı DTO'yu hem oluşturma hem güncelleme isteğinde kullanmak neden sorun çıkarabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Mass Assignment Cheat Sheet; OWASP API Security Top 10 2023 (API3 Broken Object Property Level Authorization)"
+    },
+    {
+      "id": "cybersecurity-path-traversal",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "Path traversal açığı nasıl oluşur, nasıl önlenir?",
+      "modelAnswer": "Path traversal, uygulamanın kullanıcıdan gelen bir dosya adını ya da yolunu doğrudan dosya sistemi yoluna eklemesiyle oluşur; girdide üst dizine çıkan yol parçaları ya da mutlak bir yol varsa uygulama izin verilen klasörün dışındaki dosyaları, örneğin yapılandırma dosyalarını ya da anahtarları okuyabilir veya üzerine yazabilir. En güvenli çözüm kullanıcının hiç yol vermemesidir; kullanıcı bir id gönderir, sunucu bu id'yi kendi tuttuğu dosya adıyla eşler. Yol gerçekten girdiden kurulmak zorundaysa önce kanonik hâle getirilir, yani `..` parçaları ve sembolik linkler çözülür, sonra sonucun izin verilen kök dizinin içinde kalıp kalmadığı kontrol edilir. Bu kontrol URL kodlaması çözüldükten (decode) sonra yapılır, çünkü yol parçaları kodlanmış hâlde de gelebilir; uygulamanın süreci de yalnızca gereken klasörlere erişebilecek yetkiyle çalıştırılır.",
+      "keyConcepts": [
+        {
+          "id": "klasor-disi",
+          "label": "Girdiyle kurulan yol izin verilen klasörün dışına çıkar",
+          "aliases": [
+            "üst dizin",
+            "../",
+            "klasörün dışı",
+            "dizinin dışı",
+            "dışındaki dosya",
+            "parent directory"
+          ],
+          "anchors": [
+            "Girdideki üst dizine çıkan parçalar uygulamayı izin verilen klasörün dışındaki dosyalara götürür."
+          ]
+        },
+        {
+          "id": "kullanici-yol-vermez",
+          "label": "Kullanıcı yol değil id verir, sunucu eşler",
+          "aliases": [
+            "id gönder",
+            "id ile eşle",
+            "yerine id",
+            "dolaylı referans",
+            "indirect reference",
+            "dosya adını sunucu"
+          ],
+          "anchors": [
+            "Kullanıcı yalnızca bir id gönderir, sunucu bunu kendi tuttuğu dosya adıyla eşler."
+          ]
+        },
+        {
+          "id": "kanonik-kok",
+          "label": "Kanonik hâle getirip kök dizin içinde mi kontrol",
+          "aliases": [
+            "kanonik",
+            "canonical",
+            "normalize",
+            "realpath",
+            "kök dizin",
+            "startswith"
+          ],
+          "anchors": [
+            "Yol kanonik hâle getirilir ve sonucun izin verilen kök dizinin içinde kalıp kalmadığı kontrol edilir."
+          ]
+        },
+        {
+          "id": "decode-sonra",
+          "label": "Kontrol kod çözme işleminden sonra yapılır",
+          "aliases": [
+            "decode",
+            "kod çözme",
+            "url kodla",
+            "url-encod",
+            "url encod",
+            "kodlanmış"
+          ],
+          "anchors": [
+            "Yol parçaları kodlanmış gelebileceği için kontrol URL kodlaması çözüldükten sonra yapılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının yüklediği bir ZIP arşivi açılırken path traversal nasıl ortaya çıkabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Path Traversal (Attacks); OWASP Input Validation Cheat Sheet"
     }
   ]
 }
