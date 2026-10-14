@@ -79,67 +79,6 @@
       "source": "Banka Güvenlik Mühendisliği Mülakatı, Eylül 2026"
     },
     {
-      "id": "cybersecurity-sql-injection-orm",
-      "category": "cybersecurity",
-      "kind": "applied",
-      "topic": "SQL Injection Koruması",
-      "difficulty": 1,
-      "prompt": "Giriş formunda kullanıcı adı alanına ' OR '1'='1 yazarak sisteme şifresiz girilmesine neden olan SQL Injection saldırısı kod seviyesinde nasıl oluşur? Bunu önlemek için Parametrik Sorgu (Parameterized Query) veya ORM araçları nasıl bir koruma sağlar?",
-      "modelAnswer": "Zafiyet, dışarıdan gelen kullanıcı girdisinin doğrudan SQL metniyle birleştirilmesiyle (string concatenation) oluşur:\n\n```sql\n-- Kullanıcı girdi olarak \"' OR '1'='1\" gönderdiğinde oluşan nihai sorgu:\nSELECT * FROM Users WHERE Username = '' OR '1'='1' AND Password = '...'\n```\n\nSorgu birleştiğinde 1=1 ifadesi daima doğru (true) döneceği için şifre kontrolü atlanır ve sistem veritabanındaki ilk kayıtla (genelde admin) giriş yapar.\n\nÇözüm olarak Entity Framework gibi ORM'ler veya SqlParameter sınıfları kullanıldığında veritabanı motoruna giden yapı değişir. Girdi, SQL komut metninin bir parçası olarak değil, ayrı bir 'veri paketi' (parametre) olarak iletilir. Veritabanı motoru parametreyi komut mantığının dışında, sadece bir düz metin olarak derlediği için içindeki tırnak veya OR operatörleri SQL sözdizimi olarak çalıştırılamaz; etkisiz hale getirilir (escape).",
-      "keyConcepts": [
-        {
-          "id": "string-concatenation-flaw",
-          "label": "String birleştirme hatası",
-          "aliases": [
-            "birleştirme",
-            "string concatenation",
-            "inline sql",
-            "doğrudan yazma",
-            "string interpolation"
-          ],
-          "anchors": [
-            "Saldırı, dışarıdan gelen metnin doğrulanmadan mevcut SQL cümlesine doğrudan eklenmesi (birleştirilmesi) yüzünden oluşur.",
-            "Girdinin kod içerisinde string birleştirme operatörleriyle SQL sorgusuna yedirilmesi en temel SQL Injection nedenidir."
-          ]
-        },
-        {
-          "id": "always-true-logic",
-          "label": "Mantıksal manipülasyon",
-          "aliases": [
-            "1=1",
-            "daima doğru",
-            "or true",
-            "mantık bozma",
-            "şartı atlama"
-          ],
-          "anchors": [
-            "Saldırgan eklediği OR 1=1 gibi ifadelerle WHERE koşulunun mantığını bozarak daima doğru (true) dönmesini sağlar.",
-            "Şifre kontrolünü devre dışı bırakmak için sorgu mantığını her zaman true üretecek şekilde manipüle ederler."
-          ]
-        },
-        {
-          "id": "data-vs-code-separation",
-          "label": "Veri ve komut ayrımı",
-          "aliases": [
-            "parametre",
-            "ayrıştırma",
-            "veri paketi",
-            "komut değil",
-            "sqlparameter"
-          ],
-          "anchors": [
-            "Parametrik sorgular girdiyi çalıştırılabilir bir SQL komutu olarak değil, tamamen ayrı bir veri olarak veritabanına sunar.",
-            "Veritabanı motoru hazırlanan ifadelerde veriyi ve kod bloğunu birbirinden kesin çizgilerle ayırarak işler."
-          ]
-        }
-      ],
-      "followUps": [
-        "Entity Framework Core kullanıyorsan FromSqlRaw metoduyla yazılmış bir sorguda hala SQL Injection zafiyeti yaratmak mümkün müdür?",
-        "Stored Procedure kullanmak SQL Injection'ı her durumda yüzde yüz engeller mi?"
-      ],
-      "source": "Banka Güvenlik Mühendisliği Mülakatı, Eylül 2026"
-    },
-    {
       "id": "cybersecurity-owasp-top10",
       "category": "cybersecurity",
       "kind": "definition",
@@ -857,6 +796,456 @@
         "Kullanıcının verdiği bir adresten görsel indiren bir özellikte DNS rebinding riskini nasıl kapatırsın?"
       ],
       "source": "Kendi derleme — OWASP Server-Side Request Forgery Prevention Cheat Sheet; OWASP Top 10:2025 A01 Broken Access Control"
+    },
+    {
+      "id": "cybersecurity-command-injection",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 2,
+      "prompt": "Command injection nasıl oluşur, nasıl önlenir?",
+      "modelAnswer": "Command injection, uygulamanın kullanıcıdan gelen bir değeri işletim sistemi komutunun metnine ekleyip bu metni bir shell'e çalıştırtmasıyla oluşur; shell girdideki komut ayırıcıları ve özel karakterleri yorumladığı için girdi yeni bir komut başlatabilir. En iyi önlem işletim sistemi komutunu hiç çağırmamaktır; dosya kopyalamak, arşiv açmak ya da görsel dönüştürmek için dilin ya da bir kütüphanenin kendi API'si kullanılır. Komut gerçekten gerekiyorsa shell'i aradan çıkaran yapılandırılmış bir API ile, örneğin Java'da `ProcessBuilder`'a komut ve argümanlar ayrı liste elemanları olarak verilerek çalıştırılır; böylece girdi yalnızca bir argüman olarak kalır. Bu da tek başına yetmez, çünkü bir argüman komutun bir seçeneği gibi yorumlanabilir; komut sabit tutulur, argümanlar allowlist ile doğrulanır ve süreç olabildiğince az yetkiyle çalıştırılır.",
+      "keyConcepts": [
+        {
+          "id": "shell-yorumlar",
+          "label": "Girdi shell'e verilen komut metnine eklenir",
+          "aliases": [
+            "shell",
+            "komut satırı",
+            "komut ayırıcı",
+            "özel karakter",
+            "noktalı virgül",
+            "sistem komutuna ekle"
+          ],
+          "anchors": [
+            "Girdi bir shell'e verilen komut metnine eklendiğinde shell özel karakterleri yorumlar ve yeni komut başlayabilir."
+          ]
+        },
+        {
+          "id": "kutuphane-api",
+          "label": "Mümkünse komut yerine dilin ya da kütüphanenin API'si",
+          "aliases": [
+            "kütüphane",
+            "library",
+            "dilin kendi",
+            "kendi api",
+            "komut çağırma",
+            "komutu çağırma"
+          ],
+          "anchors": [
+            "En iyi önlem işletim sistemi komutunu çağırmak yerine dilin ya da bir kütüphanenin API'sini kullanmaktır."
+          ]
+        },
+        {
+          "id": "arguman-listesi",
+          "label": "Shell'siz, argümanlar ayrı liste elemanı",
+          "aliases": [
+            "processbuilder",
+            "argüman listesi",
+            "argümanları ayrı",
+            "ayrı argüman",
+            "ayrı liste",
+            "shell=false"
+          ],
+          "anchors": [
+            "Komut ve argümanlar shell'siz çalışan bir API'ye ayrı liste elemanları olarak verilir."
+          ]
+        },
+        {
+          "id": "allowlist-az-yetki",
+          "label": "Argüman allowlist'i ve az yetkili süreç",
+          "aliases": [
+            "allowlist",
+            "whitelist",
+            "izin verilen değer",
+            "az yetki",
+            "least privilege",
+            "en az yetki"
+          ],
+          "anchors": [
+            "Argümanlar allowlist ile doğrulanır ve süreç olabildiğince az yetkiyle çalıştırılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Girdiyi kaçış karakterleriyle temizlemek neden argüman listesi kullanmaktan daha zayıf bir savunmadır?"
+      ],
+      "source": "Kendi derleme — OWASP OS Command Injection Defense Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-orm-injection",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 2,
+      "prompt": "ORM kullanan bir uygulama SQL injection'dan tamamen korunmuş olur mu? Hangi durumlarda risk devam eder?",
+      "modelAnswer": "ORM sorguyu kendisi ürettiği ve değerleri parametre olarak bağladığı sürece injection'a karşı korur; yani koruma ORM'in kendisinden değil parametreleştirmeden gelir. Risk, geliştirici ORM'in kaçış kapılarını kullandığında geri döner; native SQL sorgusu ya da JPQL/HQL sorgusu string birleştirmeyle kurulduğunda, EF Core'da `FromSqlRaw`'a kullanıcı girdisi eklendiğinde ya da bir sorgu kurucuya ham SQL parçası verildiğinde girdi yine sorgunun yapısına karışır. Bu sorgularda da named ya da positional parametre kullanılır; EF Core'da interpolasyonu parametreye çeviren `FromSql` gibi API'ler tercih edilir. Kolon adı, tablo adı ve `ORDER BY` yönü gibi şema parçaları ise parametre olamaz; bunlar kullanıcıdan geliyorsa izin verilen değerler arasından seçilir.",
+      "keyConcepts": [
+        {
+          "id": "parametrelestirme",
+          "label": "Koruma ORM'den değil parametreleştirmeden gelir",
+          "aliases": [
+            "parametreleştir",
+            "parametre olarak bağla",
+            "parametre binding",
+            "bind parameter",
+            "parameterized",
+            "prepared statement"
+          ],
+          "anchors": [
+            "ORM ancak değerleri parametre olarak bağladığı sürece korur; koruma parametreleştirmeden gelir."
+          ]
+        },
+        {
+          "id": "native-raw",
+          "label": "Native ya da raw SQL kaçış kapıları",
+          "aliases": [
+            "native query",
+            "native sql",
+            "nativequery",
+            "ham sql",
+            "raw sql",
+            "fromsqlraw"
+          ],
+          "anchors": [
+            "Native ya da raw SQL sorgusuna kullanıcı girdisi eklendiğinde injection riski geri döner."
+          ]
+        },
+        {
+          "id": "jpql-birlestirme",
+          "label": "JPQL/HQL sorgusunun string birleştirmeyle kurulması",
+          "aliases": [
+            "jpql",
+            "hql sorgu",
+            "hql injection",
+            "string birleştir",
+            "string concat",
+            "concatenat"
+          ],
+          "anchors": [
+            "JPQL ya da HQL sorgusu string birleştirmeyle kurulursa ORM kullanmak injection'ı önlemez."
+          ]
+        },
+        {
+          "id": "sema-parcalari",
+          "label": "Kolon adı ve sıralama gibi şema parçaları parametre olamaz",
+          "aliases": [
+            "order by",
+            "kolon adı",
+            "column name",
+            "tablo adı",
+            "sıralama alanı",
+            "şema parça"
+          ],
+          "anchors": [
+            "Kolon adı, tablo adı ve ORDER BY yönü parametre olamaz; izin verilen değerlerden seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spring Data JPA'da `@Query` ile yazılmış bir sorguda kullanıcıdan gelen sıralama alanını güvenli biçimde nasıl uygularsın?"
+      ],
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP Query Parameterization Cheat Sheet; Microsoft Learn: EF Core SQL Queries"
+    },
+    {
+      "id": "cybersecurity-second-order-sqli",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 3,
+      "prompt": "Second-order SQL injection nedir? Neden yalnızca kullanıcı girdisinin alındığı yerde parametre kullanmak yetmez?",
+      "modelAnswer": "Second-order SQL injection'da zararlı değer ilk istekte parametreli bir sorguyla güvenle veritabanına yazılır ve o an hiçbir şey olmaz; açık, aynı değer daha sonra başka bir işlemde, örneğin bir raporda, toplu bir işte ya da parola değiştirme akışında veritabanından okunup bir sorgu metnine birleştirildiğinde tetiklenir. Ekipler veritabanından gelen değeri çoğu zaman kendi verileri saydıkları için güvenilir kabul eder; oysa değer hâlâ kullanıcıdan gelmiştir ve depolanmış olması onu güvenilir yapmaz. İlk adımdaki doğrulama ya da kaçış bu yüzden ikinci adımı korumaz; parametreleştirme değerin nereden geldiğine bakılmadan her sorguda uygulanır. Aynı tuzak stored procedure'lerde de görülür; procedure dışarıdan parametre alsa bile içeride bu değerle dinamik SQL metni kurup çalıştırıyorsa injection procedure'ün içinde gerçekleşir.",
+      "keyConcepts": [
+        {
+          "id": "once-saklanir",
+          "label": "Değer önce güvenle saklanır, sonra başka bir sorguda kullanılır",
+          "aliases": [
+            "veritabanına yazılır",
+            "veritabanına kaydedil",
+            "depolan",
+            "sonraki bir sorgu",
+            "başka bir sorguda",
+            "başka bir işlemde"
+          ],
+          "anchors": [
+            "Zararlı değer önce güvenle saklanır, açık sonra başka bir sorguda birleştirildiğinde tetiklenir."
+          ]
+        },
+        {
+          "id": "db-verisi-guvenilmez",
+          "label": "Veritabanından gelen değer de güvenilir değildir",
+          "aliases": [
+            "veritabanından gelen",
+            "veritabanından okun",
+            "güvenilir kabul",
+            "güven sınırı",
+            "trust boundary",
+            "kendi veri"
+          ],
+          "anchors": [
+            "Veritabanından okunan değer hâlâ kullanıcıdan gelmiştir; depolanmış olması onu güvenilir yapmaz."
+          ]
+        },
+        {
+          "id": "her-sorguda",
+          "label": "Parametreleştirme kaynağa bakmadan her sorguda",
+          "aliases": [
+            "her sorguda",
+            "her yerde parametre",
+            "her zaman parametre",
+            "nereden geldiğine bakılmadan",
+            "nereden geldiğine bakmadan",
+            "istisnasız"
+          ],
+          "anchors": [
+            "Parametreleştirme değerin nereden geldiğine bakılmadan her sorguda uygulanır."
+          ]
+        },
+        {
+          "id": "procedure-dinamik",
+          "label": "Stored procedure içindeki dinamik SQL",
+          "aliases": [
+            "stored procedure",
+            "saklı yordam",
+            "dinamik sql",
+            "dynamic sql",
+            "sp_executesql",
+            "execute immediate"
+          ],
+          "anchors": [
+            "Procedure parametre alsa bile içeride dinamik SQL kuruyorsa injection orada gerçekleşir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kod incelemesinde second-order injection riskini taşıyan sorguları nasıl bulursun?"
+      ],
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP WSTG: Testing for SQL Injection"
+    },
+    {
+      "id": "cybersecurity-ssti",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 3,
+      "prompt": "Server-side template injection (SSTI) nedir? Nasıl önlenir?",
+      "modelAnswer": "SSTI, kullanıcı girdisinin bir şablon motoruna şablonun verisi olarak değil şablon metninin parçası olarak verilmesiyle oluşur; örneğin bir e-posta şablonu kullanıcının yazdığı metinle birleştirilip sonra derlendiğinde girdideki şablon ifadeleri de değerlendirilir. Thymeleaf, FreeMarker, Jinja2 ya da Twig gibi motorların ifade dilleri nesnelere, metotlara ve bazen çalışma ortamına erişebildiği için sonuç basit bir XSS'ten sunucuda kod çalıştırmaya kadar gidebilir. Temel önlem şablonları yalnızca geliştiricinin yazdığı sabit dosyalardan yüklemek ve kullanıcı girdisini her zaman şablona model değişkeni olarak geçirmektir; motor bu değeri ifade olarak değerlendirmez, yalnızca basar ve kendi kurallarıyla kodlar. Kullanıcıların kendi şablonlarını yazması bir ürün özelliğiyse mantık içermeyen (logic-less) bir motor ya da yetenekleri kısıtlanmış bir sandbox kullanılır ve şablonu işleyen süreç yalıtılır.",
+      "keyConcepts": [
+        {
+          "id": "sablon-metni",
+          "label": "Girdi şablonun verisi değil metni olur",
+          "aliases": [
+            "şablon metni",
+            "şablonun parçası",
+            "template'in bir parçası",
+            "template'in parçası",
+            "şablona birleştir",
+            "template'e birleştir"
+          ],
+          "anchors": [
+            "Kullanıcı girdisi şablonun verisi olarak değil şablon metninin parçası olarak verildiğinde ifadeleri değerlendirilir."
+          ]
+        },
+        {
+          "id": "kod-calistirma",
+          "label": "Sunucuda kod çalıştırmaya kadar gidebilir",
+          "aliases": [
+            "kod çalıştır",
+            "remote code",
+            "uzaktan kod",
+            "komut çalıştır",
+            "code execution",
+            "çalışma ortamına"
+          ],
+          "anchors": [
+            "Şablon motorlarının ifade dilleri sayesinde sonuç sunucuda kod çalıştırmaya kadar gidebilir."
+          ]
+        },
+        {
+          "id": "model-degiskeni",
+          "label": "Girdi şablona model değişkeni olarak verilir",
+          "aliases": [
+            "model değişken",
+            "değişken olarak",
+            "context değişken",
+            "veri olarak ver",
+            "veri olarak geç",
+            "sabit dosya"
+          ],
+          "anchors": [
+            "Şablonlar sabit dosyalardan yüklenir, kullanıcı girdisi şablona her zaman model değişkeni olarak verilir."
+          ]
+        },
+        {
+          "id": "sandbox",
+          "label": "Kullanıcı şablonu gerekiyorsa logic-less motor ya da sandbox",
+          "aliases": [
+            "sandbox",
+            "logic-less",
+            "logicless",
+            "mustache",
+            "mantık içermeyen",
+            "kısıtlı motor"
+          ],
+          "anchors": [
+            "Kullanıcı şablon yazacaksa mantık içermeyen bir motor ya da kısıtlanmış bir sandbox kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının adını içeren bir e-postayı şablon motoruyla üretirken adı şablona nasıl vermelisin?"
+      ],
+      "source": "Kendi derleme — OWASP WSTG: Testing for Server-side Template Injection"
+    },
+    {
+      "id": "cybersecurity-xxe",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 2,
+      "prompt": "XXE (XML External Entity) açığı nedir? Nasıl önlenir?",
+      "modelAnswer": "XML, belgenin DTD'sinde içeriği bir dosyadan ya da adresten okunan dış entity'ler tanımlamaya izin verir; güvenilmeyen bir XML'i bu özellik açık bir parser'la işleyen uygulama, belgenin istediği yerel dosyayı okuyup yanıta katabilir ya da belgenin gösterdiği adrese istek atabilir. Sonuç sunucudaki dosyaların sızması, iç ağa yönelik SSRF ya da iç içe entity genişlemesiyle belleğin ve işlemcinin tükenmesi olabilir. En güvenli önlem parser'da DTD işlemeyi tamamen kapatmaktır; bu mümkün değilse dış entity çözümleme, dış DTD yükleme ve XInclude kapatılır, entity genişlemesine sınır konur. Varsayılanlar dile, kütüphaneye ve sürüme göre değiştiği için bunlara güvenilmez, ayarlar her parser oluşturulurken açıkça yazılır; SOAP, SAML ya da SVG gibi XML tabanlı formatlar da aynı riski taşır.",
+      "keyConcepts": [
+        {
+          "id": "dis-entity",
+          "label": "DTD'de dış kaynağa bağlanan entity",
+          "aliases": [
+            "dış entity",
+            "harici entity",
+            "doctype",
+            "entity tanım",
+            "dtd'de",
+            "dtd'sinde"
+          ],
+          "anchors": [
+            "XML belgenin DTD'sinde içeriği bir dosyadan ya da adresten okunan dış entity tanımlanabilir."
+          ]
+        },
+        {
+          "id": "etkiler",
+          "label": "Dosya sızıntısı, SSRF ya da kaynak tüketimi",
+          "aliases": [
+            "yerel dosya",
+            "dosya oku",
+            "dosyaların sız",
+            "ssrf",
+            "billion laughs",
+            "denial of service"
+          ],
+          "anchors": [
+            "XXE yerel dosyaların sızmasına, SSRF'e ya da entity genişlemesiyle kaynak tükenmesine yol açar."
+          ]
+        },
+        {
+          "id": "dtd-kapat",
+          "label": "Parser'da DTD ve dış entity çözümleme kapatılır",
+          "aliases": [
+            "dtd işlemeyi",
+            "dtd'yi kapat",
+            "parser'da dtd",
+            "desteğini kapat",
+            "disallow-doctype",
+            "entity'leri kapat"
+          ],
+          "anchors": [
+            "En güvenli önlem parser'da DTD işlemeyi kapatmak, değilse dış entity çözümlemeyi kapatmaktır."
+          ]
+        },
+        {
+          "id": "varsayilana-guvenme",
+          "label": "Varsayılana güvenilmez; XML tabanlı formatlar da etkilenir",
+          "aliases": [
+            "açıkça yaz",
+            "açıkça ayarla",
+            "soap",
+            "saml",
+            "svg dosya",
+            "xml tabanlı"
+          ],
+          "anchors": [
+            "Parser varsayılanları değiştiği için ayarlar açıkça yazılır; SOAP, SAML, SVG gibi formatlar da etkilenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API yalnızca JSON kabul ediyorsa XXE riski tamamen ortadan kalkar mı?"
+      ],
+      "source": "Kendi derleme — OWASP XML External Entity Prevention Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-insecure-deserialization",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 3,
+      "prompt": "Güvenilmeyen veriyi deserialize etmek neden tehlikelidir? Nasıl önlenir?",
+      "modelAnswer": "Java'nın `ObjectInputStream`'i ya da PHP'nin `unserialize`'ı gibi yerel serileştirme formatları akıştaki tip bilgisine göre nesne oluşturur; bu yüzden veriyi gönderen taraf hangi sınıfın örnekleneceğini de seçmiş olur. Saldırı yeni kod göndermeye dayanmaz; uygulamanın classpath'inde zaten bulunan ve nesne kurulurken kendiliğinden çalışan metotları olan sınıflar (gadget) zincirlenerek dosya yazma ya da komut çalıştırma gibi bir etkiye ulaşılır. En güçlü önlem güvenilmeyen veriyi yerel formatla hiç deserialize etmemek, JSON gibi yalnızca veri taşıyan bir format ve önceden tanımlı DTO'lar kullanmaktır; JSON kütüphanelerinde de akışın tipi seçmesine izin veren polimorfik tip özellikleri kapalı tutulur. Yerel format kaçınılmazsa yalnızca bilinen sınıflara izin veren bir filtre (Java'da serialization filter) ve imzayla bütünlük kontrolü eklenir; OWASP, filtrelemenin güvenilmeyen deserialization'ı tek başına güvenli kılmadığını vurgular.",
+      "keyConcepts": [
+        {
+          "id": "akis-tipi-secer",
+          "label": "Akıştaki tip bilgisi hangi sınıfın oluşacağını seçer",
+          "aliases": [
+            "objectinputstream",
+            "unserialize",
+            "tip bilgisi",
+            "hangi sınıf",
+            "yerel format",
+            "native serializ"
+          ],
+          "anchors": [
+            "Yerel serileştirme akıştaki tip bilgisine göre nesne oluşturur; hangi sınıfın örnekleneceğini veriyi gönderen seçer."
+          ]
+        },
+        {
+          "id": "gadget",
+          "label": "Classpath'teki mevcut sınıflar (gadget) zincirlenir",
+          "aliases": [
+            "gadget",
+            "classpath",
+            "mevcut sınıf",
+            "readobject",
+            "zincirle",
+            "uzaktan kod"
+          ],
+          "anchors": [
+            "Uygulamada zaten bulunan gadget sınıfları zincirlenerek komut çalıştırma gibi bir etkiye ulaşılır."
+          ]
+        },
+        {
+          "id": "veri-formati",
+          "label": "Yalnızca veri taşıyan format, polimorfik tip kapalı",
+          "aliases": [
+            "json gibi",
+            "json kullan",
+            "veri taşıyan",
+            "polimorfik",
+            "polymorphic",
+            "default typing"
+          ],
+          "anchors": [
+            "Güvenilmeyen veri için JSON gibi yalnızca veri taşıyan bir format kullanılır, polimorfik tip kapalı tutulur."
+          ]
+        },
+        {
+          "id": "filtre-imza",
+          "label": "Sınıf allowlist filtresi ve imzayla bütünlük",
+          "aliases": [
+            "serialization filter",
+            "objectinputfilter",
+            "allowlist",
+            "whitelist",
+            "imzala",
+            "imzayla"
+          ],
+          "anchors": [
+            "Yerel format kaçınılmazsa bilinen sınıflara izin veren bir filtre ve imzayla bütünlük kontrolü eklenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir oturum nesnesini serileştirip istemcide cookie olarak taşımak hangi koşulda kabul edilebilir?"
+      ],
+      "source": "Kendi derleme — OWASP Deserialization Cheat Sheet"
     }
   ]
 }
