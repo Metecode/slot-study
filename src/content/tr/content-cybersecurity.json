@@ -3061,6 +3061,501 @@
         "Rotation kullanan bir sistemde kullanıcının iki sekmesi aynı anda yenileme yaparsa ne olur, bunu nasıl ele alırsın?"
       ],
       "source": "Kendi derleme — RFC 9700 §2.2.2, §4.14.2; RFC 9449 (DPoP); RFC 8705 (OAuth mTLS)"
+    },
+    {
+      "id": "cybersecurity-leaked-secret",
+      "category": "cybersecurity",
+      "kind": "applied",
+      "topic": "Secret ve Bağımlılık",
+      "difficulty": 2,
+      "prompt": "Bir API anahtarının yanlışlıkla bir git reposuna commit edildiği fark edildi. İlk ne yapılır, sonra nasıl önlenir?",
+      "modelAnswer": "İlk iş anahtarı servis sağlayıcıda iptal edip yenisini üretmektir (revoke ve rotate); commit'i silmek ya da git geçmişini yeniden yazmak yetmez, çünkü anahtar klonlarda, fork'larda, CI loglarında ya da önbelleklerde çoktan kopyalanmış olabilir. Ardından anahtarın açıkta kaldığı süre boyunca kullanılıp kullanılmadığı sağlayıcının erişim kayıtlarından incelenir ve anahtarın yetkisi ölçüsünde etkilenmiş olabilecek veriler değerlendirilir; geçmişin yeniden yazılması bundan sonra gelen, ekibi de etkileyen ikincil bir adımdır. Önlem için secret'lar koda ve yapılandırma dosyalarına yazılmaz, çalışma anında bir secret manager'dan alınır; geliştirici makinesinde pre-commit hook'larıyla, repoda ve CI'da secret scanning ile sızıntı commit'ten önce ya da hemen sonra yakalanır. Mümkün olan yerde uzun ömürlü statik anahtarlar yerine kısa ömürlü, dinamik kimlik bilgileri kullanılır; sızan bir değer böylece kısa sürede kendiliğinden işe yaramaz hâle gelir.",
+      "keyConcepts": [
+        {
+          "id": "once-iptal",
+          "label": "Önce anahtar iptal edilir ve yenisi üretilir",
+          "aliases": [
+            "iptal et",
+            "revoke",
+            "rotate",
+            "yenisini üret",
+            "yeni bir anahtar",
+            "rotasyon"
+          ],
+          "anchors": [
+            "İlk iş anahtarı servis sağlayıcıda iptal edip yenisini üretmektir."
+          ]
+        },
+        {
+          "id": "silmek-yetmez",
+          "label": "Commit'i ya da geçmişi silmek yetmez",
+          "aliases": [
+            "silmek yetmez",
+            "silmek yeterli değil",
+            "git geçmiş",
+            "fork",
+            "klon",
+            "çoktan kopyalan"
+          ],
+          "anchors": [
+            "Commit'i silmek ya da git geçmişini yeniden yazmak yetmez; anahtar klonlara ve fork'lara çoktan kopyalanmış olabilir."
+          ]
+        },
+        {
+          "id": "erisim-kayitlari",
+          "label": "Açıkta kaldığı sürede kullanılıp kullanılmadığı incelenir",
+          "aliases": [
+            "erişim kayıt",
+            "erişim log",
+            "audit log",
+            "access log",
+            "kullanılıp kullanılmadığ",
+            "nasıl kullanıldığ"
+          ],
+          "anchors": [
+            "Anahtarın açıkta kaldığı sürede kullanılıp kullanılmadığı sağlayıcının erişim kayıtlarından incelenir."
+          ]
+        },
+        {
+          "id": "secret-scanning",
+          "label": "Pre-commit ve secret scanning ile önleme",
+          "aliases": [
+            "secret scanning",
+            "secret tarama",
+            "pre-commit",
+            "pre commit",
+            "gitleaks",
+            "trufflehog"
+          ],
+          "anchors": [
+            "Pre-commit hook'ları ve repodaki secret scanning sızıntıyı commit'ten önce ya da hemen sonra yakalar."
+          ]
+        },
+        {
+          "id": "kisa-omurlu",
+          "label": "Statik anahtar yerine kısa ömürlü dinamik kimlik bilgisi",
+          "aliases": [
+            "kısa ömürlü",
+            "short-lived",
+            "dinamik kimlik",
+            "dynamic secret",
+            "statik anahtar",
+            "kendiliğinden işe yaramaz"
+          ],
+          "anchors": [
+            "Uzun ömürlü statik anahtarlar yerine kısa ömürlü dinamik kimlik bilgileri kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sızıntıdan sonra git geçmişini yeniden yazmanın ekip için yan etkileri nelerdir?"
+      ],
+      "source": "Kendi derleme — OWASP Secrets Management Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-dependency-scanning",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Secret ve Bağımlılık",
+      "difficulty": 2,
+      "prompt": "Uygulamanın bağımlılıklarındaki güvenlik açıklarını nasıl yönetirsin? SCA, lock dosyası ve SBOM'un bu süreçteki rolü nedir?",
+      "modelAnswer": "Bir uygulama doğrudan eklenen paketlerin yanında onların getirdiği dolaylı (transitive) bağımlılıkları da çalıştırır; açık çoğu zaman hiç bilerek seçilmemiş bu paketlerde çıkar. SCA (Software Composition Analysis) araçları kullanılan paketleri ve sürümlerini CVE ve NVD gibi bilinen açık kaynaklarıyla karşılaştırır; CI'da her derlemede çalışır ve güncelleme isteği açan araçlarla birlikte bulguyu bir düzeltmeye dönüştürür. Lock dosyası, örneğin `package-lock.json`, her paketin tam sürümünü ve bütünlük özetini sabitler; aynı kaynak koddan her seferinde aynı bağımlılık ağacı kurulur, bir paketin yeni ve belki ele geçirilmiş bir sürümü habersizce içeri girmez ve güncelleme incelenen bilinçli bir değişiklik olur. SBOM (Software Bill of Materials), yazılımın içerdiği bütün bileşenlerin ve sürümlerinin makinece okunabilir envanteridir ve CycloneDX ya da SPDX biçiminde üretilir; yeni bir açık duyurulduğunda o bileşenin hangi ürünlerde ve hangi sürümde bulunduğunu hızla cevaplatır. OWASP Top 10:2025 bu alanı Software Supply Chain Failures başlığında toplar ve paketlerin yalnızca resmî kaynaklardan, mümkünse imzalı olarak alınmasını önerir.",
+      "keyConcepts": [
+        {
+          "id": "dolayli",
+          "label": "Açık çoğu zaman dolaylı bağımlılıklarda çıkar",
+          "aliases": [
+            "dolaylı",
+            "transitive",
+            "alt bağımlılık",
+            "bağımlılığın bağımlılığ",
+            "bilerek seçilmemiş",
+            "indirect dependenc"
+          ],
+          "anchors": [
+            "Uygulama doğrudan eklenen paketlerin getirdiği dolaylı bağımlılıkları da çalıştırır; açık çoğu zaman onlarda çıkar."
+          ]
+        },
+        {
+          "id": "bilinen-acik",
+          "label": "SCA paketleri bilinen açık kayıtlarıyla karşılaştırır",
+          "aliases": [
+            "bilinen açık",
+            "known vulnerabilit",
+            "advisory",
+            "dependabot",
+            "renovate",
+            "npm audit"
+          ],
+          "anchors": [
+            "SCA araçları kullanılan paket sürümlerini CVE gibi bilinen açık kayıtlarıyla karşılaştırır."
+          ]
+        },
+        {
+          "id": "tam-surum-ozet",
+          "label": "Lock dosyası tam sürüm ve bütünlük özetini sabitler",
+          "aliases": [
+            "tam sürüm",
+            "tam versiyon",
+            "sürümü sabitle",
+            "versiyonları sabitle",
+            "integrity",
+            "bütünlük özeti"
+          ],
+          "anchors": [
+            "Lock dosyası her paketin tam sürümünü ve bütünlük özetini sabitler; her kurulumda aynı ağaç gelir."
+          ]
+        },
+        {
+          "id": "envanter",
+          "label": "SBOM bileşen envanteridir",
+          "aliases": [
+            "envanter",
+            "inventory",
+            "bileşenlerin listesi",
+            "bileşen listesi",
+            "cyclonedx",
+            "spdx"
+          ],
+          "anchors": [
+            "SBOM yazılımdaki bütün bileşenlerin ve sürümlerinin makinece okunabilir envanteridir."
+          ]
+        },
+        {
+          "id": "resmi-kaynak",
+          "label": "Paketler resmî kaynaktan, mümkünse imzalı alınır",
+          "aliases": [
+            "resmi kaynak",
+            "resmî kaynak",
+            "imzalı paket",
+            "imzalı olarak",
+            "signed package",
+            "supply chain"
+          ],
+          "anchors": [
+            "Paketler yalnızca resmî kaynaklardan ve mümkünse imzalı olarak alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "SCA aracı uygulamanın hiç çağırmadığı bir fonksiyondaki kritik bir açığı raporlarsa önceliği nasıl belirlersin?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 A03 Software Supply Chain Failures; OWASP Vulnerable Dependency Management Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-least-privilege",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Least privilege (en az yetki) ilkesi nedir? Uygulamada nerelerde uygulanır?",
+      "modelAnswer": "Least privilege, her kullanıcının, servisin ve sürecin yalnızca işini yapmak için gereken erişime, mümkünse yalnızca gerektiği süre boyunca sahip olmasıdır. Amaç bir hesap ya da bileşen ele geçirildiğinde verilebilecek zararı, yani etki alanını (blast radius) küçültmektir; tam yetkili bir hesabın sızması bütün sistemi açarken dar yetkili bir hesap yalnızca kendi alanını açar. Uygulamada veritabanı kullanıcısına yalnızca ihtiyaç duyduğu tablolarda gereken işlemler verilir, uygulamanın süreci root olarak çalıştırılmaz, servis hesaplarına ve API token'larına dar scope'lar tanımlanır, yönetici yetkileri günlük kullanılan hesaplardan ayrılır. Yetkiler zamanla birikme eğiliminde olduğu için düzenli olarak gözden geçirilir ve kullanılmayanlar geri alınır.",
+      "keyConcepts": [
+        {
+          "id": "yalnizca-gereken",
+          "label": "Yalnızca işi için gereken erişim",
+          "aliases": [
+            "yalnızca gereken",
+            "sadece gereken",
+            "ihtiyaç duyduğu kadar",
+            "işini yapmak için",
+            "gerektiği kadar",
+            "minimum yetki"
+          ],
+          "anchors": [
+            "Her kullanıcı, servis ve süreç yalnızca işini yapmak için gereken erişime sahip olur."
+          ]
+        },
+        {
+          "id": "etki-alani",
+          "label": "Ele geçirilmede zararı, etki alanını küçültür",
+          "aliases": [
+            "blast radius",
+            "etki alanı",
+            "zararı sınırla",
+            "zararı küçült",
+            "ele geçirilirse",
+            "verilebilecek zarar"
+          ],
+          "anchors": [
+            "Amaç bir hesap ele geçirildiğinde verilebilecek zararı, yani etki alanını küçültmektir."
+          ]
+        },
+        {
+          "id": "uygulama-yerleri",
+          "label": "Veritabanı kullanıcısı, süreç, servis hesabı ve scope",
+          "aliases": [
+            "veritabanı kullanıcı",
+            "db kullanıcı",
+            "servis hesab",
+            "dar scope",
+            "root olarak",
+            "yönetici hesab"
+          ],
+          "anchors": [
+            "Veritabanı kullanıcısına yalnızca gereken işlemler, servis hesaplarına ve token'lara dar scope'lar verilir."
+          ]
+        },
+        {
+          "id": "sure-ve-gozden-gecirme",
+          "label": "Gerektiği süre boyunca ve düzenli gözden geçirme",
+          "aliases": [
+            "gerektiği süre",
+            "geçici yetki",
+            "just-in-time",
+            "just in time",
+            "gözden geçir",
+            "kullanılmayan"
+          ],
+          "anchors": [
+            "Yetkiler gerektiği süre boyunca verilir, düzenli gözden geçirilir ve kullanılmayanlar geri alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tek bir veritabanı kullanıcısıyla hem uygulama sorgularını hem migration'ları çalıştıran bir sistemi bu ilkeye göre nasıl ayırırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Principle of Least Privilege); Saltzer ve Schroeder, The Protection of Information in Computer Systems (1975)"
+    },
+    {
+      "id": "cybersecurity-defense-in-depth",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Defense in depth (derinlemesine savunma) ne demektir? Bir örnekle açıkla.",
+      "modelAnswer": "Defense in depth, güvenliği tek bir kontrole bırakmamak, birbirinden bağımsız birden fazla katman kurmaktır; bir katman aşıldığında ya da yanlış yapılandırıldığında diğerleri varlığı korumaya devam eder. Örneğin SQL injection'a karşı asıl savunma parametreli sorgudur; ama ek olarak girdi doğrulanır, uygulamanın veritabanı hesabının yetkileri daraltılmıştır, hassas kolonlar şifrelenir ve anormal sorgular izlenip alarm üretir, böylece bir sorguda parametre unutulsa bile hasar sınırlı kalır ve fark edilir. Katmanların gerçekten bağımsız olması gerekir; aynı varsayıma dayanan iki kontrol, örneğin ikisi de istemcinin gönderdiği bir değere güveniyorsa, tek bir katman gibi birlikte düşer. Önleyici kontrollerin yanında tespit ve müdahale de bir katmandır, çünkü hiçbir önlemin hatasız olduğu varsayılmaz.",
+      "keyConcepts": [
+        {
+          "id": "tek-kontrol-degil",
+          "label": "Güvenlik tek bir kontrole bırakılmaz",
+          "aliases": [
+            "tek bir kontrol",
+            "tek bir önlem",
+            "tek katman",
+            "tek bir savunma",
+            "single point",
+            "tek noktaya"
+          ],
+          "anchors": [
+            "Defense in depth güvenliği tek bir kontrole bırakmamaktır."
+          ]
+        },
+        {
+          "id": "katman-asilinca",
+          "label": "Bir katman aşılınca diğerleri korumaya devam eder",
+          "aliases": [
+            "birden fazla katman",
+            "bir katman aşıl",
+            "bir katman düş",
+            "diğer katman",
+            "diğerleri koru",
+            "layered"
+          ],
+          "anchors": [
+            "Birden fazla katman kurulur; bir katman aşıldığında diğerleri korumaya devam eder."
+          ]
+        },
+        {
+          "id": "bagimsiz-katman",
+          "label": "Katmanlar bağımsız olmalı, aynı varsayım birlikte düşer",
+          "aliases": [
+            "birbirinden bağımsız",
+            "bağımsız katman",
+            "aynı varsayım",
+            "birlikte düşer",
+            "independent",
+            "farklı türde kontrol"
+          ],
+          "anchors": [
+            "Katmanlar bağımsız olmalıdır; aynı varsayıma dayanan iki kontrol birlikte düşer."
+          ]
+        },
+        {
+          "id": "tespit-mudahale",
+          "label": "Tespit ve müdahale de bir katmandır",
+          "aliases": [
+            "tespit ve müdahale",
+            "detection",
+            "monitoring",
+            "alarm üret",
+            "izlenip",
+            "loglar izlen"
+          ],
+          "anchors": [
+            "Önleyici kontrollerin yanında tespit ve müdahale de bir katmandır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API'nin önüne WAF koymak neden uygulamadaki girdi doğrulamanın yerine geçmez?"
+      ],
+      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Defense in Depth)"
+    },
+    {
+      "id": "cybersecurity-fail-secure",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Fail secure (güvenli başarısızlık) ilkesi nedir? Bir hata durumunda yetki kontrolü nasıl davranmalıdır?",
+      "modelAnswer": "Fail secure, bir bileşen hata verdiğinde ya da beklenmedik bir durumla karşılaştığında sistemin güvenli bir duruma, erişim kararlarında da reddetmeye düşmesidir (fail closed); bir hata hiçbir zaman erişimi açan bir yol olmamalıdır. Tipik açık bir yetki kontrolünün exception'ı yakalayıp yine de izin vermesidir; örneğin yetki servisine ulaşılamadığında, token doğrulanırken beklenmedik bir hata çıktığında ya da eşleşen bir kural bulunamadığında kod kullanıcıyı içeri alıyorsa sistem tam da saldırganın tetikleyebileceği durumda açılır (fail open). Bu yüzden yetki kararları varsayılan olarak reddeden bir yapıda yazılır, izin yalnızca kararın başarıyla verildiği açıkça görüldüğünde verilir ve hata yüzünden yarım kalan işlemler geri alınır. Hata mesajları da güvenli başarısız olmalıdır; kullanıcıya genel bir mesaj ve bir hata kimliği gösterilir, stack trace, SQL ya da sürüm bilgisi gibi ayrıntılar yalnızca sunucu loglarında kalır.",
+      "keyConcepts": [
+        {
+          "id": "reddetmeye-duser",
+          "label": "Hata durumunda sistem reddetmeye düşer (fail closed)",
+          "aliases": [
+            "fail closed",
+            "fail-closed",
+            "reddetmeye düş",
+            "erişimi reddet",
+            "güvenli bir duruma",
+            "güvenli duruma"
+          ],
+          "anchors": [
+            "Bir bileşen hata verdiğinde sistem güvenli bir duruma, erişim kararlarında da reddetmeye düşer."
+          ]
+        },
+        {
+          "id": "fail-open",
+          "label": "Exception'ı yakalayıp izin vermek fail open'dır",
+          "aliases": [
+            "fail open",
+            "fail-open",
+            "exception'ı yakala",
+            "catch blo",
+            "yine de izin",
+            "ulaşılamadığında"
+          ],
+          "anchors": [
+            "Yetki kontrolünün exception'ı yakalayıp yine de izin vermesi sistemi tam hata anında açar."
+          ]
+        },
+        {
+          "id": "varsayilan-red",
+          "label": "İzin yalnızca karar açıkça başarılıysa",
+          "aliases": [
+            "varsayılan olarak redde",
+            "varsayılan davranış redde",
+            "açıkça görüldüğünde",
+            "deny by default",
+            "yarım kalan işlem",
+            "varsayılan red"
+          ],
+          "anchors": [
+            "Yetki kararları varsayılan olarak reddeder; izin yalnızca karar açıkça başarılıysa verilir."
+          ]
+        },
+        {
+          "id": "hata-mesaji",
+          "label": "Kullanıcıya genel mesaj, ayrıntı yalnızca sunucu logunda",
+          "aliases": [
+            "stack trace",
+            "genel bir mesaj",
+            "hata kimliği",
+            "error id",
+            "sunucu loglarında",
+            "iç ayrıntı"
+          ],
+          "anchors": [
+            "Kullanıcıya genel bir mesaj ve hata kimliği gösterilir; stack trace gibi ayrıntılar yalnızca sunucu loglarında kalır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir feature flag servisi yanıt vermediğinde yetki kontrolü henüz tamamlanmamış yeni bir özelliğin açılmasını nasıl önlersin?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 A10 Mishandling of Exceptional Conditions; OWASP Secure Product Design Cheat Sheet; OWASP Error Handling Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-secure-logging",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Güvenlik açısından loglara neler yazılmalı, neler asla yazılmamalıdır?",
+      "modelAnswer": "Parolalar, session id'ler, access ve refresh token'lar, API anahtarları, bağlantı dizeleri, kart bilgileri ve hassas kişisel veriler loga düz hâlde yazılmaz; gerekiyorsa çıkarılır, maskelenir ya da hash'lenir, örneğin bir oturuma ait olayları izlemek için session id'nin yalnızca hash'i tutulur. Buna karşılık başarılı ve başarısız girişler, yetki reddleri ve girdi doğrulama hataları gibi güvenlik olayları zaman, kullanıcı ve kaynak bilgisiyle kaydedilir; brute force, credential stuffing ya da yetki taraması bu kayıtlardan fark edilir ve alarm üretilir. Kullanıcıdan gelen değerler loga yazılmadan önce satır sonu ve ayırıcı karakterlerden arındırılır ya da kodlanır; aksi hâlde girdi sahte bir log satırı ekleyebilir (log injection). Loglar da korunması gereken veridir; erişimleri kısıtlanır ve izlenir, değiştirilip silinmeleri fark edilecek şekilde merkezi ve salt okunur bir yerde tutulur.",
+      "keyConcepts": [
+        {
+          "id": "yazilmaz",
+          "label": "Parola, token, session id ve kişisel veri yazılmaz",
+          "aliases": [
+            "loglanma",
+            "session id",
+            "kişisel veri",
+            "kart bilgi",
+            "bağlantı dize",
+            "hassas veri"
+          ],
+          "anchors": [
+            "Parolalar, token'lar, session id'ler ve hassas kişisel veriler loga düz hâlde yazılmaz."
+          ]
+        },
+        {
+          "id": "maskeleme",
+          "label": "Gerekirse maskelenir ya da hash'lenir",
+          "aliases": [
+            "maskele",
+            "masking",
+            "redact",
+            "hash'i tutulur",
+            "hash'ini tut",
+            "kısmen göster"
+          ],
+          "anchors": [
+            "Gerekiyorsa değer maskelenir ya da yalnızca hash'i tutulur."
+          ]
+        },
+        {
+          "id": "guvenlik-olaylari",
+          "label": "Giriş ve yetki olayları kaydedilir, alarm üretilir",
+          "aliases": [
+            "başarısız giriş",
+            "başarısız login",
+            "failed login",
+            "yetki redd",
+            "yetki hata",
+            "güvenlik olay"
+          ],
+          "anchors": [
+            "Başarılı ve başarısız girişler ile yetki reddleri kaydedilir ve alarm üretir."
+          ]
+        },
+        {
+          "id": "log-injection",
+          "label": "Satır sonu karakterleriyle log injection önlenir",
+          "aliases": [
+            "log injection",
+            "log enjeksiyon",
+            "satır sonu",
+            "crlf",
+            "newline",
+            "sahte bir log"
+          ],
+          "anchors": [
+            "Kullanıcı değerleri satır sonu karakterlerinden arındırılır; aksi hâlde sahte log satırı eklenebilir."
+          ]
+        },
+        {
+          "id": "log-koruma",
+          "label": "Loglar merkezi, salt okunur ve erişimi kısıtlı tutulur",
+          "aliases": [
+            "salt okunur",
+            "read-only",
+            "değiştirilemez",
+            "merkezi",
+            "tamper",
+            "immutable"
+          ],
+          "anchors": [
+            "Loglar merkezi ve salt okunur bir yerde, erişimi kısıtlı tutulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir hata loguna kullanıcının gönderdiği isteğin tamamını eklemek neden hem gizlilik hem güvenlik sorunu yaratabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Logging Cheat Sheet; OWASP Top 10:2025 A09 Security Logging and Alerting Failures"
     }
   ]
 }
