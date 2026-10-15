@@ -194,9 +194,12 @@ describe("buildReelLayout — kenar durumlar", () => {
   });
 
   it("iki konulu kategoride kardeş konu komşulardan birine yerleşir", () => {
-    const pool = poolOf(["cybersecurity", "docker", "react"]);
-    const question = pool.find((q) => q.category === "cybersecurity")!;
-    const sibling = [...topicsOf(pool, "cybersecurity")].find((t) => t !== question.topic);
+    // İki konulu kategori elle kurulur: gerçek içerikte bir kategorinin konu
+    // sayısı soru eklendikçe değişiyor. Diğer kategoriler gerçek içerikten
+    // gelir ki şerit kalabalık olsun.
+    const question = makeQuestion("c1", "cybersecurity", "Kardeş A");
+    const sibling = "Kardeş B";
+    const pool = [question, makeQuestion("c2", "cybersecurity", sibling), ...poolOf(["docker", "react"])];
 
     for (let i = 0; i < 50; i++) {
       const layout = buildReelLayout(pool, pairOf(question), rng);

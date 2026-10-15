@@ -5,133 +5,3572 @@
     {
       "id": "cybersecurity-jwt-xss",
       "category": "cybersecurity",
-      "kind": "definition",
-      "topic": "JWT Saklama (XSS)",
+      "kind": "applied",
+      "topic": "JWT",
       "difficulty": 2,
       "prompt": "React tabanlı bir Single Page Application'da kimlik doğrulama için JWT kullanılıyor. JWT'nin XSS (Cross-Site Scripting) saldırılarıyla çalınmasını önlemek için mimaride token nerede saklanmalıdır ve bu tercihin getirdiği yeni risk nedir?",
-      "modelAnswer": "JWT'yi tarayıcının LocalStorage veya SessionStorage alanlarında saklamak, JavaScript üzerinden erişilebildiği için XSS saldırılarına karşı tamamen savunmasızdır. Sayfaya sızan zararlı bir JS kodu token'ı okuyup saldırganın sunucusuna gönderebilir.\n\nSık atlanan nokta: Çözüm olarak token, backend tarafından HttpOnly ve Secure bayrakları işaretlenmiş bir çerez (cookie) içine yazılmalıdır. HttpOnly bayrağı çerezin tarayıcıdaki JavaScript kodları tarafından okunmasını donanımsal olarak engeller. Ancak token'ı Cookie'ye taşıdığınızda, sistem otomatik olarak gönderilen çerezler yüzünden CSRF (Cross-Site Request Forgery) saldırılarına açık hale gelir. Bu yeni riski kapatmak için SameSite attribute'u kullanılmalı veya Anti-CSRF token mimarisi kurulmalıdır.",
+      "modelAnswer": "Token `localStorage` ya da `sessionStorage`'da tutulursa aynı origin'de çalışan her JavaScript onu okuyabilir; bir XSS açığında enjekte edilen kod token'ı alıp dışarı gönderir ve saldırgan onu kendi makinesinden, süresi dolana kadar kullanır. Yaygın tercih access token'ı yalnızca bellekte, bir JavaScript değişkeninde tutmak, uzun ömürlü refresh token'ı ise sunucunun `HttpOnly` ve `Secure` öznitelikleriyle yazdığı bir cookie'de taşımaktır; `HttpOnly` cookie'yi sayfadaki JavaScript'e kapatır, `Secure` yalnızca HTTPS üzerinden gönderilmesini sağlar, bellekteki access token da sayfa yenilenince kaybolur ve refresh ile yeniden alınır. Bu tercih maruziyeti azaltır ama XSS'i çözmez; enjekte edilen kod uygulamayla aynı yetkiye sahip olduğu için sayfa açıkken kullanıcı adına istek atabilir, RFC 10017'ye göre de hiçbir tarayıcı saklama yöntemi token'ın dışarı sızdırılmasını tamamen engellemez, asıl savunma XSS'i önlemektir. Getirdiği yeni risk CSRF'tir; tarayıcı cookie'yi isteğe kendiliğinden eklediği için başka bir site cookie ile çalışan bir uca kullanıcı adına istek attırabilir, bu yüzey de refresh cookie'si yalnızca yenileme ucuna gönderilip `SameSite=Strict` ya da `Lax` ile yazıldığında küçük kalır.",
       "keyConcepts": [
         {
           "id": "localstorage-xss-risk",
-          "label": "LocalStorage'ın XSS zafiyeti",
+          "label": "localStorage'daki token'ı her script okuyabilir",
           "aliases": [
             "localstorage",
             "sessionstorage",
-            "js erişimi",
-            "javascript",
-            "okunabilir"
+            "her javascript",
+            "javascript okuyabilir",
+            "dışarı gönder",
+            "kendi makinesinden"
           ],
           "anchors": [
-            "Token'ları LocalStorage'da tutmak zararlı JavaScript kodlarının bunlara kolayca erişmesine olanak tanır.",
-            "XSS zafiyeti olan bir sayfada LocalStorage içindeki veriler saldırganlar tarafından rahatlıkla çalınabilir."
+            "localStorage ya da sessionStorage'daki token'ı aynı origin'de çalışan her JavaScript, XSS ile enjekte edilen kod da okuyabilir."
+          ]
+        },
+        {
+          "id": "bellekte-access-token",
+          "label": "Access token yalnızca bellekte",
+          "aliases": [
+            "bellekte tut",
+            "bellekte sakla",
+            "yalnızca bellekte",
+            "in-memory",
+            "memory'de tut",
+            "javascript değişken"
+          ],
+          "anchors": [
+            "Access token yalnızca bellekte, bir JavaScript değişkeninde tutulur; sayfa yenilenince refresh ile yeniden alınır."
           ]
         },
         {
           "id": "httponly-cookie",
-          "label": "HttpOnly Cookie kullanımı",
+          "label": "Refresh token HttpOnly ve Secure bir cookie'de",
           "aliases": [
             "httponly",
-            "çerez",
-            "cookie",
-            "javascript okuyamaz",
-            "gizli"
+            "http-only",
+            "http only",
+            "refresh cookie",
+            "javascript'e kapat",
+            "cookie'de taşı"
           ],
           "anchors": [
-            "Token hırsızlığını engellemek için JWT'ler JavaScript'in okuyamayacağı HttpOnly çerezlerde saklanmalıdır.",
-            "Backend, token'ı HttpOnly flag'i ile bir cookie olarak dönerse istemci tarafındaki kodlar bu çerezi göremez."
+            "Refresh token sunucunun HttpOnly ve Secure öznitelikleriyle yazdığı, JavaScript'in okuyamadığı bir cookie'de taşınır."
           ]
         },
         {
-          "id": "secure-flag",
-          "label": "Secure bayrağı",
-          "aliases": ["secure", "https", "sadece şifreli", "ssl", "ağ dinleme"],
+          "id": "xss-cozulmez",
+          "label": "XSS çözülmez, kod kullanıcı adına istek atabilir",
+          "aliases": [
+            "kullanıcı adına istek",
+            "xss'i çözmez",
+            "aynı yetkiye sahip",
+            "maruziyeti azalt",
+            "tamamen engellemez",
+            "xss'i önlemek"
+          ],
           "anchors": [
-            "Cookie ayarlarında Secure bayrağının açılması, çerezin yalnızca şifrelenmiş HTTPS bağlantıları üzerinden taşınmasını şart koşar.",
-            "Ağ üzerinden token dinlenmesini (Man in the middle) önlemek için Secure cookie kullanmak zorunludur."
+            "Bu tercih XSS'i çözmez; enjekte edilen kod uygulamayla aynı yetkiyle kullanıcı adına istek atabilir."
           ]
         },
         {
           "id": "csrf-tradeoff",
-          "label": "CSRF riski değişimi",
+          "label": "Yeni risk CSRF, SameSite ile sınırlanır",
           "aliases": [
             "csrf",
-            "cross site",
+            "cross-site request forgery",
             "samesite",
-            "anti-csrf",
-            "yeni zafiyet"
+            "kendiliğinden ekle",
+            "otomatik ekle",
+            "csrf token"
           ],
           "anchors": [
-            "HttpOnly cookie kullanıldığında XSS çözülür ancak tarayıcı çerezi her isteğe otomatik eklediği için CSRF zafiyeti doğar.",
-            "Cookie tabanlı mimariye geçildiğinde sistemin Cross-Site Request Forgery (CSRF) saldırılarına karşı ayrıca korunması gerekir."
+            "Cookie isteğe kendiliğinden eklendiği için yeni risk CSRF'tir; SameSite ve yalnızca yenileme ucuna gönderim bu yüzeyi küçültür."
           ]
         }
       ],
       "followUps": [
-        "Aynı etki alanında olmayan (Cross-Origin) farklı bir backend servisine HttpOnly cookie'yi nasıl iletirsin?",
-        "Eğer XSS açığı olan bir sitede HttpOnly kullanılıyorsa, saldırgan token'ı çalamasa bile kullanıcı adına istek atabilir mi?"
+        "Frontend ile API farklı origin'lerdeyse HttpOnly refresh cookie'sini API'ye nasıl iletirsin?",
+        "XSS açığı olan bir sitede HttpOnly kullanılıyorsa saldırgan token'ı çalamasa bile kullanıcı adına neler yapabilir?"
       ],
-      "source": "Banka Güvenlik Mühendisliği Mülakatı, Eylül 2026"
+      "source": "Kendi derleme — OWASP HTML5 Security Cheat Sheet (Local Storage); RFC 10017 (OAuth 2.0 for Browser-Based Applications) §5, §8; MDN: Set-Cookie"
     },
     {
-      "id": "cybersecurity-sql-injection-orm",
+      "id": "cybersecurity-owasp-top10",
       "category": "cybersecurity",
-      "kind": "applied",
-      "topic": "SQL Injection Koruması",
+      "kind": "definition",
+      "topic": "Temeller",
       "difficulty": 1,
-      "prompt": "Giriş formunda kullanıcı adı alanına ' OR '1'='1 yazarak sisteme şifresiz girilmesine neden olan SQL Injection saldırısı kod seviyesinde nasıl oluşur? Bunu önlemek için Parametrik Sorgu (Parameterized Query) veya ORM araçları nasıl bir koruma sağlar?",
-      "modelAnswer": "Zafiyet, dışarıdan gelen kullanıcı girdisinin doğrudan SQL metniyle birleştirilmesiyle (string concatenation) oluşur:\n\n```sql\n-- Kullanıcı girdi olarak \"' OR '1'='1\" gönderdiğinde oluşan nihai sorgu:\nSELECT * FROM Users WHERE Username = '' OR '1'='1' AND Password = '...'\n```\n\nSorgu birleştiğinde 1=1 ifadesi daima doğru (true) döneceği için şifre kontrolü atlanır ve sistem veritabanındaki ilk kayıtla (genelde admin) giriş yapar.\n\nÇözüm olarak Entity Framework gibi ORM'ler veya SqlParameter sınıfları kullanıldığında veritabanı motoruna giden yapı değişir. Girdi, SQL komut metninin bir parçası olarak değil, ayrı bir 'veri paketi' (parametre) olarak iletilir. Veritabanı motoru parametreyi komut mantığının dışında, sadece bir düz metin olarak derlediği için içindeki tırnak veya OR operatörleri SQL sözdizimi olarak çalıştırılamaz; etkisiz hale getirilir (escape).",
+      "prompt": "OWASP Top 10 nedir, ne değildir?",
+      "modelAnswer": "OWASP Top 10, web uygulamalarındaki en kritik güvenlik risklerini kategoriler hâlinde sıralayan bir **farkındalık belgesidir**; geliştiricilere ve ekiplere nereden başlayacaklarını göstermek için yazılır. Liste birkaç yılda bir güncellenir ve kategoriler katkı verilen test verilerinden ve bir topluluk anketinden derlenir; 2025 sürümünde on kategorinin sekizi veriden, ikisi anketten geldi. Her kategori tek bir açığı değil, ortak bir kök nedeni paylaşan zayıflık türlerini (CWE) toplar; bu yüzden geniştir ve olduğu gibi test edilemez. Top 10'u bir uygulamanın güvenli olduğunu kanıtlayan bir kontrol listesi gibi kullanmak bu yüzden yanlıştır; OWASP test edilebilir gereksinimler için **ASVS**'i (Application Security Verification Standard) önerir ve Top 10'u yalnızca asgari bir başlangıç noktası sayar.",
       "keyConcepts": [
         {
-          "id": "string-concatenation-flaw",
-          "label": "String birleştirme hatası",
+          "id": "farkindalik",
+          "label": "En kritik riskleri gösteren farkındalık belgesi",
           "aliases": [
-            "birleştirme",
-            "string concatenation",
-            "inline sql",
-            "doğrudan yazma",
-            "string interpolation"
+            "farkındalık",
+            "awareness",
+            "en kritik",
+            "en yaygın",
+            "en sık görülen",
+            "en önemli risk"
           ],
           "anchors": [
-            "Saldırı, dışarıdan gelen metnin doğrulanmadan mevcut SQL cümlesine doğrudan eklenmesi (birleştirilmesi) yüzünden oluşur.",
-            "Girdinin kod içerisinde string birleştirme operatörleriyle SQL sorgusuna yedirilmesi en temel SQL Injection nedenidir."
+            "OWASP Top 10, web uygulamalarındaki en kritik riskleri gösteren bir farkındalık belgesidir."
           ]
         },
         {
-          "id": "always-true-logic",
-          "label": "Mantıksal manipülasyon",
+          "id": "veri-ve-anket",
+          "label": "Test verisi ve topluluk anketiyle derlenir, periyodik güncellenir",
           "aliases": [
-            "1=1",
-            "daima doğru",
-            "or true",
-            "mantık bozma",
-            "şartı atlama"
+            "anket",
+            "survey",
+            "toplulu",
+            "test verisi",
+            "güncellen",
+            "birkaç yılda"
           ],
           "anchors": [
-            "Saldırgan eklediği OR 1=1 gibi ifadelerle WHERE koşulunun mantığını bozarak daima doğru (true) dönmesini sağlar.",
-            "Şifre kontrolünü devre dışı bırakmak için sorgu mantığını her zaman true üretecek şekilde manipüle ederler."
+            "Kategoriler katkı verilen test verilerinden ve topluluk anketinden derlenir, liste birkaç yılda bir güncellenir."
           ]
         },
         {
-          "id": "data-vs-code-separation",
-          "label": "Veri ve komut ayrımı",
+          "id": "kontrol-listesi-degil",
+          "label": "Kontrol listesi ya da standart değil, asgari başlangıç",
           "aliases": [
-            "parametre",
-            "ayrıştırma",
-            "veri paketi",
-            "komut değil",
-            "sqlparameter"
+            "kontrol listesi değil",
+            "checklist değil",
+            "standart değil",
+            "asgari",
+            "başlangıç noktası",
+            "olduğu gibi test edilemez"
           ],
           "anchors": [
-            "Parametrik sorgular girdiyi çalıştırılabilir bir SQL komutu olarak değil, tamamen ayrı bir veri olarak veritabanına sunar.",
-            "Veritabanı motoru hazırlanan ifadelerde veriyi ve kod bloğunu birbirinden kesin çizgilerle ayırarak işler."
+            "Top 10 bir uygulamanın güvenli olduğunu kanıtlayan bir kontrol listesi değil, asgari bir başlangıç noktasıdır."
+          ]
+        },
+        {
+          "id": "asvs",
+          "label": "Test edilebilir gereksinimler için ASVS",
+          "aliases": [
+            "asvs",
+            "verification standard",
+            "doğrulama standard",
+            "test edilebilir gereksinim",
+            "verifiable"
+          ],
+          "anchors": [
+            "Test edilebilir güvenlik gereksinimleri için OWASP, Application Security Verification Standard'ı (ASVS) önerir."
           ]
         }
       ],
       "followUps": [
-        "Entity Framework Core kullanıyorsan FromSqlRaw metoduyla yazılmış bir sorguda hala SQL Injection zafiyeti yaratmak mümkün müdür?",
-        "Stored Procedure kullanmak SQL Injection'ı her durumda yüzde yüz engeller mi?"
+        "Top 10'daki bir kategoriyi kod incelemesinde nasıl somut kontrollere çevirirsin?"
       ],
-      "source": "Banka Güvenlik Mühendisliği Mülakatı, Eylül 2026"
+      "source": "Kendi derleme — OWASP Top 10:2025 (Introduction); OWASP Top 10:2021 — How to use the OWASP Top 10 as a standard; OWASP ASVS"
+    },
+    {
+      "id": "cybersecurity-broken-access-control",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "Broken access control neden en sık görülen güvenlik risklerinden biridir? Nasıl önlenir?",
+      "modelAnswer": "Erişim kararı her uçta ve her nesnede ayrı ayrı verilmesi gereken bir karardır; tek bir uçta ya da tek bir sorguda unutulan kontrol açık yaratır ve kuralın kendisi iş mantığına bağlı olduğu için otomatik tarayıcılar bu eksikliği çoğu zaman yakalayamaz. Sık görülen biçimleri adresteki numarayı değiştirerek başkasının kaydına ulaşmak, arayüzde gizlenen bir yönetim adresini doğrudan çağırmak ya da yalnızca `GET`'i korunan bir kaynağa `PUT` veya `DELETE` göndermektir; düğmeyi gizlemek bir kontrol değildir, çünkü istek curl ile de gelir. Korunmanın temeli **deny by default**'tur, yani herkese açık olması bilerek seçilmemiş her kaynak reddedilir ve kontrol sunucu tarafında, tek ve yeniden kullanılan bir mekanizmada yapılır. Kayıt sahipliği her sorguda zorlanır, yetki reddleri loglanır ve erişim kuralları otomatik testlerle doğrulanır; kategori OWASP Top 10:2025'te de birinci sıradaki yerini korudu.",
+      "keyConcepts": [
+        {
+          "id": "her-uc-ayri",
+          "label": "Her uç ve nesne için ayrı karar, kolay unutulur",
+          "aliases": [
+            "her uç",
+            "her endpoint",
+            "her nesne",
+            "her istekte",
+            "unutulan kontrol",
+            "kontrolü unut"
+          ],
+          "anchors": [
+            "Erişim kararı her uçta ve her nesnede ayrı verildiği için tek bir yerde unutulan kontrol açık yaratır."
+          ]
+        },
+        {
+          "id": "is-mantigi",
+          "label": "İş mantığına bağlı, otomatik araçlar yakalayamaz",
+          "aliases": [
+            "iş mantığı",
+            "iş kuralı",
+            "business logic",
+            "yakalayamaz",
+            "otomatik araç",
+            "otomatik tarayıcı"
+          ],
+          "anchors": [
+            "Kural iş mantığına bağlı olduğu için otomatik tarayıcılar eksik erişim kontrolünü çoğu zaman yakalayamaz."
+          ]
+        },
+        {
+          "id": "istemcide-gizlemek",
+          "label": "Arayüzde gizlemek kontrol değildir",
+          "aliases": [
+            "düğmeyi gizle",
+            "butonu gizle",
+            "frontend'de",
+            "istemci tarafı",
+            "client-side",
+            "curl"
+          ],
+          "anchors": [
+            "Düğmeyi arayüzde gizlemek bir kontrol değildir, istek doğrudan da gönderilebilir."
+          ]
+        },
+        {
+          "id": "deny-by-default",
+          "label": "Deny by default",
+          "aliases": [
+            "deny by default",
+            "default deny",
+            "varsayılan olarak red",
+            "varsayılan olarak her şeyi",
+            "varsayılan red",
+            "açıkça izin verilme"
+          ],
+          "anchors": [
+            "Herkese açık olması bilerek seçilmemiş her kaynak varsayılan olarak reddedilir."
+          ]
+        },
+        {
+          "id": "sunucuda-tek-yerde",
+          "label": "Kontrol sunucuda, tek bir mekanizmada ve testli",
+          "aliases": [
+            "sunucu tarafında",
+            "server-side",
+            "server side",
+            "merkezi",
+            "tek bir mekanizma",
+            "yetki test"
+          ],
+          "anchors": [
+            "Erişim kontrolü sunucu tarafında tek ve yeniden kullanılan bir mekanizmada yapılır ve testlerle doğrulanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Yetki kontrolünün yeni eklenen bir uçta unutulmadığını kod tabanında nasıl güvenceye alırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 A01 Broken Access Control; OWASP Authorization Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-idor",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "IDOR nedir? Tahmin edilemeyen id'ler kullanmak neden tek başına çözüm değildir?",
+      "modelAnswer": "IDOR (Insecure Direct Object Reference), uygulamanın istekteki bir nesne kimliğini, örneğin adresteki sipariş numarasını, o nesnenin isteği yapan kullanıcıya ait olup olmadığına bakmadan kullanmasıdır; kullanıcı numarayı değiştirerek başkasının kaydını okuyabilir ya da değiştirebilir. Sorun kimliğin görünmesi değil, **nesne düzeyinde yetki kontrolünün** eksik olmasıdır; OWASP API Security Top 10 aynı açığı bu yüzden Broken Object Level Authorization adıyla anar. UUID gibi rastgele kimlikler tahmini zorlaştırır ama kimlikler loglarda, paylaşılan linklerde ve başka yanıtlarda sızabildiği için yalnızca ek bir katmandır, yetkilendirmenin yerine geçmez. Doğru çözüm her erişimde sahipliği ya da yetkiyi sunucuda kontrol etmektir; en sağlam yol sorguyu oturumdaki kullanıcıyla kapsamak, yani kaydı yalnızca id ile değil kullanıcının kimliğiyle birlikte aramaktır.",
+      "keyConcepts": [
+        {
+          "id": "baskasinin-kaydi",
+          "label": "Kimliği değiştirerek başkasının kaydına ulaşmak",
+          "aliases": [
+            "başkasının",
+            "başka bir kullanıcının",
+            "başka kullanıcının",
+            "numarayı değiştir",
+            "id'yi değiştir",
+            "idyi değiştir"
+          ],
+          "anchors": [
+            "Kullanıcı istekteki numarayı değiştirerek başkasının kaydını okuyabilir ya da değiştirebilir."
+          ]
+        },
+        {
+          "id": "nesne-duzeyinde",
+          "label": "Nesne düzeyinde yetki kontrolü eksik",
+          "aliases": [
+            "nesne düzeyinde",
+            "object level",
+            "object-level",
+            "sahipli",
+            "kime ait",
+            "ait olup olmadığ"
+          ],
+          "anchors": [
+            "Sorun, nesnenin isteği yapan kullanıcıya ait olup olmadığının kontrol edilmemesidir."
+          ]
+        },
+        {
+          "id": "uuid-ek-katman",
+          "label": "Rastgele kimlik sızabilir, yalnızca ek katman",
+          "aliases": [
+            "uuid",
+            "rastgele kimlik",
+            "rastgele id",
+            "sızabil",
+            "ek bir katman",
+            "defense in depth"
+          ],
+          "anchors": [
+            "UUID gibi rastgele kimlikler sızabildiği için yalnızca ek bir katmandır, yetkilendirmenin yerini tutmaz."
+          ]
+        },
+        {
+          "id": "sorguyu-kapsamla",
+          "label": "Sorgu oturumdaki kullanıcıyla kapsanır",
+          "aliases": [
+            "oturumdaki kullanıcı",
+            "kullanıcının kimliğiyle",
+            "user_id",
+            "owner_id",
+            "kullanıcıya göre filtre",
+            "her erişimde"
+          ],
+          "anchors": [
+            "Kayıt yalnızca id ile değil, oturumdaki kullanıcının kimliğiyle birlikte aranır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir dosya indirme ucunda IDOR riskini azaltmak için isteği nasıl tasarlarsın?"
+      ],
+      "source": "Kendi derleme — OWASP Insecure Direct Object Reference Prevention Cheat Sheet; OWASP API Security Top 10 2023 (API1 Broken Object Level Authorization)"
+    },
+    {
+      "id": "cybersecurity-mass-assignment",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "Mass assignment açığı nedir, nasıl önlenir?",
+      "modelAnswer": "Framework'ler istekteki alanları otomatik olarak bir nesneye bağlayabilir; istek gövdesi doğrudan entity'ye bağlanırsa kullanıcı formda hiç olmayan bir alanı, örneğin `isAdmin`, rol ya da fiyat değerini de gönderip değiştirebilir. Spring MVC ve ASP.NET MVC'de bu davranışa **autobinding** de denir; OWASP API Security Top 10 aynı sorunu, yanıtta gereğinden fazla alan döndürmekle birlikte Broken Object Property Level Authorization başlığında toplar. Temel çözüm girdiyi yalnızca kullanıcının değiştirebileceği alanları içeren ayrı bir istek DTO'suna bağlamak ya da bağlanabilecek alanları açıkça bir allowlist'le sınırlamaktır; hassas alanları tek tek yasaklayan bir denylist, entity'ye yeni bir alan eklendiğinde sessizce eskir. DTO alan düzeyindeki yazmayı sınırlar, ama kullanıcının o nesneyi değiştirmeye yetkili olup olmadığı yine ayrıca kontrol edilir.",
+      "keyConcepts": [
+        {
+          "id": "otomatik-baglama",
+          "label": "İstek gövdesi doğrudan entity'ye bağlanır",
+          "aliases": [
+            "autobinding",
+            "auto binding",
+            "bind edil",
+            "entity'ye bağla",
+            "doğrudan bağla",
+            "binding"
+          ],
+          "anchors": [
+            "İstek gövdesi doğrudan entity'ye bağlandığında kullanıcı beklenmeyen alanları da gönderebilir."
+          ]
+        },
+        {
+          "id": "hassas-alan",
+          "label": "Formda olmayan hassas bir alan değiştirilir",
+          "aliases": [
+            "isadmin",
+            "is_admin",
+            "admin",
+            "fiyat",
+            "price",
+            "rol değeri"
+          ],
+          "anchors": [
+            "Kullanıcı formda hiç olmayan isAdmin, rol ya da fiyat gibi bir alanı da gönderip değiştirebilir."
+          ]
+        },
+        {
+          "id": "istek-dto",
+          "label": "Yalnızca düzenlenebilir alanları içeren istek DTO'su",
+          "aliases": [
+            "data transfer object",
+            "dto'su",
+            "dto kullan",
+            "dto ile",
+            "dto'ya",
+            "istek nesnesi"
+          ],
+          "anchors": [
+            "Girdi yalnızca kullanıcının değiştirebileceği alanları içeren ayrı bir istek DTO'suna bağlanır."
+          ]
+        },
+        {
+          "id": "alan-allowlist",
+          "label": "Bağlanabilecek alanlar allowlist ile sınırlanır, denylist eskir",
+          "aliases": [
+            "allowlist",
+            "allow-list",
+            "whitelist",
+            "setallowedfields",
+            "izin verilen alan",
+            "denylist"
+          ],
+          "anchors": [
+            "Bağlanabilecek alanlar açıkça bir allowlist ile sınırlanır; hassas alanları yasaklayan denylist kolayca eskir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Aynı DTO'yu hem oluşturma hem güncelleme isteğinde kullanmak neden sorun çıkarabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Mass Assignment Cheat Sheet; OWASP API Security Top 10 2023 (API3 Broken Object Property Level Authorization)"
+    },
+    {
+      "id": "cybersecurity-path-traversal",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Erişim Kontrolü",
+      "difficulty": 2,
+      "prompt": "Path traversal açığı nasıl oluşur, nasıl önlenir?",
+      "modelAnswer": "Path traversal, uygulamanın kullanıcıdan gelen bir dosya adını ya da yolunu doğrudan dosya sistemi yoluna eklemesiyle oluşur; girdide üst dizine çıkan yol parçaları ya da mutlak bir yol varsa uygulama izin verilen klasörün dışındaki dosyaları, örneğin yapılandırma dosyalarını ya da anahtarları okuyabilir veya üzerine yazabilir. En güvenli çözüm kullanıcının hiç yol vermemesidir; kullanıcı bir id gönderir, sunucu bu id'yi kendi tuttuğu dosya adıyla eşler. Yol gerçekten girdiden kurulmak zorundaysa sıra önemlidir; önce girdinin URL kodlaması çözülür (decode), çünkü yol parçaları kodlanmış hâlde de gelebilir, sonra yol kanonik hâle getirilir, yani `..` parçaları ve sembolik linkler çözülür, en son da sonucun izin verilen kök dizinin içinde kalıp kalmadığı kontrol edilir. Uygulamanın süreci de yalnızca gereken klasörlere erişebilecek yetkiyle çalıştırılır.",
+      "keyConcepts": [
+        {
+          "id": "klasor-disi",
+          "label": "Girdiyle kurulan yol izin verilen klasörün dışına çıkar",
+          "aliases": [
+            "üst dizin",
+            "../",
+            "klasörün dışı",
+            "dizinin dışı",
+            "dışındaki dosya",
+            "parent directory"
+          ],
+          "anchors": [
+            "Girdideki üst dizine çıkan parçalar uygulamayı izin verilen klasörün dışındaki dosyalara götürür."
+          ]
+        },
+        {
+          "id": "kullanici-yol-vermez",
+          "label": "Kullanıcı yol değil id verir, sunucu eşler",
+          "aliases": [
+            "id gönder",
+            "id ile eşle",
+            "yerine id",
+            "dolaylı referans",
+            "indirect reference",
+            "dosya adını sunucu"
+          ],
+          "anchors": [
+            "Kullanıcı yalnızca bir id gönderir, sunucu bunu kendi tuttuğu dosya adıyla eşler."
+          ]
+        },
+        {
+          "id": "kanonik-kok",
+          "label": "Kanonik hâle getirip kök dizin içinde mi kontrol",
+          "aliases": [
+            "kanonik",
+            "canonical",
+            "normalize",
+            "realpath",
+            "kök dizin",
+            "startswith"
+          ],
+          "anchors": [
+            "Yol kanonik hâle getirilir ve sonucun izin verilen kök dizinin içinde kalıp kalmadığı kontrol edilir."
+          ]
+        },
+        {
+          "id": "decode-sonra",
+          "label": "Önce decode, sonra kanonikleştirme ve kök kontrolü",
+          "aliases": [
+            "decode",
+            "kod çözme",
+            "url kodla",
+            "url-encod",
+            "url encod",
+            "kodlanmış"
+          ],
+          "anchors": [
+            "Sıra önce URL kodlamasını çözmek, sonra yolu kanonik hâle getirmek, en son kök dizin kontrolü yapmaktır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının yüklediği bir ZIP arşivi açılırken path traversal nasıl ortaya çıkabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Path Traversal (Attacks); OWASP Input Validation Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-allowlist-validation",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 1,
+      "prompt": "Girdi doğrulamada allowlist yaklaşımı neden denylist'ten daha güvenlidir?",
+      "modelAnswer": "Allowlist neyin kabul edileceğini tanımlar ve geri kalan her şeyi reddeder; örneğin bir posta kodu için yalnızca beş rakam, bir sıralama alanı için yalnızca bilinen kolon adları kabul edilir. Denylist ise tehlikeli bilinen karakterleri ya da kalıpları yakalamaya çalışır; aynı girdi farklı kodlamalar, büyük-küçük harf varyantları ya da beklenmedik bir yazımla gelebildiği için liste hiçbir zaman tam olmaz, üstelik kesme işareti içeren bir soyadı gibi meşru girdiyi de reddedebilir. Doğrulama sunucu tarafında yapılır, istemcideki kontrol kolayca atlandığı için yalnızca kullanıcıya hızlı geri bildirim içindir; biçimin yanında anlamın da doğrulanması gerekir, örneğin bitiş tarihinin başlangıçtan sonra olması. Girdi doğrulama injection ve XSS'e karşı asıl savunma değildir; SQL için parametreli sorgu, HTML için bağlama uygun çıktı kodlaması gerekir, doğrulama bunların önüne konan ek bir katmandır.",
+      "keyConcepts": [
+        {
+          "id": "kabul-edileni-tanimlar",
+          "label": "Kabul edileni tanımlar, gerisini reddeder",
+          "aliases": [
+            "kabul edile",
+            "sadece izin verilen",
+            "yalnızca izin verilen",
+            "beklenen biçim",
+            "gerisini redde",
+            "geri kalanı redde"
+          ],
+          "anchors": [
+            "Allowlist neyin kabul edileceğini tanımlar ve geri kalan her şeyi reddeder."
+          ]
+        },
+        {
+          "id": "liste-tam-olmaz",
+          "label": "Denylist varyantlarla aşılır, hiçbir zaman tam olmaz",
+          "aliases": [
+            "farklı kodlama",
+            "varyant",
+            "atlatıl",
+            "bypass",
+            "hiçbir zaman tam",
+            "her kötü girdiyi"
+          ],
+          "anchors": [
+            "Aynı girdi farklı kodlama ve varyantlarla gelebildiği için denylist hiçbir zaman tam olmaz."
+          ]
+        },
+        {
+          "id": "sunucu-tarafinda",
+          "label": "Doğrulama sunucuda yapılır, istemci kontrolü atlanır",
+          "aliases": [
+            "sunucu tarafında",
+            "server-side",
+            "server side",
+            "backend'de",
+            "backendde",
+            "istemcideki kontrol"
+          ],
+          "anchors": [
+            "İstemcideki kontrol kolayca atlandığı için doğrulama sunucu tarafında yapılır."
+          ]
+        },
+        {
+          "id": "asil-savunma-degil",
+          "label": "Injection ve XSS'e karşı asıl savunma değil",
+          "aliases": [
+            "parametreli sorgu",
+            "prepared statement",
+            "output encoding",
+            "çıktı kodlama",
+            "asıl savunma değil",
+            "ek bir katman"
+          ],
+          "anchors": [
+            "Injection için parametreli sorgu, XSS için çıktı kodlaması gerekir; girdi doğrulama ek bir katmandır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının serbest metin girdiği bir yorum alanında allowlist nasıl uygulanır?"
+      ],
+      "source": "Kendi derleme — OWASP Input Validation Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-file-upload",
+      "category": "cybersecurity",
+      "kind": "applied",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 2,
+      "prompt": "Kullanıcıların dosya yükleyebildiği bir özellik nasıl güvenli hâle getirilir?",
+      "modelAnswer": "Dosyanın adına, uzantısına ve istemcinin gönderdiği `Content-Type` başlığına güvenilmez, çünkü üçü de kullanıcının kontrolündedir; izin verilen uzantılar bir allowlist'le sınırlanır ve dosya türü içeriğin kendisinden, örneğin dosya imzasından (magic bytes) doğrulanır. Dosya kullanıcının verdiği adla değil uygulamanın ürettiği rastgele bir adla, web kök dizininin dışında ve mümkünse ayrı bir depolama alanında ya da alan adında saklanır; böylece yüklenen bir betik sunucuda çalıştırılamaz, yüklenen bir HTML dosyası da uygulamanın origin'inde açılamaz. Boyut için, arşivlerde açılmış hâlin boyutu için de sınır konur ve dosyalar antivirüs taramasından geçirilir; görseller yeniden kodlanarak içlerindeki metadata ve gizlenmiş içerik temizlenebilir. Yükleme ve indirme uçları da diğer uçlar gibi yetki kontrolünden geçer, bir kullanıcı başkasının dosyasına adresini bilerek ulaşamamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "uzantiya-guvenme",
+          "label": "Ada, uzantıya ve Content-Type'a güvenilmez",
+          "aliases": [
+            "dosya uzantı",
+            "uzantısına",
+            "uzantıya güven",
+            "extension",
+            "content-type",
+            "mime"
+          ],
+          "anchors": [
+            "Dosyanın adı, uzantısı ve Content-Type başlığı kullanıcının kontrolünde olduğu için bunlara güvenilmez."
+          ]
+        },
+        {
+          "id": "icerikten-tur",
+          "label": "Tür içerikten, dosya imzasından doğrulanır",
+          "aliases": [
+            "magic byte",
+            "magic number",
+            "dosya imza",
+            "file signature",
+            "içeriğine bak",
+            "içeriğinden"
+          ],
+          "anchors": [
+            "Dosya türü içeriğin kendisinden, örneğin magic bytes ile dosya imzasından doğrulanır."
+          ]
+        },
+        {
+          "id": "rastgele-ad",
+          "label": "Uygulamanın ürettiği rastgele bir adla saklanır",
+          "aliases": [
+            "rastgele ad",
+            "rastgele bir ad",
+            "rastgele isim",
+            "rastgele bir isim",
+            "yeniden adlandır",
+            "rename"
+          ],
+          "anchors": [
+            "Dosya kullanıcının verdiği adla değil, uygulamanın ürettiği rastgele bir adla saklanır."
+          ]
+        },
+        {
+          "id": "web-koku-disi",
+          "label": "Web kök dizininin dışında, ayrı alanda saklanır",
+          "aliases": [
+            "web kök",
+            "webroot",
+            "web root",
+            "ayrı alan adı",
+            "ayrı bir depolama",
+            "object storage"
+          ],
+          "anchors": [
+            "Dosyalar web kök dizininin dışında, mümkünse ayrı bir depolama alanında ya da alan adında saklanır."
+          ]
+        },
+        {
+          "id": "boyut-tarama",
+          "label": "Boyut sınırı ve zararlı yazılım taraması",
+          "aliases": [
+            "boyut sınır",
+            "dosya boyutu",
+            "size limit",
+            "antivir",
+            "virüs tara",
+            "malware"
+          ],
+          "anchors": [
+            "Dosya boyutuna sınır konur ve dosyalar zararlı yazılım taramasından geçirilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcıların yüklediği görselleri uygulamanın kendi alan adından sunmak neden risklidir?"
+      ],
+      "source": "Kendi derleme — OWASP File Upload Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-open-redirect",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 2,
+      "prompt": "Open redirect nedir, neden önemsenmelidir?",
+      "modelAnswer": "Open redirect, uygulamanın kullanıcıyı bir parametrede gelen adrese, örneğin girişten sonra dönülecek sayfaya, hedefi doğrulamadan yönlendirmesidir; saldırgan uygulamanın kendi alan adıyla başlayan ama kullanıcıyı herhangi bir siteye götüren bir link üretebilir. Link güvenilen bir alan adıyla başladığı için kullanıcı da e-posta filtreleri de ona güvenir; açık bu yüzden en çok phishing'de, kullanıcıyı sahte bir giriş sayfasına taşımak için kullanılır. Daha ciddi sonucu başka açıklarla birleştiğinde ortaya çıkar; OAuth'ta yönlendirme adresi kayıtlı alan adının altındaki herhangi bir yola izin veriyorsa, o alandaki bir open redirect authorization code'un ya da token'ın saldırganın sitesine taşınmasına yol açabilir. Önlem hedefi kullanıcıdan almamak ya da yalnızca uygulama içi göreli yollara ve bir allowlist'teki adreslere izin vermektir; en sağlamı kullanıcıya adres yerine sunucunun kendi tablosunda karşılığını bulduğu bir anahtar göndermektir.",
+      "keyConcepts": [
+        {
+          "id": "dogrulanmamis-hedef",
+          "label": "Parametredeki hedef doğrulanmadan yönlendirilir",
+          "aliases": [
+            "hedefi doğrulamadan",
+            "kontrol etmeden yönlendir",
+            "doğrulamadan yönlendir",
+            "redirect parametre",
+            "returnurl",
+            "herhangi bir siteye"
+          ],
+          "anchors": [
+            "Uygulama kullanıcıyı parametrede gelen adrese hedefi doğrulamadan yönlendirir."
+          ]
+        },
+        {
+          "id": "phishing",
+          "label": "Güvenilen alan adıyla phishing",
+          "aliases": [
+            "phishing",
+            "oltalama",
+            "sahte giriş",
+            "sahte site",
+            "sahte bir",
+            "güvenilen alan"
+          ],
+          "anchors": [
+            "Link güvenilen alan adıyla başladığı için açık kullanıcıyı sahte bir giriş sayfasına taşımak için kullanılır."
+          ]
+        },
+        {
+          "id": "oauth-sizinti",
+          "label": "OAuth'ta kod ya da token sızıntısına zincirlenir",
+          "aliases": [
+            "oauth",
+            "authorization code",
+            "redirect_uri",
+            "redirect uri",
+            "token'ın saldırgan",
+            "kodun sız"
+          ],
+          "anchors": [
+            "OAuth'ta open redirect authorization code'un ya da token'ın saldırganın sitesine taşınmasına yol açabilir."
+          ]
+        },
+        {
+          "id": "goreli-allowlist",
+          "label": "Göreli yol, allowlist ya da anahtar eşleme",
+          "aliases": [
+            "göreli yol",
+            "relative path",
+            "relative url",
+            "allowlist",
+            "whitelist",
+            "izin verilen adres"
+          ],
+          "anchors": [
+            "Yalnızca uygulama içi göreli yollara ve bir allowlist'teki adreslere izin verilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Girişten sonra kullanıcıyı geldiği sayfaya döndürmek için göreli bir yol kabul ederken nelere dikkat edersin?"
+      ],
+      "source": "Kendi derleme — OWASP Unvalidated Redirects and Forwards Cheat Sheet; RFC 9700 §4.11 (Open Redirection)"
+    },
+    {
+      "id": "cybersecurity-ssrf",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Girdi Doğrulama",
+      "difficulty": 3,
+      "prompt": "SSRF (Server-Side Request Forgery) nedir? Neden tehlikelidir ve nasıl önlenir?",
+      "modelAnswer": "SSRF, uygulamanın kullanıcının verdiği bir adrese, örneğin bir webhook adresine ya da içeriği çekilip gösterilecek bir linke, sunucunun kendisinden istek atmasıyla oluşur; istek sunucunun ağ konumundan çıktığı için dışarıdan erişilemeyen iç servislere, yönetim panellerine ya da `localhost`'a ulaşabilir. Bulut ortamlarında en bilinen hedef, sunucuya geçici kimlik bilgileri veren instance metadata servisidir; tek bir SSRF bu yüzden bütün bulut hesabına yayılabilen bir kimlik bilgisi sızıntısına dönüşebilir. Önlemin temeli hedefleri bir allowlist'le sınırlamaktır; alan adının yanında çözümlenen IP adresi de iç ve özel ağ aralıklarına karşı kontrol edilir ve bağlantı doğrulanan IP'ye kurulur, çünkü doğrulama ile bağlantı arasında DNS yanıtı değişebilir. HTTP istemcisinde yönlendirme takibi kapatılır ve ağ katmanında uygulamanın çıkış trafiği yalnızca gereken hedeflerle sınırlanır; SSRF, OWASP Top 10:2025'te ayrı bir kategori olmaktan çıkıp Broken Access Control'ün altına alındı.",
+      "keyConcepts": [
+        {
+          "id": "sunucudan-istek",
+          "label": "Sunucu kullanıcının verdiği adrese istek atar",
+          "aliases": [
+            "verdiği adres",
+            "verdiği url",
+            "belirlediği",
+            "webhook",
+            "sunucu adına",
+            "sunucunun kendisi"
+          ],
+          "anchors": [
+            "SSRF'te sunucu, kullanıcının verdiği bir adrese kendi ağ konumundan istek atar."
+          ]
+        },
+        {
+          "id": "ic-ag",
+          "label": "Dışarıdan erişilemeyen iç servislere ulaşır",
+          "aliases": [
+            "iç ağ",
+            "iç servis",
+            "internal",
+            "localhost",
+            "127.0.0.1",
+            "intranet"
+          ],
+          "anchors": [
+            "İstek sunucudan çıktığı için dışarıdan erişilemeyen iç servislere ve localhost'a ulaşabilir."
+          ]
+        },
+        {
+          "id": "metadata",
+          "label": "Bulut metadata servisi ve geçici kimlik bilgileri",
+          "aliases": [
+            "metadata",
+            "169.254.169.254",
+            "imds",
+            "bulut",
+            "cloud",
+            "geçici kimlik bilgi"
+          ],
+          "anchors": [
+            "Bulutta en bilinen hedef, geçici kimlik bilgileri veren instance metadata servisidir."
+          ]
+        },
+        {
+          "id": "allowlist-ip",
+          "label": "Hedef allowlist'i ve çözümlenen IP kontrolü",
+          "aliases": [
+            "allowlist",
+            "whitelist",
+            "çözümlenen ip",
+            "özel ip",
+            "private ip",
+            "dns rebinding"
+          ],
+          "anchors": [
+            "Hedefler allowlist ile sınırlanır, çözümlenen IP adresi de özel ağ aralıklarına karşı kontrol edilir."
+          ]
+        },
+        {
+          "id": "yonlendirme-cikis",
+          "label": "Yönlendirme takibi kapalı, çıkış trafiği sınırlı",
+          "aliases": [
+            "yönlendirme takib",
+            "redirect takib",
+            "redirect'leri takip",
+            "follow redirect",
+            "egress",
+            "çıkış trafiği"
+          ],
+          "anchors": [
+            "HTTP istemcisinde yönlendirme takibi kapatılır, ağ katmanında çıkış trafiği sınırlanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının verdiği bir adresten görsel indiren bir özellikte DNS rebinding riskini nasıl kapatırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Server-Side Request Forgery Prevention Cheat Sheet; OWASP Top 10:2025 A01 Broken Access Control"
+    },
+    {
+      "id": "cybersecurity-command-injection",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 2,
+      "prompt": "Command injection nasıl oluşur, nasıl önlenir?",
+      "modelAnswer": "Command injection, uygulamanın kullanıcıdan gelen bir değeri işletim sistemi komutunun metnine ekleyip bu metni bir shell'e çalıştırtmasıyla oluşur; shell girdideki komut ayırıcıları ve özel karakterleri yorumladığı için girdi yeni bir komut başlatabilir. En iyi önlem işletim sistemi komutunu hiç çağırmamaktır; dosya kopyalamak, arşiv açmak ya da görsel dönüştürmek için dilin ya da bir kütüphanenin kendi API'si kullanılır. Komut gerçekten gerekiyorsa shell'i aradan çıkaran yapılandırılmış bir API ile, örneğin Java'da `ProcessBuilder`'a komut ve argümanlar ayrı liste elemanları olarak verilerek çalıştırılır; böylece girdi yalnızca bir argüman olarak kalır. Bu da tek başına yetmez, çünkü bir argüman komutun bir seçeneği gibi yorumlanabilir; komut sabit tutulur, argümanlar allowlist ile doğrulanır ve süreç olabildiğince az yetkiyle çalıştırılır.",
+      "keyConcepts": [
+        {
+          "id": "shell-yorumlar",
+          "label": "Girdi shell'e verilen komut metnine eklenir",
+          "aliases": [
+            "shell",
+            "komut satırı",
+            "komut ayırıcı",
+            "özel karakter",
+            "noktalı virgül",
+            "sistem komutuna ekle"
+          ],
+          "anchors": [
+            "Girdi bir shell'e verilen komut metnine eklendiğinde shell özel karakterleri yorumlar ve yeni komut başlayabilir."
+          ]
+        },
+        {
+          "id": "kutuphane-api",
+          "label": "Mümkünse komut yerine dilin ya da kütüphanenin API'si",
+          "aliases": [
+            "kütüphane",
+            "library",
+            "dilin kendi",
+            "kendi api",
+            "komut çağırma",
+            "komutu çağırma"
+          ],
+          "anchors": [
+            "En iyi önlem işletim sistemi komutunu çağırmak yerine dilin ya da bir kütüphanenin API'sini kullanmaktır."
+          ]
+        },
+        {
+          "id": "arguman-listesi",
+          "label": "Shell'siz, argümanlar ayrı liste elemanı",
+          "aliases": [
+            "processbuilder",
+            "argüman listesi",
+            "argümanları ayrı",
+            "ayrı argüman",
+            "ayrı liste",
+            "shell=false"
+          ],
+          "anchors": [
+            "Komut ve argümanlar shell'siz çalışan bir API'ye ayrı liste elemanları olarak verilir."
+          ]
+        },
+        {
+          "id": "allowlist-az-yetki",
+          "label": "Argüman allowlist'i ve az yetkili süreç",
+          "aliases": [
+            "allowlist",
+            "whitelist",
+            "izin verilen değer",
+            "az yetki",
+            "least privilege",
+            "en az yetki"
+          ],
+          "anchors": [
+            "Argümanlar allowlist ile doğrulanır ve süreç olabildiğince az yetkiyle çalıştırılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Girdiyi kaçış karakterleriyle temizlemek neden argüman listesi kullanmaktan daha zayıf bir savunmadır?"
+      ],
+      "source": "Kendi derleme — OWASP OS Command Injection Defense Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-orm-injection",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 2,
+      "prompt": "ORM kullanan bir uygulama SQL injection'dan tamamen korunmuş olur mu? Hangi durumlarda risk devam eder?",
+      "modelAnswer": "ORM sorguyu kendisi ürettiği ve değerleri parametre olarak bağladığı sürece injection'a karşı korur; yani koruma ORM'in kendisinden değil parametreleştirmeden gelir. Risk, geliştirici ORM'in kaçış kapılarını kullandığında geri döner; native SQL sorgusu ya da JPQL/HQL sorgusu string birleştirmeyle kurulduğunda, EF Core'da `FromSqlRaw`'a kullanıcı girdisi eklendiğinde ya da bir sorgu kurucuya ham SQL parçası verildiğinde girdi yine sorgunun yapısına karışır. Bu sorgularda da named ya da positional parametre kullanılır; EF Core'da interpolasyonu parametreye çeviren `FromSql` gibi API'ler tercih edilir. Kolon adı, tablo adı ve `ORDER BY` yönü gibi şema parçaları ise parametre olamaz; bunlar kullanıcıdan geliyorsa izin verilen değerler arasından seçilir.",
+      "keyConcepts": [
+        {
+          "id": "parametrelestirme",
+          "label": "Koruma ORM'den değil parametreleştirmeden gelir",
+          "aliases": [
+            "parametreleştir",
+            "parametre olarak bağla",
+            "parametre binding",
+            "bind parameter",
+            "parameterized",
+            "prepared statement"
+          ],
+          "anchors": [
+            "ORM ancak değerleri parametre olarak bağladığı sürece korur; koruma parametreleştirmeden gelir."
+          ]
+        },
+        {
+          "id": "native-raw",
+          "label": "Native ya da raw SQL kaçış kapıları",
+          "aliases": [
+            "native query",
+            "native sql",
+            "nativequery",
+            "ham sql",
+            "raw sql",
+            "fromsqlraw"
+          ],
+          "anchors": [
+            "Native ya da raw SQL sorgusuna kullanıcı girdisi eklendiğinde injection riski geri döner."
+          ]
+        },
+        {
+          "id": "jpql-birlestirme",
+          "label": "JPQL/HQL sorgusunun string birleştirmeyle kurulması",
+          "aliases": [
+            "jpql",
+            "hql sorgu",
+            "hql injection",
+            "string birleştir",
+            "string concat",
+            "concatenat"
+          ],
+          "anchors": [
+            "JPQL ya da HQL sorgusu string birleştirmeyle kurulursa ORM kullanmak injection'ı önlemez."
+          ]
+        },
+        {
+          "id": "sema-parcalari",
+          "label": "Kolon adı ve sıralama gibi şema parçaları parametre olamaz",
+          "aliases": [
+            "order by",
+            "kolon adı",
+            "column name",
+            "tablo adı",
+            "sıralama alanı",
+            "şema parça"
+          ],
+          "anchors": [
+            "Kolon adı, tablo adı ve ORDER BY yönü parametre olamaz; izin verilen değerlerden seçilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spring Data JPA'da `@Query` ile yazılmış bir sorguda kullanıcıdan gelen sıralama alanını güvenli biçimde nasıl uygularsın?"
+      ],
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP Query Parameterization Cheat Sheet; Microsoft Learn: EF Core SQL Queries"
+    },
+    {
+      "id": "cybersecurity-second-order-sqli",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 3,
+      "prompt": "Second-order SQL injection nedir? Neden yalnızca kullanıcı girdisinin alındığı yerde parametre kullanmak yetmez?",
+      "modelAnswer": "Second-order SQL injection'da zararlı değer ilk istekte parametreli bir sorguyla güvenle veritabanına yazılır ve o an hiçbir şey olmaz; açık, aynı değer daha sonra başka bir işlemde, örneğin bir raporda, toplu bir işte ya da parola değiştirme akışında veritabanından okunup bir sorgu metnine birleştirildiğinde tetiklenir. Ekipler veritabanından gelen değeri çoğu zaman kendi verileri saydıkları için güvenilir kabul eder; oysa değer hâlâ kullanıcıdan gelmiştir ve depolanmış olması onu güvenilir yapmaz. İlk adımdaki doğrulama ya da kaçış bu yüzden ikinci adımı korumaz; parametreleştirme değerin nereden geldiğine bakılmadan her sorguda uygulanır. Aynı tuzak stored procedure'lerde de görülür; procedure dışarıdan parametre alsa bile içeride bu değerle dinamik SQL metni kurup çalıştırıyorsa injection procedure'ün içinde gerçekleşir.",
+      "keyConcepts": [
+        {
+          "id": "once-saklanir",
+          "label": "Değer önce güvenle saklanır, sonra başka bir sorguda kullanılır",
+          "aliases": [
+            "veritabanına yazılır",
+            "veritabanına kaydedil",
+            "depolan",
+            "sonraki bir sorgu",
+            "başka bir sorguda",
+            "başka bir işlemde"
+          ],
+          "anchors": [
+            "Zararlı değer önce güvenle saklanır, açık sonra başka bir sorguda birleştirildiğinde tetiklenir."
+          ]
+        },
+        {
+          "id": "db-verisi-guvenilmez",
+          "label": "Veritabanından gelen değer de güvenilir değildir",
+          "aliases": [
+            "veritabanından gelen",
+            "veritabanından okun",
+            "güvenilir kabul",
+            "güven sınırı",
+            "trust boundary",
+            "kendi veri"
+          ],
+          "anchors": [
+            "Veritabanından okunan değer hâlâ kullanıcıdan gelmiştir; depolanmış olması onu güvenilir yapmaz."
+          ]
+        },
+        {
+          "id": "her-sorguda",
+          "label": "Parametreleştirme kaynağa bakmadan her sorguda",
+          "aliases": [
+            "her sorguda",
+            "her yerde parametre",
+            "her zaman parametre",
+            "nereden geldiğine bakılmadan",
+            "nereden geldiğine bakmadan",
+            "istisnasız"
+          ],
+          "anchors": [
+            "Parametreleştirme değerin nereden geldiğine bakılmadan her sorguda uygulanır."
+          ]
+        },
+        {
+          "id": "procedure-dinamik",
+          "label": "Stored procedure içindeki dinamik SQL",
+          "aliases": [
+            "stored procedure",
+            "saklı yordam",
+            "dinamik sql",
+            "dynamic sql",
+            "sp_executesql",
+            "execute immediate"
+          ],
+          "anchors": [
+            "Procedure parametre alsa bile içeride dinamik SQL kuruyorsa injection orada gerçekleşir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir kod incelemesinde second-order injection riskini taşıyan sorguları nasıl bulursun?"
+      ],
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP WSTG: Testing for SQL Injection"
+    },
+    {
+      "id": "cybersecurity-ssti",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 3,
+      "prompt": "Server-side template injection (SSTI) nedir? Nasıl önlenir?",
+      "modelAnswer": "SSTI, kullanıcı girdisinin bir şablon motoruna şablonun verisi olarak değil şablon metninin parçası olarak verilmesiyle oluşur; örneğin bir e-posta şablonu kullanıcının yazdığı metinle birleştirilip sonra derlendiğinde girdideki şablon ifadeleri de değerlendirilir. Thymeleaf, FreeMarker, Jinja2 ya da Twig gibi motorların ifade dilleri nesnelere, metotlara ve bazen çalışma ortamına erişebildiği için sonuç basit bir XSS'ten sunucuda kod çalıştırmaya kadar gidebilir. Temel önlem şablonları yalnızca geliştiricinin yazdığı sabit dosyalardan yüklemek ve kullanıcı girdisini her zaman şablona model değişkeni olarak geçirmektir; motor bu değeri ifade olarak değerlendirmez, yalnızca basar ve kendi kurallarıyla kodlar. Kullanıcıların kendi şablonlarını yazması bir ürün özelliğiyse mantık içermeyen (logic-less) bir motor ya da yetenekleri kısıtlanmış bir sandbox ek katman olarak kullanılır; sandbox kaçışları sık bulunduğu için bunlar asıl savunmanın yerine geçmez ve şablonu işleyen süreç ayrıca yalıtılır.",
+      "keyConcepts": [
+        {
+          "id": "sablon-metni",
+          "label": "Girdi şablonun verisi değil metni olur",
+          "aliases": [
+            "şablon metni",
+            "şablonun parçası",
+            "template'in bir parçası",
+            "template'in parçası",
+            "şablona birleştir",
+            "template'e birleştir"
+          ],
+          "anchors": [
+            "Kullanıcı girdisi şablonun verisi olarak değil şablon metninin parçası olarak verildiğinde ifadeleri değerlendirilir."
+          ]
+        },
+        {
+          "id": "kod-calistirma",
+          "label": "Sunucuda kod çalıştırmaya kadar gidebilir",
+          "aliases": [
+            "kod çalıştır",
+            "remote code",
+            "uzaktan kod",
+            "komut çalıştır",
+            "code execution",
+            "çalışma ortamına"
+          ],
+          "anchors": [
+            "Şablon motorlarının ifade dilleri sayesinde sonuç sunucuda kod çalıştırmaya kadar gidebilir."
+          ]
+        },
+        {
+          "id": "model-degiskeni",
+          "label": "Girdi şablona model değişkeni olarak verilir",
+          "aliases": [
+            "model değişken",
+            "değişken olarak",
+            "context değişken",
+            "veri olarak ver",
+            "veri olarak geç",
+            "sabit dosya"
+          ],
+          "anchors": [
+            "Şablonlar sabit dosyalardan yüklenir, kullanıcı girdisi şablona her zaman model değişkeni olarak verilir."
+          ]
+        },
+        {
+          "id": "sandbox",
+          "label": "Logic-less motor ve sandbox yalnızca ek katman",
+          "aliases": [
+            "sandbox",
+            "logic-less",
+            "logicless",
+            "mustache",
+            "mantık içermeyen",
+            "kısıtlı motor"
+          ],
+          "anchors": [
+            "Kullanıcı şablon yazacaksa logic-less motor ya da sandbox ek katman olarak kullanılır; sandbox kaçışları yaygın olduğu için asıl savunmanın yerine geçmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcının adını içeren bir e-postayı şablon motoruyla üretirken adı şablona nasıl vermelisin?"
+      ],
+      "source": "Kendi derleme — OWASP WSTG: Testing for Server-side Template Injection; PortSwigger Web Security Academy: Server-side template injection"
+    },
+    {
+      "id": "cybersecurity-xxe",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 2,
+      "prompt": "XXE (XML External Entity) açığı nedir? Nasıl önlenir?",
+      "modelAnswer": "XML, belgenin DTD'sinde içeriği bir dosyadan ya da adresten okunan dış entity'ler tanımlamaya izin verir; güvenilmeyen bir XML'i bu özellik açık bir parser'la işleyen uygulama, belgenin istediği yerel dosyayı okuyup yanıta katabilir ya da belgenin gösterdiği adrese istek atabilir. Sonuç sunucudaki dosyaların sızması, iç ağa yönelik SSRF ya da iç içe entity genişlemesiyle belleğin ve işlemcinin tükenmesi olabilir. En güvenli önlem parser'da DTD işlemeyi tamamen kapatmaktır; bu mümkün değilse dış entity çözümleme, dış DTD yükleme ve XInclude kapatılır, entity genişlemesine sınır konur. Varsayılanlar dile, kütüphaneye ve sürüme göre değiştiği için bunlara güvenilmez, ayarlar her parser oluşturulurken açıkça yazılır; SOAP, SAML ya da SVG gibi XML tabanlı formatlar da aynı riski taşır.",
+      "keyConcepts": [
+        {
+          "id": "dis-entity",
+          "label": "DTD'de dış kaynağa bağlanan entity",
+          "aliases": [
+            "dış entity",
+            "harici entity",
+            "doctype",
+            "entity tanım",
+            "dtd'de",
+            "dtd'sinde"
+          ],
+          "anchors": [
+            "XML belgenin DTD'sinde içeriği bir dosyadan ya da adresten okunan dış entity tanımlanabilir."
+          ]
+        },
+        {
+          "id": "etkiler",
+          "label": "Dosya sızıntısı, SSRF ya da kaynak tüketimi",
+          "aliases": [
+            "yerel dosya",
+            "dosya oku",
+            "dosyaların sız",
+            "ssrf",
+            "billion laughs",
+            "denial of service"
+          ],
+          "anchors": [
+            "XXE yerel dosyaların sızmasına, SSRF'e ya da entity genişlemesiyle kaynak tükenmesine yol açar."
+          ]
+        },
+        {
+          "id": "dtd-kapat",
+          "label": "Parser'da DTD ve dış entity çözümleme kapatılır",
+          "aliases": [
+            "dtd işlemeyi",
+            "dtd'yi kapat",
+            "parser'da dtd",
+            "desteğini kapat",
+            "disallow-doctype",
+            "entity'leri kapat"
+          ],
+          "anchors": [
+            "En güvenli önlem parser'da DTD işlemeyi kapatmak, değilse dış entity çözümlemeyi kapatmaktır."
+          ]
+        },
+        {
+          "id": "varsayilana-guvenme",
+          "label": "Varsayılana güvenilmez; XML tabanlı formatlar da etkilenir",
+          "aliases": [
+            "açıkça yaz",
+            "açıkça ayarla",
+            "soap",
+            "saml",
+            "svg dosya",
+            "xml tabanlı"
+          ],
+          "anchors": [
+            "Parser varsayılanları değiştiği için ayarlar açıkça yazılır; SOAP, SAML, SVG gibi formatlar da etkilenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API yalnızca JSON kabul ediyorsa XXE riski tamamen ortadan kalkar mı?"
+      ],
+      "source": "Kendi derleme — OWASP XML External Entity Prevention Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-insecure-deserialization",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Injection",
+      "difficulty": 3,
+      "prompt": "Güvenilmeyen veriyi deserialize etmek neden tehlikelidir? Nasıl önlenir?",
+      "modelAnswer": "Java'nın `ObjectInputStream`'i ya da PHP'nin `unserialize`'ı gibi yerel serileştirme formatları akıştaki tip bilgisine göre nesne oluşturur; bu yüzden veriyi gönderen taraf hangi sınıfın örnekleneceğini de seçmiş olur. Saldırı yeni kod göndermeye dayanmaz; uygulamanın classpath'inde zaten bulunan ve nesne kurulurken kendiliğinden çalışan metotları olan sınıflar (gadget) zincirlenerek dosya yazma ya da komut çalıştırma gibi bir etkiye ulaşılır. En güçlü önlem güvenilmeyen veriyi yerel formatla hiç deserialize etmemek, JSON gibi yalnızca veri taşıyan bir format ve önceden tanımlı DTO'lar kullanmaktır; JSON kütüphanelerinde de akışın tipi seçmesine izin veren polimorfik tip özellikleri devre dışı bırakılır. Yerel format kaçınılmazsa yalnızca bilinen sınıflara izin veren bir filtre (Java'da serialization filter) ve imzayla bütünlük kontrolü eklenir; OWASP, filtrelemenin güvenilmeyen deserialization'ı tek başına güvenli kılmadığını vurgular.",
+      "keyConcepts": [
+        {
+          "id": "akis-tipi-secer",
+          "label": "Akıştaki tip bilgisi hangi sınıfın oluşacağını seçer",
+          "aliases": [
+            "objectinputstream",
+            "unserialize",
+            "tip bilgisi",
+            "hangi sınıf",
+            "yerel format",
+            "native serializ"
+          ],
+          "anchors": [
+            "Yerel serileştirme akıştaki tip bilgisine göre nesne oluşturur; hangi sınıfın örnekleneceğini veriyi gönderen seçer."
+          ]
+        },
+        {
+          "id": "gadget",
+          "label": "Classpath'teki mevcut sınıflar (gadget) zincirlenir",
+          "aliases": [
+            "gadget",
+            "classpath",
+            "mevcut sınıf",
+            "readobject",
+            "zincirle",
+            "uzaktan kod"
+          ],
+          "anchors": [
+            "Uygulamada zaten bulunan gadget sınıfları zincirlenerek komut çalıştırma gibi bir etkiye ulaşılır."
+          ]
+        },
+        {
+          "id": "veri-formati",
+          "label": "Yalnızca veri taşıyan format, polimorfik tip kapalı",
+          "aliases": [
+            "json gibi",
+            "json kullan",
+            "veri taşıyan",
+            "polimorfik",
+            "polymorphic",
+            "default typing"
+          ],
+          "anchors": [
+            "Güvenilmeyen veri için JSON gibi yalnızca veri taşıyan bir format kullanılır, polimorfik tip kapalı tutulur."
+          ]
+        },
+        {
+          "id": "filtre-imza",
+          "label": "Sınıf allowlist filtresi ve imzayla bütünlük",
+          "aliases": [
+            "serialization filter",
+            "objectinputfilter",
+            "allowlist",
+            "whitelist",
+            "imzala",
+            "imzayla"
+          ],
+          "anchors": [
+            "Yerel format kaçınılmazsa bilinen sınıflara izin veren bir filtre ve imzayla bütünlük kontrolü eklenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir oturum nesnesini serileştirip istemcide cookie olarak taşımak hangi koşulda kabul edilebilir?"
+      ],
+      "source": "Kendi derleme — OWASP Deserialization Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-xss-types",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "XSS",
+      "difficulty": 1,
+      "prompt": "Stored, reflected ve DOM tabanlı XSS arasındaki fark nedir?",
+      "modelAnswer": "Üç türde de saldırganın kodu kurbanın tarayıcısında sitenin kendi origin'iyle çalışır; bu yüzden sayfanın gördüğü her şeyi okuyabilir ve kullanıcının oturumuyla istek atabilir. Stored XSS'te zararlı içerik uygulamada kalıcı olarak saklanır, örneğin bir yorum alanında ya da profil bilgisinde, ve o sayfayı açan her kullanıcıya gösterilir. Reflected XSS'te içerik saklanmaz; istekteki bir parametre, örneğin arama terimi, kodlanmadan aynı yanıtın içine geri yazılır ve kurbanın hazırlanmış bir linke tıklaması gerekir. DOM tabanlı XSS'te sorun tamamen istemci kodundadır; sayfanın JavaScript'i URL'deki bir parçayı ya da başka bir kaynağı alıp `innerHTML` gibi tehlikeli bir API'ye yazar ve değer çoğu zaman sunucuya hiç uğramadığı için sunucu tarafındaki kontroller onu görmez.",
+      "keyConcepts": [
+        {
+          "id": "sitenin-adina",
+          "label": "Kod kurbanın tarayıcısında sitenin origin'iyle çalışır",
+          "aliases": [
+            "kurbanın tarayıcısında",
+            "kullanıcının tarayıcısında",
+            "sitenin kendi",
+            "sitenin adına",
+            "origin'iyle çalış",
+            "cookie'lerine eriş"
+          ],
+          "anchors": [
+            "Üç türde de saldırganın kodu kurbanın tarayıcısında sitenin kendi origin'iyle çalışır."
+          ]
+        },
+        {
+          "id": "kalici",
+          "label": "Stored: içerik kalıcı saklanır, herkese gösterilir",
+          "aliases": [
+            "kalıcı olarak saklan",
+            "kalıcı xss",
+            "persistent",
+            "veritabanına kaydedil",
+            "veritabanında saklan",
+            "yorum alan"
+          ],
+          "anchors": [
+            "Stored XSS'te zararlı içerik kalıcı olarak saklanır ve sayfayı açan her kullanıcıya gösterilir."
+          ]
+        },
+        {
+          "id": "istekten-yansir",
+          "label": "Reflected: istekteki değer yanıta geri yazılır, link gerekir",
+          "aliases": [
+            "geri yansıt",
+            "yanıta yansı",
+            "istekteki",
+            "url parametre",
+            "arama terim",
+            "linke tıkla"
+          ],
+          "anchors": [
+            "Reflected XSS'te istekteki bir parametre kodlanmadan yanıta geri yazılır ve kurbanın linke tıklaması gerekir."
+          ]
+        },
+        {
+          "id": "istemci-kodunda",
+          "label": "DOM tabanlı: sorun istemci kodunda, sunucuya uğramayabilir",
+          "aliases": [
+            "istemci kodu",
+            "client-side",
+            "client side",
+            "sunucuya uğramadan",
+            "sunucuya hiç uğramadığı",
+            "innerhtml"
+          ],
+          "anchors": [
+            "DOM tabanlı XSS'te sayfanın JavaScript'i değeri tehlikeli bir API'ye yazar; değer sunucuya uğramayabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir XSS açığı HttpOnly cookie kullanan bir uygulamada hâlâ ne yapabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP DOM based XSS Prevention Cheat Sheet; OWASP Types of XSS"
+    },
+    {
+      "id": "cybersecurity-xss-output-encoding",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "XSS",
+      "difficulty": 2,
+      "prompt": "XSS'e karşı neden asıl savunma output encoding'dir? Input validation tek başına neden yetmez?",
+      "modelAnswer": "XSS, verinin sayfada HTML ya da JavaScript olarak yorumlanmasıyla çalışır ve aynı değer yazıldığı yere göre farklı karakterlerle tehlikeli hâle gelir; bu yüzden asıl savunma veriyi çıktıya yazıldığı noktada o bağlamın kurallarıyla kodlamaktır. HTML gövdesinde `<` ve `&` gibi karakterler HTML entity'ye çevrilir, attribute değeri tırnak içinde attribute kurallarıyla, URL parçası URL kodlamasıyla kodlanır; `<script>` bloğunun içine kullanıcı verisi yazmaktan ise hiç kaçınılır. Girdi doğrulama yardımcı olur ama yetmez, çünkü geçerli bir girdi de tehlikeli olabilir, örneğin kesme işareti içeren bir soyadı bir JavaScript dizesini kapatabilir; ayrıca girdiyi alan katman verinin sonra hangi bağlamda gösterileceğini bilemez. React, Angular ya da Thymeleaf gibi şablon sistemleri değerleri varsayılan olarak kodlar; açık genellikle bu korumayı atlayan kaçış kapılarında, örneğin `dangerouslySetInnerHTML`'de ya da bir `href`'e verilen kullanıcı adresinde çıkar. Kullanıcının biçimli HTML girmesi gerçekten gerekiyorsa kodlama yerine DOMPurify gibi bir sanitizer kütüphanesi kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "baglama-gore",
+          "label": "Kodlama çıktı bağlamına göre yapılır",
+          "aliases": [
+            "bağlama göre",
+            "bağlamına göre",
+            "bağlamın kuralları",
+            "context-aware",
+            "context aware",
+            "html entity"
+          ],
+          "anchors": [
+            "Veri yazıldığı bağlamın, HTML gövdesi, attribute ya da URL kurallarıyla kodlanır."
+          ]
+        },
+        {
+          "id": "cikti-noktasinda",
+          "label": "Veri çıktıya yazıldığı noktada kodlanır",
+          "aliases": [
+            "escape",
+            "encode et",
+            "yazıldığı noktada",
+            "yazıldığı yerde",
+            "ekrana basarken",
+            "çıktıya yazarken"
+          ],
+          "anchors": [
+            "Asıl savunma veriyi çıktıya yazıldığı noktada kodlamaktır."
+          ]
+        },
+        {
+          "id": "baglami-bilemez",
+          "label": "Geçerli girdi de tehlikeli olabilir, giriş katmanı bağlamı bilemez",
+          "aliases": [
+            "geçerli bir girdi",
+            "geçerli girdi",
+            "hangi bağlamda",
+            "nerede gösterileceğ",
+            "nerede kullanılacağ",
+            "kesme işareti"
+          ],
+          "anchors": [
+            "Geçerli bir girdi de tehlikeli olabilir ve girdiyi alan katman verinin hangi bağlamda gösterileceğini bilemez."
+          ]
+        },
+        {
+          "id": "framework-kacis-kapisi",
+          "label": "Framework varsayılan olarak kodlar, açık kaçış kapılarında",
+          "aliases": [
+            "varsayılan olarak kod",
+            "auto-escap",
+            "autoescap",
+            "dangerouslysetinnerhtml",
+            "v-html",
+            "kaçış kapı"
+          ],
+          "anchors": [
+            "Şablon sistemleri değerleri varsayılan olarak kodlar; açık bu korumayı atlayan kaçış kapılarında çıkar."
+          ]
+        },
+        {
+          "id": "sanitizer",
+          "label": "Biçimli HTML için sanitizer",
+          "aliases": [
+            "sanitiz",
+            "dompurify",
+            "html temizle",
+            "temizleme",
+            "zengin metin",
+            "rich text"
+          ],
+          "anchors": [
+            "Kullanıcının biçimli HTML girmesi gerekiyorsa DOMPurify gibi bir sanitizer kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcı verisini sayfadaki bir JavaScript değişkenine aktarman gerekirse bunu güvenle nasıl yaparsın?"
+      ],
+      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP Input Validation Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-dom-xss",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "XSS",
+      "difficulty": 3,
+      "prompt": "DOM tabanlı XSS'te source ve sink kavramları ne anlama gelir? Nasıl önlenir?",
+      "modelAnswer": "Source, saldırganın etkileyebildiği ve sayfanın JavaScript'inin okuduğu değerdir; `location.hash`, `location.search`, `document.referrer`, `postMessage` ile gelen mesajlar ya da `localStorage`'daki bir değer buna örnektir. Sink ise kendisine verilen dizeyi HTML ya da kod olarak işleyen API'dir; `innerHTML`, `outerHTML`, `document.write`, `eval` ya da `setTimeout`'a verilen bir dize tehlikeli sink'lerdir ve açık, bir source'tan gelen değerin kodlanmadan bir sink'e ulaşmasıdır. Önlemin temeli güvenli API'yi seçmektir; metin göstermek için değeri metin olarak yazan `textContent` kullanılır, HTML gerçekten gerekiyorsa değer bir sanitizer'dan geçirilir ve kullanıcıdan gelen adreslerin `https:` gibi izin verilen bir şemayla başladığı kontrol edilir. CSP'nin `require-trusted-types-for 'script'` yönergesiyle açılan **Trusted Types** ise tehlikeli sink'lerin düz dize kabul etmesini engeller; değer yalnızca uygulamanın tanımladığı bir politika fonksiyonundan geçerse yazılabilir.",
+      "keyConcepts": [
+        {
+          "id": "kaynaklar",
+          "label": "Source: saldırganın etkileyebildiği değer (URL, mesaj, depolama)",
+          "aliases": [
+            "location.hash",
+            "location.search",
+            "document.referrer",
+            "postmessage",
+            "fragment",
+            "hash parça"
+          ],
+          "anchors": [
+            "Source, location.hash ya da postMessage gibi saldırganın etkileyebildiği ve sayfanın okuduğu değerdir."
+          ]
+        },
+        {
+          "id": "tehlikeli-api",
+          "label": "Sink: dizeyi HTML ya da kod olarak işleyen API",
+          "aliases": [
+            "innerhtml",
+            "outerhtml",
+            "document.write",
+            "eval",
+            "settimeout",
+            "insertadjacenthtml"
+          ],
+          "anchors": [
+            "Sink, innerHTML ya da eval gibi kendisine verilen dizeyi HTML ya da kod olarak işleyen API'dir."
+          ]
+        },
+        {
+          "id": "guvenli-api",
+          "label": "Değeri metin olarak yazan güvenli API",
+          "aliases": [
+            "textcontent",
+            "innertext",
+            "createtextnode",
+            "metin olarak yaz",
+            "güvenli api",
+            "safe sink"
+          ],
+          "anchors": [
+            "Metin göstermek için değeri metin olarak yazan textContent gibi güvenli bir API kullanılır."
+          ]
+        },
+        {
+          "id": "trusted-types",
+          "label": "Trusted Types sink'lere düz dize verilmesini engeller",
+          "aliases": [
+            "trusted types",
+            "trusted-types",
+            "trustedtypes",
+            "trustedhtml",
+            "politika fonksiyon",
+            "require-trusted"
+          ],
+          "anchors": [
+            "Trusted Types açıkken tehlikeli sink'ler yalnızca bir politika fonksiyonundan geçmiş değeri kabul eder."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir SPA'da route parametresini sayfaya basarken framework kullanıyorsan DOM XSS riski nerede kalır?"
+      ],
+      "source": "Kendi derleme — OWASP DOM based XSS Prevention Cheat Sheet; MDN: Trusted Types API"
+    },
+    {
+      "id": "cybersecurity-csp",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "CSP ve Clickjacking",
+      "difficulty": 2,
+      "prompt": "Content Security Policy (CSP) nedir? XSS'e karşı nasıl bir koruma sağlar?",
+      "modelAnswer": "CSP, sunucunun `Content-Security-Policy` yanıt başlığıyla tarayıcıya sayfanın hangi kaynaklardan script, stil, görsel ya da bağlantı yükleyebileceğini söylediği bir politikadır; `script-src` ve `default-src` gibi yönergelerle tanımlanır ve tarayıcı politikaya uymayan yüklemeleri engeller. Politika açıkça izin verilmedikçe satır içi script'leri, `onclick` gibi olay attribute'larını ve `eval` ile dizeden kod üretmeyi de engeller; XSS'te enjekte edilen kod çoğunlukla bu yollardan çalıştığı için açık bulunsa bile istismarı zorlaşır. CSP ek bir savunma katmanıdır, açığın kendisini kapatmaz; çıktı kodlaması ve sanitization yine gerekir, CSP ise bunlar bir yerde atlandığında hasarı sınırlar. Mevcut bir uygulamada politika önce `Content-Security-Policy-Report-Only` başlığıyla devreye alınır; tarayıcı bu modda hiçbir şeyi engellemez, yalnızca ihlalleri raporlar ve uygulamanın neyi kıracağı görülerek politika sıkılaştırılır.",
+      "keyConcepts": [
+        {
+          "id": "izinli-kaynaklar",
+          "label": "Yanıt başlığıyla izinli kaynakları tanımlar",
+          "aliases": [
+            "yanıt başlığı",
+            "response header",
+            "script-src",
+            "default-src",
+            "hangi kaynak",
+            "izin verilen kaynak"
+          ],
+          "anchors": [
+            "CSP yanıt başlığıyla sayfanın hangi kaynaklardan script ve diğer içerikleri yükleyebileceğini tanımlar."
+          ]
+        },
+        {
+          "id": "inline-engel",
+          "label": "Satır içi script, olay attribute'ları ve eval engellenir",
+          "aliases": [
+            "satır içi",
+            "inline",
+            "onclick",
+            "olay attribute",
+            "event handler",
+            "eval"
+          ],
+          "anchors": [
+            "CSP açıkça izin verilmedikçe satır içi script'leri, olay attribute'larını ve eval'i engeller."
+          ]
+        },
+        {
+          "id": "ek-katman",
+          "label": "Ek savunma katmanı, kodlamanın yerine geçmez",
+          "aliases": [
+            "defense in depth",
+            "derinlemesine savunma",
+            "ek bir savunma",
+            "ek bir katman",
+            "ek katman",
+            "hasarı sınırla"
+          ],
+          "anchors": [
+            "CSP açığı kapatmaz; çıktı kodlaması yine gerekir, CSP bir yer atlandığında hasarı sınırlar."
+          ]
+        },
+        {
+          "id": "report-only",
+          "label": "Report-Only ile engellemeden kademeli geçiş",
+          "aliases": [
+            "report-only",
+            "report only",
+            "raporla",
+            "report-uri",
+            "report-to",
+            "engellemez"
+          ],
+          "anchors": [
+            "Politika önce Report-Only modunda devreye alınır; tarayıcı engellemez, yalnızca ihlalleri raporlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "CSP'yi `<meta>` etiketiyle vermek ile yanıt başlığıyla vermek arasında ne fark vardır?"
+      ],
+      "source": "Kendi derleme — MDN: Content Security Policy (CSP); OWASP Content Security Policy Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-csp-nonce-hash",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "CSP ve Clickjacking",
+      "difficulty": 3,
+      "prompt": "CSP'de nonce ve hash tabanlı politikalar nasıl çalışır? 'unsafe-inline' neden kaçınılması gereken bir ayardır?",
+      "modelAnswer": "Nonce tabanlı politikada sunucu her yanıt için tahmin edilemeyen yeni bir rastgele değer üretir, bunu `script-src` yönergesine ve yalnızca kendi yazdığı `<script>` etiketlerinin `nonce` attribute'una koyar; tarayıcı yalnızca değeri eşleşen script'leri çalıştırır, sayfaya sonradan enjekte edilen bir script bu değeri bilemez. Hash tabanlı politikada başlıkta izin verilen script içeriğinin SHA-256 gibi bir özeti bulunur; içerik değişmediği sürece politika da sabit kalır, bu yüzden statik sayfalara uygundur ama script her değiştiğinde özet yeniden hesaplanır. `'unsafe-inline'` her satır içi script'e izin verir; XSS'te enjekte edilen kod da çoğunlukla satır içi olduğu için CSP'nin bu açığa karşı sağladığı korumanın büyük kısmını ortadan kaldırır, politika nonce ya da hash içeriyorsa tarayıcılar onu zaten yok sayar. `'strict-dynamic'` nonce ya da hash ile güvenilen bir script'in yüklediği script'lere de güven aktarır ve üçüncü taraf script'lerle politikayı yönetilebilir kılar; alan adı allowlist'lerine dayanan politikalar ise kolayca güvensiz bir alan adını da kapsadığı için tek başına zayıf kalır.",
+      "keyConcepts": [
+        {
+          "id": "her-yanitta-yeni",
+          "label": "Nonce her yanıtta yeni ve tahmin edilemez",
+          "aliases": [
+            "her yanıt için",
+            "her istekte rastgele",
+            "her istekte farklı",
+            "rastgele bir değer",
+            "rastgele değer",
+            "tahmin edileme"
+          ],
+          "anchors": [
+            "Sunucu her yanıt için tahmin edilemeyen yeni bir rastgele değer üretir."
+          ]
+        },
+        {
+          "id": "enjekte-bilemez",
+          "label": "Enjekte edilen script değeri bilemez",
+          "aliases": [
+            "bilemez",
+            "bilemediği",
+            "bilmediği",
+            "eşleşen script",
+            "sonradan eklenen",
+            "değeri bilmeyen"
+          ],
+          "anchors": [
+            "Tarayıcı yalnızca değeri eşleşen script'leri çalıştırır, enjekte edilen script bu değeri bilemez."
+          ]
+        },
+        {
+          "id": "icerik-ozeti",
+          "label": "Hash: içeriğin özeti, statik sayfalara uygun",
+          "aliases": [
+            "sha-256",
+            "sha256",
+            "içeriğin özeti",
+            "içeriğinin hash",
+            "içeriğin hash",
+            "statik sayfa"
+          ],
+          "anchors": [
+            "Hash tabanlı politikada izin verilen script içeriğinin özeti başlıkta bulunur; statik sayfalara uygundur."
+          ]
+        },
+        {
+          "id": "korumayi-kaldirir",
+          "label": "Satır içi her script'e izin vermek korumayı kaldırır",
+          "aliases": [
+            "satır içi",
+            "inline script",
+            "inline kod",
+            "korumanın büyük kısmı",
+            "korumayı kaldır",
+            "etkisiz"
+          ],
+          "anchors": [
+            "unsafe-inline her satır içi script'e izin verdiği için CSP'nin XSS korumasının büyük kısmını kaldırır."
+          ]
+        },
+        {
+          "id": "strict-dynamic",
+          "label": "strict-dynamic güveni aktarır; alan adı allowlist'i zayıf",
+          "aliases": [
+            "strict-dynamic",
+            "strict dynamic",
+            "güven aktar",
+            "alan adı allowlist",
+            "host allowlist",
+            "host listesi"
+          ],
+          "anchors": [
+            "strict-dynamic güvenilen script'in yüklediklerine güven aktarır; alan adı allowlist'leri tek başına zayıftır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Önbellekten sunulan bir HTML sayfasında nonce tabanlı CSP neden sorun çıkarır?"
+      ],
+      "source": "Kendi derleme — MDN: Content Security Policy (CSP) — strict CSP, nonces, hashes, strict-dynamic; OWASP Content Security Policy Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-clickjacking",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "CSP ve Clickjacking",
+      "difficulty": 2,
+      "prompt": "Clickjacking nedir? frame-ancestors ve X-Frame-Options buna karşı nasıl korur?",
+      "modelAnswer": "Clickjacking'de saldırgan hedef sayfayı kendi sitesinde görünmez bir `iframe` içine yerleştirir ve üstüne zararsız görünen bir arayüz koyar; kullanıcı saldırganın sayfasına tıkladığını sanırken aslında oturumu açık olduğu hedef sitedeki bir düğmeye, örneğin bir ödeme ya da ayar onayına tıklar. Savunma sayfanın başka siteler tarafından çerçevelenmesini yanıt başlığıyla yasaklamaktır; CSP'nin `frame-ancestors 'none'` ya da yalnızca kendi origin'ine izin veren `'self'` değeri bunun güncel yoludur ve gerekirse belirli origin'lere de izin verebilir. Eski `X-Frame-Options` başlığı yalnızca `DENY` ve `SAMEORIGIN` değerlerini destekler, belirli bir siteye izin veren `ALLOW-FROM` modern tarayıcılarda çalışmaz; CSP standardına göre `frame-ancestors` uygulanıyorsa `X-Frame-Options` yok sayılır, eski tarayıcılar için ikisi birlikte gönderilebilir. İki başlık da `<meta>` etiketiyle verilemez, yanıt başlığı olmak zorundadır; JavaScript ile çerçeveden kaçmaya çalışan kodlar güvenilir değildir, en fazla ek önlemdir.",
+      "keyConcepts": [
+        {
+          "id": "gorunmez-cerceve",
+          "label": "Görünmez çerçeve içinde kullanıcıya tıklatma",
+          "aliases": [
+            "görünmez",
+            "invisible",
+            "iframe",
+            "şeffaf",
+            "ui redress",
+            "tıklat"
+          ],
+          "anchors": [
+            "Saldırgan hedef sayfayı görünmez bir iframe'e koyar ve kullanıcıya farkında olmadan tıklatır."
+          ]
+        },
+        {
+          "id": "yanit-basligi",
+          "label": "Çerçeveleme yanıt başlığıyla yasaklanır, meta çalışmaz",
+          "aliases": [
+            "çerçevelen",
+            "iframe içinde açıl",
+            "iframe'e konma",
+            "yanıt başlığı",
+            "response header",
+            "meta etiket"
+          ],
+          "anchors": [
+            "Sayfanın çerçevelenmesi yanıt başlığıyla yasaklanır; meta etiketi bu başlıklar için çalışmaz."
+          ]
+        },
+        {
+          "id": "deger-secenekleri",
+          "label": "DENY/SAMEORIGIN ya da 'none'/'self'; ALLOW-FROM çalışmaz",
+          "aliases": [
+            "deny",
+            "sameorigin",
+            "allow-from",
+            "allow from",
+            "'none'",
+            "'self'"
+          ],
+          "anchors": [
+            "X-Frame-Options yalnızca DENY ve SAMEORIGIN destekler; frame-ancestors 'none' ya da 'self' alır."
+          ]
+        },
+        {
+          "id": "csp-oncelikli",
+          "label": "CSP yolu güncel; uygulanırsa X-Frame-Options yok sayılır",
+          "aliases": [
+            "content security policy",
+            "csp ile",
+            "csp'de",
+            "csp'nin",
+            "yok sayılır",
+            "eski tarayıcı"
+          ],
+          "anchors": [
+            "frame-ancestors güncel yoldur; uygulanıyorsa X-Frame-Options yok sayılır, eski tarayıcılar için ikisi birlikte gönderilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Uygulamanın yalnızca kendi alt alan adlarında çerçevelenmesine izin vermesi gerekiyorsa başlığı nasıl yazarsın?"
+      ],
+      "source": "Kendi derleme — OWASP Clickjacking Defense Cheat Sheet; MDN: X-Frame-Options, CSP frame-ancestors"
+    },
+    {
+      "id": "cybersecurity-hash-vs-encryption",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 1,
+      "prompt": "Hash, encryption ve encoding arasındaki fark nedir? Parolalar neden şifrelenmez de hash'lenir?",
+      "modelAnswer": "Encoding, veriyi başka bir sistemin taşıyabileceği bir biçime çevirir, örneğin Base64 ya da URL kodlaması; anahtar yoktur ve herkes geri çevirebilir, bu yüzden gizlilik sağlamaz. Encryption veriyi bir anahtarla okunamaz hâle getirir ve anahtarı bilen geri çözebilir; amaç gizliliktir ve işlem iki yönlüdür. Hash ise tek yönlüdür; girdiden sabit uzunlukta bir özet üretir, özetten girdiye geri dönülemez ve aynı girdi her zaman aynı özeti verir. Parolanın kendisini geri elde etmeye gerek yoktur, yalnızca girilen parolanın doğru olup olmadığını bilmek yeter, bu yüzden parola hash'lenir ve girişte hesaplanan değer saklanan hash'iyle karşılaştırılır; şifrelenmiş parolalar anahtar sızarsa topluca çözülür, hash'ten ise parola ancak tahmin edilerek bulunabilir.",
+      "keyConcepts": [
+        {
+          "id": "encoding-gizlilik-degil",
+          "label": "Encoding anahtarsızdır, gizlilik sağlamaz",
+          "aliases": [
+            "base64",
+            "anahtar yok",
+            "herkes geri çevir",
+            "gizlilik sağlamaz",
+            "biçime çevir",
+            "format değiş"
+          ],
+          "anchors": [
+            "Encoding veriyi anahtarsız başka bir biçime çevirir, herkes geri çevirebilir ve gizlilik sağlamaz."
+          ]
+        },
+        {
+          "id": "encryption-iki-yonlu",
+          "label": "Encryption anahtarla iki yönlüdür",
+          "aliases": [
+            "anahtarla",
+            "anahtarı bilen",
+            "iki yönlü",
+            "two-way",
+            "geri çözül",
+            "geri çözebilir"
+          ],
+          "anchors": [
+            "Encryption veriyi bir anahtarla okunamaz yapar, anahtarı bilen geri çözebilir."
+          ]
+        },
+        {
+          "id": "hash-tek-yonlu",
+          "label": "Hash tek yönlüdür, geri dönülemez",
+          "aliases": [
+            "tek yönlü",
+            "one-way",
+            "one way",
+            "geri dönülemez",
+            "geri döndürülemez",
+            "sabit uzunluk"
+          ],
+          "anchors": [
+            "Hash tek yönlüdür; sabit uzunlukta bir özet üretir ve özetten girdiye geri dönülemez."
+          ]
+        },
+        {
+          "id": "geri-almaya-gerek-yok",
+          "label": "Parolayı geri almaya gerek yok, hash karşılaştırılır",
+          "aliases": [
+            "geri almaya gerek",
+            "geri almamıza gerek",
+            "geri elde etmeye gerek",
+            "doğru olup olmadığ",
+            "hash'iyle karşılaştır",
+            "veritabanındakiyle karşılaştır"
+          ],
+          "anchors": [
+            "Parolanın kendisini geri almaya gerek yoktur; girişte hesaplanan değer saklanan hash'le karşılaştırılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sistem parolanı unuttuğunda sana mevcut parolanı e-postayla gönderebiliyorsa bu, parolaların nasıl saklandığı hakkında ne söyler?"
+      ],
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Hashing vs Encryption)"
+    },
+    {
+      "id": "cybersecurity-salt-pepper",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 2,
+      "prompt": "Parola hash'lerken salt ve pepper ne işe yarar? Hangisi gizli tutulur?",
+      "modelAnswer": "Salt her parola için ayrı üretilen rastgele bir değerdir ve parolayla birlikte hash'lenir; aynı parolayı kullanan iki kullanıcının hash'leri bu sayede farklı olur, önceden hesaplanmış tablolar (rainbow table) ya da tek bir tahminin tüm kullanıcılara birden denenmesi işe yaramaz. Salt gizli değildir; doğrulamada gerektiği için hash'in yanında, aynı kayıtta saklanır ve NIST SP 800-63B-4 de salt'ın ve hash'in her parola için birlikte saklanmasını ister. Pepper ise tüm parolalar için ortak, gizli bir anahtardır ve hash'e anahtarlı bir işlemle, örneğin HMAC ile eklenir; parola veritabanından ayrı, bir secret manager'da ya da tercihen bir HSM'de tutulur, böylece yalnızca veritabanı sızdığında hash'ler çevrimdışı denenemez. Bedeli rotasyondur; pepper değişirse mevcut hash'ler parolaların kendisi bilinmeden yeniden hesaplanamaz, bu yüzden pepper ele geçirildiğinde kullanıcıların parolalarını sıfırlaması gerekir.",
+      "keyConcepts": [
+        {
+          "id": "her-parolaya-ayri",
+          "label": "Salt her parola için ayrı ve rastgeledir",
+          "aliases": [
+            "her parola için ayrı",
+            "her kullanıcı için ayrı",
+            "her kullanıcı için rastgele",
+            "her kullanıcı için farklı",
+            "kullanıcıya özel",
+            "rastgele bir değer"
+          ],
+          "anchors": [
+            "Salt her parola için ayrı üretilen rastgele bir değerdir ve parolayla birlikte hash'lenir."
+          ]
+        },
+        {
+          "id": "on-hesaplama",
+          "label": "Aynı parola aynı hash'i vermez, ön hesaplanmış tablolar işe yaramaz",
+          "aliases": [
+            "rainbow",
+            "önceden hesaplan",
+            "ön hesaplama",
+            "precomputed",
+            "aynı parola",
+            "aynı hash"
+          ],
+          "anchors": [
+            "Salt sayesinde aynı parolanın hash'leri farklı olur ve rainbow table gibi ön hesaplamalar işe yaramaz."
+          ]
+        },
+        {
+          "id": "salt-gizli-degil",
+          "label": "Salt gizli değildir, hash'in yanında saklanır",
+          "aliases": [
+            "salt gizli değil",
+            "salt'ın gizli",
+            "gizli tutulmaz",
+            "hash'in yanında",
+            "hash ile birlikte",
+            "birlikte saklan"
+          ],
+          "anchors": [
+            "Salt gizli değildir; doğrulamada gerektiği için hash'in yanında, aynı kayıtta saklanır."
+          ]
+        },
+        {
+          "id": "pepper-ayri-yerde",
+          "label": "Pepper veritabanı dışında, secret manager ya da HSM'de",
+          "aliases": [
+            "secret manager",
+            "vault",
+            "hardware security module",
+            "hsm'de",
+            "veritabanı dışında",
+            "veritabanından ayrı"
+          ],
+          "anchors": [
+            "Pepper parola veritabanından ayrı, bir secret manager'da ya da tercihen bir HSM'de tutulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Pepper'ı uygulamanın yapılandırma dosyasına koymak neden HSM'de tutmaktan daha zayıftır?"
+      ],
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Salting, Peppering); NIST SP 800-63B-4 §3.1.1.2"
+    },
+    {
+      "id": "cybersecurity-slow-password-hash",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 2,
+      "prompt": "Parolaları saklarken neden SHA-256 değil bcrypt, scrypt ya da Argon2 kullanılır?",
+      "modelAnswer": "SHA-256 gibi genel amaçlı hash fonksiyonları hızlı olmak için tasarlanmıştır; veritabanını ele geçiren biri GPU ile çok sayıda tahmini kısa sürede deneyebilir ve yaygın parolaların büyük kısmını bulur. Parola hash fonksiyonları ise bilerek yavaştır ve maliyetleri bir parametreyle, work factor ya da iterasyon sayısıyla ayarlanır; donanım hızlandıkça bu maliyet artırılır, meşru kullanıcı tek bir girişte farkı hissetmezken saldırganın milyonlarca denemesi pahalı hâle gelir. scrypt ve Argon2 ayrıca memory-hard'dır, yani her deneme belirli bir miktar bellek ister; bu da paralel denemeye dayanan GPU ve özel donanım (ASIC) saldırılarını zorlaştırır. OWASP bugün ilk tercih olarak Argon2id'yi, o yoksa scrypt'i, eski sistemlerde bcrypt'i, FIPS-140 uyumu gerektiğinde PBKDF2'yi önerir; önerilen parametreler zamanla değiştiği için güncel rehberden alınır, bcrypt'in girdisi de en fazla 72 bayt olduğu için uzun parolalarda bu sınır ayrıca ele alınır.",
+      "keyConcepts": [
+        {
+          "id": "hizli-tasarlanmis",
+          "label": "Genel amaçlı hash hızlıdır, tahmin ucuzdur",
+          "aliases": [
+            "genel amaçlı",
+            "hızlı olmak için",
+            "gpu ile",
+            "gpu'lar",
+            "brute force",
+            "kaba kuvvet"
+          ],
+          "anchors": [
+            "SHA-256 gibi genel amaçlı hash'ler hızlı olduğu için saldırgan GPU ile çok sayıda tahmini kısa sürede dener."
+          ]
+        },
+        {
+          "id": "ayarlanabilir-maliyet",
+          "label": "Bilerek yavaş, maliyeti ayarlanabilir",
+          "aliases": [
+            "bilerek yavaş",
+            "kasıtlı olarak yavaş",
+            "yavaş olduğu için",
+            "work factor",
+            "cost factor",
+            "iterasyon sayısı"
+          ],
+          "anchors": [
+            "Parola hash fonksiyonları bilerek yavaştır ve maliyetleri work factor ya da iterasyon sayısıyla ayarlanır."
+          ]
+        },
+        {
+          "id": "memory-hard",
+          "label": "scrypt ve Argon2 memory-hard'dır",
+          "aliases": [
+            "memory-hard",
+            "memory hard",
+            "bellek iste",
+            "bellek yoğun",
+            "asic",
+            "paralel deneme"
+          ],
+          "anchors": [
+            "scrypt ve Argon2 her denemede bellek ister; bu GPU ve ASIC ile paralel denemeyi zorlaştırır."
+          ]
+        },
+        {
+          "id": "owasp-tercih",
+          "label": "OWASP sırası: Argon2id, scrypt, bcrypt; FIPS için PBKDF2",
+          "aliases": [
+            "argon2id",
+            "ilk tercih",
+            "pbkdf2",
+            "fips",
+            "güncel rehber",
+            "owasp öner"
+          ],
+          "anchors": [
+            "OWASP ilk tercih olarak Argon2id'yi, o yoksa scrypt'i, eski sistemlerde bcrypt'i, FIPS gerekirse PBKDF2'yi önerir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Parolaları hâlâ tuzsuz MD5 ile saklayan eski bir sistemde, kullanıcıları zorla sıfırlatmadan daha güçlü bir algoritmaya nasıl geçersin?"
+      ],
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-password-policy",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Parola Güvenliği",
+      "difficulty": 2,
+      "prompt": "NIST SP 800-63B parola politikası için ne önerir? Periyodik parola değiştirme ve karmaşıklık kuralları neden önerilmez?",
+      "modelAnswer": "NIST SP 800-63B-4 parolanın gücünü karmaşıklıkta değil uzunlukta arar; parola tek başına kullanılıyorsa en az 15, çok faktörlü doğrulamanın bir parçasıysa en az 8 karakter ister ve en az 64 karakterlik parolalara, boşluğa ve Unicode karakterlere izin verilmesini önerir. Büyük harf, rakam ya da sembol zorunluluğu gibi kompozisyon kurallarını yasaklar, çünkü kullanıcılar bu kurallara tahmin edilebilir biçimde uyar ve `password` yerine `Password1` seçer; onun yerine her yeni parola yaygın, beklenen ya da daha önce sızmış parolalardan oluşan bir blocklist'le karşılaştırılır ve reddedilirse nedeni söylenir. Periyodik değiştirme de istenmez; NIST'e göre değiştireceğini bilen kullanıcı daha zayıf parola seçer ve yenisini eskisinden tahmin edilebilir dönüşümlerle türetir, bu yüzden değişim yalnızca parolanın ele geçirildiğine dair bir kanıt olduğunda zorunlu tutulur. Ayrıca parola yöneticilerine ve otomatik doldurmaya izin verilmesi zorunludur, parola ipucu ve güvenlik soruları kullanılmaz, başarısız denemeler de hız sınırıyla en fazla 100 ardışık denemeyle sınırlanır.",
+      "keyConcepts": [
+        {
+          "id": "uzunluk",
+          "label": "Güç uzunluktan gelir: 15, MFA'da 8, en az 64'e izin",
+          "aliases": [
+            "uzunluk",
+            "15 karakter",
+            "en az 15",
+            "64 karakter",
+            "uzun parola",
+            "passphrase"
+          ],
+          "anchors": [
+            "Tek başına kullanılan parola en az 15, MFA'nın parçasıysa en az 8 karakter olur; en az 64 karaktere izin verilir."
+          ]
+        },
+        {
+          "id": "kompozisyon-yok",
+          "label": "Kompozisyon kuralları konmaz",
+          "aliases": [
+            "kompozisyon",
+            "composition",
+            "büyük harf",
+            "sembol zorunlu",
+            "rakam zorunlu",
+            "karakter türü"
+          ],
+          "anchors": [
+            "Büyük harf, rakam ya da sembol zorunluluğu gibi kompozisyon kuralları konmaz; kullanıcılar tahmin edilebilir biçimde uyar."
+          ]
+        },
+        {
+          "id": "blocklist",
+          "label": "Yaygın ve sızmış parolalar blocklist ile reddedilir",
+          "aliases": [
+            "blocklist",
+            "blacklist",
+            "sızmış parola",
+            "yaygın parola",
+            "breach",
+            "pwned"
+          ],
+          "anchors": [
+            "Her yeni parola yaygın, beklenen ya da sızmış parolalardan oluşan bir blocklist ile karşılaştırılır."
+          ]
+        },
+        {
+          "id": "kanit-olunca-degisim",
+          "label": "Değişim yalnızca ele geçirilme kanıtı varsa",
+          "aliases": [
+            "ele geçirildiğ",
+            "kanıt varsa",
+            "kanıt olduğunda",
+            "sızdığında",
+            "compromise",
+            "tahmin edilebilir dönüşüm"
+          ],
+          "anchors": [
+            "Parola yalnızca ele geçirildiğine dair bir kanıt olduğunda değiştirilir; zorla değişim tahmin edilebilir dönüşümlere yol açar."
+          ]
+        },
+        {
+          "id": "parola-yoneticisi",
+          "label": "Parola yöneticisi ve otomatik doldurma serbest",
+          "aliases": [
+            "parola yöneticisi",
+            "password manager",
+            "yapıştır",
+            "paste",
+            "autofill",
+            "otomatik doldur"
+          ],
+          "anchors": [
+            "Parola yöneticilerine ve otomatik doldurmaya izin verilmesi zorunludur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Yeni bir parolayı sızmış parola listesiyle karşılaştırırken parolanın kendisini üçüncü bir servise göndermeden bunu nasıl yaparsın?"
+      ],
+      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.1, §3.2.2, Ek A; NIST SP 800-63 FAQ (Q-B05)"
+    },
+    {
+      "id": "cybersecurity-symmetric-vs-asymmetric",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kriptografi",
+      "difficulty": 1,
+      "prompt": "Simetrik ve asimetrik şifreleme arasındaki fark nedir? Pratikte neden ikisi birlikte kullanılır?",
+      "modelAnswer": "Simetrik şifrelemede, örneğin AES'te, şifreleyen ve çözen aynı gizli anahtarı kullanır; hızlıdır ve büyük veriler için uygundur, ama anahtarın iki tarafa güvenli bir yoldan ulaştırılması gerekir. Asimetrik şifrelemede, örneğin RSA'da ya da eliptik eğri algoritmalarında, her tarafın bir anahtar çifti vardır; açık anahtar herkese verilebilir, onunla şifrelenen veri yalnızca eşi olan özel anahtarla çözülür. Asimetrik işlemler simetriğe göre çok daha yavaştır, bu yüzden pratikte asimetrik kriptografi yalnızca taraflar arasında güvenle bir simetrik oturum anahtarı üzerinde anlaşmak ve karşı tarafın kimliğini doğrulamak için kullanılır, verinin kendisi o simetrik anahtarla şifrelenir. TLS bu hibrit modelle çalışır; asimetrik anahtar çiftleri ayrıca dijital imza için de kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "ayni-anahtar",
+          "label": "Simetrikte iki taraf aynı gizli anahtarı kullanır",
+          "aliases": [
+            "aynı gizli anahtar",
+            "aynı anahtar",
+            "tek anahtar",
+            "tek bir anahtar",
+            "paylaşılan anahtar",
+            "shared key"
+          ],
+          "anchors": [
+            "Simetrik şifrelemede şifreleyen ve çözen aynı gizli anahtarı kullanır."
+          ]
+        },
+        {
+          "id": "anahtar-cifti",
+          "label": "Asimetrikte açık ve özel anahtar çifti",
+          "aliases": [
+            "anahtar çifti",
+            "key pair",
+            "açık anahtar",
+            "public key",
+            "özel anahtar",
+            "private key"
+          ],
+          "anchors": [
+            "Asimetrik şifrelemede açık anahtarla şifrelenen veri yalnızca eşi olan özel anahtarla çözülür."
+          ]
+        },
+        {
+          "id": "anahtar-dagitimi",
+          "label": "Simetrik anahtarın güvenle ulaştırılması sorunu",
+          "aliases": [
+            "güvenli bir yoldan",
+            "güvenli şekilde ilet",
+            "karşı tarafa ilet",
+            "anahtar dağıtım",
+            "key distribution",
+            "key exchange"
+          ],
+          "anchors": [
+            "Simetrik anahtarın iki tarafa güvenli bir yoldan ulaştırılması gerekir."
+          ]
+        },
+        {
+          "id": "hibrit",
+          "label": "Asimetrik yavaş; anahtar anlaşması için, veri simetrikle",
+          "aliases": [
+            "hibrit",
+            "hybrid",
+            "asimetrik yavaş",
+            "çok daha yavaş",
+            "simetrik anahtar paylaş",
+            "oturum anahtar"
+          ],
+          "anchors": [
+            "Asimetrik kriptografi simetrik bir oturum anahtarı üzerinde anlaşmak için, veri ise simetrik anahtarla şifrelenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Veritabanında bir kolonu şifreliyorsan şifreleme anahtarını nerede tutar, nasıl döndürürsün?"
+      ],
+      "source": "Kendi derleme — OWASP Cryptographic Storage Cheat Sheet; RFC 8446 §1.2"
+    },
+    {
+      "id": "cybersecurity-hmac-vs-signature",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kriptografi",
+      "difficulty": 2,
+      "prompt": "HMAC ile dijital imza arasındaki fark nedir? Düz bir hash neden bütünlük için yetmez?",
+      "modelAnswer": "Düz bir hash, örneğin SHA-256, yalnızca verinin özetidir; mesajı değiştiren biri özeti de yeniden hesaplayıp yanına koyabileceği için tek başına verinin yolda değişmediğini ya da kimin gönderdiğini kanıtlamaz. HMAC özeti gizli bir anahtarla birlikte hesaplar; anahtarı bilmeyen geçerli bir değer üretemez, bu yüzden hem bütünlüğü hem de mesajın anahtarı bilen biri tarafından üretildiğini doğrular. Ama anahtar paylaşıldığı için doğrulayan taraf da aynı değeri üretebilir; HMAC iki taraf arasında güven sağlar, mesajı kimin yazdığını üçüncü bir kişiye kanıtlamaz. Dijital imza ise özel anahtarla atılır ve açık anahtarla herkes doğrulayabilir; imzayı yalnızca özel anahtarın sahibi üretebildiği için inkâr edilemezlik (non-repudiation) sağlar, buna karşılık HMAC'ten daha yavaştır ve açık anahtarın gerçekten o kişiye ait olduğunun, örneğin bir sertifikayla, ayrıca bilinmesi gerekir.",
+      "keyConcepts": [
+        {
+          "id": "yeniden-hesaplanir",
+          "label": "Düz hash'i değiştiren de yeniden hesaplar",
+          "aliases": [
+            "yeniden hesapla",
+            "tekrar hesapla",
+            "anahtarsız",
+            "değiştiren biri",
+            "herkes hesaplayabilir",
+            "kimin gönderdiğ"
+          ],
+          "anchors": [
+            "Mesajı değiştiren biri düz hash'i de yeniden hesaplayabildiği için hash tek başına bütünlüğü kanıtlamaz."
+          ]
+        },
+        {
+          "id": "gizli-anahtarla",
+          "label": "HMAC gizli bir anahtarla hesaplanır",
+          "aliases": [
+            "gizli bir anahtarla",
+            "gizli anahtarla",
+            "paylaşılan anahtar",
+            "shared secret",
+            "secret key",
+            "anahtarı bilmeyen"
+          ],
+          "anchors": [
+            "HMAC özeti gizli bir anahtarla hesaplar; anahtarı bilmeyen geçerli bir değer üretemez."
+          ]
+        },
+        {
+          "id": "dogrulayan-da-uretir",
+          "label": "HMAC'te doğrulayan da üretebilir, üçüncü kişiye kanıt değildir",
+          "aliases": [
+            "doğrulayan taraf da",
+            "iki taraf da aynı anahtar",
+            "aynı değeri üret",
+            "kimin ürettiğini",
+            "ispatlayamaz",
+            "üçüncü bir kişi"
+          ],
+          "anchors": [
+            "Anahtar paylaşıldığı için doğrulayan da aynı değeri üretebilir; HMAC üçüncü bir kişiye kimin yazdığını kanıtlamaz."
+          ]
+        },
+        {
+          "id": "imza-acik-anahtar",
+          "label": "İmza özel anahtarla atılır, açık anahtarla herkes doğrular",
+          "aliases": [
+            "özel anahtarla",
+            "private key ile",
+            "açık anahtarla",
+            "public key ile",
+            "herkes doğrula",
+            "asimetrik"
+          ],
+          "anchors": [
+            "Dijital imza özel anahtarla atılır ve açık anahtarla herkes doğrulayabilir."
+          ]
+        },
+        {
+          "id": "inkar-edilemezlik",
+          "label": "İmza inkâr edilemezlik sağlar",
+          "aliases": [
+            "inkar edilemez",
+            "inkâr edilemez",
+            "inkar edemez",
+            "inkâr edemez",
+            "non-repudiation",
+            "non repudiation"
+          ],
+          "anchors": [
+            "İmzayı yalnızca özel anahtarın sahibi üretebildiği için dijital imza inkâr edilemezlik sağlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir webhook'un gerçekten beklenen servisten geldiğini HMAC ile nasıl doğrularsın; karşılaştırmayı neden sabit zamanlı yaparsın?"
+      ],
+      "source": "Kendi derleme — RFC 2104 (HMAC); NIST FIPS 186-5 (Digital Signature Standard)"
+    },
+    {
+      "id": "cybersecurity-mfa-phishing",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "MFA nedir? Her MFA yöntemi phishing'e karşı korur mu?",
+      "modelAnswer": "MFA, kimliği birbirinden bağımsız en az iki farklı faktörle doğrulamaktır; bilinen bir şey (parola), sahip olunan bir şey (telefon, güvenlik anahtarı) ve olunan bir şey (biyometri) bu faktörlerdir, iki ayrı parola istemek MFA sayılmaz. Her yöntem phishing'e karşı korumaz; SMS ile gelen ya da bir uygulamanın ürettiği tek kullanımlık kodu kullanıcı elle girdiği için sahte bir sayfa kodu da alıp aynı anda gerçek siteye aktarabilir, NIST SP 800-63B-4 de elle girilen kodları ve out-of-band yöntemleri phishing'e dayanıklı saymaz. Yalnızca bir bildirimi onaylamaya dayanan push yöntemi, saldırganın art arda istek gönderip kullanıcının birini onaylamasını beklediği authentication fatigue saldırılarına açıktır; NIST bu yüzden yalnızca onaya dayanan yöntemi artık kabul edilebilir saymaz ve iki kanal arasında bir değerin aktarılmasını ister. Phishing'e dayanıklı yöntemler, örneğin WebAuthn/FIDO2 güvenlik anahtarları ve passkey'ler, doğrulayıcının çıktısını bağlanılan sitenin kimliğine kriptografik olarak bağlar; sahte bir alan adında üretilen yanıt gerçek sitede işe yaramaz.",
+      "keyConcepts": [
+        {
+          "id": "farkli-faktorler",
+          "label": "Farklı türden en az iki faktör",
+          "aliases": [
+            "bilinen bir şey",
+            "sahip olunan",
+            "farklı faktör",
+            "farklı bir faktör",
+            "ek bir faktör",
+            "two-factor"
+          ],
+          "anchors": [
+            "MFA kimliği bilinen, sahip olunan ve olunan bir şey gibi farklı türden en az iki faktörle doğrular."
+          ]
+        },
+        {
+          "id": "kod-aktarilir",
+          "label": "Elle girilen kodu sahte sayfa gerçek siteye aktarabilir",
+          "aliases": [
+            "sahte bir sayfa",
+            "sahte site",
+            "kodu da",
+            "aktarabilir",
+            "relay",
+            "gerçek zamanlı"
+          ],
+          "anchors": [
+            "Kullanıcı tek kullanımlık kodu elle girdiği için sahte bir sayfa kodu alıp gerçek siteye aktarabilir."
+          ]
+        },
+        {
+          "id": "onay-yorgunlugu",
+          "label": "Yalnızca onaylamaya dayanan push, fatigue saldırısına açık",
+          "aliases": [
+            "fatigue",
+            "yorgunlu",
+            "art arda",
+            "sürekli bildirim",
+            "onaylat",
+            "push bomb"
+          ],
+          "anchors": [
+            "Yalnızca onaylamaya dayanan push yöntemi, art arda gönderilen isteklerle yapılan fatigue saldırılarına açıktır."
+          ]
+        },
+        {
+          "id": "siteye-bagli",
+          "label": "Phishing'e dayanıklı yöntem çıktıyı sitenin kimliğine bağlar",
+          "aliases": [
+            "webauthn",
+            "fido",
+            "passkey",
+            "sitenin kimliğine",
+            "alan adına bağlı",
+            "domaine bağlı"
+          ],
+          "anchors": [
+            "WebAuthn/FIDO2 ve passkey'ler doğrulayıcının çıktısını bağlanılan sitenin kimliğine kriptografik olarak bağlar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcılarının bir kısmı yalnızca SMS ile doğrulama yapabiliyorsa bu yöntemin riskini nasıl azaltırsın?"
+      ],
+      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.3 (Out-of-Band), §3.2.5 (Phishing Resistance); OWASP Multifactor Authentication Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-passkeys",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "Passkey (WebAuthn) nasıl çalışır? Parolaya göre neden phishing'e dayanıklıdır?",
+      "modelAnswer": "Passkey, kullanıcının cihazında ya da parola yöneticisinde her site için ayrı üretilen bir anahtar çiftidir; site yalnızca açık anahtarı saklar, özel anahtar kullanıcı tarafında kalır, bu yüzden sunucuda çalınabilecek ya da başka sitelerde denenebilecek paylaşılan bir sır yoktur. Girişte sunucu rastgele bir challenge gönderir, kullanıcının cihazı bunu özel anahtarla imzalar ve sunucu imzayı kayıtlı açık anahtarla doğrular; kullanıcı yalnızca cihazın kilidini parmak izi, yüz tanıma ya da PIN ile açar ve biyometrik veri cihazdan çıkmaz. Anahtarın kullanımı kaydedildiği alan adıyla sınırlıdır; sahte bir alan adındaki sayfa bu anahtarı kullandıramaz, bu yüzden koruma kullanıcının adresi dikkatle kontrol etmesine bağlı değildir. Passkey'ler cihazlar arasında senkronize edilebilir ya da tek bir cihaza, örneğin bir donanım güvenlik anahtarına bağlı kalabilir; NIST SP 800-63B-4 senkronize edilebilen authenticator'ları AAL2'ye kadar kabul eder, anahtar dışa aktarılabildiği için AAL3'te kullanılmalarına izin vermez.",
+      "keyConcepts": [
+        {
+          "id": "sunucuda-sir-yok",
+          "label": "Sunucuda yalnızca açık anahtar, paylaşılan sır yok",
+          "aliases": [
+            "paylaşılan bir sır",
+            "paylaşılan sır yok",
+            "yalnızca açık anahtar",
+            "sadece public key",
+            "sızsa bile",
+            "no shared secret"
+          ],
+          "anchors": [
+            "Site yalnızca açık anahtarı saklar; sunucuda çalınabilecek paylaşılan bir sır yoktur."
+          ]
+        },
+        {
+          "id": "challenge-imza",
+          "label": "Sunucunun challenge'ı özel anahtarla imzalanır",
+          "aliases": [
+            "challenge",
+            "imzalar",
+            "imzalanır",
+            "özel anahtarla imza",
+            "private key ile imza",
+            "imzayı doğrula"
+          ],
+          "anchors": [
+            "Sunucu rastgele bir challenge gönderir, cihaz bunu özel anahtarla imzalar, sunucu açık anahtarla doğrular."
+          ]
+        },
+        {
+          "id": "alan-adina-sinirli",
+          "label": "Anahtar kaydedildiği alan adıyla sınırlı",
+          "aliases": [
+            "alan adıyla sınırlı",
+            "alan adına bağlı",
+            "domain'e bağlı",
+            "siteye bağlı",
+            "rp id",
+            "sahte bir alan"
+          ],
+          "anchors": [
+            "Anahtarın kullanımı kaydedildiği alan adıyla sınırlıdır; sahte bir alan adı onu kullandıramaz."
+          ]
+        },
+        {
+          "id": "biyometri-cihazda",
+          "label": "Biyometri yalnızca cihazın kilidini açar, cihazdan çıkmaz",
+          "aliases": [
+            "parmak izi",
+            "yüz tanıma",
+            "biyometri",
+            "cihazdan çıkmaz",
+            "cihazın kilidi",
+            "yerel doğrula"
+          ],
+          "anchors": [
+            "Kullanıcı cihazın kilidini biyometriyle ya da PIN'le açar; biyometrik veri cihazdan çıkmaz."
+          ]
+        },
+        {
+          "id": "senkron-aal2",
+          "label": "Senkronize ya da cihaza bağlı; senkronize olan AAL2'ye kadar",
+          "aliases": [
+            "senkronize ed",
+            "cihazlar arasında",
+            "device-bound",
+            "cihaza bağlı",
+            "aal2",
+            "aal3"
+          ],
+          "anchors": [
+            "Passkey senkronize edilebilir ya da tek cihaza bağlı kalabilir; NIST senkronize olanları AAL2'ye kadar kabul eder."
+          ]
+        }
+      ],
+      "followUps": [
+        "Kullanıcı passkey'inin bulunduğu tek cihazını kaybederse hesap kurtarma akışı phishing direncini nasıl bozabilir?"
+      ],
+      "source": "Kendi derleme — FIDO Alliance: Passkeys; NIST SP 800-63B-4 §3.2.5 ve Ek B (Syncable Authenticators); W3C Web Authentication"
+    },
+    {
+      "id": "cybersecurity-session-fixation",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "Session fixation saldırısı nedir? Nasıl önlenir?",
+      "modelAnswer": "Session fixation'da saldırgan önceden bildiği bir session id'yi kurbanın tarayıcısına yerleştirir, örneğin bu id'yi taşıyan bir linkle; kurban bu oturumla giriş yaptığında uygulama aynı id'yi kimliği doğrulanmış oturuma çevirirse saldırgan da elindeki id ile kurbanın hesabına girmiş olur. Temel önlem kimlik doğrulamadan hemen sonra, genel olarak her yetki seviyesi değişiminde, eski session id'yi geçersiz kılıp yeni bir id üretmektir; OWASP bunu session fixation'a karşı zorunlu sayar. Uygulama session id'yi yalnızca cookie'den kabul etmeli, URL parametresindeki id'yi reddetmeli ve kendisinin üretmediği bir id geldiğinde onu kullanmak yerine yenisini vermelidir. Spring Security gibi framework'ler girişte id'yi varsayılan olarak değiştirir; çıkışta da oturum yalnızca tarayıcıdaki cookie silinerek değil, sunucu tarafında geçersiz kılınarak kapatılır.",
+      "keyConcepts": [
+        {
+          "id": "bilinen-id",
+          "label": "Saldırganın bildiği id kurbana yerleştirilir",
+          "aliases": [
+            "önceden bildiği",
+            "bildiği bir session",
+            "kendi session id",
+            "id'yi yerleştir",
+            "aynı id ile",
+            "aynı session id"
+          ],
+          "anchors": [
+            "Saldırgan önceden bildiği bir session id'yi kurbanın tarayıcısına yerleştirir."
+          ]
+        },
+        {
+          "id": "giriste-yeni-id",
+          "label": "Girişte ve yetki değişiminde yeni session id",
+          "aliases": [
+            "yeni bir id",
+            "yeni session id",
+            "yeni bir session",
+            "id'yi yenile",
+            "regenerat",
+            "changesessionid"
+          ],
+          "anchors": [
+            "Kimlik doğrulamadan hemen sonra eski session id geçersiz kılınır ve yeni bir id üretilir."
+          ]
+        },
+        {
+          "id": "yalnizca-cookie",
+          "label": "Id yalnızca cookie'den, URL'den ya da üretilmemişse kabul edilmez",
+          "aliases": [
+            "url parametre",
+            "url'deki id",
+            "yalnızca cookie",
+            "sadece cookie",
+            "kendisinin üretmediği",
+            "üretmediği bir id"
+          ],
+          "anchors": [
+            "Session id yalnızca cookie'den kabul edilir; URL'deki ya da uygulamanın üretmediği id reddedilir."
+          ]
+        },
+        {
+          "id": "sunucuda-sonlandir",
+          "label": "Çıkışta oturum sunucu tarafında geçersiz kılınır",
+          "aliases": [
+            "sunucu tarafında geçersiz",
+            "sunucuda geçersiz",
+            "invalidate",
+            "çıkışta",
+            "logout",
+            "oturumu sonlandır"
+          ],
+          "anchors": [
+            "Çıkışta oturum yalnızca cookie silinerek değil, sunucu tarafında geçersiz kılınarak kapatılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Token kullanan stateless bir API'de session fixation'a benzeyen bir risk var mı?"
+      ],
+      "source": "Kendi derleme — OWASP Session Management Cheat Sheet (Session ID renewal, Session Fixation)"
+    },
+    {
+      "id": "cybersecurity-credential-stuffing",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Kimlik Doğrulama",
+      "difficulty": 2,
+      "prompt": "Brute force, credential stuffing ve password spraying arasındaki fark nedir? Giriş ekranında hangi önlemler alınır?",
+      "modelAnswer": "Brute force tek bir hesaba çok sayıda parola denemektir; credential stuffing başka sitelerin sızıntılarından elde edilen kullanıcı adı ve parola çiftlerini, insanlar aynı parolayı birçok yerde kullandığı için toplu olarak denemektir; password spraying ise az sayıda yaygın parolayı çok sayıda hesapta, hesap başına birkaç denemeyle sınar ve böylece hesap bazlı limitlere takılmaz. OWASP'a göre en etkili önlem MFA'dır, çünkü doğru parola tek başına yetmez; yeni parolaların bilinen sızıntı listeleriyle karşılaştırılması da yeniden kullanılmış parolaları baştan engeller. Deneme sayısı hem hesap hem de IP ya da cihaz bazında, kısa ve uzun zaman pencerelerinde üst sınıra bağlanır ve şüpheli girişlerde CAPTCHA ya da ek doğrulama istenir; OWASP engellerin geçici olmasını önerir, kalıcı bir kilit saldırganın meşru kullanıcıyı hesabından dışarıda bırakmasının yolunu açar. Hata mesajları kullanıcı adının mı parolanın mı yanlış olduğunu söylemez; aksi hâlde saldırgan önce geçerli kullanıcı adlarını listeleyip (user enumeration) sonra denemeyi yalnızca onlara yöneltir.",
+      "keyConcepts": [
+        {
+          "id": "sizinti-ciftleri",
+          "label": "Credential stuffing: başka sızıntılardan gelen çiftler, parola tekrarı",
+          "aliases": [
+            "başka sitelerin sızıntı",
+            "başka sitelerden",
+            "sızan kullanıcı adı",
+            "sızdırılmış",
+            "aynı parolayı",
+            "parola tekrar"
+          ],
+          "anchors": [
+            "Credential stuffing başka sitelerin sızıntılarından gelen kullanıcı adı ve parola çiftlerini dener."
+          ]
+        },
+        {
+          "id": "tek-hesap-cok-hesap",
+          "label": "Brute force tek hesaba, spraying çok hesaba az parola",
+          "aliases": [
+            "tek bir hesaba",
+            "tek hesaba",
+            "yaygın parola",
+            "çok sayıda hesap",
+            "birçok hesap",
+            "hesap başına"
+          ],
+          "anchors": [
+            "Brute force tek bir hesaba çok parola dener; password spraying az sayıda yaygın parolayı çok sayıda hesapta dener."
+          ]
+        },
+        {
+          "id": "mfa",
+          "label": "En etkili önlem MFA",
+          "aliases": [
+            "çok faktörlü",
+            "multi-factor",
+            "iki faktör",
+            "mfa kullan",
+            "mfa'dır",
+            "olarak mfa"
+          ],
+          "anchors": [
+            "En etkili önlem MFA'dır; doğru parola tek başına yetmez."
+          ]
+        },
+        {
+          "id": "hiz-siniri",
+          "label": "Hesap ve IP bazlı hız sınırı, CAPTCHA, geçici engel",
+          "aliases": [
+            "rate limit",
+            "rate-limit",
+            "hız sınır",
+            "deneme sayısı",
+            "throttl",
+            "captcha"
+          ],
+          "anchors": [
+            "Deneme sayısı hesap ve IP bazında sınırlanır, şüpheli girişlerde CAPTCHA istenir, engeller geçicidir."
+          ]
+        },
+        {
+          "id": "genel-hata",
+          "label": "Hata mesajı hangi alanın yanlış olduğunu söylemez",
+          "aliases": [
+            "genel bir hata",
+            "aynı hata mesajı",
+            "enumeration",
+            "kullanıcı adının mı",
+            "kullanıcı adı mı",
+            "hangisinin yanlış"
+          ],
+          "anchors": [
+            "Hata mesajı kullanıcı adının mı parolanın mı yanlış olduğunu söylemez; böylece user enumeration önlenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Giriş ucunu IP bazlı hız sınırıyla koruyorsan binlerce farklı IP'den gelen dağıtık bir denemeyi nasıl fark edersin?"
+      ],
+      "source": "Kendi derleme — OWASP Credential Stuffing Prevention Cheat Sheet; OWASP Authentication Cheat Sheet; NIST SP 800-63B-4 §3.2.2"
+    },
+    {
+      "id": "cybersecurity-oauth-vs-oidc",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "OAuth ve OIDC",
+      "difficulty": 2,
+      "prompt": "OAuth 2.0 neden bir kimlik doğrulama protokolü değildir? OpenID Connect buna ne ekler?",
+      "modelAnswer": "OAuth 2.0 bir yetki devri çerçevesidir; kullanıcı bir uygulamaya parolasını vermeden, kendi adına belirli bir kaynağa sınırlı erişim izni verir ve uygulama bu izni bir access token olarak alır. Access token kaynak sunucusu, yani API için yazılmıştır ve istemci için genellikle opaktır; istemciye kullanıcının kim olduğunu, ne zaman ve nasıl giriş yaptığını söyleme garantisi vermez, bu yüzden yalnızca token alınabildi diye kullanıcının giriş yaptığını varsaymak, başka bir uygulama için verilmiş bir token'ın kabul edilmesi gibi açıklara yol açar. OpenID Connect, OAuth 2.0'ın üzerine bir kimlik katmanı ekler; `openid` scope'uyla başlayan akışta istemci access token'ın yanında bir ID token da alır. ID token istemci için üretilmiş imzalı bir JWT'dir; kimin giriş yaptığını (`sub`), kimin ürettiğini (`iss`), kimin için üretildiğini (`aud`, istemcinin client_id'si) ve geçerlilik süresini (`exp`) taşır ve istemci bunları doğrulamak zorundadır. ID token API çağrılarında kullanılmaz; API access token'ı, istemci ID token'ı doğrular, kullanıcı hakkında ek bilgi gerekiyorsa UserInfo uç noktası access token'la çağrılır.",
+      "keyConcepts": [
+        {
+          "id": "yetki-devri",
+          "label": "OAuth yetki devridir",
+          "aliases": [
+            "yetki devri",
+            "delegat",
+            "kendi adına",
+            "kullanıcı adına",
+            "authorization için",
+            "parolasını vermeden"
+          ],
+          "anchors": [
+            "OAuth 2.0'da kullanıcı bir uygulamaya parolasını vermeden kendi adına sınırlı erişim izni verir."
+          ]
+        },
+        {
+          "id": "access-token-api-icin",
+          "label": "Access token API içindir, kim olduğunu söylemez",
+          "aliases": [
+            "kim olduğunu söylemez",
+            "kim olduğunu göstermez",
+            "opak",
+            "opaque",
+            "kaynak sunucu",
+            "resource server"
+          ],
+          "anchors": [
+            "Access token kaynak sunucusu için yazılmıştır, istemci için opaktır ve kullanıcının kim olduğunu söylemez."
+          ]
+        },
+        {
+          "id": "id-token",
+          "label": "OIDC kimlik katmanı ve ID token ekler",
+          "aliases": [
+            "id token",
+            "id_token",
+            "kimlik token",
+            "identity token",
+            "kimlik katmanı",
+            "identity layer"
+          ],
+          "anchors": [
+            "OpenID Connect OAuth 2.0'ın üzerine bir kimlik katmanı ekler ve istemciye bir ID token verir."
+          ]
+        },
+        {
+          "id": "claim-dogrulama",
+          "label": "ID token'daki iss, sub, aud, exp istemcide doğrulanır",
+          "aliases": [
+            "audience",
+            "client_id",
+            "issuer",
+            "sub claim",
+            "aud claim",
+            "iss claim"
+          ],
+          "anchors": [
+            "İstemci ID token'ın yayıncısını, hedef kitlesinin kendi client_id'si olduğunu ve süresini doğrular."
+          ]
+        },
+        {
+          "id": "api-ye-gitmez",
+          "label": "ID token API'ye gönderilmez, ek bilgi UserInfo'dan",
+          "aliases": [
+            "api çağrılarında kullanılmaz",
+            "api'ye gönderilmez",
+            "apiye gönderilmez",
+            "api'ye gönderme",
+            "userinfo",
+            "istemci id token"
+          ],
+          "anchors": [
+            "ID token API çağrılarında kullanılmaz; ek kullanıcı bilgisi UserInfo uç noktasından access token'la alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir SPA kullanıcı adını göstermek için access token'ın içini çözüp okuyorsa bu neden kırılgan bir tasarımdır?"
+      ],
+      "source": "Kendi derleme — RFC 6749 §1; OpenID Connect Core 1.0 §1, §2, §3.1.3.7, §5.3"
+    },
+    {
+      "id": "cybersecurity-auth-code-pkce",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "OAuth ve OIDC",
+      "difficulty": 3,
+      "prompt": "Authorization code akışında PKCE hangi saldırıyı önler, nasıl çalışır?",
+      "modelAnswer": "Authorization code akışında yetkilendirme sunucusu kullanıcıyı tarayıcı üzerinden kısa ömürlü bir code ile istemciye geri yönlendirir, istemci bu code'u arka kanalda, token uç noktasında access token ile değiştirir. Mobil ve tarayıcıdaki uygulamalar gibi public client'lar bir client secret saklayamaz; yönlendirme sırasında code'u ele geçiren biri, örneğin aynı özel URL şemasını kaydetmiş kötü niyetli bir uygulama, onu token'a çevirebilir. PKCE bunu önler; istemci her istek için rastgele bir `code_verifier` üretir, yetkilendirme isteğine onun SHA-256 özetini `code_challenge` olarak koyar ve token isteğinde `code_verifier`'ın kendisini gönderir, sunucu ikisinin eşleştiğini doğrular. Code'u çalan ama verifier'ı bilmeyen biri token alamaz; S256 kullanabilen istemcinin onu kullanması zorunludur, değeri olduğu gibi gönderen `plain` yöntemi ise yalnızca S256 teknik olarak mümkün değilse kabul edilir. RFC 9700 PKCE'yi public client'lar için zorunlu, confidential client'lar için önerilen kılar; yetkilendirme sunucusu da redirect URI'leri kayıtlı değerlerle birebir karşılaştırmalıdır.",
+      "keyConcepts": [
+        {
+          "id": "code-ele-gecirme",
+          "label": "Public client'ta yönlendirmedeki code ele geçirilebilir",
+          "aliases": [
+            "ele geçiren",
+            "intercept",
+            "code'u çal",
+            "özel url şeması",
+            "custom url scheme",
+            "secret saklayamaz"
+          ],
+          "anchors": [
+            "Public client secret saklayamaz; yönlendirmede code'u ele geçiren biri onu token'a çevirebilir."
+          ]
+        },
+        {
+          "id": "verifier-challenge",
+          "label": "code_verifier ve ondan türeyen code_challenge",
+          "aliases": [
+            "code_verifier",
+            "code_challenge",
+            "code verifier",
+            "code challenge",
+            "verifier",
+            "doğrulayıcı değer"
+          ],
+          "anchors": [
+            "İstemci rastgele bir code_verifier üretir ve yetkilendirme isteğine onun özetini code_challenge olarak koyar."
+          ]
+        },
+        {
+          "id": "token-isteginde",
+          "label": "Verifier token isteğinde gönderilir, sunucu eşleştirir",
+          "aliases": [
+            "token isteğinde",
+            "token alırken",
+            "token uç noktası",
+            "token endpoint",
+            "eşleştiğini doğrula",
+            "eşleşip eşleşmediğ"
+          ],
+          "anchors": [
+            "Token isteğinde code_verifier gönderilir ve sunucu onun challenge ile eşleştiğini doğrular."
+          ]
+        },
+        {
+          "id": "s256",
+          "label": "S256 kullanılır, plain yalnızca zorunlu kalınca",
+          "aliases": [
+            "s256",
+            "sha-256 özeti",
+            "sha256 özeti",
+            "hash'ini",
+            "plain yöntem",
+            "özetini koy"
+          ],
+          "anchors": [
+            "S256 kullanabilen istemci onu kullanmak zorundadır; plain yalnızca S256 mümkün değilse kabul edilir."
+          ]
+        },
+        {
+          "id": "rfc9700",
+          "label": "RFC 9700: public client'ta zorunlu, redirect URI birebir",
+          "aliases": [
+            "public client",
+            "confidential client",
+            "rfc 9700",
+            "tüm istemciler",
+            "bütün istemciler",
+            "birebir karşılaştır"
+          ],
+          "anchors": [
+            "RFC 9700 PKCE'yi public client'lar için zorunlu kılar ve redirect URI'lerin birebir karşılaştırılmasını ister."
+          ]
+        }
+      ],
+      "followUps": [
+        "PKCE kullanılan bir akışta `state` parametresine hâlâ ihtiyaç var mı?"
+      ],
+      "source": "Kendi derleme — RFC 7636 §1, §4; RFC 9700 §2.1, §2.1.1; RFC 6749 §4.1"
+    },
+    {
+      "id": "cybersecurity-implicit-flow",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "OAuth ve OIDC",
+      "difficulty": 2,
+      "prompt": "OAuth'taki implicit flow neden artık önerilmiyor?",
+      "modelAnswer": "Implicit flow, tarayıcıdaki uygulamaların arka kanal gerektirmeden token alabilmesi için tasarlanmıştı; yetkilendirme sunucusu access token'ı doğrudan yönlendirme adresinin fragment kısmında istemciye verir. Token bu yüzden adres çubuğunda ve tarayıcı geçmişinde kalır, Referer başlığı ya da açık yönlendirmeler üzerinden sızabilir; ayrıca token'ın gerçekten bu istemci için verildiği güvenle doğrulanamadığı için başka bir istemciye verilmiş bir token akışa enjekte edilebilir. Akış refresh token vermez ve token'ı gönderen istemciye bağlamayı (sender-constrained token) desteklemez, bu yüzden çalınan bir token süresi dolana kadar her yerden kullanılabilir. RFC 9700 bu yüzden implicit grant'in kullanılmamasını (SHOULD NOT) ister ve yerine authorization code akışını PKCE ile önerir. Hâlâ taslak olan OAuth 2.1 (son sürümü Eylül 2026 tarihli draft-ietf-oauth-v2-1-16) implicit ve resource owner password credentials akışlarını hiç tanımlamaz ve PKCE'yi zorunlu tutar.",
+      "keyConcepts": [
+        {
+          "id": "fragment",
+          "label": "Token yönlendirme adresinin fragment'ında gelir",
+          "aliases": [
+            "fragment",
+            "adres çubuğu",
+            "#access_token",
+            "url'deki token",
+            "url'de token",
+            "url içinde"
+          ],
+          "anchors": [
+            "Implicit flow'da access token doğrudan yönlendirme adresinin fragment kısmında verilir."
+          ]
+        },
+        {
+          "id": "sizinti",
+          "label": "Geçmiş, Referer ve yönlendirmelerle sızar",
+          "aliases": [
+            "tarayıcı geçmiş",
+            "browser history",
+            "referer",
+            "referrer",
+            "geçmişte kal",
+            "token sızar"
+          ],
+          "anchors": [
+            "Token tarayıcı geçmişinde kalır, Referer başlığı ya da açık yönlendirmeler üzerinden sızabilir."
+          ]
+        },
+        {
+          "id": "enjeksiyon",
+          "label": "Token'ın bu istemciye verildiği doğrulanamaz, enjekte edilebilir",
+          "aliases": [
+            "token injection",
+            "enjekte edilebilir",
+            "başka bir istemci",
+            "kime verildiğ",
+            "kime ait",
+            "bu istemci için"
+          ],
+          "anchors": [
+            "Token'ın bu istemci için verildiği doğrulanamadığından başka bir istemciye verilmiş token akışa enjekte edilebilir."
+          ]
+        },
+        {
+          "id": "code-pkce-yerine",
+          "label": "RFC 9700: kullanılmamalı, yerine code + PKCE",
+          "aliases": [
+            "authorization code",
+            "code akışı",
+            "code flow",
+            "pkce",
+            "should not",
+            "code + pkce"
+          ],
+          "anchors": [
+            "RFC 9700 implicit grant'in kullanılmamasını ister ve yerine PKCE'li authorization code akışını önerir."
+          ]
+        },
+        {
+          "id": "oauth21",
+          "label": "Taslak OAuth 2.1 implicit'i hiç tanımlamaz",
+          "aliases": [
+            "oauth 2.1",
+            "oauth2.1",
+            "taslak",
+            "draft",
+            "tanımlamaz",
+            "ropc"
+          ],
+          "anchors": [
+            "Hâlâ taslak olan OAuth 2.1 implicit ve password grant'leri tanımlamaz, PKCE'yi zorunlu tutar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Implicit flow kullanan eski bir SPA'yı authorization code + PKCE'ye geçirirken token'ları tarayıcıda nerede tutarsın?"
+      ],
+      "source": "Kendi derleme — RFC 9700 §2.1.2, §4.2, §4.3, §4.6; RFC 6749 §4.2; draft-ietf-oauth-v2-1-16"
+    },
+    {
+      "id": "cybersecurity-jwt-signature",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "JWT",
+      "difficulty": 1,
+      "prompt": "JWT'nin imzası neyi garanti eder, neyi etmez?",
+      "modelAnswer": "İmza, token'ın içeriğinin imzalandıktan sonra değiştirilmediğini ve onu doğru anahtara sahip bir tarafın ürettiğini garanti eder; header ya da payload'da tek bir karakter değişirse doğrulama başarısız olur. Gizlilik garanti etmez; header ve payload yalnızca Base64url ile kodlanmıştır ve token'ı gören herkes içeriğini okuyabilir, bu yüzden token'a parola, kişisel veri ya da iç sistem bilgisi gibi hassas bilgiler konmaz, gizlilik gerekiyorsa token JWE ile şifrelenir. İmzanın geçerli olması token'ın kabul edilmesi için de yetmez; `exp` ile süresi, `iss` ile beklenen yayıncıdan geldiği, `aud` ile bu servis için üretildiği ayrıca kontrol edilir, aksi hâlde başka bir servis için verilmiş geçerli bir token kabul edilebilir.",
+      "keyConcepts": [
+        {
+          "id": "butunluk",
+          "label": "İçeriğin değiştirilmediğini ve doğru anahtarla üretildiğini garanti eder",
+          "aliases": [
+            "değiştirilmediğ",
+            "bütünlük",
+            "integrity",
+            "kurcalan",
+            "tamper",
+            "doğru anahtara sahip"
+          ],
+          "anchors": [
+            "İmza token'ın içeriğinin değiştirilmediğini ve doğru anahtara sahip bir tarafça üretildiğini garanti eder."
+          ]
+        },
+        {
+          "id": "herkes-okur",
+          "label": "Payload şifreli değildir, herkes okuyabilir",
+          "aliases": [
+            "base64",
+            "herkes okuyabilir",
+            "şifreli değil",
+            "şifrelenmemiş",
+            "decode edil",
+            "içeriğini okuyabilir"
+          ],
+          "anchors": [
+            "Header ve payload yalnızca Base64url ile kodlanmıştır; token'ı gören herkes içeriğini okuyabilir."
+          ]
+        },
+        {
+          "id": "hassas-bilgi-konmaz",
+          "label": "Hassas bilgi konmaz, gizlilik için JWE",
+          "aliases": [
+            "hassas bilgi",
+            "hassas veri",
+            "kişisel veri",
+            "jwe ile",
+            "şifrelenmiş jwt",
+            "confidentiality"
+          ],
+          "anchors": [
+            "Token'a hassas bilgi konmaz; gizlilik gerekiyorsa token JWE ile şifrelenir."
+          ]
+        },
+        {
+          "id": "claim-kontrolu",
+          "label": "Süre, yayıncı ve hedef kitle ayrıca doğrulanır",
+          "aliases": [
+            "expiration",
+            "issuer",
+            "audience",
+            "beklenen yayıncı",
+            "bu servis için",
+            "claim'leri doğrula"
+          ],
+          "anchors": [
+            "Geçerli imza yetmez; süre, beklenen yayıncı ve bu servis için üretildiği ayrıca kontrol edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir mikroservis yalnızca imzayı doğrulayıp `aud`'u kontrol etmezse hangi senaryoda başka bir servisin token'ını kabul eder?"
+      ],
+      "source": "Kendi derleme — RFC 7519 (JWT); RFC 8725 §3.8, §3.9; OWASP JSON Web Token Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-jwt-algorithm",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "JWT",
+      "difficulty": 3,
+      "prompt": "JWT doğrulanırken algoritma neden token'ın header'ından okunmamalıdır? HS256 ile RS256 arasındaki fark nedir?",
+      "modelAnswer": "HS256 bir HMAC'tir; imzalayan ve doğrulayan tek bir ortak sırrı paylaşır, bu yüzden token'ı doğrulayabilen her servis yeni bir token da üretebilir ve anahtar tüm doğrulayıcılara dağıtılmak zorundadır; anahtar ayrıca bir parola gibi tahmin edilebilir değil, yeterince uzun rastgele bir değer olmalıdır, çünkü ele geçirilen tek bir token üzerinden çevrimdışı denenebilir. RS256 ya da ES256 gibi asimetrik algoritmalarda token yalnızca özel anahtarı tutan yayıncıda imzalanır, servisler açık anahtarla, genellikle yayıncının JWKS adresinden alarak doğrular; bir servisin ele geçirilmesi başkası adına token üretmeye yetmez. Header'daki `alg` alanı token'ı gönderen tarafın kontrolündedir; doğrulayıcı algoritmayı oradan seçerse imzasız (`none`) bir token'ı ya da açık anahtarın HMAC sırrı gibi kullanıldığı bir doğrulamayı kabul edebilir, RFC 8725 bu iki açığı da tarif eder. Bu yüzden kabul edilen algoritmalar doğrulayıcıda açıkça sabitlenir, her anahtar yalnızca tek bir algoritmayla kullanılır ve `kid` ya da `jku` gibi header alanları da güvenilmeyen girdi sayılır.",
+      "keyConcepts": [
+        {
+          "id": "hs-paylasilan",
+          "label": "HS256'da doğrulayan da token üretebilir",
+          "aliases": [
+            "ortak sır",
+            "ortak bir sır",
+            "paylaşılan anahtar",
+            "shared secret",
+            "doğrulayan da üret",
+            "token da üretebilir"
+          ],
+          "anchors": [
+            "HS256'da imzalayan ve doğrulayan tek bir ortak sırrı paylaşır; doğrulayan her servis token da üretebilir."
+          ]
+        },
+        {
+          "id": "rs-ozel-anahtar",
+          "label": "RS256'da özel anahtar yalnızca yayıncıda",
+          "aliases": [
+            "özel anahtarı tutan",
+            "yalnızca yayıncı",
+            "jwks",
+            "açık anahtarla doğrula",
+            "public key ile doğrula",
+            "private key yalnızca"
+          ],
+          "anchors": [
+            "RS256'da token yalnızca özel anahtarı tutan yayıncıda imzalanır, servisler açık anahtarla doğrular."
+          ]
+        },
+        {
+          "id": "alg-gonderenin",
+          "label": "alg alanı gönderenin kontrolünde; none ve karışıklık",
+          "aliases": [
+            "alg alanı",
+            "alg header",
+            "alg: none",
+            "imzasız",
+            "algoritma karışıklığı",
+            "algorithm confusion"
+          ],
+          "anchors": [
+            "alg alanı gönderenin kontrolündedir; doğrulayıcı oradan seçerse imzasız ya da karıştırılmış bir doğrulamayı kabul edebilir."
+          ]
+        },
+        {
+          "id": "algoritma-sabit",
+          "label": "Kabul edilen algoritma doğrulayıcıda sabitlenir",
+          "aliases": [
+            "sabitle",
+            "allowlist",
+            "beklenen algoritma",
+            "izin verilen algoritma",
+            "tek bir algoritma",
+            "whitelist"
+          ],
+          "anchors": [
+            "Kabul edilen algoritmalar doğrulayıcıda sabitlenir ve her anahtar tek bir algoritmayla kullanılır."
+          ]
+        },
+        {
+          "id": "anahtar-gucu",
+          "label": "HMAC anahtarı uzun ve rastgele olmalı",
+          "aliases": [
+            "yeterince uzun",
+            "zayıf anahtar",
+            "çevrimdışı",
+            "offline",
+            "parola gibi",
+            "tahmin edilebilir anahtar"
+          ],
+          "anchors": [
+            "HS256 anahtarı parola gibi değil, yeterince uzun rastgele bir değer olmalıdır; aksi hâlde çevrimdışı denenebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Yayıncı imzalama anahtarını döndürdüğünde doğrulayıcı servisler kesintisiz nasıl geçiş yapar?"
+      ],
+      "source": "Kendi derleme — RFC 8725 §2.1, §2.2, §3.1, §3.2, §3.5, §3.10; RFC 7518 (JWA)"
+    },
+    {
+      "id": "cybersecurity-refresh-token-rotation",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "JWT",
+      "difficulty": 3,
+      "prompt": "Refresh token rotation nedir? Yeniden kullanım tespiti nasıl çalışır?",
+      "modelAnswer": "Rotation'da her yenileme isteğinde yetkilendirme sunucusu yeni bir access token'ın yanında yeni bir refresh token da verir ve kullanılan eski refresh token'ı geçersiz kılar; her refresh token böylece tek kullanımlık olur. Bir refresh token çalınırsa saldırgan ve meşru istemci aynı token'ı er geç kullanmaya çalışır ve ikisinden biri zaten geçersiz kılınmış bir token sunar; sunucu bunu çalınma işareti sayar. Hangisinin saldırgan olduğunu bilemediği için o yetkiye bağlı aktif refresh token'ı, çoğu uygulamada da aynı aileden bütün token'ları iptal eder; saldırı durur, meşru kullanıcı da yeniden giriş yapmak zorunda kalır. Tespit iptal edilen token'ın kaydına dayandığı için bu kayıt hemen silinmez; iki sekme ya da eşzamanlı istek aynı token'ı aynı anda gönderebildiği için uygulamalar kısa bir tolerans penceresi de tanıyabilir. RFC 9700 public client'lar için refresh token'ların ya rotation kullanmasını ya da sender-constrained olmasını, yani DPoP ya da mTLS ile istemciye kriptografik olarak bağlanmasını zorunlu tutar.",
+      "keyConcepts": [
+        {
+          "id": "tek-kullanimlik",
+          "label": "Her yenilemede yeni refresh token, eskisi geçersiz",
+          "aliases": [
+            "tek kullanımlık",
+            "single-use",
+            "single use",
+            "yeni bir refresh token",
+            "eskisi geçersiz",
+            "eski refresh token"
+          ],
+          "anchors": [
+            "Her yenilemede yeni bir refresh token verilir ve eskisi geçersiz kılınır; token tek kullanımlıktır."
+          ]
+        },
+        {
+          "id": "calinma-isareti",
+          "label": "Geçersiz token'ın tekrar gelmesi çalınma işaretidir",
+          "aliases": [
+            "çalınma işareti",
+            "çalındığ",
+            "kopyalan",
+            "reuse detection",
+            "zaten geçersiz",
+            "zaten kullanılmış"
+          ],
+          "anchors": [
+            "Zaten geçersiz kılınmış bir refresh token'ın tekrar gelmesi çalınma işareti sayılır."
+          ]
+        },
+        {
+          "id": "aileyi-iptal",
+          "label": "Hangisinin saldırgan olduğu bilinmediği için hepsi iptal",
+          "aliases": [
+            "hepsini iptal",
+            "bütün refresh token",
+            "tüm refresh token",
+            "token ailesi",
+            "token family",
+            "aynı aileden"
+          ],
+          "anchors": [
+            "Sunucu hangisinin saldırgan olduğunu bilemediği için aynı aileden bütün token'ları iptal eder."
+          ]
+        },
+        {
+          "id": "tolerans",
+          "label": "Eşzamanlı istekler için kısa tolerans penceresi",
+          "aliases": [
+            "tolerans",
+            "grace period",
+            "grace",
+            "eşzamanlı",
+            "iki sekme",
+            "kısa bir pencere"
+          ],
+          "anchors": [
+            "İki sekme aynı token'ı aynı anda gönderebildiği için kısa bir tolerans penceresi tanınabilir."
+          ]
+        },
+        {
+          "id": "sender-constrained",
+          "label": "Alternatif: sender-constrained refresh token (DPoP, mTLS)",
+          "aliases": [
+            "sender-constrained",
+            "sender constrained",
+            "dpop",
+            "mtls",
+            "istemciye bağla",
+            "kriptografik olarak bağla"
+          ],
+          "anchors": [
+            "RFC 9700 public client'larda rotation ya da DPoP/mTLS ile sender-constrained refresh token ister."
+          ]
+        }
+      ],
+      "followUps": [
+        "Rotation kullanan bir sistemde kullanıcının iki sekmesi aynı anda yenileme yaparsa ne olur, bunu nasıl ele alırsın?"
+      ],
+      "source": "Kendi derleme — RFC 9700 §2.2.2, §4.14.2; RFC 9449 (DPoP); RFC 8705 (OAuth mTLS)"
+    },
+    {
+      "id": "cybersecurity-leaked-secret",
+      "category": "cybersecurity",
+      "kind": "applied",
+      "topic": "Secret ve Bağımlılık",
+      "difficulty": 2,
+      "prompt": "Bir API anahtarının yanlışlıkla bir git reposuna commit edildiği fark edildi. İlk ne yapılır, sonra nasıl önlenir?",
+      "modelAnswer": "İlk iş anahtarı servis sağlayıcıda iptal edip yenisini üretmektir (revoke ve rotate); commit'i silmek ya da git geçmişini yeniden yazmak yetmez, çünkü anahtar klonlarda, fork'larda, CI loglarında ya da önbelleklerde çoktan kopyalanmış olabilir. Ardından anahtarın açıkta kaldığı süre boyunca kullanılıp kullanılmadığı sağlayıcının erişim kayıtlarından incelenir ve anahtarın yetkisi ölçüsünde etkilenmiş olabilecek veriler değerlendirilir; geçmişin yeniden yazılması bundan sonra gelen, ekibi de etkileyen ikincil bir adımdır. Önlem için secret'lar koda ve yapılandırma dosyalarına yazılmaz, çalışma anında bir secret manager'dan alınır; geliştirici makinesinde pre-commit hook'larıyla, repoda ve CI'da secret scanning ile sızıntı commit'ten önce ya da hemen sonra yakalanır. Mümkün olan yerde uzun ömürlü statik anahtarlar yerine kısa ömürlü, dinamik kimlik bilgileri kullanılır; sızan bir değer böylece kısa sürede kendiliğinden işe yaramaz hâle gelir.",
+      "keyConcepts": [
+        {
+          "id": "once-iptal",
+          "label": "Önce anahtar iptal edilir ve yenisi üretilir",
+          "aliases": [
+            "iptal et",
+            "revoke",
+            "rotate",
+            "yenisini üret",
+            "yeni bir anahtar",
+            "rotasyon"
+          ],
+          "anchors": [
+            "İlk iş anahtarı servis sağlayıcıda iptal edip yenisini üretmektir."
+          ]
+        },
+        {
+          "id": "silmek-yetmez",
+          "label": "Commit'i ya da geçmişi silmek yetmez",
+          "aliases": [
+            "silmek yetmez",
+            "silmek yeterli değil",
+            "git geçmiş",
+            "fork",
+            "klon",
+            "çoktan kopyalan"
+          ],
+          "anchors": [
+            "Commit'i silmek ya da git geçmişini yeniden yazmak yetmez; anahtar klonlara ve fork'lara çoktan kopyalanmış olabilir."
+          ]
+        },
+        {
+          "id": "erisim-kayitlari",
+          "label": "Açıkta kaldığı sürede kullanılıp kullanılmadığı incelenir",
+          "aliases": [
+            "erişim kayıt",
+            "erişim log",
+            "audit log",
+            "access log",
+            "kullanılıp kullanılmadığ",
+            "nasıl kullanıldığ"
+          ],
+          "anchors": [
+            "Anahtarın açıkta kaldığı sürede kullanılıp kullanılmadığı sağlayıcının erişim kayıtlarından incelenir."
+          ]
+        },
+        {
+          "id": "secret-scanning",
+          "label": "Pre-commit ve secret scanning ile önleme",
+          "aliases": [
+            "secret scanning",
+            "secret tarama",
+            "pre-commit",
+            "pre commit",
+            "gitleaks",
+            "trufflehog"
+          ],
+          "anchors": [
+            "Pre-commit hook'ları ve repodaki secret scanning sızıntıyı commit'ten önce ya da hemen sonra yakalar."
+          ]
+        },
+        {
+          "id": "kisa-omurlu",
+          "label": "Statik anahtar yerine kısa ömürlü dinamik kimlik bilgisi",
+          "aliases": [
+            "kısa ömürlü",
+            "short-lived",
+            "dinamik kimlik",
+            "dynamic secret",
+            "statik anahtar",
+            "kendiliğinden işe yaramaz"
+          ],
+          "anchors": [
+            "Uzun ömürlü statik anahtarlar yerine kısa ömürlü dinamik kimlik bilgileri kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir sızıntıdan sonra git geçmişini yeniden yazmanın ekip için yan etkileri nelerdir?"
+      ],
+      "source": "Kendi derleme — OWASP Secrets Management Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-dependency-scanning",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Secret ve Bağımlılık",
+      "difficulty": 2,
+      "prompt": "Uygulamanın bağımlılıklarındaki güvenlik açıklarını nasıl yönetirsin? SCA, lock dosyası ve SBOM'un bu süreçteki rolü nedir?",
+      "modelAnswer": "Bir uygulama doğrudan eklenen paketlerin yanında onların getirdiği dolaylı (transitive) bağımlılıkları da çalıştırır; açık çoğu zaman hiç bilerek seçilmemiş bu paketlerde çıkar. SCA (Software Composition Analysis) araçları kullanılan paketleri ve sürümlerini CVE ve NVD gibi bilinen açık kaynaklarıyla karşılaştırır; CI'da her derlemede çalışır ve güncelleme isteği açan araçlarla birlikte bulguyu bir düzeltmeye dönüştürür. Lock dosyası, örneğin `package-lock.json`, her paketin tam sürümünü ve bütünlük özetini sabitler; aynı kaynak koddan her seferinde aynı bağımlılık ağacı kurulur, bir paketin yeni ve belki ele geçirilmiş bir sürümü habersizce içeri girmez ve güncelleme incelenen bilinçli bir değişiklik olur. SBOM (Software Bill of Materials), yazılımın içerdiği bütün bileşenlerin ve sürümlerinin makinece okunabilir envanteridir ve CycloneDX ya da SPDX biçiminde üretilir; yeni bir açık duyurulduğunda o bileşenin hangi ürünlerde ve hangi sürümde bulunduğunu hızla cevaplatır. OWASP Top 10:2025 bu alanı Software Supply Chain Failures başlığında toplar ve paketlerin yalnızca resmî kaynaklardan, mümkünse imzalı olarak alınmasını önerir.",
+      "keyConcepts": [
+        {
+          "id": "dolayli",
+          "label": "Açık çoğu zaman dolaylı bağımlılıklarda çıkar",
+          "aliases": [
+            "dolaylı",
+            "transitive",
+            "alt bağımlılık",
+            "bağımlılığın bağımlılığ",
+            "bilerek seçilmemiş",
+            "indirect dependenc"
+          ],
+          "anchors": [
+            "Uygulama doğrudan eklenen paketlerin getirdiği dolaylı bağımlılıkları da çalıştırır; açık çoğu zaman onlarda çıkar."
+          ]
+        },
+        {
+          "id": "bilinen-acik",
+          "label": "SCA paketleri bilinen açık kayıtlarıyla karşılaştırır",
+          "aliases": [
+            "bilinen açık",
+            "known vulnerabilit",
+            "advisory",
+            "dependabot",
+            "renovate",
+            "npm audit"
+          ],
+          "anchors": [
+            "SCA araçları kullanılan paket sürümlerini CVE gibi bilinen açık kayıtlarıyla karşılaştırır."
+          ]
+        },
+        {
+          "id": "tam-surum-ozet",
+          "label": "Lock dosyası tam sürüm ve bütünlük özetini sabitler",
+          "aliases": [
+            "tam sürüm",
+            "tam versiyon",
+            "sürümü sabitle",
+            "versiyonları sabitle",
+            "integrity",
+            "bütünlük özeti"
+          ],
+          "anchors": [
+            "Lock dosyası her paketin tam sürümünü ve bütünlük özetini sabitler; her kurulumda aynı ağaç gelir."
+          ]
+        },
+        {
+          "id": "envanter",
+          "label": "SBOM bileşen envanteridir",
+          "aliases": [
+            "envanter",
+            "inventory",
+            "bileşenlerin listesi",
+            "bileşen listesi",
+            "cyclonedx",
+            "spdx"
+          ],
+          "anchors": [
+            "SBOM yazılımdaki bütün bileşenlerin ve sürümlerinin makinece okunabilir envanteridir."
+          ]
+        },
+        {
+          "id": "resmi-kaynak",
+          "label": "Paketler resmî kaynaktan, mümkünse imzalı alınır",
+          "aliases": [
+            "resmi kaynak",
+            "resmî kaynak",
+            "imzalı paket",
+            "imzalı olarak",
+            "signed package",
+            "supply chain"
+          ],
+          "anchors": [
+            "Paketler yalnızca resmî kaynaklardan ve mümkünse imzalı olarak alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "SCA aracı uygulamanın hiç çağırmadığı bir fonksiyondaki kritik bir açığı raporlarsa önceliği nasıl belirlersin?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 A03 Software Supply Chain Failures; OWASP Vulnerable Dependency Management Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-least-privilege",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Least privilege (en az yetki) ilkesi nedir? Uygulamada nerelerde uygulanır?",
+      "modelAnswer": "Least privilege, her kullanıcının, servisin ve sürecin yalnızca işini yapmak için gereken erişime, mümkünse yalnızca gerektiği süre boyunca sahip olmasıdır. Amaç bir hesap ya da bileşen ele geçirildiğinde verilebilecek zararı, yani etki alanını (blast radius) küçültmektir; geniş yetkili bir hesabın sızması bütün sistemi açarken dar yetkili bir hesap yalnızca kendi alanını açar. Uygulamada veritabanı kullanıcısına yalnızca ihtiyaç duyduğu tablolarda gereken işlemler verilir, uygulamanın süreci root olarak çalıştırılmaz, servis hesaplarına ve API token'larına dar scope'lar tanımlanır, yönetici yetkileri günlük kullanılan hesaplardan ayrılır. Yetkiler zamanla birikme eğiliminde olduğu için düzenli olarak gözden geçirilir ve kullanılmayanlar geri alınır.",
+      "keyConcepts": [
+        {
+          "id": "yalnizca-gereken",
+          "label": "Yalnızca işi için gereken erişim",
+          "aliases": [
+            "yalnızca gereken",
+            "sadece gereken",
+            "ihtiyaç duyduğu kadar",
+            "işini yapmak için",
+            "gerektiği kadar",
+            "minimum yetki"
+          ],
+          "anchors": [
+            "Her kullanıcı, servis ve süreç yalnızca işini yapmak için gereken erişime sahip olur."
+          ]
+        },
+        {
+          "id": "etki-alani",
+          "label": "Ele geçirilmede zararı, etki alanını küçültür",
+          "aliases": [
+            "blast radius",
+            "etki alanı",
+            "zararı sınırla",
+            "zararı küçült",
+            "ele geçirilirse",
+            "verilebilecek zarar"
+          ],
+          "anchors": [
+            "Amaç bir hesap ele geçirildiğinde verilebilecek zararı, yani etki alanını küçültmektir."
+          ]
+        },
+        {
+          "id": "uygulama-yerleri",
+          "label": "Veritabanı kullanıcısı, süreç, servis hesabı ve scope",
+          "aliases": [
+            "veritabanı kullanıcı",
+            "db kullanıcı",
+            "servis hesab",
+            "dar scope",
+            "root olarak",
+            "yönetici hesab"
+          ],
+          "anchors": [
+            "Veritabanı kullanıcısına yalnızca gereken işlemler, servis hesaplarına ve token'lara dar scope'lar verilir."
+          ]
+        },
+        {
+          "id": "sure-ve-gozden-gecirme",
+          "label": "Gerektiği süre boyunca ve düzenli gözden geçirme",
+          "aliases": [
+            "gerektiği süre",
+            "geçici yetki",
+            "just-in-time",
+            "just in time",
+            "gözden geçir",
+            "kullanılmayan"
+          ],
+          "anchors": [
+            "Yetkiler gerektiği süre boyunca verilir, düzenli gözden geçirilir ve kullanılmayanlar geri alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Tek bir veritabanı kullanıcısıyla hem uygulama sorgularını hem migration'ları çalıştıran bir sistemi bu ilkeye göre nasıl ayırırsın?"
+      ],
+      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Principle of Least Privilege); Saltzer ve Schroeder, The Protection of Information in Computer Systems (1975)"
+    },
+    {
+      "id": "cybersecurity-defense-in-depth",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 1,
+      "prompt": "Defense in depth (derinlemesine savunma) ne demektir? Bir örnekle açıkla.",
+      "modelAnswer": "Defense in depth, güvenliği tek bir kontrole bırakmamak, birbirinden bağımsız birden fazla katman kurmaktır; bir katman aşıldığında ya da yanlış yapılandırıldığında diğerleri varlığı korumaya devam eder. Örneğin SQL injection'a karşı asıl savunma parametreli sorgudur; ama ek olarak girdi doğrulanır, uygulamanın veritabanı hesabının yetkileri daraltılmıştır, hassas kolonlar şifrelenir ve anormal sorgular izlenip alarm üretir, böylece bir sorguda parametre unutulsa bile hasar sınırlı kalır ve fark edilir. Katmanların gerçekten bağımsız olması gerekir; aynı varsayıma dayanan iki kontrol, örneğin ikisi de istemcinin gönderdiği bir değere güveniyorsa, tek bir katman gibi birlikte düşer. Önleyici kontrollerin yanında tespit ve müdahale de bir katmandır, çünkü hiçbir önlemin hatasız olduğu varsayılmaz.",
+      "keyConcepts": [
+        {
+          "id": "tek-kontrol-degil",
+          "label": "Güvenlik tek bir kontrole bırakılmaz",
+          "aliases": [
+            "tek bir kontrol",
+            "tek bir önlem",
+            "tek katman",
+            "tek bir savunma",
+            "single point",
+            "tek noktaya"
+          ],
+          "anchors": [
+            "Defense in depth güvenliği tek bir kontrole bırakmamaktır."
+          ]
+        },
+        {
+          "id": "katman-asilinca",
+          "label": "Bir katman aşılınca diğerleri korumaya devam eder",
+          "aliases": [
+            "birden fazla katman",
+            "bir katman aşıl",
+            "bir katman düş",
+            "diğer katman",
+            "diğerleri koru",
+            "layered"
+          ],
+          "anchors": [
+            "Birden fazla katman kurulur; bir katman aşıldığında diğerleri korumaya devam eder."
+          ]
+        },
+        {
+          "id": "bagimsiz-katman",
+          "label": "Katmanlar bağımsız olmalı, aynı varsayım birlikte düşer",
+          "aliases": [
+            "birbirinden bağımsız",
+            "bağımsız katman",
+            "aynı varsayım",
+            "birlikte düşer",
+            "independent",
+            "farklı türde kontrol"
+          ],
+          "anchors": [
+            "Katmanlar bağımsız olmalıdır; aynı varsayıma dayanan iki kontrol birlikte düşer."
+          ]
+        },
+        {
+          "id": "tespit-mudahale",
+          "label": "Tespit ve müdahale de bir katmandır",
+          "aliases": [
+            "tespit ve müdahale",
+            "detection",
+            "monitoring",
+            "alarm üret",
+            "izlenip",
+            "loglar izlen"
+          ],
+          "anchors": [
+            "Önleyici kontrollerin yanında tespit ve müdahale de bir katmandır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir API'nin önüne WAF koymak neden uygulamadaki girdi doğrulamanın yerine geçmez?"
+      ],
+      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Defense in Depth)"
+    },
+    {
+      "id": "cybersecurity-fail-secure",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Fail secure (güvenli başarısızlık) ilkesi nedir? Bir hata durumunda yetki kontrolü nasıl davranmalıdır?",
+      "modelAnswer": "Fail secure, bir bileşen hata verdiğinde ya da beklenmedik bir durumla karşılaştığında sistemin güvenli bir duruma, erişim kararlarında da reddetmeye düşmesidir (fail closed); bir hata hiçbir zaman erişimi açan bir yol olmamalıdır. Tipik açık bir yetki kontrolünün exception'ı yakalayıp yine de izin vermesidir; örneğin yetki servisine ulaşılamadığında, token doğrulanırken beklenmedik bir hata çıktığında ya da eşleşen bir kural bulunamadığında kod kullanıcıyı içeri alıyorsa sistem tam da saldırganın tetikleyebileceği durumda açılır (fail open). Bu yüzden yetki kararları varsayılan olarak reddeden bir yapıda yazılır, izin yalnızca kararın başarıyla verildiği açıkça görüldüğünde verilir ve hata yüzünden yarım kalan işlemler geri alınır. Hata mesajları da güvenli başarısız olmalıdır; kullanıcıya genel bir mesaj ve bir hata kimliği gösterilir, stack trace, SQL ya da sürüm bilgisi gibi ayrıntılar yalnızca sunucu loglarında kalır.",
+      "keyConcepts": [
+        {
+          "id": "reddetmeye-duser",
+          "label": "Hata durumunda sistem reddetmeye düşer (fail closed)",
+          "aliases": [
+            "fail closed",
+            "fail-closed",
+            "reddetmeye düş",
+            "erişimi reddet",
+            "güvenli bir duruma",
+            "güvenli duruma"
+          ],
+          "anchors": [
+            "Bir bileşen hata verdiğinde sistem güvenli bir duruma, erişim kararlarında da reddetmeye düşer."
+          ]
+        },
+        {
+          "id": "fail-open",
+          "label": "Exception'ı yakalayıp izin vermek fail open'dır",
+          "aliases": [
+            "fail open",
+            "fail-open",
+            "exception'ı yakala",
+            "catch blo",
+            "yine de izin",
+            "ulaşılamadığında"
+          ],
+          "anchors": [
+            "Yetki kontrolünün exception'ı yakalayıp yine de izin vermesi sistemi tam hata anında açar."
+          ]
+        },
+        {
+          "id": "varsayilan-red",
+          "label": "İzin yalnızca karar açıkça başarılıysa",
+          "aliases": [
+            "varsayılan olarak redde",
+            "varsayılan davranış redde",
+            "açıkça görüldüğünde",
+            "deny by default",
+            "yarım kalan işlem",
+            "varsayılan red"
+          ],
+          "anchors": [
+            "Yetki kararları varsayılan olarak reddeder; izin yalnızca karar açıkça başarılıysa verilir."
+          ]
+        },
+        {
+          "id": "hata-mesaji",
+          "label": "Kullanıcıya genel mesaj, ayrıntı yalnızca sunucu logunda",
+          "aliases": [
+            "stack trace",
+            "genel bir mesaj",
+            "hata kimliği",
+            "error id",
+            "sunucu loglarında",
+            "iç ayrıntı"
+          ],
+          "anchors": [
+            "Kullanıcıya genel bir mesaj ve hata kimliği gösterilir; stack trace gibi ayrıntılar yalnızca sunucu loglarında kalır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir feature flag servisi yanıt vermediğinde yetki kontrolü henüz tamamlanmamış yeni bir özelliğin açılmasını nasıl önlersin?"
+      ],
+      "source": "Kendi derleme — OWASP Top 10:2025 A10 Mishandling of Exceptional Conditions; OWASP Secure Product Design Cheat Sheet; OWASP Error Handling Cheat Sheet"
+    },
+    {
+      "id": "cybersecurity-secure-logging",
+      "category": "cybersecurity",
+      "kind": "definition",
+      "topic": "Temeller",
+      "difficulty": 2,
+      "prompt": "Güvenlik açısından loglara neler yazılmalı, neler asla yazılmamalıdır?",
+      "modelAnswer": "Parolalar, session id'ler, access ve refresh token'lar, API anahtarları, bağlantı dizeleri, kart bilgileri ve hassas kişisel veriler loga düz hâlde yazılmaz; gerekiyorsa çıkarılır, maskelenir ya da hash'lenir, örneğin bir oturuma ait olayları izlemek için session id'nin yalnızca hash'i tutulur. Buna karşılık başarılı ve başarısız girişler, yetki reddleri ve girdi doğrulama hataları gibi güvenlik olayları zaman, kullanıcı ve kaynak bilgisiyle kaydedilir; brute force, credential stuffing ya da yetki taraması bu kayıtlardan fark edilir ve alarm üretilir. Kullanıcıdan gelen değerler loga yazılmadan önce satır sonu ve ayırıcı karakterlerden arındırılır ya da kodlanır; aksi hâlde girdi sahte bir log satırı ekleyebilir (log injection). Loglar da korunması gereken veridir; erişimleri kısıtlanır ve izlenir, değiştirilip silinmeleri fark edilecek şekilde merkezi ve salt okunur bir yerde tutulur.",
+      "keyConcepts": [
+        {
+          "id": "yazilmaz",
+          "label": "Parola, token, session id ve kişisel veri yazılmaz",
+          "aliases": [
+            "loglanma",
+            "session id",
+            "kişisel veri",
+            "kart bilgi",
+            "bağlantı dize",
+            "hassas veri"
+          ],
+          "anchors": [
+            "Parolalar, token'lar, session id'ler ve hassas kişisel veriler loga düz hâlde yazılmaz."
+          ]
+        },
+        {
+          "id": "maskeleme",
+          "label": "Gerekirse maskelenir ya da hash'lenir",
+          "aliases": [
+            "maskele",
+            "masking",
+            "redact",
+            "hash'i tutulur",
+            "hash'ini tut",
+            "kısmen göster"
+          ],
+          "anchors": [
+            "Gerekiyorsa değer maskelenir ya da yalnızca hash'i tutulur."
+          ]
+        },
+        {
+          "id": "guvenlik-olaylari",
+          "label": "Giriş ve yetki olayları kaydedilir, alarm üretilir",
+          "aliases": [
+            "başarısız giriş",
+            "başarısız login",
+            "failed login",
+            "yetki redd",
+            "yetki hata",
+            "güvenlik olay"
+          ],
+          "anchors": [
+            "Başarılı ve başarısız girişler ile yetki reddleri kaydedilir ve alarm üretir."
+          ]
+        },
+        {
+          "id": "log-injection",
+          "label": "Satır sonu karakterleriyle log injection önlenir",
+          "aliases": [
+            "log injection",
+            "log enjeksiyon",
+            "satır sonu",
+            "crlf",
+            "newline",
+            "sahte bir log"
+          ],
+          "anchors": [
+            "Kullanıcı değerleri satır sonu karakterlerinden arındırılır; aksi hâlde sahte log satırı eklenebilir."
+          ]
+        },
+        {
+          "id": "log-koruma",
+          "label": "Loglar merkezi, salt okunur ve erişimi kısıtlı tutulur",
+          "aliases": [
+            "salt okunur",
+            "read-only",
+            "değiştirilemez",
+            "merkezi",
+            "tamper",
+            "immutable"
+          ],
+          "anchors": [
+            "Loglar merkezi ve salt okunur bir yerde, erişimi kısıtlı tutulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir hata loguna kullanıcının gönderdiği isteğin tamamını eklemek neden hem gizlilik hem güvenlik sorunu yaratabilir?"
+      ],
+      "source": "Kendi derleme — OWASP Logging Cheat Sheet; OWASP Top 10:2025 A09 Security Logging and Alerting Failures"
     }
   ]
 }
