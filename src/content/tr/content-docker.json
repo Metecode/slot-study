@@ -19,7 +19,8 @@
             "custom network",
             "özel ağ",
             "aynı ağ",
-            "user-defined bridge"
+            "user-defined bridge",
+            "kullanıcı tanımlı ağ"
           ],
           "anchors": [
             "İki konteyner aynı kullanıcı tanımlı ağa bağlanır ve birbirine adıyla erişir.",
@@ -44,11 +45,12 @@
           "id": "publish-not-required",
           "label": "Port yayınlamaya gerek yok",
           "aliases": [
-            "-p",
+            "-p ile",
+            "yayınlamak gerekmez",
+            "yayınlaman gerekmez",
             "publish",
-            "port aç",
-            "expose",
-            "dışarı açma"
+            "dışarı açma",
+            "port aç"
           ],
           "anchors": [
             "Konteynerler arası erişim için portu dışarıya yayınlamaya gerek yoktur.",
@@ -76,10 +78,10 @@
           "label": "Image salt okunur şablon",
           "aliases": [
             "şablon",
-            "salt okunur",
-            "read-only",
             "template",
-            "değişmez"
+            "salt okunur bir",
+            "salt okunurdur",
+            "read-only'dir"
           ],
           "anchors": [
             "Image uygulamayı çalıştırmak için gereken her şeyi içeren salt okunur bir şablondur."
@@ -90,9 +92,11 @@
           "label": "Container çalışan örnek",
           "aliases": [
             "çalışan örnek",
-            "çalışan bir",
-            "instance",
-            "örneği"
+            "çalışan bir örnek",
+            "çalışan instance",
+            "running instance",
+            "çalışan hali",
+            "çalıştırılmış hali"
           ],
           "anchors": [
             "Container bir image'dan başlatılmış çalışan bir örnektir."
@@ -102,9 +106,12 @@
           "id": "katman",
           "label": "Katmanlar ve yazılabilir katman",
           "aliases": [
-            "katman",
-            "layer",
-            "yazılabilir"
+            "yazılabilir katman",
+            "yazılabilir bir katman",
+            "yazılabilir ince",
+            "writable layer",
+            "katmanların üstüne",
+            "üstüne yazılabilir"
           ],
           "anchors": [
             "Container başlatılırken image katmanlarının üstüne yazılabilir bir katman eklenir."
@@ -115,9 +122,10 @@
           "label": "Kalıcı veri volume'da",
           "aliases": [
             "volume",
-            "kalıcı",
-            "silinir",
-            "kaybolur"
+            "kalıcı veri",
+            "kalıcı olması",
+            "container silin",
+            "katman da silinir"
           ],
           "anchors": [
             "Container silindiğinde yazılabilir katman da silinir, kalıcı veri volume'da tutulur."
@@ -170,11 +178,12 @@
           "id": "hafif",
           "label": "Daha hafif ve hızlı",
           "aliases": [
-            "saniye",
+            "saniyeler içinde",
             "hafif",
-            "boyut",
             "hızlı başla",
-            "başlama süre"
+            "başlama süre",
+            "megabayt",
+            "gigabayt"
           ],
           "anchors": [
             "Container'lar VM'lere göre çok daha hafiftir ve saniyeler içinde başlar."
@@ -198,7 +207,9 @@
             "yalıtım",
             "güvenlik sınırı",
             "kernel'deki bir açık",
-            "daha zayıf"
+            "daha zayıf",
+            "vm kadar güçlü",
+            "kadar güçlü değil"
           ],
           "anchors": [
             "Kernel paylaşıldığı için container yalıtımı VM kadar güçlü değildir."
@@ -223,9 +234,11 @@
           "id": "talimat-katman",
           "label": "Her talimat bir katman",
           "aliases": [
-            "katman",
-            "layer",
-            "talimat"
+            "her talimat",
+            "katman üretir",
+            "katman oluşturur",
+            "dosya sistemini değiştiren",
+            "run, copy"
           ],
           "anchors": [
             "Dosya sistemini değiştiren her Dockerfile talimatı bir katman üretir."
@@ -235,9 +248,11 @@
           "id": "onbellek",
           "label": "Değişmeyen katman yeniden kullanılır",
           "aliases": [
-            "önbellek",
-            "cache",
-            "yeniden kullan"
+            "yeniden kullan",
+            "cache'ten",
+            "önbellekten",
+            "değişmediyse",
+            "cache hit"
           ],
           "anchors": [
             "Değişmeyen talimatların katmanı önbellekten yeniden kullanılır."
@@ -249,8 +264,9 @@
           "aliases": [
             "sonraki tüm",
             "sonrakiler",
-            "ondan sonra",
-            "zincir"
+            "ondan sonraki",
+            "sonraki katman",
+            "takip eden"
           ],
           "anchors": [
             "Bir katmanın önbelleği bozulursa sonraki tüm katmanlar yeniden oluşturulur."
@@ -262,8 +278,9 @@
           "aliases": [
             "package.json",
             "pom.xml",
-            "bağımlılık",
             "önce kopyala",
+            "sık değişen",
+            "en sona",
             "npm ci"
           ],
           "anchors": [
@@ -290,9 +307,9 @@
           "label": "Birden fazla FROM",
           "aliases": [
             "birden fazla from",
-            "from",
+            "iki from",
             "aşama",
-            "stage"
+            "as build"
           ],
           "anchors": [
             "Multi-stage build tek Dockerfile'da birden fazla FROM aşaması kullanır."
@@ -303,9 +320,10 @@
           "label": "Yalnızca çıktı kopyalanır",
           "aliases": [
             "copy --from",
-            "çıktı",
             "artifact",
-            "jar"
+            "yalnızca çıktı",
+            "jar'ı",
+            "jar dosya"
           ],
           "anchors": [
             "Son aşamaya yalnızca derlenmiş çıktı kopyalanır."
@@ -315,11 +333,12 @@
           "id": "kucuk-image",
           "label": "Küçük image",
           "aliases": [
-            "küçük",
-            "boyut",
-            "jdk yok",
+            "küçük image",
+            "image küçül",
+            "boyut küçül",
+            "boyutu küçül",
             "maven yok",
-            "jre"
+            "jdk yok"
           ],
           "anchors": [
             "Derleme araçları son image'a girmediği için image küçülür."
@@ -329,9 +348,9 @@
           "id": "guvenlik",
           "label": "Daha küçük saldırı yüzeyi",
           "aliases": [
-            "güvenlik",
             "saldırı yüzey",
-            "attack surface"
+            "attack surface",
+            "saldırı alanı"
           ],
           "anchors": [
             "Derleme araçları canlı image'da olmadığı için saldırı yüzeyi küçülür."
@@ -356,9 +375,11 @@
           "id": "entrypoint-ana",
           "label": "ENTRYPOINT ana komut",
           "aliases": [
-            "entrypoint",
-            "ana komut",
-            "ana süreç"
+            "her zaman çalış",
+            "korunur",
+            "ana komutu belirler",
+            "sabit komut",
+            "çalışacak ana komut"
           ],
           "anchors": [
             "ENTRYPOINT container başladığında çalışacak ana komutu belirler."
@@ -368,8 +389,10 @@
           "id": "cmd-varsayilan",
           "label": "CMD varsayılan komut/argüman",
           "aliases": [
-            "varsayılan",
-            "default",
+            "varsayılan argüman",
+            "varsayılan komut",
+            "default argüman",
+            "default komut",
             "argüman"
           ],
           "anchors": [
@@ -380,10 +403,11 @@
           "id": "override",
           "label": "docker run CMD'yi değiştirir",
           "aliases": [
-            "değiştirilir",
-            "override",
+            "tamamen değiştirilir",
+            "cmd'yi ezer",
             "ezilir",
-            "--entrypoint"
+            "--entrypoint",
+            "üzerine yazılır"
           ],
           "anchors": [
             "docker run'a verilen argümanlar CMD'yi değiştirir, ENTRYPOINT korunur."
@@ -393,11 +417,12 @@
           "id": "exec-form",
           "label": "Exec form ve sinyaller",
           "aliases": [
-            "exec form",
             "sigterm",
             "sinyal",
-            "pid 1",
-            "shell form"
+            "sh -c",
+            "json dizi",
+            "graceful",
+            "pid 1 olarak"
           ],
           "anchors": [
             "Shell formda shell SIGTERM'i uygulamaya iletmez, bu yüzden exec form tercih edilir."
@@ -422,8 +447,11 @@
           "id": "ikisi-kopyalar",
           "label": "İkisi de dosya kopyalar",
           "aliases": [
-            "kopyala",
-            "build context"
+            "build context",
+            "ikisi de kopyalar",
+            "ikisi de dosya",
+            "context'ten",
+            "context'inden"
           ],
           "anchors": [
             "COPY ve ADD dosyaları build context'inden image'a kopyalar."
@@ -433,11 +461,12 @@
           "id": "add-tar",
           "label": "ADD arşiv açar",
           "aliases": [
-            ".tar",
             "tar arşiv",
+            ".tar.gz",
             "arşiv",
-            "açar",
-            "extract"
+            "extract",
+            "otomatik aç",
+            "sıkıştırılmış"
           ],
           "anchors": [
             "ADD yerel tar arşivlerini otomatik olarak açar."
@@ -447,9 +476,11 @@
           "id": "add-url",
           "label": "ADD URL'den indirir",
           "aliases": [
-            "url",
-            "indir",
-            "download"
+            "url'den",
+            "uzak url",
+            "dosya indir",
+            "download",
+            "uzaktan indir"
           ],
           "anchors": [
             "ADD bir URL'den dosya indirebilir."
@@ -460,9 +491,11 @@
           "label": "COPY tercih edilir",
           "aliases": [
             "öngörülebilir",
-            "açık",
-            "tercih",
-            "sürpriz"
+            "sürpriz",
+            "beklenmedik",
+            "yalnızca kopyalar",
+            "sadece kopyalar",
+            "sihirli"
           ],
           "anchors": [
             "Davranışı açık ve öngörülebilir olduğu için COPY tercih edilir."
@@ -487,10 +520,12 @@
           "id": "kalici",
           "label": "Kalıcı veri dışarıda tutulur",
           "aliases": [
-            "kalıcı",
+            "kalıcı veri",
             "container silin",
-            "kaybol",
-            "persist"
+            "silinse bile",
+            "dışarıda tutulur",
+            "veri kalır",
+            "kalıcıdır"
           ],
           "anchors": [
             "Container silinince veri kaybolduğu için kalıcı veri dışarıda tutulur."
@@ -516,7 +551,8 @@
             "host'taki",
             "host klasör",
             "belirli bir klasör",
-            "bind mount"
+            "host dizin",
+            "host'un klasör"
           ],
           "anchors": [
             "Bind mount host'taki belirli bir klasörü container'a bağlar."
@@ -526,9 +562,11 @@
           "id": "db-volume",
           "label": "Veritabanı için volume",
           "aliases": [
-            "veritabanı",
-            "yedek",
-            "taşın"
+            "veritabanı için volume",
+            "yedekle",
+            "taşınması kolay",
+            "taşıması kolay",
+            "dosya izinleri"
           ],
           "anchors": [
             "Veritabanı verisi için volume kullanılır."
@@ -567,8 +605,9 @@
           "aliases": [
             "belgele",
             "documentation",
-            "bildirir",
-            "açmaz"
+            "dokümantasyon",
+            "açmaz",
+            "dışarı açmaz"
           ],
           "anchors": [
             "EXPOSE yalnızca belgeleme amaçlıdır, portu dışarıya açmaz."
@@ -579,10 +618,11 @@
           "label": "-p host portunu bağlar",
           "aliases": [
             "host port",
-            "bağlar",
-            "8080:80",
-            "yayınla",
-            "publish"
+            "-p 8080:80",
+            "publish",
+            "host'un bir port",
+            "gerçekten bağlar",
+            "porta bağlar"
           ],
           "anchors": [
             "Port yayınlama host'un portunu container'ın portuna bağlar."
@@ -605,10 +645,11 @@
           "id": "ufw",
           "label": "Docker UFW'yi atlar",
           "aliases": [
-            "ufw",
             "iptables",
             "güvenlik duvar",
-            "firewall"
+            "firewall",
+            "ufw gibi",
+            "ufw kural"
           ],
           "anchors": [
             "Docker'ın iptables kuralları UFW gibi güvenlik duvarlarını atlar."
@@ -660,8 +701,8 @@
           "aliases": [
             "servis adı",
             "ortak ağ",
-            "hostname",
-            "db"
+            "ortak bir ağ",
+            "hostname"
           ],
           "anchors": [
             "Compose servisleri ortak ağa koyar ve servisler birbirine adıyla erişir."
@@ -712,7 +753,9 @@
           "id": "hazir-degil",
           "label": "Başlamış olmak hazır olmak değil",
           "aliases": [
-            "hazır",
+            "hazır olduğu",
+            "hazır olmayabilir",
+            "hazır değil",
             "bağlantı kabul",
             "ready"
           ],
@@ -780,7 +823,7 @@
             "image'a",
             "env db_password",
             "docker history",
-            "katman"
+            "image katman"
           ],
           "anchors": [
             "Şifre Dockerfile'a veya image'a yazılmamalıdır, katmanlardan okunabilir."
@@ -793,7 +836,8 @@
             "environment",
             "env_file",
             ".env",
-            "-e "
+            "run -e",
+            "ortam değişken"
           ],
           "anchors": [
             "Gizli bilgi çalışma anında environment variable olarak verilir."
@@ -817,7 +861,8 @@
           "aliases": [
             "git repo",
             "gitignore",
-            "commit"
+            "commit etme",
+            "repoya commit"
           ],
           "anchors": [
             "Şifreler git reposuna commit edilmemelidir."
@@ -845,8 +890,8 @@
             "base image",
             "alpine",
             "distroless",
-            "jre",
-            "slim"
+            "slim",
+            "-jre"
           ],
           "anchors": [
             "Küçük bir base image seçmek boyutu ciddi azaltır."
@@ -870,7 +915,7 @@
             "aynı katman",
             "aynı run",
             "rm -rf",
-            "birleştir",
+            "komutlarını birleştir",
             "temizl"
           ],
           "anchors": [
@@ -921,8 +966,8 @@
           "aliases": [
             "docker ps",
             "ps -a",
-            "exit code",
-            "çıkış kodu"
+            "durmuş container",
+            "compose ps"
           ],
           "anchors": [
             "docker ps -a durmuş container'ları ve çıkış kodlarını gösterir."
@@ -934,7 +979,9 @@
           "aliases": [
             "docker logs",
             "logs -f",
-            "loglar"
+            "loglarına bak",
+            "logları incele",
+            "stdout"
           ],
           "anchors": [
             "docker logs uygulamanın çıktısını gösterir."
@@ -970,8 +1017,9 @@
           "aliases": [
             "137",
             "oomkilled",
-            "oom",
-            "bellek yetme"
+            "oom killer",
+            "bellek yetme",
+            "bellek yetmedi"
           ],
           "anchors": [
             "Exit code 137 genelde bellek yetersizliğinden öldürüldüğünü gösterir."
@@ -1026,9 +1074,8 @@
             "çöker",
             "crash",
             "exit code 1",
-            "environment",
             "bağlanamayan",
-            "hata"
+            "eksik environment"
           ],
           "anchors": [
             "Uygulama başlarken hata verip çöküyor olabilir."
@@ -1078,9 +1125,10 @@
           "id": "otomatik",
           "label": "Otomatik yeniden başlatma",
           "aliases": [
-            "otomatik",
             "yeniden başlat",
-            "restart"
+            "otomatik olarak yeniden",
+            "kendiliğinden başla",
+            "tekrar başlat"
           ],
           "anchors": [
             "Restart policy durdurulan container'ın otomatik yeniden başlatılmasını belirler."
@@ -1113,7 +1161,8 @@
           "id": "gizler",
           "label": "Sorunu gizleyebilir",
           "aliases": [
-            "gizle",
+            "sorunu gizle",
+            "gizleyebilir",
             "restartcount",
             "restarting",
             "sürekli çök"
@@ -1167,8 +1216,9 @@
           "id": "oom",
           "label": "Bellek aşımı OOM ile öldürür",
           "aliases": [
-            "oom",
             "137",
+            "oom killer",
+            "oomkilled",
             "öldür"
           ],
           "anchors": [
@@ -1180,7 +1230,9 @@
           "label": "CPU aşımı yavaşlatır",
           "aliases": [
             "throttl",
-            "yavaşlat"
+            "yavaşlatılır",
+            "öldürülmez",
+            "cpu sınırı aşıl"
           ],
           "anchors": [
             "CPU sınırında container öldürülmez, yavaşlatılır."
@@ -1192,9 +1244,10 @@
           "aliases": [
             "maxrampercentage",
             "container farkında",
-            "heap",
+            "heap boyut",
             "%25",
-            "metaspace"
+            "metaspace",
+            "heap'i"
           ],
           "anchors": [
             "JVM heap'i container sınırına göre hesaplar, varsayılan oran düşüktür ve heap dışı bellek de hesaba katılmalıdır."
@@ -1219,8 +1272,11 @@
           "id": "varsayilan-root",
           "label": "Varsayılan root",
           "aliases": [
-            "varsayılan",
-            "root"
+            "root olarak çalış",
+            "varsayılan olarak root",
+            "kullanıcısıyla çalışır",
+            "default olarak root",
+            "root'tur"
           ],
           "anchors": [
             "Docker image'ları varsayılan olarak root kullanıcısıyla çalışır."
@@ -1230,10 +1286,11 @@
           "id": "risk",
           "label": "Kaçış ve yetki riski",
           "aliases": [
+            "container escape",
+            "container'dan kaç",
             "kaçma",
-            "escape",
-            "saldırgan",
-            "tam yetki"
+            "tam yetki",
+            "root yetkisi"
           ],
           "anchors": [
             "Root ile çalışan uygulamadaki açık container'dan kaçmaya veya geniş yetkiye yol açabilir."
@@ -1243,10 +1300,12 @@
           "id": "user",
           "label": "USER talimatı",
           "aliases": [
-            "user ",
             "useradd",
+            "adduser",
             "yetkisiz kullanıcı",
-            "adduser"
+            "yetkisiz bir kullanıcı",
+            "ayrı bir kullanıcı",
+            "user talimat"
           ],
           "anchors": [
             "Dockerfile'da yetkisiz bir kullanıcı oluşturulup USER ile ona geçilir."
@@ -1272,7 +1331,8 @@
           "aliases": [
             "1024",
             "8080",
-            "port"
+            "düşük port",
+            "80 yerine"
           ],
           "anchors": [
             "Root olmayan kullanıcı 1024 altındaki portları dinleyemez."
@@ -1298,8 +1358,9 @@
           "label": "repo:tag ve varsayılan latest",
           "aliases": [
             "repo:tag",
-            "varsayılan",
-            "tag verilmezse"
+            "tag verilmezse",
+            "tag yazılmazsa",
+            "verilmezse latest"
           ],
           "anchors": [
             "Image repo:tag biçiminde adlandırılır, tag verilmezse latest kullanılır."
@@ -1309,10 +1370,12 @@
           "id": "degisken",
           "label": "latest değişkendir",
           "aliases": [
-            "değişken",
-            "değiştirilebilir",
+            "işaret eder",
+            "değiştirilebilir bir etiket",
             "en yeni değil",
-            "işaret eder"
+            "en yeni sürüm değil",
+            "başka bir image'a",
+            "başka bir sürüme"
           ],
           "anchors": [
             "latest değişken bir etikettir ve en yeni anlamına gelmez."
@@ -1325,8 +1388,8 @@
             "habersiz",
             "major",
             "geri dön",
-            "rollback",
-            "yükseltme"
+            "yükseltme",
+            "hangi sürüm"
           ],
           "anchors": [
             "latest habersiz sürüm yükseltmesine yol açar ve geri dönüşü zorlaştırır."
@@ -1336,7 +1399,8 @@
           "id": "sabit",
           "label": "Sabit sürüm veya digest",
           "aliases": [
-            "sabit",
+            "sabit sürüm",
+            "sabit tag",
             "sürüm tag",
             "digest",
             "sha256",
@@ -1365,9 +1429,11 @@
           "id": "bridge",
           "label": "bridge varsayılan sanal ağ",
           "aliases": [
-            "bridge",
             "sanal ağ",
-            "kendi ip"
+            "sanal bir ağ",
+            "kendi ip",
+            "port yayınlama gerek",
+            "varsayılan sürücü"
           ],
           "anchors": [
             "bridge varsayılan sürücüdür, container'lar sanal ağa bağlanır."
@@ -1379,8 +1445,9 @@
           "aliases": [
             "host ağ",
             "host'un ağ",
-            "port eşleme gerekmez",
-            "doğrudan"
+            "port eşlemesi gerekmez",
+            "doğrudan kullan",
+            "ağ yalıtımı yok"
           ],
           "anchors": [
             "host sürücüsünde container host'un ağını doğrudan kullanır."
@@ -1390,9 +1457,10 @@
           "id": "none",
           "label": "none ağsız",
           "aliases": [
-            "none",
             "ağı yok",
-            "loopback"
+            "hiç ağı",
+            "loopback",
+            "ağ yok"
           ],
           "anchors": [
             "none sürücüsünde container'ın ağı yoktur."
@@ -1403,8 +1471,10 @@
           "label": "Kullanıcı tanımlı bridge önerilir",
           "aliases": [
             "kullanıcı tanımlı",
-            "adıyla",
-            "compose"
+            "user-defined",
+            "birbirini adıyla",
+            "birbirine adıyla",
+            "adıyla bul"
           ],
           "anchors": [
             "Pratikte kullanıcı tanımlı bridge ağı önerilir."
@@ -1429,10 +1499,12 @@
           "id": "tanim",
           "label": "Image saklama ve paylaşma",
           "aliases": [
-            "sakla",
-            "paylaş",
-            "depo",
-            "repository"
+            "saklandığı ve paylaş",
+            "image'ların saklan",
+            "image'larının saklan",
+            "image deposu",
+            "image'ları sakla",
+            "merkezi depo"
           ],
           "anchors": [
             "Registry Docker image'larının saklandığı ve paylaşıldığı sunucudur."
@@ -1444,9 +1516,10 @@
           "aliases": [
             "docker hub",
             "ghcr",
-            "ecr",
+            "aws ecr",
             "nexus",
-            "artifactory"
+            "artifactory",
+            "gitlab registry"
           ],
           "anchors": [
             "Docker Hub, GHCR, ECR gibi registry'ler vardır."
@@ -1483,7 +1556,9 @@
           "aliases": [
             "kurum içi",
             "özel registry",
-            "private"
+            "özel bir registry",
+            "private registry",
+            "şirket içi"
           ],
           "anchors": [
             "Kurumsal ortamlarda image'lar kurum içi bir registry üzerinden çekilir."
