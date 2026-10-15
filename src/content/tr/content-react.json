@@ -15,10 +15,12 @@
           "id": "children-is-a-prop",
           "label": "Etiket arası içerik prop olarak gelir",
           "aliases": [
-            "children",
             "etiket arası",
-            "jsx içeriği",
-            "prop olarak geçer"
+            "etiketleri arasına",
+            "açılış ve kapanış",
+            "prop olarak geçer",
+            "children prop'u",
+            "jsx içeriği"
           ],
           "anchors": [
             "Açılış ve kapanış etiketleri arasına yazılan JSX children prop'u olarak bileşene geçer.",
@@ -29,11 +31,12 @@
           "id": "composition-over-inheritance",
           "label": "Kalıtım yerine kompozisyon",
           "aliases": [
-            "composition",
-            "kompozisyon",
             "kalıtım yerine",
+            "inheritance yerine",
+            "composition",
             "wrapper",
-            "sarmalayıcı"
+            "sarmalayıcı",
+            "sarmala"
           ],
           "anchors": [
             "İçeriğini bilmeyen sarmalayıcı bileşenler yazmayı sağlar, kalıtıma gerek kalmaz.",
@@ -46,8 +49,10 @@
           "aliases": [
             "dizi olmayabilir",
             "tek eleman",
-            "React.Children",
-            "map güvenli değil"
+            "react.children",
+            "map güvenli değil",
+            "tipi sabit değil",
+            "children.map"
           ],
           "anchors": [
             "children tek eleman, dizi, metin ya da undefined olabilir; her zaman dizi değildir.",
@@ -74,10 +79,12 @@
           "id": "memory-tree",
           "label": "Bellekteki ağaç",
           "aliases": [
-            "bellek",
-            "javascript nesnesi",
-            "hafıza",
-            "temsil"
+            "bellekteki hafif",
+            "bellekte tutulan",
+            "javascript nesne",
+            "nesnelerden oluşan",
+            "hafif temsil",
+            "hafif bir javascript"
           ],
           "anchors": [
             "Arayüzün bellekte tutulan hafif bir kopyasıdır, düz JavaScript nesnelerinden oluşur.",
@@ -88,11 +95,12 @@
           "id": "diff-then-minimal-write",
           "label": "Karşılaştırıp yalnızca değişeni yazma",
           "aliases": [
-            "diff",
-            "karşılaştır",
-            "reconciliation",
+            "diffing",
+            "öncekiyle karşılaştır",
+            "eskisiyle karşılaştır",
             "sadece değişen",
-            "minimum"
+            "yalnızca farklı olan",
+            "değişen kısımları"
           ],
           "anchors": [
             "Yeni ağaç öncekiyle karşılaştırılır ve sadece farklı düğümler gerçek DOM'a yazılır.",
@@ -103,10 +111,10 @@
           "id": "heuristic-not-full-diff",
           "label": "Tam karşılaştırma değil, kestirme",
           "aliases": [
+            "iki varsayım",
             "varsayım",
             "heuristic",
             "kestirme",
-            "key",
             "farklı tip"
           ],
           "anchors": [
@@ -134,8 +142,8 @@
           "id": "kutuphane",
           "label": "UI kütüphanesi",
           "aliases": [
-            "kütüphane",
-            "library",
+            "javascript kütüphane",
+            "ui kütüphane",
             "kullanıcı arayüzü",
             "user interface",
             "arayüz geliştir",
@@ -149,8 +157,12 @@
           "id": "component",
           "label": "Component tabanlı",
           "aliases": [
-            "component",
-            "bileşen"
+            "component tabanlı",
+            "bileşen tabanlı",
+            "component'lere böl",
+            "bileşenlere böl",
+            "component-based",
+            "parçalara böl"
           ],
           "anchors": [
             "Arayüz yeniden kullanılabilir component'lere bölünür."
@@ -173,8 +185,11 @@
           "id": "state",
           "label": "State yönetimi",
           "aliases": [
-            "state",
-            "durum"
+            "kendi state",
+            "state'ini yönet",
+            "state yönet",
+            "durumunu yönet",
+            "state değiş"
           ],
           "anchors": [
             "Her component kendi state'ini yönetir ve state değişince arayüz güncellenir."
@@ -208,7 +223,11 @@
           "id": "jsx",
           "label": "JSX",
           "aliases": [
-            "jsx"
+            "jsx sözdizimi",
+            "jsx ile",
+            "jsx kullan",
+            "html benzeri",
+            "jsx syntax"
           ],
           "anchors": [
             "JSX ile JavaScript içinde HTML benzeri kod yazılır."
@@ -245,8 +264,11 @@
           "id": "component",
           "label": "Component mimarisi",
           "aliases": [
-            "component",
-            "bileşen"
+            "component tabanlı",
+            "bileşen tabanlı",
+            "component mimari",
+            "component-based",
+            "bileşen mimari"
           ],
           "anchors": [
             "Uygulama bağımsız ve yeniden kullanılabilir component'lerden oluşur."
@@ -268,11 +290,12 @@
           "id": "sozdizimi",
           "label": "Sözdizimi uzantısı",
           "aliases": [
-            "sözdizimi",
-            "syntax",
+            "sözdizimi uzantı",
+            "syntax extension",
             "html benzeri",
             "html gibi",
-            "xml"
+            "html'e benze",
+            "javascript uzantı"
           ],
           "anchors": [
             "JSX, JavaScript içinde HTML benzeri kod yazmayı sağlayan bir sözdizimi uzantısıdır."
@@ -295,12 +318,12 @@
           "id": "derleme",
           "label": "Derleme gerekir",
           "aliases": [
-            "derle",
-            "compile",
+            "derleme sırasında",
+            "derlenir",
             "transpile",
             "babel",
             "tarayıcı anlamaz",
-            "esbuild"
+            "doğrudan anlamaz"
           ],
           "anchors": [
             "Tarayıcı JSX'i doğrudan anlamaz, derleme adımında dönüştürülür."
@@ -326,7 +349,8 @@
             "plain object",
             "javascript nesnesi",
             "js nesnesi",
-            "obje"
+            "ekranda ne görün",
+            "tarif eden"
           ],
           "anchors": [
             "Element ekranda ne görüneceğini tarif eden düz bir JavaScript nesnesidir."
@@ -337,8 +361,9 @@
           "label": "Element değiştirilemez",
           "aliases": [
             "immutable",
-            "değiştirilemez",
-            "değişmez"
+            "değiştirilemez bir",
+            "değiştirilemez (",
+            "ve değiştirilemez"
           ],
           "anchors": [
             "Element oluşturulduktan sonra değiştirilemez, yenisi oluşturulur."
@@ -348,10 +373,12 @@
           "id": "component-fonksiyon",
           "label": "Component fonksiyon/class'tır",
           "aliases": [
-            "fonksiyon",
-            "function",
-            "class",
-            "sınıf"
+            "fonksiyon ya da class",
+            "fonksiyon ya da sınıf",
+            "fonksiyon veya class",
+            "fonksiyon veya sınıf",
+            "element döndüren",
+            "mantık ve state"
           ],
           "anchors": [
             "Component element döndüren bir fonksiyon veya class'tır."
@@ -361,9 +388,11 @@
           "id": "props-girdi",
           "label": "Component props alır",
           "aliases": [
-            "props",
-            "girdi",
-            "parametre"
+            "props alır",
+            "props alıp",
+            "girdi olarak props",
+            "props'u girdi",
+            "props kabul"
           ],
           "anchors": [
             "Component props alır ve bunlara göre element üretir."
@@ -385,10 +414,11 @@
           "id": "degisen-veri",
           "label": "Değişebilen veri",
           "aliases": [
-            "değişebil",
-            "değişen",
+            "değişebilen veri",
+            "değişebilen",
             "zamanla değiş",
-            "mutable"
+            "değişen veri",
+            "yaşam süresi boyunca değiş"
           ],
           "anchors": [
             "State component'in yaşam süresi boyunca değişebilen veridir."
@@ -399,10 +429,11 @@
           "label": "Component'e ait",
           "aliases": [
             "component'e ait",
-            "kendi",
-            "yerel",
-            "local",
-            "içinde tutul"
+            "kendisine ait",
+            "kendi içinde tut",
+            "içinde tutul",
+            "kendi verisi",
+            "local state"
           ],
           "anchors": [
             "State component'in kendisine aittir ve orada yönetilir."
@@ -412,9 +443,11 @@
           "id": "rerender",
           "label": "Değişince yeniden render",
           "aliases": [
-            "render",
+            "yeniden render",
+            "re-render",
+            "tekrar render",
+            "render edilir",
             "yeniden çiz",
-            "ui güncel",
             "arayüz güncel"
           ],
           "anchors": [
@@ -425,9 +458,12 @@
           "id": "hook",
           "label": "useState ile yönetilir",
           "aliases": [
-            "usestate",
+            "usestate ile",
+            "usestate hook",
+            "usestate veya",
             "usereducer",
-            "setstate"
+            "setstate",
+            "set fonksiyon"
           ],
           "anchors": [
             "Function component'lerde state useState veya useReducer ile tutulur."
@@ -449,13 +485,12 @@
           "id": "parent-child",
           "label": "Parent'tan child'a aktarılır",
           "aliases": [
-            "parent",
-            "child",
+            "parent component'ten",
+            "parent'tan child",
             "üst component",
             "alt component",
             "ebeveyn",
-            "aşağı aktar",
-            "dışarıdan"
+            "aşağı aktar"
           ],
           "anchors": [
             "Props parent component'ten child component'e aktarılır."
@@ -468,9 +503,9 @@
             "salt okunur",
             "read-only",
             "readonly",
-            "değiştirilemez",
             "değiştiremez",
-            "immutable"
+            "değiştirmemeli",
+            "sadece okunur"
           ],
           "anchors": [
             "Child component aldığı props'u değiştiremez."
@@ -480,11 +515,11 @@
           "id": "girdi",
           "label": "Component girdisi",
           "aliases": [
-            "girdi",
-            "input",
-            "parametre",
-            "argüman",
-            "attribute"
+            "girdiler",
+            "attribute",
+            "fonksiyon parametre",
+            "parametreleri gibi",
+            "argüman"
           ],
           "anchors": [
             "Props bir component'in girdileridir, fonksiyon parametrelerine benzer."
@@ -494,11 +529,12 @@
           "id": "callback",
           "label": "Fonksiyon da geçirilebilir",
           "aliases": [
-            "callback",
+            "callback fonksiyon",
+            "callback olarak",
             "fonksiyon geçir",
-            "handler",
-            "event handler",
-            "fonksiyon da"
+            "fonksiyonlar da",
+            "fonksiyon da",
+            "callback'ler"
           ],
           "anchors": [
             "Props ile veri yanında callback fonksiyonları da aktarılır."
@@ -520,11 +556,12 @@
           "id": "state-ic",
           "label": "State component içinde yönetilir",
           "aliases": [
-            "component içinde",
             "kendi içinde",
             "kendi state",
-            "yerel",
-            "içeride yönet"
+            "component içinde",
+            "içeride yönet",
+            "kendi yönettiği",
+            "içinde yönettiği"
           ],
           "anchors": [
             "State component'in kendi içinde yönettiği veridir."
@@ -534,8 +571,9 @@
           "id": "props-disardan",
           "label": "Props dışarıdan gelir",
           "aliases": [
-            "parent",
-            "dışarıdan",
+            "parent'tan gelen",
+            "parent'tan",
+            "dışarıdan gelen",
             "üst component",
             "ebeveyn"
           ],
@@ -551,7 +589,7 @@
             "read-only",
             "readonly",
             "değiştiremez",
-            "değiştirilemez"
+            "sadece okunur"
           ],
           "anchors": [
             "Component kendi props'unu değiştiremez."
@@ -561,12 +599,11 @@
           "id": "state-degisir",
           "label": "State güncellenebilir",
           "aliases": [
-            "güncellen",
+            "değiştirebildiği",
             "değiştirebil",
-            "değiştirilebilir",
-            "setstate",
-            "usestate",
-            "setter"
+            "setstate ile",
+            "güncelleyebil",
+            "set fonksiyon"
           ],
           "anchors": [
             "State setter fonksiyonuyla güncellenebilir."
@@ -601,11 +638,12 @@
           "id": "fonksiyon-ref",
           "label": "Fonksiyon referansı verilir",
           "aliases": [
-            "referans",
+            "fonksiyon referans",
             "parantezsiz",
             "string değil",
             "fonksiyonun kendisi",
-            "süslü parantez"
+            "süslü parantez",
+            "string olarak"
           ],
           "anchors": [
             "Handler'a string yerine fonksiyon referansı verilir."
@@ -638,9 +676,10 @@
           "id": "wrapper",
           "label": "Native event sarmalayıcısı",
           "aliases": [
-            "sarmala",
+            "sarmalayıcı",
             "wrapper",
-            "sarar",
+            "saran",
+            "native event'i sar",
             "native event"
           ],
           "anchors": [
@@ -678,7 +717,10 @@
           "id": "nativeevent",
           "label": "nativeEvent erişimi",
           "aliases": [
-            "nativeevent"
+            "nativeevent",
+            "native event'e eriş",
+            "orijinal event",
+            "asıl event"
           ],
           "anchors": [
             "Orijinal event'e nativeEvent ile erişilir."
@@ -701,13 +743,11 @@
           "label": "Elemanları tanımlar",
           "aliases": [
             "hangi eleman",
-            "tanı",
-            "ayırt",
-            "değişti",
-            "eklendi",
-            "silindi",
+            "ayırt et",
+            "eklendiğini",
+            "silindiğini",
             "eşleştir",
-            "kimli"
+            "tanımasını"
           ],
           "anchors": [
             "Key React'in hangi elemanın eklendiğini, silindiğini veya değiştiğini tanımasını sağlar."
@@ -717,10 +757,11 @@
           "id": "benzersiz",
           "label": "Kardeşler arasında benzersiz",
           "aliases": [
-            "benzersiz",
-            "unique",
-            "eşsiz",
-            "kardeş"
+            "kardeşler arasında",
+            "benzersiz ve kararlı",
+            "benzersiz olmalı",
+            "benzersiz bir",
+            "kardeş elemanlar"
           ],
           "anchors": [
             "Key kardeş elemanlar arasında benzersiz olmalıdır."
@@ -732,10 +773,9 @@
           "aliases": [
             "kararlı",
             "stable",
-            "sabit",
             "veriden gelen",
+            "verideki id",
             "veritabanı id",
-            "todo.id",
             "item.id"
           ],
           "anchors": [
@@ -747,11 +787,11 @@
           "label": "Verimli güncelleme",
           "aliases": [
             "gereksiz render",
-            "performans",
-            "verimli",
-            "reconciliation",
+            "state'inin doğru",
+            "state'i koru",
             "state koru",
-            "state'i koru"
+            "verimli güncelle",
+            "sadece değişen"
           ],
           "anchors": [
             "Doğru key gereksiz render'ı önler ve eleman state'ini korur."
@@ -776,9 +816,9 @@
             "kapsülle",
             "encapsulation",
             "izole",
-            "scope",
             "stil izol",
-            "css izol"
+            "css izol",
+            "stili izole"
           ],
           "anchors": [
             "Shadow DOM web component'lerde DOM ve CSS'i kapsüller."
@@ -790,9 +830,9 @@
           "aliases": [
             "tarayıcı teknolojisi",
             "tarayıcı özelliği",
-            "browser",
             "web component",
-            "gerçek dom'un parçası"
+            "gerçek dom'un parçası",
+            "browser api"
           ],
           "anchors": [
             "Shadow DOM tarayıcının sağladığı bir teknolojidir ve gerçek DOM'un parçasıdır."
@@ -802,11 +842,12 @@
           "id": "virtual-bellek",
           "label": "Virtual DOM bellekte",
           "aliases": [
-            "belle",
+            "bellekteki bir kopya",
+            "bellekte tutulan",
             "in-memory",
-            "memory",
             "javascript'te tutul",
-            "kopya"
+            "bellekte tuttuğu",
+            "dom kopyası"
           ],
           "anchors": [
             "Virtual DOM kütüphanenin bellekte tuttuğu bir temsildir."
@@ -816,11 +857,12 @@
           "id": "virtual-performans",
           "label": "Virtual DOM performans içindir",
           "aliases": [
-            "performans",
             "diffing",
+            "minimize",
             "minimum güncelle",
             "verimli güncelle",
-            "karşılaştır"
+            "performans için",
+            "güncellemeleri minimize"
           ],
           "anchors": [
             "Virtual DOM'un amacı DOM güncellemelerini en aza indirmektir."
@@ -842,8 +884,12 @@
           "id": "state-yonetir",
           "label": "Değeri React state'i tutar",
           "aliases": [
-            "state",
-            "usestate"
+            "react state'i",
+            "state'inde tutul",
+            "state tarafından",
+            "state'te tutul",
+            "state'e bağlan",
+            "react state'inde"
           ],
           "anchors": [
             "Form elemanının değeri React state'inde tutulur."
@@ -854,7 +900,10 @@
           "label": "value + onChange",
           "aliases": [
             "onchange",
-            "value"
+            "value'su state",
+            "value prop",
+            "value ve onchange",
+            "value'yu state"
           ],
           "anchors": [
             "Input'un value'su state'e bağlanır, değişiklik onChange ile yazılır."
@@ -904,9 +953,12 @@
           "id": "ref",
           "label": "Ref ile okunur",
           "aliases": [
-            "ref",
             "useref",
-            "createref"
+            "createref",
+            "ref ile",
+            "ref (useref)",
+            "ref'le",
+            "ref kullan"
           ],
           "anchors": [
             "Değer ihtiyaç anında ref ile DOM'dan okunur."
@@ -940,13 +992,12 @@
           "id": "ekstra-dugum",
           "label": "Ekstra DOM düğümü eklemez",
           "aliases": [
-            "ekstra",
+            "ekstra bir düğüm",
+            "ekstra düğüm",
             "gereksiz div",
             "fazladan",
-            "extra",
             "düğüm eklemeden",
-            "dom'a eklenmez",
-            "node eklemez"
+            "ekstra bir div"
           ],
           "anchors": [
             "Fragment DOM'a ekstra bir düğüm eklemez."
@@ -956,11 +1007,11 @@
           "id": "coklu-eleman",
           "label": "Birden fazla eleman döndürme",
           "aliases": [
-            "birden fazla",
-            "çoklu",
-            "gruplama",
-            "grupla",
-            "multiple"
+            "birden fazla eleman",
+            "çoklu eleman",
+            "elemanları grupla",
+            "multiple element",
+            "tek kök"
           ],
           "anchors": [
             "Bir component'in birden fazla eleman döndürmesini sağlar."
@@ -983,7 +1034,11 @@
           "id": "key",
           "label": "Listede key için uzun yazım",
           "aliases": [
-            "key"
+            "key vermek",
+            "key gerek",
+            "key={",
+            "fragment key",
+            "uzun yazım"
           ],
           "anchors": [
             "Key gerekiyorsa uzun Fragment yazımı kullanılır."
@@ -1071,10 +1126,11 @@
           "id": "karsilastirma",
           "label": "Ağaçları karşılaştırma",
           "aliases": [
-            "karşılaştır",
-            "diff",
+            "öncekiyle karşılaştır",
             "önceki ağaç",
             "eski ağaç",
+            "diffing",
+            "ağaçları karşılaştır",
             "compare"
           ],
           "anchors": [
@@ -1085,11 +1141,12 @@
           "id": "minimum",
           "label": "Minimum DOM değişikliği",
           "aliases": [
+            "minimum değişiklik",
             "minimum",
-            "en az",
             "sadece değişen",
             "yalnızca değişen",
-            "değişen kısım"
+            "değişen kısım",
+            "neyin değişmesi"
           ],
           "anchors": [
             "Gerçek DOM'a uygulanacak minimum değişiklik belirlenir."
@@ -1099,11 +1156,11 @@
           "id": "tip",
           "label": "Farklı tip yeniden oluşturulur",
           "aliases": [
-            "tip",
-            "type",
+            "farklı tip",
             "farklı eleman",
-            "yeniden oluştur",
-            "sıfırdan"
+            "tamamen yeniden oluştur",
+            "sıfırdan",
+            "baştan kur"
           ],
           "anchors": [
             "Farklı tipteki elemanlar tamamen yeniden oluşturulur."
@@ -1113,7 +1170,10 @@
           "id": "key",
           "label": "Listelerde key",
           "aliases": [
-            "key"
+            "key ile",
+            "key kullan",
+            "key sayesinde",
+            "eşleştirme için key"
           ],
           "anchors": [
             "Listelerde elemanlar key ile eşleştirilir."
@@ -1135,11 +1195,12 @@
           "id": "motor",
           "label": "Yeni reconciliation motoru",
           "aliases": [
-            "reconciliation",
+            "reconciliation motor",
             "motor",
             "engine",
             "yeniden yazım",
-            "algoritma"
+            "stack tabanlı",
+            "react 16"
           ],
           "anchors": [
             "Fiber React'in yeniden yazılmış reconciliation motorudur."
@@ -1149,12 +1210,10 @@
           "id": "bolme",
           "label": "İşi küçük birimlere böler",
           "aliases": [
-            "birim",
-            "parça",
-            "bölme",
-            "böler",
-            "bölün",
-            "unit",
+            "küçük birim",
+            "birimlere böl",
+            "parçalara böl",
+            "unit of work",
             "incremental"
           ],
           "anchors": [
@@ -1167,11 +1226,9 @@
           "aliases": [
             "duraklat",
             "kesinti",
-            "pause",
             "interrupt",
-            "iptal",
-            "abort",
-            "yarıda"
+            "yarıda kes",
+            "işi durdur"
           ],
           "anchors": [
             "Render işi duraklatılabilir, iptal edilebilir veya yeniden kullanılabilir."
@@ -1210,7 +1267,7 @@
             "common ancestor",
             "ortak üst",
             "ortak ebeveyn",
-            "en yakın"
+            "en yakın ortak"
           ],
           "anchors": [
             "State en yakın ortak parent'a taşınır."
@@ -1220,11 +1277,11 @@
           "id": "paylasim",
           "label": "Aynı veriyi paylaşma",
           "aliases": [
-            "paylaş",
+            "paylaşması",
             "ortak veri",
             "aynı veri",
             "aynı değişen",
-            "share"
+            "veriyi paylaş"
           ],
           "anchors": [
             "Birden fazla component aynı veriye ihtiyaç duyduğunda uygulanır."
@@ -1234,10 +1291,11 @@
           "id": "props-callback",
           "label": "Props ve callback ile iletim",
           "aliases": [
-            "props",
-            "callback",
+            "props ile",
+            "callback olarak",
+            "callback fonksiyon",
             "fonksiyon geçir",
-            "handler"
+            "değiştirme fonksiyon"
           ],
           "anchors": [
             "Parent veriyi props ile, güncelleme fonksiyonunu callback ile iletir."
@@ -1273,8 +1331,10 @@
           "id": "fonksiyon",
           "label": "Bir fonksiyondur",
           "aliases": [
-            "fonksiyon",
-            "function"
+            "döndüren fonksiyon",
+            "döndüren bir fonksiyon",
+            "component alan fonksiyon",
+            "alan bir fonksiyon"
           ],
           "anchors": [
             "HOC bir fonksiyondur, component değildir."
@@ -1299,10 +1359,11 @@
           "id": "ornek",
           "label": "Örnekler",
           "aliases": [
-            "connect",
             "withrouter",
             "withauth",
-            "with"
+            "withstyles",
+            "redux connect",
+            "with ile başla"
           ],
           "anchors": [
             "connect ve withRouter HOC örnekleridir."
@@ -1325,7 +1386,7 @@
           "label": "createPortal",
           "aliases": [
             "createportal",
-            "portal"
+            "create portal"
           ],
           "anchors": [
             "Portal createPortal ile oluşturulur."
@@ -1335,12 +1396,12 @@
           "id": "dom-disi",
           "label": "Parent DOM'unun dışına render",
           "aliases": [
-            "dışına",
-            "dışında",
+            "hiyerarşisi dışında",
+            "hiyerarşi dışı",
+            "dom hiyerarşisinin dışı",
             "başka bir dom",
-            "body",
             "farklı dom",
-            "hiyerarşi dışı"
+            "parent'ın dışına"
           ],
           "anchors": [
             "Child, parent'ın DOM hiyerarşisi dışındaki bir düğüme render edilir."
@@ -1364,11 +1425,12 @@
           "id": "react-agaci",
           "label": "React ağacında kalır",
           "aliases": [
-            "context",
             "react ağacı",
+            "component ağacı",
             "bubble",
-            "event",
-            "component ağacı"
+            "kabarır",
+            "context'e erişir",
+            "yerini korur"
           ],
           "anchors": [
             "İçerik React ağacındaki yerini korur, context ve event bubbling çalışır."
@@ -1390,10 +1452,12 @@
           "id": "sira",
           "label": "Kimliğe değil sıraya bağlı",
           "aliases": [
-            "sıra",
-            "order",
-            "pozisyon",
-            "konum"
+            "sırasına bağlı",
+            "kimliğine değil",
+            "pozisyona bağlı",
+            "konumuna bağlı",
+            "index'ler kayar",
+            "sıra değişirse"
           ],
           "anchors": [
             "Index key elemanın kimliğine değil sırasına bağlıdır."
@@ -1403,12 +1467,12 @@
           "id": "degisim",
           "label": "Sıralama, ekleme, silme sorunu",
           "aliases": [
-            "yeniden sırala",
-            "sıralama",
-            "ekle",
-            "sil",
-            "başa",
-            "değişirse"
+            "yeniden sıralan",
+            "başa eleman",
+            "eleman eklen",
+            "eleman silin",
+            "eklenir, silinir",
+            "eklendiğinde veya"
           ],
           "anchors": [
             "Liste değiştiğinde React yanlış elemanları eşleştirir."
@@ -1418,11 +1482,12 @@
           "id": "state-kaymasi",
           "label": "State yanlış elemana kayar",
           "aliases": [
-            "state",
             "input değer",
+            "yanlış elemana",
+            "yanlış satır",
+            "state'inin yanlış",
             "kayma",
-            "yanlış eleman",
-            "hata"
+            "yanlış eleman"
           ],
           "anchors": [
             "Component state'i yanlış elemana kayabilir."
@@ -1432,11 +1497,12 @@
           "id": "id",
           "label": "Kararlı id kullanılmalı",
           "aliases": [
+            "kararlı id",
+            "kararlı bir id",
+            "benzersiz ve kararlı",
+            "stable id",
             "id kullan",
-            "kararlı",
-            "stable",
-            "benzersiz",
-            "unique"
+            "verideki id"
           ],
           "anchors": [
             "Verideki kararlı id kullanılmalıdır."
@@ -2138,11 +2204,12 @@
           "id": "katman",
           "label": "Katman katman props",
           "aliases": [
-            "katman",
-            "derin",
-            "kademe",
-            "seviye",
-            "props"
+            "katman katman",
+            "derindeki",
+            "derine",
+            "kademe kademe",
+            "aşağıya aktar",
+            "props ile taşı"
           ],
           "anchors": [
             "Props katman katman aşağı taşınır."
@@ -2152,7 +2219,7 @@
           "id": "cozum",
           "label": "Çözümler",
           "aliases": [
-            "context",
+            "context api",
             "redux",
             "zustand",
             "composition",
@@ -2382,10 +2449,12 @@
           "id": "gruplama",
           "label": "Güncellemeleri gruplar",
           "aliases": [
-            "grupla",
-            "toplu",
-            "birleştir",
-            "batch"
+            "gruplayıp",
+            "gruplanır",
+            "tek bir render'da birleştir",
+            "güncellemeleri grupla",
+            "güncellemeleri birleştir",
+            "bir araya topla"
           ],
           "anchors": [
             "Birden fazla state güncellemesi gruplanır."
@@ -2399,8 +2468,7 @@
             "tek bir render",
             "tek bir re-render",
             "tek re-render",
-            "bir kez render",
-            "tek seferde"
+            "bir kez render"
           ],
           "anchors": [
             "Gruplanan güncellemeler tek bir render ile uygulanır."
@@ -2410,8 +2478,8 @@
           "id": "automatic",
           "label": "React 18 automatic batching",
           "aliases": [
-            "automatic",
-            "otomatik",
+            "automatic batching",
+            "otomatik batching",
             "react 18",
             "settimeout",
             "promise"
@@ -2424,7 +2492,8 @@
           "id": "flushsync",
           "label": "flushSync",
           "aliases": [
-            "flushsync"
+            "flushsync",
+            "flush sync"
           ],
           "anchors": [
             "flushSync ile batching devre dışı bırakılabilir."
@@ -2573,10 +2642,11 @@
           "label": "Önceki state'i alır",
           "aliases": [
             "önceki state",
-            "prev",
+            "prev =>",
+            "prevstate",
             "previous",
             "önceki değer",
-            "mevcut state"
+            "güncel state"
           ],
           "anchors": [
             "Updater function önceki state'i alıp yeni state'i döndürür."
@@ -2587,11 +2657,11 @@
           "label": "Art arda güncelleme",
           "aliases": [
             "art arda",
-            "ardışı",
+            "arka arkaya",
             "birden fazla güncelle",
             "üç kez",
-            "kuyru",
-            "queue"
+            "aynı handler içinde",
+            "peş peşe"
           ],
           "anchors": [
             "Aynı handler içinde art arda güncellemede her biri son değeri kullanır."
@@ -2616,8 +2686,9 @@
           "aliases": [
             "gerek yok",
             "her zaman değil",
-            "bağımsız",
-            "sabit değer"
+            "bağımsızsa",
+            "sabit değer",
+            "doğrudan değer"
           ],
           "anchors": [
             "Değer önceki state'e bağlı değilse gerekmez."
@@ -2900,12 +2971,12 @@
           "id": "client",
           "label": "Client state arayüze aittir",
           "aliases": [
-            "arayüz",
+            "arayüze ait",
             "ui state",
-            "modal",
-            "sekme",
-            "form",
-            "tarayıcı"
+            "modal açık",
+            "seçili sekme",
+            "form girdisi",
+            "sadece istemcide"
           ],
           "anchors": [
             "Client state yalnızca arayüze ait veridir."
@@ -2915,11 +2986,12 @@
           "id": "server",
           "label": "Server state backend'in kopyasıdır",
           "aliases": [
-            "backend",
-            "sunucu",
-            "server",
-            "veritaban",
-            "kopya"
+            "backend'de tutulan",
+            "sunucuda olan",
+            "uzaktan çekilen",
+            "önbellek kopya",
+            "backend'in kopya",
+            "asıl kaynağı sunucu"
           ],
           "anchors": [
             "Server state backend verisinin client'taki kopyasıdır."
@@ -2929,10 +3001,9 @@
           "id": "stale",
           "label": "Eskiyebilir",
           "aliases": [
-            "eski",
+            "eskiyebilir",
             "stale",
             "güncel olmay",
-            "bayat",
             "yeniden çek",
             "refetch",
             "invalid"
@@ -2948,9 +3019,9 @@
             "react query",
             "tanstack",
             "rtk query",
-            "swr",
-            "usestate",
-            "zustand"
+            "swr gibi",
+            "zustand",
+            "tanstack query"
           ],
           "anchors": [
             "Server state için React Query, client state için useState veya Zustand kullanılır."
