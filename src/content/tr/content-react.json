@@ -1525,10 +1525,10 @@
           "label": "Gereksiz render'ı engeller",
           "aliases": [
             "gereksiz render",
-            "yeniden render",
-            "re-render",
-            "render etme",
-            "render'ı engel"
+            "render edilmesini engel",
+            "render'ı engel",
+            "render etmez",
+            "render'ını atla"
           ],
           "anchors": [
             "React.memo props değişmediği sürece yeniden render'ı engeller."
@@ -1541,7 +1541,8 @@
             "shallow",
             "yüzeysel",
             "props karşılaştır",
-            "props değiş"
+            "props'u karşılaştır",
+            "props'ları karşılaştır"
           ],
           "anchors": [
             "Props yüzeysel olarak karşılaştırılır."
@@ -1551,11 +1552,11 @@
           "id": "hoc",
           "label": "Component'i sarmalar",
           "aliases": [
-            "sarmala",
-            "wrap",
-            "hoc",
             "higher-order",
-            "purecomponent"
+            "purecomponent",
+            "sarmalayarak",
+            "component'i sarmala",
+            "wrap eder"
           ],
           "anchors": [
             "Function component'i sarmalayan bir HOC'tur, PureComponent'in karşılığıdır."
@@ -1565,11 +1566,12 @@
           "id": "referans",
           "label": "Referans sorunu",
           "aliases": [
-            "referans",
+            "referans her render",
+            "referansı değiş",
+            "her render'da yeni",
             "usecallback",
-            "usememo",
-            "obje",
-            "fonksiyon prop"
+            "fonksiyon prop",
+            "obje veya fonksiyon"
           ],
           "anchors": [
             "Referansı her render'da değişen props'ta işe yaramaz, useCallback veya useMemo gerekir."
@@ -1603,13 +1605,12 @@
           "id": "gec-yukleme",
           "label": "İhtiyaç anında yükleme",
           "aliases": [
-            "lazy",
             "tembel",
             "gecikmeli",
             "ihtiyaç an",
-            "render edilince",
-            "sonradan yükle",
-            "ertele"
+            "ihtiyaç duyulduğunda",
+            "yüklemeyi ertele",
+            "sonradan yükle"
           ],
           "anchors": [
             "Component ilk render edileceği ana kadar yüklenmez."
@@ -1633,7 +1634,8 @@
             "code splitting",
             "code-splitting",
             "chunk",
-            "bundle",
+            "ayrı bir bundle",
+            "ayrı bundle",
             "ayrı dosya"
           ],
           "anchors": [
@@ -1668,8 +1670,11 @@
           "id": "class-gereksiz",
           "label": "Class yazmadan",
           "aliases": [
-            "class",
-            "sınıf"
+            "class yazmadan",
+            "class olmadan",
+            "class component yazmadan",
+            "sınıf yazmadan",
+            "class'a gerek"
           ],
           "anchors": [
             "Hook'larla class yazmadan state kullanılabilir."
@@ -1682,8 +1687,8 @@
             "use ile",
             "use önek",
             "use prefix",
-            "usestate",
-            "useeffect"
+            "\"use\"",
+            "use'la başla"
           ],
           "anchors": [
             "Hook adları use ile başlar."
@@ -1693,7 +1698,8 @@
           "id": "surum",
           "label": "React 16.8",
           "aliases": [
-            "16.8"
+            "16.8",
+            "react 16.8"
           ],
           "anchors": [
             "Hook'lar React 16.8 ile geldi."
@@ -1717,11 +1723,10 @@
           "aliases": [
             "üst seviye",
             "top level",
-            "en üst",
-            "koşul",
-            "döngü",
+            "koşul içinde",
+            "döngü içinde",
             "if içinde",
-            "loop"
+            "en üstte"
           ],
           "anchors": [
             "Hook'lar koşul veya döngü içinde değil, en üst seviyede çağrılır."
@@ -1731,11 +1736,12 @@
           "id": "react-fonksiyonu",
           "label": "Yalnızca React fonksiyonlarından",
           "aliases": [
-            "function component",
-            "custom hook",
+            "function component'lerden",
             "react fonksiyon",
-            "component içinde",
-            "normal fonksiyon"
+            "custom hook'lardan",
+            "normal fonksiyon",
+            "normal javascript fonksiyon",
+            "fonksiyon component'lerinden"
           ],
           "anchors": [
             "Hook'lar yalnızca function component'lerden veya custom hook'lardan çağrılır."
@@ -1745,9 +1751,11 @@
           "id": "sira",
           "label": "Çağrılma sırası sabit kalmalı",
           "aliases": [
-            "sıra",
-            "order",
-            "aynı sırada"
+            "çağrılma sırası",
+            "aynı sırada",
+            "sıra her render",
+            "sıraya göre",
+            "sıra değişirse"
           ],
           "anchors": [
             "React hook state'ini çağrılma sırasıyla eşleştirir."
@@ -1758,7 +1766,8 @@
           "label": "ESLint kuralı",
           "aliases": [
             "eslint",
-            "lint"
+            "lint kuralı",
+            "rules-of-hooks"
           ],
           "anchors": [
             "eslint-plugin-react-hooks bu kuralları denetler."
@@ -1780,10 +1789,11 @@
           "id": "yakalar",
           "label": "Alt ağaçtaki hataları yakalar",
           "aliases": [
-            "yakala",
-            "catch",
-            "hata",
-            "error"
+            "hataları yakala",
+            "hatayı yakala",
+            "render sırasında oluşan",
+            "javascript hataları",
+            "hataları yakalayıp"
           ],
           "anchors": [
             "Error boundary alt ağacındaki render hatalarını yakalar."
@@ -1795,9 +1805,10 @@
           "aliases": [
             "fallback",
             "yedek arayüz",
+            "yedek bir arayüz",
             "hata ekranı",
-            "çökmek yerine",
-            "çökmesini"
+            "çökmesi yerine",
+            "çökmek yerine"
           ],
           "anchors": [
             "Uygulama çökmek yerine fallback UI gösterir."
@@ -1807,7 +1818,7 @@
           "id": "class",
           "label": "Class component gerekir",
           "aliases": [
-            "class",
+            "class component",
             "getderivedstatefromerror",
             "componentdidcatch",
             "react-error-boundary"
@@ -1820,11 +1831,12 @@
           "id": "sinir",
           "label": "Neyi yakalamaz",
           "aliases": [
-            "event handler",
-            "asenkron",
-            "async",
+            "event handler'lardaki",
+            "asenkron kod",
             "settimeout",
-            "ssr"
+            "yakalamaz",
+            "ssr'daki",
+            "sunucu tarafındaki"
           ],
           "anchors": [
             "Event handler ve asenkron koddaki hataları yakalamaz."
@@ -1847,12 +1859,11 @@
           "label": "Kodu parçalara bölme",
           "aliases": [
             "chunk",
-            "parça",
-            "bölme",
-            "böler",
-            "bölün",
+            "parçalara böl",
+            "küçük parça",
             "ayrı bundle",
-            "split"
+            "bölme tekniği",
+            "tek büyük bundle"
           ],
           "anchors": [
             "Kod tek bundle yerine küçük parçalara bölünür."
@@ -1862,12 +1873,12 @@
           "id": "ihtiyac",
           "label": "İhtiyaç anında yükleme",
           "aliases": [
-            "ihtiyaç",
-            "gerektiğinde",
-            "lazy",
-            "tembel",
-            "sonradan",
-            "runtime"
+            "ihtiyaç anında",
+            "gerektiğinde yüklen",
+            "ihtiyaç duyduğu",
+            "tembel yükle",
+            "talep üzerine",
+            "on demand"
           ],
           "anchors": [
             "Parçalar ihtiyaç anında yüklenir."
@@ -1894,7 +1905,7 @@
             "initial load",
             "yükleme süre",
             "bundle boyut",
-            "performans"
+            "ilk açılış"
           ],
           "anchors": [
             "İlk yükleme süresini kısaltır."
@@ -1930,11 +1941,12 @@
           "id": "bekleme",
           "label": "Hazır olmayanı bekler",
           "aliases": [
-            "bekle",
             "hazır değil",
-            "ertele",
+            "hazır olana kadar",
+            "render'ı ertele",
             "askıya",
-            "suspend"
+            "suspend",
+            "henüz hazır"
           ],
           "anchors": [
             "Alt ağaç hazır olana kadar render'ı erteler."
@@ -1944,8 +1956,10 @@
           "id": "lazy",
           "label": "React.lazy ile",
           "aliases": [
-            "lazy",
-            "code splitting"
+            "react.lazy",
+            "lazy component",
+            "code splitting",
+            "lazy ile"
           ],
           "anchors": [
             "React.lazy ile code splitting'de kullanılır."
@@ -1955,10 +1969,12 @@
           "id": "veri",
           "label": "Veri çekme",
           "aliases": [
-            "veri",
-            "data",
+            "veri çekme",
+            "veri bekleniyor",
+            "veri gelirken",
             "use(",
-            "fetch"
+            "data fetching",
+            "veri yüklen"
           ],
           "anchors": [
             "Suspense uyumlu veri çekmeyle de kullanılır."
@@ -1980,11 +1996,12 @@
           "id": "gorunur",
           "label": "Yalnızca görünen satırlar",
           "aliases": [
-            "görünen",
-            "görünür",
-            "ekranda",
+            "ekranda görünen",
+            "görünen satır",
+            "görünür pencere",
             "visible",
-            "viewport"
+            "viewport",
+            "yalnızca görünen"
           ],
           "anchors": [
             "Yalnızca ekranda görünen satırlar render edilir."
@@ -1997,7 +2014,7 @@
             "uzun liste",
             "büyük liste",
             "binlerce",
-            "çok satır",
+            "çok sayıda satır",
             "long list"
           ],
           "anchors": [
@@ -2012,7 +2029,7 @@
             "dom node",
             "düğüm sayı",
             "render maliyet",
-            "performans"
+            "dom'daki eleman"
           ],
           "anchors": [
             "DOM düğümü sayısı ve render maliyeti düşer."
@@ -2050,7 +2067,6 @@
             "yan etki",
             "side effect",
             "veri çek",
-            "fetch",
             "abonel",
             "subscription",
             "timer"
@@ -2065,6 +2081,7 @@
           "aliases": [
             "render sonra",
             "render'dan sonra",
+            "render olduktan sonra",
             "after render",
             "ekrana çizildikten",
             "paint"
@@ -2077,10 +2094,12 @@
           "id": "dependency",
           "label": "Dependency array",
           "aliases": [
-            "dependency",
-            "bağımlılı",
+            "dependency array",
+            "bağımlılık dizi",
             "boş dizi",
-            "[]"
+            "[]",
+            "deps dizi",
+            "bağımlılık listesi"
           ],
           "anchors": [
             "Dependency array effect'in ne zaman çalışacağını belirler."
@@ -2091,9 +2110,10 @@
           "label": "Cleanup fonksiyonu",
           "aliases": [
             "cleanup",
-            "temizle",
+            "temizleme fonksiyon",
             "unmount",
-            "return"
+            "döndürülen fonksiyon",
+            "temizlik fonksiyon"
           ],
           "anchors": [
             "Döndürülen cleanup fonksiyonu unmount'ta ve yeniden çalışmadan önce çağrılır."
@@ -2115,8 +2135,11 @@
           "id": "sunucu",
           "label": "Yalnızca sunucuda çalışır",
           "aliases": [
-            "sunucu",
-            "server"
+            "sunucuda çalış",
+            "yalnızca sunucuda",
+            "sadece sunucuda",
+            "sunucu tarafında render",
+            "sunucuda render"
           ],
           "anchors": [
             "Server component'ler yalnızca sunucuda çalışır."
@@ -2126,10 +2149,12 @@
           "id": "bundle",
           "label": "Client bundle'a girmez",
           "aliases": [
-            "bundle",
+            "client bundle",
+            "bundle'a girmez",
+            "bundle'ına hiç",
             "client'a gönderilmez",
-            "javascript gönderil",
-            "boyut"
+            "istemciye gönderilme",
+            "bundle boyutu küçül"
           ],
           "anchors": [
             "Kodları client bundle'ına gönderilmez."
@@ -2139,11 +2164,11 @@
           "id": "kisit",
           "label": "State ve event kullanamaz",
           "aliases": [
-            "state",
-            "event",
-            "etkileşim",
-            "usestate",
-            "useeffect"
+            "state kullanamaz",
+            "state, effect",
+            "state ve effect",
+            "event handler kullanamaz",
+            "hook kullanamaz"
           ],
           "anchors": [
             "State, effect ve event handler kullanamazlar."
@@ -2164,11 +2189,12 @@
           "id": "veri",
           "label": "Doğrudan veri erişimi",
           "aliases": [
-            "veritaban",
-            "database",
-            "async",
+            "veritabanına doğrudan",
+            "doğrudan eriş",
             "dosya sistem",
-            "doğrudan veri"
+            "async/await",
+            "doğrudan veri",
+            "async olarak"
           ],
           "anchors": [
             "Veritabanına doğrudan erişip async olarak veri çekebilirler."
@@ -2245,12 +2271,12 @@
           "id": "render",
           "label": "useState render tetikler, useRef tetiklemez",
           "aliases": [
+            "render tetiklenmez",
             "render tetikle",
-            "re-render",
-            "yeniden render",
             "render etmez",
             "render olmaz",
-            "render'a sebep"
+            "render'a sebep olmaz",
+            "yeniden render olmaz"
           ],
           "anchors": [
             "useState değiştiğinde render tetiklenir, useRef değiştiğinde tetiklenmez."
@@ -2260,10 +2286,12 @@
           "id": "current",
           "label": "useRef .current ile değiştirilebilir",
           "aliases": [
-            "current",
-            "mutable",
-            "değiştirilebilir",
-            "kutu"
+            ".current",
+            "ref.current",
+            "değiştirilebilir bir kutu",
+            "mutable obje",
+            "mutable nesne",
+            "current özelliği"
           ],
           "anchors": [
             "useRef'in değeri .current üzerinden değiştirilebilir."
@@ -2287,12 +2315,12 @@
           "id": "kalicilik",
           "label": "Render'lar arası kalıcı",
           "aliases": [
-            "kalıcı",
             "render'lar arası",
-            "korunur",
-            "persist",
+            "render'lar arasında",
             "önceki değer",
-            "timer id"
+            "timer id",
+            "değer korunur",
+            "kalıcı, değiştirilebilir"
           ],
           "anchors": [
             "useRef değeri render'lar arasında korunur."
@@ -2327,11 +2355,12 @@
           "id": "senkron",
           "label": "Senkron / asenkron",
           "aliases": [
-            "senkron",
-            "asenkron",
-            "sync",
-            "async",
-            "bloke"
+            "senkron çalış",
+            "asenkron çalış",
+            "paint'i bloke",
+            "ekranı blokla",
+            "bloke eder",
+            "senkron olarak"
           ],
           "anchors": [
             "useLayoutEffect senkron çalışır ve paint'i bloke eder."
@@ -2356,11 +2385,10 @@
           "aliases": [
             "ölçme",
             "ölçer",
-            "ölçü",
             "measure",
-            "layout",
-            "konum",
-            "boyut"
+            "konum ayarla",
+            "boyutunu ölç",
+            "eleman ölç"
           ],
           "anchors": [
             "useLayoutEffect eleman ölçme ve konumlama için kullanılır."
@@ -2396,9 +2424,10 @@
           "label": "İki kez çalıştırma",
           "aliases": [
             "iki kez",
-            "çift",
+            "iki defa",
             "twice",
-            "double"
+            "double render",
+            "çift render"
           ],
           "anchors": [
             "Component'leri ve effect'leri iki kez çalıştırır."
@@ -2408,12 +2437,10 @@
           "id": "sorun-tespit",
           "label": "Olası sorunları gösterir",
           "aliases": [
-            "sorun",
-            "uyarı",
-            "warning",
+            "olası sorun",
             "saf olmayan",
             "impure",
-            "cleanup",
+            "eksik cleanup",
             "deprecated",
             "eskimiş"
           ],
@@ -2425,9 +2452,11 @@
           "id": "dom-yok",
           "label": "DOM'a eleman eklemez",
           "aliases": [
-            "dom'a",
-            "ekstra",
-            "eleman eklemez"
+            "ekstra eleman eklemez",
+            "eleman eklemez",
+            "arayüz render etmez",
+            "dom'a ekstra",
+            "görünür bir şey"
           ],
           "anchors": [
             "DOM'a ekstra eleman eklemez."
@@ -2515,11 +2544,12 @@
           "id": "ssr-html",
           "label": "Sunucudan gelen HTML",
           "aliases": [
-            "ssr",
-            "sunucu",
-            "server",
+            "sunucuda render",
             "statik html",
-            "hazır html"
+            "hazır html",
+            "sunucudan gelen html",
+            "server-side render",
+            "server side render"
           ],
           "anchors": [
             "Sunucuda render edilmiş HTML tarayıcıya gönderilir."
@@ -2529,11 +2559,12 @@
           "id": "etkilesim",
           "label": "Etkileşim ekleme",
           "aliases": [
-            "etkileşim",
+            "etkileşimli",
             "interaktif",
-            "event handler",
+            "event listener",
             "olay dinleyici",
-            "bağla"
+            "handler'ları bağla",
+            "tıklanabilir"
           ],
           "anchors": [
             "Client tarafında event handler'lar ve state bağlanarak sayfa etkileşimli olur."
@@ -2543,7 +2574,11 @@
           "id": "hydrateroot",
           "label": "hydrateRoot",
           "aliases": [
-            "hydrateroot"
+            "hydrateroot",
+            "hydrate",
+            "yeniden oluşturmaz",
+            "üzerine bağlan",
+            "devralı"
           ],
           "anchors": [
             "Hydration hydrateRoot ile yapılır."
@@ -2579,10 +2614,11 @@
           "label": "Basit / karmaşık state",
           "aliases": [
             "karmaşı",
-            "basit",
+            "basit state",
+            "basit ve bağımsız",
             "complex",
-            "iç içe",
-            "bağlı alan"
+            "bağlı alan",
+            "birbirine bağlı"
           ],
           "anchors": [
             "useState basit, useReducer karmaşık state için uygundur."
@@ -2593,8 +2629,11 @@
           "label": "Action dispatch edilir",
           "aliases": [
             "dispatch",
-            "action",
-            "aksiyon"
+            "dispatch ile",
+            "dispatch edilen",
+            "action gönder",
+            "aksiyon",
+            "action nesne"
           ],
           "anchors": [
             "useReducer'da güncelleme action dispatch edilerek yapılır."
@@ -2604,10 +2643,11 @@
           "id": "reducer",
           "label": "Reducer fonksiyonu",
           "aliases": [
-            "reducer",
+            "reducer fonksiyon",
             "saf fonksiyon",
             "pure function",
-            "component dışı"
+            "component dışı",
+            "saf bir reducer"
           ],
           "anchors": [
             "Güncelleme mantığı saf bir reducer fonksiyonunda toplanır."
@@ -2617,9 +2657,11 @@
           "id": "test",
           "label": "Test edilebilirlik",
           "aliases": [
-            "test",
+            "test edil",
+            "kolayca test",
+            "tek yerde",
             "merkezi",
-            "tek yerde"
+            "tek yerde topla"
           ],
           "anchors": [
             "Reducer ayrı olduğu için kolayca test edilir."
@@ -2710,10 +2752,12 @@
           "id": "usememo-deger",
           "label": "useMemo değeri saklar",
           "aliases": [
-            "değer",
-            "sonuç",
+            "hesaplamanın sonucu",
             "hesaplama sonucu",
-            "result"
+            "sonucunu (değeri)",
+            "değeri memoize",
+            "değeri saklar",
+            "sonucu memoize"
           ],
           "anchors": [
             "useMemo bir hesaplamanın sonucunu saklar."
@@ -2723,9 +2767,11 @@
           "id": "usecallback-fonksiyon",
           "label": "useCallback fonksiyonu saklar",
           "aliases": [
-            "fonksiyon",
-            "referans",
-            "function"
+            "fonksiyonun kendisi",
+            "fonksiyonun referans",
+            "fonksiyonu memoize",
+            "fonksiyon referansı",
+            "fonksiyonu saklar"
           ],
           "anchors": [
             "useCallback fonksiyonun referansını saklar."
@@ -2735,9 +2781,11 @@
           "id": "bagimlilik",
           "label": "Bağımlılık değişene kadar",
           "aliases": [
-            "bağımlılı",
-            "dependency",
-            "deps"
+            "bağımlılıklar değiş",
+            "bağımlılık dizisi",
+            "dependency array",
+            "deps)",
+            "bağımlılıklar değişene"
           ],
           "anchors": [
             "İkisi de bağımlılıklar değişene kadar önbellekte tutar."
@@ -2747,9 +2795,9 @@
           "id": "kullanim",
           "label": "Kullanım amacı",
           "aliases": [
-            "pahalı",
+            "pahalı hesaplama",
             "react.memo",
-            "child",
+            "memo'lu child",
             "referans eşit",
             "gereksiz render"
           ],
@@ -2787,11 +2835,11 @@
           "id": "mantik",
           "label": "Mantığı tekrar kullanma",
           "aliases": [
-            "mantı",
+            "mantığı tekrar",
+            "mantığı paylaş",
             "logic",
-            "tekrar kullan",
+            "tekrar kullanılabilir",
             "yeniden kullan",
-            "paylaş",
             "reuse"
           ],
           "anchors": [
@@ -2802,10 +2850,11 @@
           "id": "hook-kullanir",
           "label": "Başka hook'ları kullanır",
           "aliases": [
-            "usestate",
-            "useeffect",
+            "başka hook",
+            "diğer hook",
             "hook'ları kullan",
-            "başka hook"
+            "içinde başka",
+            "hook'lardan oluş"
           ],
           "anchors": [
             "İçinde başka hook'ları kullanır."
@@ -2857,7 +2906,7 @@
             "starttransition",
             "ispending",
             "güncellemeyi sar",
-            "setstate"
+            "state güncellemesini sar"
           ],
           "anchors": [
             "useTransition state güncellemesini startTransition ile sarar ve isPending verir."
@@ -2867,10 +2916,11 @@
           "id": "deferred",
           "label": "useDeferredValue değeri geciktirir",
           "aliases": [
+            "gecikmeli kopya",
             "gecikmeli",
-            "deferred",
             "değerin kopya",
-            "değer"
+            "geriden gel",
+            "değeri geciktir"
           ],
           "anchors": [
             "useDeferredValue bir değerin gecikmeli kopyasını döndürür."
@@ -2881,7 +2931,9 @@
           "label": "Ne zaman hangisi",
           "aliases": [
             "kontrol etmediğin",
+            "kontrol edemediğ",
             "props'tan",
+            "prop olarak gel",
             "kendin tetikl",
             "dışarıdan gelen"
           ],
@@ -2908,7 +2960,8 @@
             "hayır",
             "engellemez",
             "engelleyemez",
-            "render olur",
+            "memo'lu olsa bile",
+            "props aynı olsa bile",
             "yine render"
           ],
           "anchors": [
@@ -2919,9 +2972,10 @@
           "id": "props",
           "label": "Yalnızca props'a bakar",
           "aliases": [
-            "props",
             "yalnızca props",
-            "sadece props"
+            "sadece props",
+            "props'u karşılaştır",
+            "props'a bakar"
           ],
           "anchors": [
             "React.memo yalnızca props'u karşılaştırır."
@@ -2931,11 +2985,12 @@
           "id": "bolme",
           "label": "Context'i bölme",
           "aliases": [
-            "bölme",
-            "böler",
-            "bölün",
-            "split",
-            "ayrı context"
+            "context'ler bölün",
+            "context'i böl",
+            "ayrı context",
+            "context'i küçük parça",
+            "sorumluluğa göre böl",
+            "küçük context"
           ],
           "anchors": [
             "Context'ler sorumluluğa göre bölünebilir."
@@ -2945,11 +3000,12 @@
           "id": "usememo-selector",
           "label": "Value memoize / selector",
           "aliases": [
-            "usememo",
+            "value'su usememo",
+            "value'yu usememo",
+            "usememo ile sabit",
             "selector",
             "zustand",
-            "redux",
-            "value"
+            "redux"
           ],
           "anchors": [
             "Provider value'su useMemo ile sabitlenir ya da selector'lı kütüphane kullanılır."
