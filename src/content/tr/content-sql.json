@@ -16,10 +16,10 @@
           "label": "B-Tree varsayılan ve genel amaçlı",
           "aliases": [
             "b-tree",
-            "varsayılan",
-            "aralık",
-            "sıralama",
-            "range"
+            "btree",
+            "b tree",
+            "eşitlik, aralık",
+            "genel amaçlı"
           ],
           "anchors": [
             "B-Tree varsayılan index türüdür; eşitlik, aralık ve sıralama sorgularının hepsinde çalışır.",
@@ -30,9 +30,11 @@
           "id": "hash-equality-only",
           "label": "Hash yalnızca eşitlik",
           "aliases": [
-            "hash",
-            "sadece eşittir",
-            "aralıkta çalışmaz",
+            "hash index",
+            "hash yalnızca",
+            "hash sadece",
+            "yalnızca eşitlik",
+            "sadece eşitlik",
             "exact match"
           ],
           "anchors": [
@@ -44,11 +46,12 @@
           "id": "gin-multivalue",
           "label": "GIN çok değerli alanlar için",
           "aliases": [
-            "gin",
+            "gin index",
             "jsonb",
-            "dizi",
             "tam metin",
-            "array"
+            "full-text",
+            "birden çok değer",
+            "birden fazla değer"
           ],
           "anchors": [
             "GIN bir satırda birden çok değer tutan alanlar içindir: dizi, JSONB, tam metin arama.",
@@ -74,10 +77,11 @@
           "id": "index-write-cost",
           "label": "Index yazmayı yavaşlatır",
           "aliases": [
+            "yazmayı yavaşlat",
             "yazma maliyeti",
-            "insert yavaşlar",
-            "güncelleme",
-            "her index güncellenir"
+            "insert yavaşla",
+            "yazma ağırlıklı",
+            "index'leri güncelle"
           ],
           "anchors": [
             "Her index yazma işlemini yavaşlatır çünkü INSERT ve UPDATE sırasında güncellenmesi gerekir.",
@@ -105,6 +109,8 @@
           "label": "Bağlantı tablosu",
           "aliases": [
             "ara tablo",
+            "bağlantı tablo",
+            "ilişki tablo",
             "junction",
             "join table",
             "üçüncü tablo"
@@ -119,9 +125,11 @@
           "label": "Bileşik birincil anahtar",
           "aliases": [
             "bileşik",
+            "bileşim",
             "composite",
-            "iki kolon primary key",
-            "tekrarı engeller"
+            "iki kez atan",
+            "iki kez eklen",
+            "iki kolon primary key"
           ],
           "anchors": [
             "Bağlantı tablosunun birincil anahtarı iki yabancı anahtarın bileşimidir.",
@@ -132,10 +140,12 @@
           "id": "relationship-attributes",
           "label": "İlişkiye ait alanlar",
           "aliases": [
-            "rol",
             "atanma tarihi",
+            "katılma tarihi",
+            "ilişkiye ait",
             "ilişki verisi",
-            "ek alan"
+            "ne çalışana ne projeye",
+            "ilişkinin özelli"
           ],
           "anchors": [
             "Rol ve atanma tarihi gibi alanlar bağlantı tablosunda tutulur.",
@@ -146,10 +156,12 @@
           "id": "reverse-direction-index",
           "label": "Ters yön için ayrı index",
           "aliases": [
+            "ters yön",
+            "ayrı bir index",
             "ikinci index",
+            "project_id üzerine",
             "project_id index",
-            "ters sorgu",
-            "kolon sırası"
+            "ters sorgu"
           ],
           "anchors": [
             "Bileşik anahtarın ikinci kolonu tek başına aramada kullanılamaz, o yön için ayrı index gerekir.",
@@ -176,11 +188,12 @@
           "id": "dirty-read-definition",
           "label": "Commit edilmemiş veriyi okuma",
           "aliases": [
-            "dirty read",
             "commit edilmemiş",
-            "rollback",
-            "geri alma",
-            "askıda"
+            "commit etmeden",
+            "henüz commit",
+            "uncommitted",
+            "iptal edilecek",
+            "hiç var olmamış"
           ],
           "anchors": [
             "Dirty read, bir transaction'ın henüz commit edilmemiş, askıda olan değişikliklerini başka bir transaction'ın okumasıdır.",
@@ -192,9 +205,9 @@
           "label": "Read Committed ile çözüm",
           "aliases": [
             "read committed",
-            "varsayılan",
-            "default",
-            "izolasyon"
+            "read-committed",
+            "read_committed",
+            "commit edilmiş veri"
           ],
           "anchors": [
             "Bu problemi çözmek için en az Read Committed izolasyon seviyesi kullanılmalıdır.",
@@ -208,7 +221,8 @@
             "non-repeatable",
             "repeatable read",
             "ikinci okuma",
-            "değişebilir"
+            "iki kez okun",
+            "farklı değer"
           ],
           "anchors": [
             "Read Committed kirli okumayı önlese de, okunan verinin aynı işlem içinde tekrar okunduğunda değişmemesini garanti etmez.",
@@ -234,11 +248,12 @@
           "id": "pessimistic-lock-db",
           "label": "FOR UPDATE ile satır kilitleme",
           "aliases": [
-            "pessimistic",
-            "for update",
             "satır kilidi",
-            "bekletme",
-            "block"
+            "satırı kilitle",
+            "kilit açılana",
+            "kilit bitene",
+            "bekletilir",
+            "block olur"
           ],
           "anchors": [
             "Pessimistic yaklaşım SELECT FOR UPDATE kullanarak işlem bitene kadar o satırı diğerlerine kilitler.",
@@ -249,12 +264,12 @@
           "id": "optimistic-version-retry",
           "label": "Versiyon kontrolü ve Retry",
           "aliases": [
-            "optimistic",
-            "version",
-            "versiyon",
+            "version kolonu",
+            "version =",
             "sıfır satır",
-            "retry",
-            "uygulama seviyesi"
+            "0 rows",
+            "satır sayısı 0",
+            "kilit koymaz"
           ],
           "anchors": [
             "İyimser kilitleme veritabanını kilitlemez, bunun yerine bir versiyon kolonu kontrol edilerek kayıt güncellenir.",
@@ -265,10 +280,10 @@
           "id": "high-contention-choice",
           "label": "Çakışma yoğunluğuna göre seçim",
           "aliases": [
-            "çakışma",
+            "çakışma oranı",
+            "çakışma ihtimali",
             "contention",
-            "yoğunluk",
-            "retry döngüsü",
+            "retry döngü",
             "peş peşe"
           ],
           "anchors": [
@@ -295,11 +310,12 @@
           "id": "sum-over-window",
           "label": "SUM OVER kullanımı",
           "aliases": [
-            "window",
-            "over",
+            "over (",
+            "over(",
             "sum over",
-            "pencere",
-            "group by sız"
+            "pencere fonksiyon",
+            "window function",
+            "kümülatif"
           ],
           "anchors": [
             "Kümülatif toplam için SUM fonksiyonu OVER kelimesiyle birlikte window function olarak kullanılır.",
@@ -310,11 +326,12 @@
           "id": "order-by-accumulation",
           "label": "ORDER BY ile kümülatif birikim",
           "aliases": [
-            "order by",
+            "o anki satıra",
             "satıra kadar",
             "current row",
             "önceki satırlar",
-            "birikimli"
+            "birikimli",
+            "o ana kadar"
           ],
           "anchors": [
             "OVER bloğunun içine ORDER BY yazdığımızda, toplam işlemi ilk satırdan mevcut satıra kadar çalışır.",
@@ -326,9 +343,9 @@
           "label": "Eşitlik bozucu (tie-breaker) id",
           "aliases": [
             "tie-breaker",
-            "id",
+            "tie breaker",
             "aynı tarih",
-            "eşsiz",
+            "aynı gün",
             "kırılım"
           ],
           "anchors": [
@@ -355,13 +372,12 @@
           "id": "tanim",
           "label": "Veritabanının döndürdüğü hata",
           "aliases": [
-            "hata",
-            "error",
             "kısıt ihlal",
             "constraint",
-            "unique",
-            "foreign key",
-            "deadlock"
+            "unique ihlal",
+            "sözdizimi hata",
+            "syntax",
+            "bağlantı kop"
           ],
           "anchors": [
             "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır."
@@ -385,10 +401,11 @@
           "label": "Uygulamada SQLException olarak yakalanır",
           "aliases": [
             "sqlexception",
-            "jdbc",
             "dataaccessexception",
-            "catch",
-            "yakala"
+            "dataintegrityviolation",
+            "try-catch",
+            "try catch",
+            "jdbc'de"
           ],
           "anchors": [
             "Java'da hata JDBC üzerinden SQLException olarak yakalanır, Spring bunu DataAccessException'a çevirir."
@@ -398,10 +415,11 @@
           "id": "rollback",
           "label": "Transaction geri alınır",
           "aliases": [
-            "rollback",
-            "geri al",
-            "@transactional",
-            "transaction bozulur"
+            "transaction bozulur",
+            "transaction hatalı",
+            "geri alınmalı",
+            "rollback yap",
+            "sonraki komutlar da reddedilir"
           ],
           "anchors": [
             "Hata veren transaction ROLLBACK ile geri alınmalıdır."
@@ -439,7 +457,8 @@
           "id": "explain",
           "label": "EXPLAIN / EXPLAIN ANALYZE",
           "aliases": [
-            "explain"
+            "explain",
+            "explain analyze"
           ],
           "anchors": [
             "Yavaş sorgunun planını görmek için EXPLAIN, ölçmek için EXPLAIN ANALYZE kullanılır."
@@ -491,9 +510,10 @@
           "id": "gercek-calisir",
           "label": "ANALYZE sorguyu gerçekten çalıştırır",
           "aliases": [
-            "gerçekten çalıştırır",
-            "rollback",
-            "transaction içinde"
+            "gerçekten çalıştır",
+            "transaction içinde",
+            "rollback yapmalı",
+            "sorguyu çalıştırır"
           ],
           "anchors": [
             "EXPLAIN ANALYZE sorguyu gerçekten çalıştırdığı için yazma sorgularında ROLLBACK ile kullanılmalıdır."
@@ -543,10 +563,11 @@
           "label": "Toplam süreye göre değerlendirme",
           "aliases": [
             "toplam süre",
-            "çok sık",
-            "sıklık",
-            "frekans",
-            "total time"
+            "total time",
+            "en çok yoran",
+            "çok sık çalışan",
+            "çağrılma sayısı",
+            "frekans"
           ],
           "anchors": [
             "Sık çalışan orta hızlı sorgu toplamda en çok yükü getirebilir."
@@ -557,7 +578,7 @@
           "label": "Anlık sorgular",
           "aliases": [
             "pg_stat_activity",
-            "anlık",
+            "o anda çalışan",
             "şu an çalışan",
             "takılı"
           ],
@@ -584,11 +605,12 @@
           "id": "exception-blok",
           "label": "EXCEPTION / TRY-CATCH bloğu",
           "aliases": [
-            "exception",
-            "try catch",
-            "try-catch",
-            "catch",
-            "when others"
+            "exception bloğu",
+            "exception bölüm",
+            "exception when",
+            "begin ... exception",
+            "when others",
+            "try...catch"
           ],
           "anchors": [
             "PL/pgSQL'de hata EXCEPTION bloğuyla, SQL Server'da TRY CATCH ile yakalanır."
@@ -599,9 +621,11 @@
           "label": "Hata türüne göre yakalama",
           "aliases": [
             "unique_violation",
+            "division_by_zero",
             "hata türü",
-            "when ",
-            "belirli hata"
+            "belirli bir hata",
+            "belirli hata",
+            "türüne göre"
           ],
           "anchors": [
             "Hata unique_violation gibi belirli bir türe göre yakalanabilir."
@@ -612,8 +636,10 @@
           "label": "RAISE ile hata fırlatma",
           "aliases": [
             "raise",
-            "throw",
-            "hata fırlat"
+            "raise exception",
+            "kendi hatanı",
+            "kendi hatamı",
+            "kendi hatasını"
           ],
           "anchors": [
             "Kendi hatanı fırlatmak için RAISE EXCEPTION kullanılır."
@@ -627,7 +653,7 @@
             "sadece o blok",
             "yalnızca o blo",
             "dış transaction",
-            "kısmi"
+            "kısmi geri al"
           ],
           "anchors": [
             "EXCEPTION bloğu arka planda savepoint açar ve yalnızca bloğun değişikliklerini geri alır."
@@ -653,10 +679,11 @@
           "label": "Karşılıklı kilit bekleme",
           "aliases": [
             "birbirini bekle",
+            "birbirinin tuttuğu",
             "karşılıklı",
             "kilidi bekle",
-            "döngü",
-            "circular"
+            "circular wait",
+            "sonsuza kadar bekle"
           ],
           "anchors": [
             "Deadlock iki transaction'ın birbirinin tuttuğu kilidi beklemesidir."
@@ -666,10 +693,10 @@
           "id": "tespit",
           "label": "Veritabanı tespit edip birini sonlandırır",
           "aliases": [
-            "tespit",
+            "tespit eder",
+            "tespit edip",
             "birini sonlandır",
-            "biri iptal",
-            "kurban",
+            "birini iptal",
             "victim",
             "40p01"
           ],
@@ -694,10 +721,11 @@
           "id": "kisa-transaction",
           "label": "Kısa transaction ve retry",
           "aliases": [
-            "kısa",
-            "retry",
+            "kısa tut",
+            "kısa transaction",
+            "lock_timeout",
             "yeniden dene",
-            "timeout"
+            "tekrar dene"
           ],
           "anchors": [
             "Transaction'lar kısa tutulmalı ve sonlandırılan işlem yeniden denenmelidir."
@@ -725,7 +753,8 @@
             "atomicity",
             "bölünmez",
             "ya hep ya hiç",
-            "tamamen",
+            "ya tamamen",
+            "hiç yapılmaz",
             "atomik"
           ],
           "anchors": [
@@ -738,7 +767,8 @@
           "aliases": [
             "consistency",
             "tutarlı",
-            "kısıt",
+            "kısıtlar korunur",
+            "kısıtlar ihlal",
             "geçerli durum"
           ],
           "anchors": [
@@ -751,7 +781,8 @@
           "aliases": [
             "isolation",
             "izolasyon",
-            "eşzamanlı",
+            "eşzamanlı işlemler",
+            "aynı anda yapılan",
             "birbirini görmez"
           ],
           "anchors": [
@@ -763,10 +794,11 @@
           "label": "Durability",
           "aliases": [
             "durability",
-            "kalıcı",
+            "kalıcılık",
             "çökse bile",
-            "wal",
-            "commit edilen"
+            "write-ahead",
+            "commit edilen",
+            "diske yaz"
           ],
           "anchors": [
             "Durability, commit edilen verinin sistem çökse bile kaybolmamasıdır."
@@ -831,10 +863,10 @@
           "label": "Serializable ve maliyeti",
           "aliases": [
             "serializable",
-            "sırayla",
-            "retry",
-            "yeniden dene",
-            "en katı"
+            "sırayla çalışmış",
+            "en katı",
+            "en yüksek seviye",
+            "yeniden dene"
           ],
           "anchors": [
             "Serializable tüm anomalileri engeller ama çakışmada yeniden deneme gerektirir."
@@ -859,10 +891,11 @@
           "id": "inner",
           "label": "INNER JOIN yalnızca eşleşenler",
           "aliases": [
-            "inner join",
-            "inner",
-            "eşleşen",
-            "iki tabloda da"
+            "iki tabloda da",
+            "yalnızca eşleşen",
+            "sadece eşleşen",
+            "eşleşen satır",
+            "kesişim"
           ],
           "anchors": [
             "INNER JOIN yalnızca iki tabloda da eşleşen satırları döner."
@@ -872,10 +905,11 @@
           "id": "left",
           "label": "LEFT JOIN soldakilerin tamamı",
           "aliases": [
-            "left join",
-            "left",
             "soldaki",
-            "tüm satır"
+            "sol tablo",
+            "soldaki tablonun tüm",
+            "eşleşme yoksa",
+            "eşleşmese bile"
           ],
           "anchors": [
             "LEFT JOIN soldaki tablonun tüm satırlarını döner."
@@ -885,7 +919,11 @@
           "id": "null",
           "label": "Eşleşmeyen taraf NULL",
           "aliases": [
-            "null"
+            "null gelir",
+            "null olur",
+            "null döner",
+            "null dolar",
+            "null ile doldur"
           ],
           "anchors": [
             "Eşleşme olmayan tarafın kolonları NULL gelir."
@@ -909,10 +947,12 @@
           "id": "where-tuzagi",
           "label": "WHERE koşulu LEFT JOIN'i bozar",
           "aliases": [
-            "where",
             "on içine",
             "on kısmı",
-            "inner join'e çevir"
+            "on koşulu",
+            "inner join'e çevir",
+            "inner join'e dön",
+            "null satırları eler"
           ],
           "anchors": [
             "LEFT JOIN sonrası WHERE'de sağ tabloya koşul yazmak sorguyu INNER JOIN'e çevirir."
@@ -938,8 +978,11 @@
           "label": "WHERE gruplamadan önce satırları filtreler",
           "aliases": [
             "gruplamadan önce",
-            "satır",
-            "where"
+            "gruplama yapılmadan",
+            "group by'dan önce",
+            "gruplama öncesi",
+            "tek tek satır",
+            "satır bazlı"
           ],
           "anchors": [
             "WHERE gruplama yapılmadan önce satırları filtreler."
@@ -949,10 +992,12 @@
           "id": "having-sonra",
           "label": "HAVING grupları filtreler",
           "aliases": [
-            "having",
-            "grupları",
+            "grupları filtrele",
+            "oluşan grupları",
             "group by sonra",
-            "gruplamadan sonra"
+            "group by'dan sonra",
+            "gruplamadan sonra",
+            "gruplama sonrası"
           ],
           "anchors": [
             "HAVING GROUP BY sonrası oluşan grupları filtreler."
@@ -963,9 +1008,9 @@
           "label": "Aggregate yalnızca HAVING'de",
           "aliases": [
             "aggregate",
-            "sum",
-            "count",
-            "toplama fonksiyon"
+            "toplama fonksiyon",
+            "toplam fonksiyon",
+            "agregat"
           ],
           "anchors": [
             "Aggregate fonksiyonlar WHERE'de kullanılamaz, HAVING'de kullanılır."
@@ -976,8 +1021,10 @@
           "label": "Çalışma sırası",
           "aliases": [
             "çalışma sırası",
-            "from",
-            "sırası"
+            "from → where",
+            "where → group by",
+            "işlenme sırası",
+            "mantıksal sıra"
           ],
           "anchors": [
             "Sorgu FROM, WHERE, GROUP BY, HAVING, SELECT sırasıyla işlenir."
@@ -1002,10 +1049,11 @@
           "id": "pk",
           "label": "Primary key benzersiz tanımlar",
           "aliases": [
-            "primary key",
             "benzersiz",
-            "unique",
-            "not null"
+            "unique ve",
+            "null olamaz",
+            "her satırı benzersiz",
+            "satırı tekil"
           ],
           "anchors": [
             "Primary key her satırı benzersiz tanımlar ve NOT NULL olmak zorundadır."
@@ -1015,9 +1063,11 @@
           "id": "fk",
           "label": "Foreign key başka tabloya referans",
           "aliases": [
-            "foreign key",
-            "referans",
-            "başka tablo"
+            "başka bir tablonun",
+            "başka tablonun",
+            "primary key'ine",
+            "referans veren",
+            "referans verir"
           ],
           "anchors": [
             "Foreign key başka bir tablonun primary key'ine referans verir."
@@ -1027,10 +1077,11 @@
           "id": "butunluk",
           "label": "Referans bütünlüğü",
           "aliases": [
-            "bütünlük",
-            "integrity",
-            "var olmayan",
-            "olmayan bir"
+            "bütünlü",
+            "referential integrity",
+            "referans bütünlüğü",
+            "var olmayan bir",
+            "olmayan bir kayda"
           ],
           "anchors": [
             "Foreign key referans bütünlüğünü sağlar."
@@ -1040,10 +1091,10 @@
           "id": "on-delete",
           "label": "ON DELETE seçenekleri",
           "aliases": [
-            "on delete",
             "cascade",
             "restrict",
-            "set null"
+            "set null",
+            "no action"
           ],
           "anchors": [
             "ON DELETE, referans verilen satır silindiğinde ne olacağını belirler."
@@ -1056,7 +1107,8 @@
             "otomatik index açmaz",
             "elle index",
             "fk index",
-            "index ekle"
+            "index açmaz",
+            "foreign key kolonuna index"
           ],
           "anchors": [
             "PostgreSQL foreign key kolonuna otomatik index açmaz."
@@ -1081,7 +1133,8 @@
           "id": "amac",
           "label": "Tekrarı ve anomaliyi azaltmak",
           "aliases": [
-            "tekrar",
+            "veri tekrar",
+            "tekrarı azalt",
             "anomali",
             "tek bir yer",
             "redundancy",
@@ -1095,10 +1148,11 @@
           "id": "1nf",
           "label": "1NF atomik değer",
           "aliases": [
-            "1nf",
             "atomik",
+            "atomic",
             "tek değer",
-            "atomic"
+            "virgülle ayrılmış",
+            "tekrar eden grup"
           ],
           "anchors": [
             "1NF'de her hücre tek ve atomik değer tutar."
@@ -1108,10 +1162,12 @@
           "id": "2nf",
           "label": "2NF kısmi bağımlılık yok",
           "aliases": [
-            "2nf",
             "kısmi bağımlılık",
             "anahtarın tamamı",
-            "partial"
+            "tamamına bağlı",
+            "anahtarın bir kısmı",
+            "bir parçasına",
+            "partial dependency"
           ],
           "anchors": [
             "2NF'de her kolon bileşik anahtarın tamamına bağlıdır."
@@ -1121,10 +1177,11 @@
           "id": "3nf",
           "label": "3NF geçişli bağımlılık yok",
           "aliases": [
-            "3nf",
             "geçişli",
             "transitive",
-            "birbirine bağlı değil"
+            "birbirine bağlı değil",
+            "birbirine bağlı olmaz",
+            "anahtar olmayan kolonlar"
           ],
           "anchors": [
             "3NF'de anahtar olmayan kolonlar birbirine bağlı değildir."
@@ -1135,9 +1192,10 @@
           "label": "Bilinçli denormalizasyon",
           "aliases": [
             "denormaliz",
-            "join",
+            "çok fazla join",
             "okuma ağırlıklı",
-            "raporlama"
+            "raporlama",
+            "bilerek tekrar"
           ],
           "anchors": [
             "Okuma ağırlıklı sistemlerde bilinçli denormalizasyon yapılabilir."
@@ -1177,8 +1235,10 @@
           "label": "İlk kolon yoksa kullanılamaz",
           "aliases": [
             "ilk kolon",
-            "kullanamaz",
+            "koşulda yok",
             "created_at tek başına",
+            "sadece created_at",
+            "yalnızca created_at",
             "yalnızca ikinci"
           ],
           "anchors": [
@@ -1189,10 +1249,12 @@
           "id": "esitlik-aralik",
           "label": "Eşitlik önce, aralık sonra",
           "aliases": [
-            "eşitlik",
-            "aralık",
-            "range",
-            "önce"
+            "eşitlik koşulu",
+            "eşitlik kolonu",
+            "eşitlik önce",
+            "aralık kolonu",
+            "aralık sonra",
+            "between"
           ],
           "anchors": [
             "Eşitlik koşulu konan kolon önce, aralık kolonu sonra gelmelidir."
@@ -1202,9 +1264,11 @@
           "id": "siralama",
           "label": "ORDER BY'a da yarar",
           "aliases": [
-            "order by",
-            "sıralama",
-            "sort"
+            "order by created_at",
+            "sıralama için ek",
+            "sıralamayı index",
+            "ek sıralama",
+            "sıralama da"
           ],
           "anchors": [
             "Doğru sıradaki bileşik index ORDER BY için ek sıralama ihtiyacını kaldırır."
@@ -1229,9 +1293,10 @@
           "id": "fonksiyon",
           "label": "Kolona fonksiyon uygulamak",
           "aliases": [
-            "fonksiyon",
-            "lower",
-            "upper",
+            "fonksiyon uygula",
+            "kolona fonksiyon",
+            "lower(",
+            "upper(",
             "ifade üzerine",
             "expression index"
           ],
@@ -1243,9 +1308,11 @@
           "id": "like",
           "label": "Baştan joker ile LIKE",
           "aliases": [
-            "like",
+            "like '%",
             "joker",
-            "wildcard"
+            "wildcard",
+            "baştan joker",
+            "başı joker"
           ],
           "anchors": [
             "Baştan joker içeren LIKE sorgusu B-Tree index kullanamaz."
@@ -1256,9 +1323,11 @@
           "label": "Tip uyuşmazlığı",
           "aliases": [
             "tip uyuşmaz",
-            "dönüşüm",
-            "cast",
-            "tür uyuşmaz"
+            "tür uyuşmaz",
+            "örtük dönüşüm",
+            "dönüşüm gerektir",
+            "implicit cast",
+            "tip dönüşüm"
           ],
           "anchors": [
             "Tip uyuşmazlığı dönüşüm gerektirir ve index'i devre dışı bırakır."
@@ -1312,7 +1381,8 @@
             "tüm kolon",
             "gereken kolon",
             "bütün kolon",
-            "kapsa"
+            "ihtiyaç duyduğu tüm",
+            "gereken tüm kolon"
           ],
           "anchors": [
             "Covering index sorgunun ihtiyaç duyduğu tüm kolonları içerir."
@@ -1322,10 +1392,12 @@
           "id": "index-only",
           "label": "Index-only scan",
           "aliases": [
-            "index-only",
-            "index only",
             "tabloya gitme",
-            "tabloya hiç"
+            "tabloya hiç",
+            "sadece index'ten",
+            "yalnızca index'ten",
+            "index'ten oku",
+            "heap'e gitme"
           ],
           "anchors": [
             "Tüm kolonlar index'te olduğunda index-only scan ile tabloya gidilmez."
@@ -1335,7 +1407,9 @@
           "id": "include",
           "label": "INCLUDE kolonları",
           "aliases": [
-            "include"
+            "include (",
+            "include ile",
+            "include kolon"
           ],
           "anchors": [
             "INCLUDE ile eklenen kolonlar aramada değil yalnızca okumada kullanılır."
@@ -1347,8 +1421,9 @@
           "aliases": [
             "visibility map",
             "vacuum",
-            "büyü",
-            "yazma"
+            "index'i büyüt",
+            "index büyür",
+            "yazmayı yavaşlat"
           ],
           "anchors": [
             "Index-only scan visibility map'e bağlıdır ve ek kolonlar index'i büyütür."
@@ -1386,9 +1461,12 @@
           "id": "tek",
           "label": "Yalnızca bir clustered index",
           "aliases": [
-            "yalnızca bir",
-            "tek bir",
-            "sadece bir"
+            "yalnızca bir clustered",
+            "sadece bir clustered",
+            "bir tane clustered",
+            "tek bir clustered",
+            "fiziksel sıra tek",
+            "sadece bir tane"
           ],
           "anchors": [
             "Bir tabloda yalnızca bir clustered index olabilir."
@@ -1398,11 +1476,12 @@
           "id": "non-clustered",
           "label": "Non-clustered ayrı yapı",
           "aliases": [
+            "ayrı bir yapı",
             "ayrı yapı",
             "işaretçi",
-            "pointer",
-            "birden fazla",
-            "ek okuma"
+            "satırın yerini",
+            "ek okuma",
+            "ek bir okuma"
           ],
           "anchors": [
             "Non-clustered index ayrı bir yapıdır ve satıra işaretçi tutar."
@@ -1412,9 +1491,12 @@
           "id": "postgres",
           "label": "PostgreSQL'de clustered yok",
           "aliases": [
-            "postgresql",
             "cluster komutu",
-            "korunmaz"
+            "kalıcı clustered",
+            "clustered index yok",
+            "heap olarak",
+            "korunmaz",
+            "bir kez fiziksel"
           ],
           "anchors": [
             "PostgreSQL'de kalıcı clustered index yoktur."
@@ -1439,10 +1521,11 @@
           "id": "with",
           "label": "WITH ile isimli geçici sonuç",
           "aliases": [
-            "with",
             "isimli",
             "geçici sonuç",
-            "geçici tablo"
+            "geçici tablo",
+            "isim verilmiş",
+            "adlandırılmış"
           ],
           "anchors": [
             "CTE WITH ile tanımlanan isimli geçici sonuç kümesidir."
@@ -1452,10 +1535,12 @@
           "id": "okunabilirlik",
           "label": "Okunabilirlik ve yeniden kullanım",
           "aliases": [
-            "okunabil",
-            "iç içe",
+            "okunabilirliği art",
+            "iç içe subquery",
+            "iç içe sorgu",
             "birden fazla kez",
-            "tekrar kullan"
+            "tekrar kullan",
+            "aynı ara sonuc"
           ],
           "anchors": [
             "CTE iç içe subquery'lere göre okunabilirliği artırır."
@@ -1465,11 +1550,12 @@
           "id": "recursive",
           "label": "Recursive CTE ve hiyerarşi",
           "aliases": [
-            "recursive",
-            "hiyerarşi",
-            "ağaç",
-            "yönetici",
-            "kendine başvur"
+            "kendine başvur",
+            "kendi kendine",
+            "hiyerarşik veri",
+            "organizasyon şeması",
+            "kategori ağacı",
+            "yönetici–çalışan"
           ],
           "anchors": [
             "Recursive CTE hiyerarşik veriyi dolaşmak için kullanılır."
@@ -1509,8 +1595,10 @@
           "aliases": [
             "iç sorgu",
             "içinde çalışan",
-            "join",
-            "birleştir"
+            "içine yazılan",
+            "satır bazında birleştir",
+            "tabloları birleştir",
+            "kolonlarını birlikte"
           ],
           "anchors": [
             "Subquery başka bir sorgunun içinde çalışır, JOIN ise tabloları birleştirir."
@@ -1533,10 +1621,12 @@
           "id": "exists",
           "label": "EXISTS ilk eşleşmede durur",
           "aliases": [
-            "exists",
             "varlık",
             "ilk eşleşme",
-            "durur"
+            "eşleşme bulduğu anda",
+            "bulunca durur",
+            "bulduğu anda",
+            "var mı yok mu"
           ],
           "anchors": [
             "EXISTS bir eşleşme bulduğu anda durur."
@@ -1547,9 +1637,10 @@
           "label": "NOT IN ve NULL tuzağı",
           "aliases": [
             "not in",
-            "null",
             "not exists",
-            "boş gelir"
+            "boş gelir",
+            "null döndürür",
+            "tek bir null"
           ],
           "anchors": [
             "NOT IN alt sorgusu NULL döndürürse sonuç boş gelir, NOT EXISTS daha güvenlidir."
@@ -1574,8 +1665,12 @@
           "id": "row-number",
           "label": "ROW_NUMBER benzersiz numara",
           "aliases": [
-            "row_number",
-            "benzersiz numara"
+            "benzersiz numara",
+            "eşitlerde bile",
+            "eşitlik olsa bile",
+            "1, 2, 3, 4",
+            "her satıra farklı",
+            "sıra numarası"
           ],
           "anchors": [
             "ROW_NUMBER eşit değerlerde bile benzersiz numara verir."
@@ -1585,9 +1680,12 @@
           "id": "rank",
           "label": "RANK boşluk bırakır",
           "aliases": [
-            "rank",
-            "boşluk",
-            "atlar"
+            "1, 2, 2, 4",
+            "1, 1, 3",
+            "sırayı atlar",
+            "sonraki sırayı atla",
+            "numara atla",
+            "boşluklu"
           ],
           "anchors": [
             "RANK eşit değerlere aynı sırayı verir ve sonrasında boşluk bırakır."
@@ -1597,10 +1695,12 @@
           "id": "dense-rank",
           "label": "DENSE_RANK boşluksuz",
           "aliases": [
-            "dense_rank",
             "boşluk bırakmaz",
             "boşluksuz",
-            "ardışık"
+            "ardışık",
+            "1, 2, 2, 3",
+            "1, 1, 2",
+            "boşluk olmaz"
           ],
           "anchors": [
             "DENSE_RANK eşitlere aynı sırayı verir ama boşluk bırakmaz."
@@ -1613,7 +1713,8 @@
             "partition by",
             "partition",
             "grup bazında",
-            "her müşteri"
+            "müşteri bazında",
+            "gruplara ayır"
           ],
           "anchors": [
             "Grup bazında sıralama için PARTITION BY kullanılır."
@@ -1624,10 +1725,11 @@
           "label": "WHERE'de kullanılamaz, dış katman gerekir",
           "aliases": [
             "dış katman",
-            "subquery",
-            "cte",
+            "dış bir katman",
             "where'de kullanılamaz",
-            "dışarı al"
+            "where'de doğrudan",
+            "dışarı al",
+            "alt sorguya al"
           ],
           "anchors": [
             "Pencere fonksiyonu WHERE'de kullanılamadığı için sorgu dış katmana alınır."
@@ -1652,10 +1754,12 @@
           "id": "delete",
           "label": "DELETE koşullu, satır satır",
           "aliases": [
-            "delete",
-            "where",
             "satır satır",
-            "koşul"
+            "where ile",
+            "koşul alabilir",
+            "koşul verilebilir",
+            "koşullu sil",
+            "tek tek sil"
           ],
           "anchors": [
             "DELETE WHERE ile koşullu olarak satır satır siler."
@@ -1665,10 +1769,12 @@
           "id": "truncate",
           "label": "TRUNCATE tüm satırlar, hızlı",
           "aliases": [
-            "truncate",
-            "tüm satır",
-            "hızlı",
-            "tek seferde"
+            "tek seferde",
+            "where almaz",
+            "where alamaz",
+            "tümünü siler",
+            "tüm satırları siler",
+            "satır satır işlem yapma"
           ],
           "anchors": [
             "TRUNCATE tablodaki tüm satırları tek seferde ve hızlı siler."
@@ -1678,10 +1784,11 @@
           "id": "drop",
           "label": "DROP tabloyu yapısıyla kaldırır",
           "aliases": [
-            "drop",
             "yapısıyla",
             "tablonun kendisi",
-            "tamamen kaldır"
+            "tamamen kaldır",
+            "tabloyu kaldır",
+            "tabloyu siler"
           ],
           "anchors": [
             "DROP tabloyu yapısıyla birlikte tamamen kaldırır."
@@ -1691,11 +1798,12 @@
           "id": "geri-alma",
           "label": "Geri alma ve trigger farkı",
           "aliases": [
-            "rollback",
-            "geri al",
-            "trigger",
-            "dml",
-            "ddl"
+            "geri alınabilir",
+            "rollback yapılabilir",
+            "trigger'ları tetikle",
+            "trigger'lar çalışır",
+            "bir dml",
+            "ddl komut"
           ],
           "anchors": [
             "DELETE trigger tetikler ve geri alınabilir, TRUNCATE'in davranışı veritabanına göre değişir."
@@ -1720,10 +1828,12 @@
           "id": "tekrar",
           "label": "UNION tekrarları kaldırır",
           "aliases": [
-            "tekrar",
+            "tekrar eden satır",
+            "tekrarları kaldır",
+            "tekrarları ayıkla",
             "duplicate",
             "distinct",
-            "kaldırır"
+            "tekrarsız"
           ],
           "anchors": [
             "UNION sonuçtaki tekrar eden satırları kaldırır."
@@ -1733,10 +1843,11 @@
           "id": "all",
           "label": "UNION ALL hepsini döner",
           "aliases": [
-            "union all",
-            "hepsini",
+            "hepsini döner",
             "olduğu gibi",
-            "tüm satır"
+            "tekrarları da tut",
+            "tekrarları korur",
+            "tüm satırları olduğu"
           ],
           "anchors": [
             "UNION ALL tüm satırları olduğu gibi döner."
@@ -1746,10 +1857,12 @@
           "id": "maliyet",
           "label": "UNION ALL daha hızlı",
           "aliases": [
-            "hızlı",
-            "maliyet",
-            "sıralama",
-            "hash"
+            "sıralar veya hash",
+            "sıralama ya da hash",
+            "sıralama veya hash",
+            "ek bir maliyet",
+            "ek maliyet",
+            "union all daha hızlı"
           ],
           "anchors": [
             "UNION tekrarları bulmak için ek iş yaptığından UNION ALL daha hızlıdır."
@@ -1815,7 +1928,8 @@
           "aliases": [
             "coalesce",
             "ifnull",
-            "nvl"
+            "nvl(",
+            "isnull("
           ],
           "anchors": [
             "COALESCE ilk NULL olmayan değeri döner."
@@ -1827,8 +1941,10 @@
           "aliases": [
             "yok say",
             "count(*)",
-            "count",
-            "avg"
+            "count(kolon",
+            "null'ları saymaz",
+            "null olmayanları say",
+            "avg("
           ],
           "anchors": [
             "Aggregate fonksiyonlar NULL değerleri yok sayar."
@@ -1840,7 +1956,8 @@
           "aliases": [
             "aritmetik",
             "sonuç null",
-            "toplama"
+            "sonucu da null",
+            "null ile toplama"
           ],
           "anchors": [
             "NULL ile yapılan aritmetik işlemin sonucu NULL olur."
@@ -1868,8 +1985,9 @@
             "her eleman için",
             "her biri için",
             "ayrı sorgu",
+            "ayrı bir sorgu",
             "101",
-            "1 sorgu"
+            "her kayıt için"
           ],
           "anchors": [
             "N+1, liste için bir sorgu ve her eleman için ayrı bir sorgu atılmasıdır."
@@ -1879,9 +1997,11 @@
           "id": "lazy",
           "label": "Lazy loading kaynaklı",
           "aliases": [
-            "lazy",
-            "hibernate",
-            "jpa"
+            "lazy loading",
+            "lazy load",
+            "lazy yükle",
+            "tembel yükle",
+            "onetomany"
           ],
           "anchors": [
             "N+1 genelde ORM'lerdeki lazy loading yüzünden oluşur."
@@ -1891,8 +2011,8 @@
           "id": "tespit",
           "label": "SQL loglarıyla tespit",
           "aliases": [
-            "logları",
             "sql log",
+            "sorgu log",
             "show-sql",
             "statistics",
             "sorgu sayısı"
@@ -1918,9 +2038,10 @@
           "label": "Batch fetching",
           "aliases": [
             "batchsize",
-            "batch",
+            "batch fetch",
+            "batch size",
             "toplu yükle",
-            "in ("
+            "in (...)"
           ],
           "anchors": [
             "BatchSize ilişkileri IN ile toplu yükler."
@@ -2032,10 +2153,12 @@
           "id": "materialized",
           "label": "Materialized view sonucu saklar",
           "aliases": [
-            "diskte",
-            "saklar",
+            "diskte saklar",
+            "sonucu saklar",
+            "sonucunu disk",
             "sonucu tutar",
-            "önceden hesap"
+            "önceden hesap",
+            "fiziksel olarak sakla"
           ],
           "anchors": [
             "Materialized view sorgunun sonucunu diskte saklar."
@@ -2045,11 +2168,12 @@
           "id": "refresh",
           "label": "REFRESH ve eski veri",
           "aliases": [
-            "refresh",
+            "refresh materialized",
             "stale",
-            "eski",
+            "eski veri",
+            "eskiyebilir",
             "güncel değil",
-            "yenile"
+            "yenilenmesi gerek"
           ],
           "anchors": [
             "Materialized view'in verisi eski olabilir ve REFRESH ile yenilenir."
@@ -2059,10 +2183,12 @@
           "id": "secim",
           "label": "Kullanım senaryosu",
           "aliases": [
-            "rapor",
-            "güvenlik",
-            "gecikme",
-            "güncel"
+            "ağır rapor",
+            "raporlama",
+            "dashboard",
+            "gecikmeyi tolere",
+            "sürekli güncel",
+            "her zaman güncel"
           ],
           "anchors": [
             "Güncel veri gerekiyorsa view, ağır raporlar için materialized view seçilir."
@@ -2088,9 +2214,10 @@
           "label": "Function değer döndürür",
           "aliases": [
             "değer döndür",
-            "döndürür",
-            "select içinde",
-            "return"
+            "tablo döndür",
+            "select içinde kullanılabil",
+            "select içinde çağr",
+            "returns"
           ],
           "anchors": [
             "Function değer döndürür ve SELECT içinde kullanılabilir."
@@ -2100,7 +2227,7 @@
           "id": "procedure-call",
           "label": "Procedure CALL ile çalışır",
           "aliases": [
-            "call",
+            "call ile",
             "işlem dizisi",
             "select içinde kullanılamaz"
           ],
@@ -2112,9 +2239,11 @@
           "id": "transaction",
           "label": "Procedure'de transaction kontrolü",
           "aliases": [
-            "commit",
-            "rollback",
-            "transaction kontrol"
+            "commit/rollback",
+            "commit ya da rollback",
+            "commit veya rollback",
+            "transaction kontrol",
+            "kendi transaction"
           ],
           "anchors": [
             "PostgreSQL'de procedure içinde COMMIT ve ROLLBACK yapılabilir."
@@ -2126,7 +2255,9 @@
           "aliases": [
             "ağ trafiği",
             "veri yanında",
-            "paylaş"
+            "veriye yakın",
+            "aynı kuralı",
+            "birden fazla uygulama"
           ],
           "anchors": [
             "Veri yanında çalışmak ağ trafiğini azaltır."
@@ -2136,11 +2267,12 @@
           "id": "eksi",
           "label": "Eksi: test ve bağımlılık",
           "aliases": [
-            "test",
-            "versiyon",
-            "bağımlılık",
+            "test etme",
+            "test edilmesi",
+            "versiyonla",
             "lock-in",
-            "hata ayıkla"
+            "veritabanına bağımlı",
+            "hata ayıklama"
           ],
           "anchors": [
             "Veritabanındaki mantığı test etmek ve versiyonlamak zordur."
@@ -2165,11 +2297,12 @@
           "id": "otomatik",
           "label": "Olaya bağlı otomatik çalışır",
           "aliases": [
-            "otomatik",
-            "insert",
-            "update",
-            "delete",
-            "olay"
+            "otomatik olarak çalış",
+            "otomatik çalış",
+            "insert, update",
+            "olduğunda çalış",
+            "olaya bağlı",
+            "kendiliğinden çalış"
           ],
           "anchors": [
             "Trigger bir tabloda veri değiştiğinde otomatik çalışan fonksiyondur."
@@ -2179,10 +2312,12 @@
           "id": "before-after",
           "label": "BEFORE / AFTER",
           "aliases": [
-            "before",
-            "after",
-            "önce",
-            "sonra"
+            "before ya da after",
+            "before veya after",
+            "before/after",
+            "işlemden önce",
+            "for each row",
+            "her satır için ya da"
           ],
           "anchors": [
             "Trigger işlemden önce veya sonra çalışabilir."
@@ -2205,11 +2340,11 @@
           "id": "risk",
           "label": "Gizli davranış ve performans",
           "aliases": [
-            "gizli",
-            "hata ayıkla",
-            "performansı düş",
+            "gizli davranış",
+            "görünmez",
             "zincirleme",
-            "yavaşlat"
+            "hata ayıklama zor",
+            "toplu işlemleri yavaşlat"
           ],
           "anchors": [
             "Trigger'lar gizli davranış yaratır ve toplu işlemleri yavaşlatabilir."
@@ -2237,8 +2372,9 @@
             "okuyup atar",
             "okur ve atar",
             "atlanan satır",
-            "yavaşlar",
-            "offset"
+            "okuyup çöpe",
+            "sayfa ilerledikçe",
+            "sayfa numarası büyüdükçe"
           ],
           "anchors": [
             "OFFSET atlanan satırları okuyup atar, sayfa ilerledikçe yavaşlar."
@@ -2251,7 +2387,9 @@
             "kayar",
             "kayma",
             "iki sayfada",
-            "tutarsız"
+            "iki kez görün",
+            "yeni kayıt eklen",
+            "tutarsızlık"
           ],
           "anchors": [
             "Araya kayıt eklenirse OFFSET sayfalamasında satırlar kayar."
@@ -2275,9 +2413,10 @@
           "label": "Index ile sabit hız",
           "aliases": [
             "aynı hız",
-            "sabit",
-            "index",
-            "doğrudan"
+            "sabit hız",
+            "doğrudan konuma",
+            "index'i kullanır",
+            "index'li kolon"
           ],
           "anchors": [
             "Keyset pagination index sayesinde her sayfada aynı hızda çalışır."
@@ -2287,11 +2426,12 @@
           "id": "rastgele-sayfa",
           "label": "Rastgele sayfaya atlanamaz",
           "aliases": [
-            "rastgele",
+            "rastgele bir sayfa",
+            "rastgele sayfa",
             "atlanamaz",
-            "sayfa numara",
             "önceki/sonraki",
-            "sonraki"
+            "sayfaya git",
+            "sonsuz kaydırma"
           ],
           "anchors": [
             "Keyset pagination'da belirli bir sayfa numarasına atlanamaz."
