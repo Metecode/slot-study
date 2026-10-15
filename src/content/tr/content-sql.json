@@ -1939,20 +1939,21 @@
       "topic": "Güvenlik",
       "difficulty": 2,
       "prompt": "SQL injection nedir ve nasıl önlenir?",
-      "modelAnswer": "SQL injection, kullanıcı girdisinin sorgu metnine doğrudan eklenmesi sonucu saldırganın sorgunun **yapısını değiştirmesidir**:\n\n```java\nString sql = \"SELECT * FROM users WHERE name = '\" + input + \"'\";\n// input: ' OR '1'='1  → tüm kullanıcılar döner\n```\n\nTemel çözüm **parametreli sorgu** (prepared statement) kullanmaktır. Değer sorgu metnine eklenmez, ayrı bir parametre olarak gönderilir; veritabanı onu her zaman veri olarak işler, komut olarak değil:\n\n```java\nPreparedStatement ps = conn.prepareStatement(\"SELECT * FROM users WHERE name = ?\");\nps.setString(1, input);\n```\n\nJPA'da `:name` gibi named parametreler aynı korumayı sağlar.\n\nEk önlemler: uygulamanın veritabanı kullanıcısına yalnızca gereken yetkileri vermek (**least privilege**) ve hata mesajlarında SQL detayını kullanıcıya göstermemek.\n\nSık atlanan nokta: tablo veya kolon adı ve ORDER BY yönü parametre olarak verilemez. Bunlar kullanıcıdan geliyorsa izin verilen değerler listesiyle (**whitelist**) doğrulanmalıdır; elle kaçış (escape) yapmak güvenilir değildir.",
+      "modelAnswer": "SQL injection, kullanıcıdan gelen bir değerin sorgu metnine string olarak birleştirilmesiyle o değerin veri yerine SQL kodunun parçası gibi yorumlanması ve saldırganın sorgunun yapısını değiştirebilmesidir. Temel çözüm parametreli sorgudur (prepared statement); sorgu metni ve değerler veritabanına ayrı gönderildiği için değer hiçbir zaman komut olarak çalışmaz, JPA'daki `:name` gibi named parametreler de aynı korumayı sağlar. Tablo ya da kolon adı ve sıralama yönü parametre olarak bağlanamaz; kullanıcıdan geliyorlarsa önceden tanımlı bir izin listesiyle (allowlist) eşlenmeli, elle kaçış (escape) yapmaya güvenilmemelidir. Ek katman olarak uygulamanın veritabanı kullanıcısına yalnızca gereken yetkiler verilir (least privilege) ve hata mesajlarında SQL ayrıntısı kullanıcıya gösterilmez.",
       "keyConcepts": [
         {
           "id": "tanim",
           "label": "Girdinin sorgu yapısını değiştirmesi",
           "aliases": [
-            "girdi",
             "yapısını değiştir",
             "sorgu metnine",
-            "or '1'='1",
-            "birleştir"
+            "string olarak birleştir",
+            "string birleştir",
+            "sorguya doğrudan ekle",
+            "concatenat"
           ],
           "anchors": [
-            "SQL injection, kullanıcı girdisinin sorgunun yapısını değiştirmesidir."
+            "SQL injection, kullanıcıdan gelen değerin sorgu metnine string olarak birleştirilmesiyle sorgunun yapısının değişmesidir."
           ]
         },
         {
@@ -1961,11 +1962,13 @@
           "aliases": [
             "prepared",
             "parametreli",
-            "parametre",
-            "bind"
+            "parametrik",
+            "parametrize",
+            "parameterized",
+            "named parametre"
           ],
           "anchors": [
-            "Parametreli sorguda değer ayrı gönderilir ve veri olarak işlenir."
+            "Parametreli sorguda sorgu metni ve değer ayrı gönderilir, değer her zaman veri olarak işlenir."
           ]
         },
         {
@@ -1975,30 +1978,33 @@
             "least privilege",
             "en az yetki",
             "gereken yetki",
-            "yetki"
+            "minimum yetki",
+            "sınırlı yetki"
           ],
           "anchors": [
-            "Veritabanı kullanıcısına yalnızca gereken yetkiler verilmelidir."
+            "Uygulamanın veritabanı kullanıcısına yalnızca gereken yetkiler verilmelidir."
           ]
         },
         {
           "id": "whitelist",
-          "label": "Kolon adı ve sıralama için whitelist",
+          "label": "Kolon adı ve sıralama için allowlist",
           "aliases": [
             "whitelist",
-            "izin verilen",
-            "order by",
-            "kolon adı"
+            "allowlist ile",
+            "izin listesi",
+            "beyaz liste",
+            "kolon adı",
+            "tablo adı"
           ],
           "anchors": [
-            "Parametre olamayan kolon adı ve sıralama yönü whitelist ile doğrulanmalıdır."
+            "Parametre olarak bağlanamayan tablo/kolon adı ve sıralama yönü önceden tanımlı bir izin listesiyle eşlenmelidir."
           ]
         }
       ],
       "followUps": [
         "JPA kullanıyorsan SQL injection'dan tamamen korunmuş olur musun? Hangi durumda hâlâ risk vardır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet (Prepared Statements, Allow-list Input Validation, Least Privilege)"
     },
     {
       "id": "sql-view-vs-materialized",
