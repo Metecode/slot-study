@@ -6197,12 +6197,12 @@
           "id": "otomatik-cookie",
           "label": "Tarayıcı cookie'yi kendiliğinden ekler",
           "aliases": [
-            "cookie",
-            "çerez",
-            "kendiliğinden",
-            "otomatik ekle",
-            "başka bir site",
-            "kötü niyetli site"
+            "cookie'leri isteğe",
+            "cookie'leri otomatik",
+            "cookie'yi otomatik",
+            "çerezleri otomatik",
+            "kendiliğinden ekle",
+            "başka bir site"
           ],
           "anchors": [
             "CSRF'te başka bir site tarayıcıya istek attırır; tarayıcı cookie'leri kendiliğinden ekler."
@@ -6230,7 +6230,7 @@
             "authorization başlığı",
             "authorization header",
             "bearer",
-            "bellekte",
+            "bellekte tut",
             "başlığı ekleyemez"
           ],
           "anchors": [

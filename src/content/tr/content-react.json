@@ -1005,7 +1005,8 @@
           "id": "dangerously",
           "label": "dangerouslySetInnerHTML",
           "aliases": [
-            "dangerouslysetinnerhtml"
+            "dangerouslysetinnerhtml",
+            "dangerously"
           ],
           "anchors": [
             "innerHTML'in React karşılığı dangerouslySetInnerHTML'dir."
@@ -1015,7 +1016,10 @@
           "id": "html-nesne",
           "label": "__html nesnesi",
           "aliases": [
-            "__html"
+            "__html",
+            "html anahtar",
+            "html key",
+            "html alanı"
           ],
           "anchors": [
             "Değer __html anahtarlı bir nesne olarak verilir."
@@ -1025,10 +1029,12 @@
           "id": "xss",
           "label": "XSS riski",
           "aliases": [
-            "xss",
+            "xss risk",
+            "xss açı",
+            "xss saldır",
+            "xss'e",
             "cross-site",
-            "script enjeksiyon",
-            "güvenli"
+            "script enjeksiyon"
           ],
           "anchors": [
             "XSS saldırısı riski taşır."
@@ -1038,10 +1044,12 @@
           "id": "sanitize",
           "label": "Sanitize edilmeli",
           "aliases": [
-            "sanitize",
+            "sanitiz",
             "dompurify",
-            "temizle",
-            "güvenilir"
+            "html'i temizle",
+            "temizlenmiş",
+            "güvenilir kaynak",
+            "güvenilir html"
           ],
           "anchors": [
             "Yalnızca güvenilir veya sanitize edilmiş HTML ile kullanılmalıdır."
