@@ -4003,9 +4003,9 @@
           "aliases": [
             "inversion of control",
             "kontrolün tersine",
-            "yaşam döngüsü",
+            "kontrolün koddan",
             "oluşturma sorumlulu",
-            "framework",
+            "framework'e",
             "çerçeveye"
           ],
           "anchors": [
@@ -4030,11 +4030,11 @@
           "id": "enjeksiyon",
           "label": "Bağımlılık dışarıdan enjekte edilir",
           "aliases": [
-            "enjekte",
-            "new ile",
-            "constructor",
-            "dışarıdan",
-            "kendisi yaratmaz"
+            "kendisi yaratmaz",
+            "new ile yaratmaz",
+            "container onları",
+            "enjekte eder",
+            "kendisi new ile oluşturmaz"
           ],
           "anchors": [
             "DI'da bean bağımlılıklarını kendisi oluşturmaz, container onları enjekte eder."
@@ -4047,9 +4047,9 @@
             "gevşek bağ",
             "loose coupling",
             "loosely",
-            "mock",
-            "test edilebil",
-            "sahte"
+            "sahte (mock)",
+            "mock bir",
+            "mock vermek"
           ],
           "anchors": [
             "DI gevşek bağlılık sağlar; testte sahte implementasyon verilebilir."
@@ -4074,11 +4074,11 @@
           "id": "final-zorunlu",
           "label": "final alanlar, eksik bağımlılık olmaz",
           "aliases": [
-            "final",
-            "immutable",
-            "değişmez",
+            "final olabilir",
+            "alanlar final",
+            "eksik bağımlılık",
             "zorunlu bağımlılık",
-            "eksik bağımlılık"
+            "eksiksiz oluş"
           ],
           "anchors": [
             "Constructor injection'da alanlar final olur ve nesne eksik bağımlılıkla oluşmaz."
@@ -4088,11 +4088,11 @@
           "id": "test",
           "label": "Container olmadan test edilir",
           "aliases": [
-            "test",
-            "mock",
-            "new ile",
             "container olmadan",
-            "konteyner olmadan"
+            "konteyner olmadan",
+            "spring olmadan",
+            "new ile kurul",
+            "testte"
           ],
           "anchors": [
             "Constructor injection kullanan sınıf testte container olmadan new ile kurulabilir."
@@ -4115,9 +4115,8 @@
           "id": "field-gizler",
           "label": "Field: bağımlılığı gizler, final olamaz",
           "aliases": [
-            "gizler",
-            "gizli",
-            "görünmez",
+            "bağımlılıkları gizler",
+            "gizli kalır",
             "final olamaz",
             "reflection",
             "şiştiği"
@@ -4158,12 +4157,12 @@
           "id": "varsayilan",
           "label": "Varsayılan singleton, container başına tek örnek",
           "aliases": [
-            "varsayılan",
-            "default",
             "container başına",
             "tek örnek",
+            "tek bir örnek",
             "tek instance",
-            "aynı örnek"
+            "varsayılan scope singleton",
+            "aynı örnek verilir"
           ],
           "anchors": [
             "Varsayılan scope singleton'dır; container başına tek örnek oluşturulur."
@@ -4186,11 +4185,12 @@
           "id": "web-scope",
           "label": "request, session, application",
           "aliases": [
-            "request",
-            "session",
-            "application",
+            "request scope",
+            "session scope",
+            "request, session",
             "websocket",
-            "http isteği"
+            "http isteği başına",
+            "http oturumu başına"
           ],
           "anchors": [
             "Web uygulamalarında request, session ve application scope'ları vardır."
@@ -4201,11 +4201,10 @@
           "label": "Singleton paylaşılır: race condition, veri sızması",
           "aliases": [
             "race condition",
-            "paylaşıl",
-            "thread-safe",
-            "thread safe",
-            "sızma",
-            "eşzamanlı"
+            "başkasına sız",
+            "veriler karış",
+            "tüm istekler ve thread",
+            "kullanıcıya özel veri"
           ],
           "anchors": [
             "Singleton bean thread'ler arasında paylaşılır; değişebilir alan race condition'a yol açar."
@@ -4243,12 +4242,12 @@
           "id": "bir-kez",
           "label": "Enjeksiyon bir kez, hep aynı örnek",
           "aliases": [
-            "bir kez",
-            "tek sefer",
-            "aynı örnek",
-            "aynı instance",
-            "hep aynı",
-            "oluşturulurken"
+            "singleton oluşturulurken",
+            "bir kez enjekte",
+            "davranışı kaybolur",
+            "etkisini kaybeder",
+            "aynı prototype örneği",
+            "tek sefer"
           ],
           "anchors": [
             "Enjeksiyon singleton oluşturulurken bir kez yapılır, hep aynı prototype örneği kullanılır."
@@ -4259,10 +4258,10 @@
           "label": "ObjectProvider ile her seferinde al",
           "aliases": [
             "objectprovider",
-            "provider",
+            "jakarta.inject.provider",
             "getobject",
             "objectfactory",
-            "sağlayıcı"
+            "provider enjekte"
           ],
           "anchors": [
             "ObjectProvider enjekte edilip her ihtiyaçta getObject çağrılır."
@@ -4287,8 +4286,7 @@
             "scoped proxy",
             "proxymode",
             "target_class",
-            "scopedproxymode",
-            "proxy"
+            "scopedproxymode"
           ],
           "anchors": [
             "Bean scoped proxy ile tanımlanırsa proxy her kullanımda hedef örneği container'dan alır."
@@ -4313,11 +4311,11 @@
           "id": "olustur-enjekte",
           "label": "Önce oluşturma, sonra enjeksiyon",
           "aliases": [
-            "constructor",
-            "oluşturulur",
-            "oluşturur",
+            "önce bean'i oluştur",
+            "örneğini oluştur",
             "instantiat",
-            "aware"
+            "aware arayüz",
+            "beannameaware"
           ],
           "anchors": [
             "Bean önce constructor ile oluşturulur, sonra bağımlılıkları enjekte edilir."
@@ -4329,10 +4327,10 @@
           "aliases": [
             "bağımlılıklar hazır",
             "enjeksiyondan sonra",
+            "enjekte edildikten sonra",
             "afterpropertiesset",
             "initializingbean",
-            "initmethod",
-            "init-method"
+            "initmethod"
           ],
           "anchors": [
             "@PostConstruct bağımlılıklar enjekte edildikten sonra çalışır."
@@ -4345,7 +4343,7 @@
             "beanpostprocessor",
             "postprocessbefore",
             "postprocessafter",
-            "proxy"
+            "aop proxy"
           ],
           "anchors": [
             "BeanPostProcessor başlatmanın öncesinde ve sonrasında çalışır; AOP proxy'leri sonrasında oluşur."
@@ -4355,12 +4353,11 @@
           "id": "kapanis",
           "label": "Kapanışta @PreDestroy",
           "aliases": [
-            "kapanır",
-            "kapanış",
-            "shutdown",
+            "kapanırken",
+            "context kapan",
+            "container kapan",
             "disposablebean",
-            "destroymethod",
-            "close"
+            "destroymethod"
           ],
           "anchors": [
             "@PreDestroy context kapanırken çağrılır."
@@ -4370,10 +4367,10 @@
           "id": "prototype",
           "label": "Prototype'ta yok etme çağrılmaz",
           "aliases": [
-            "prototype",
-            "yönetmez",
-            "çağırmaz",
-            "çalıştırmaz"
+            "prototype bean'lerde",
+            "yok etme geri",
+            "prototype'larda",
+            "çağrılmaz"
           ],
           "anchors": [
             "Prototype bean'lerde Spring yok etme geri çağrılarını çalıştırmaz."
@@ -4430,7 +4427,7 @@
             "üçüncü parti",
             "third-party",
             "third party",
-            "kütüphane",
+            "kütüphanelerin sınıf",
             "kaynağını değiştir",
             "oluşturma mantığı"
           ],
@@ -4485,9 +4482,9 @@
           "id": "katman",
           "label": "Niyet ve katman",
           "aliases": [
-            "katman",
-            "layer",
-            "niyet",
+            "katmanı belirt",
+            "iş katmanını belgeler",
+            "niyeti",
             "semantik",
             "anlamsal"
           ],
@@ -4502,8 +4499,8 @@
             "exception translation",
             "dataaccessexception",
             "persistenceexceptiontranslation",
-            "çevirir",
-            "translation"
+            "hiyerarşisine çevir",
+            "exception'larını çevir"
           ],
           "anchors": [
             "@Repository, persistence exception'larını DataAccessException hiyerarşisine çevirir."
@@ -4558,10 +4555,11 @@
           "id": "varsayilan",
           "label": "@Primary varsayılan aday",
           "aliases": [
-            "varsayılan",
-            "default",
+            "varsayılan aday",
+            "varsayılan olarak işaret",
             "öncelikli",
-            "tercih edilen"
+            "tercih edilen",
+            "istenmeyen her yerde"
           ],
           "anchors": [
             "@Primary bir bean'i o tür için varsayılan aday yapar."
@@ -4571,9 +4569,9 @@
           "id": "belirli",
           "label": "@Qualifier belirli bean'i seçer",
           "aliases": [
-            "adıyla",
+            "adıyla seç",
             "ismiyle",
-            "belirli bir",
+            "belirli bir bean",
             "bean adı",
             "niteleyici"
           ],
@@ -4587,8 +4585,8 @@
           "aliases": [
             "önce gelir",
             "önceliklidir",
-            "ezer",
-            "baskın"
+            "baskın",
+            "primary'yi ezer"
           ],
           "anchors": [
             "@Qualifier, @Primary'den önce gelir."
@@ -4598,10 +4596,11 @@
           "id": "liste",
           "label": "Hepsini List ya da Map ile al",
           "aliases": [
-            "list<",
+            "list<paymentclient",
             "map<string",
-            "hepsini",
-            "tümünü",
+            "hepsine ihtiyaç",
+            "list ile hepsini",
+            "hepsini enjekte",
             "liste olarak"
           ],
           "anchors": [
@@ -4671,10 +4670,10 @@
           "id": "proxy",
           "label": "Çalışma anında proxy ile uygulanır",
           "aliases": [
-            "proxy",
+            "proxy ile uygula",
             "weaving",
-            "çalışma anında",
-            "transactional",
+            "çalışma anında proxy",
+            "mekanizmanın üzerine",
             "cacheable"
           ],
           "anchors": [
@@ -4700,9 +4699,11 @@
           "id": "arayuz",
           "label": "JDK proxy arayüz üzerinden çalışır",
           "aliases": [
-            "arayüz",
-            "interface",
+            "yalnızca arayüz",
+            "sadece arayüz",
+            "sadece interface",
             "somut sınıf",
+            "interface'ler üzerinden",
             "beannotofrequiredtype"
           ],
           "anchors": [
@@ -4713,11 +4714,10 @@
           "id": "alt-sinif",
           "label": "CGLIB alt sınıf üretir",
           "aliases": [
-            "alt sınıf",
+            "alt sınıfını",
             "subclass",
-            "kalıtım",
-            "extends",
-            "türetir"
+            "türetir",
+            "alt sınıf üret"
           ],
           "anchors": [
             "CGLIB çalışma anında bean sınıfının alt sınıfını üretir."
@@ -4727,9 +4727,12 @@
           "id": "final",
           "label": "final sınıf ve metotlar proxy'lenemez",
           "aliases": [
-            "final",
-            "private",
-            "override edilemez"
+            "final sınıf",
+            "final metot",
+            "proxy'lenemez",
+            "override edilemez",
+            "override edilemedi",
+            "private metot"
           ],
           "anchors": [
             "CGLIB final sınıfları proxy'leyemez, final ve private metotları yakalayamaz."
@@ -4783,11 +4786,11 @@
           "id": "diger-turler",
           "label": "@Before, @AfterReturning, @AfterThrowing, @After",
           "aliases": [
-            "before",
             "afterreturning",
             "afterthrowing",
-            "after",
-            "finally"
+            "metottan önce",
+            "finally gibi",
+            "after advice"
           ],
           "anchors": [
             "@Before önce, @AfterReturning normal dönüşte, @AfterThrowing exception'da, @After her durumda çalışır."
@@ -4799,8 +4802,9 @@
           "aliases": [
             "sarar",
             "sarmal",
-            "wrap",
             "etrafında",
+            "kendisinin kontrol",
+            "çağrılmasını kontrol",
             "kontrol eder"
           ],
           "anchors": [
@@ -4823,9 +4827,9 @@
           "label": "Süre ölçme, değer değiştirme, exception yutma",
           "aliases": [
             "süre ölç",
-            "argüman",
+            "argümanları değiş",
             "dönüş değerini değiş",
-            "yakalayıp",
+            "exception'ı yakalayıp",
             "exception'ı yut",
             "sonucu değiş"
           ],
@@ -4866,10 +4870,11 @@
           "id": "proxy-interceptor",
           "label": "Proxy ve TransactionInterceptor",
           "aliases": [
-            "proxy",
-            "interceptor",
+            "proxy'sine gelir",
+            "proxy çağrılır",
             "transactioninterceptor",
-            "araya gir"
+            "araya gir",
+            "proxy üzerinden"
           ],
           "anchors": [
             "Çağrı bean'in proxy'sine gelir, TransactionInterceptor transaction'ı başlatır."
@@ -4908,10 +4913,11 @@
           "id": "commit-rollback",
           "label": "Normal dönüşte commit, RuntimeException'da rollback",
           "aliases": [
-            "commit",
-            "rollback",
-            "geri al",
-            "runtimeexception"
+            "commit edilir",
+            "rollback yapılır",
+            "rollback yapar",
+            "commit yapar",
+            "commit'e engel"
           ],
           "anchors": [
             "Metot normal dönerse commit, RuntimeException ya da Error fırlarsa rollback yapılır."
@@ -4967,10 +4973,10 @@
           "aliases": [
             "askıya",
             "suspend",
-            "bağımsız",
+            "bağımsız bir transaction",
             "ayrı bir transaction",
             "ayrı bağlantı",
-            "audit"
+            "audit log"
           ],
           "anchors": [
             "REQUIRES_NEW dıştaki transaction'ı askıya alıp bağımsız yeni bir transaction açar."
@@ -4993,9 +4999,10 @@
           "label": "NESTED JPA'da varsayılan kapalı",
           "aliases": [
             "nestedtransactionallowed",
-            "jpatransactionmanager",
-            "jdbc",
-            "entitymanager"
+            "jdbc savepoint",
+            "varsayılan olarak kapalı",
+            "jpa ile varsayılan",
+            "jpatransactionmanager'da"
           ],
           "anchors": [
             "NESTED JDBC savepoint'ine dayanır; JpaTransactionManager'da varsayılan olarak kapalıdır."
@@ -5067,7 +5074,7 @@
             "yok sayılır",
             "katılan",
             "validateexistingtransaction",
-            "ignore"
+            "ignore edilir"
           ],
           "anchors": [
             "Isolation yalnızca yeni transaction başlarken uygulanır; mevcut transaction'a katılanınki yok sayılır."
@@ -5106,11 +5113,12 @@
           "id": "runtime-varsayilan",
           "label": "Varsayılan: RuntimeException ve Error",
           "aliases": [
-            "runtimeexception",
+            "rollback'e yol aç",
+            "yalnızca runtimeexception",
+            "runtimeexception ve error",
             "unchecked",
-            "error",
-            "checked exception",
-            "commit edilir"
+            "checked exception fırlarsa",
+            "checked'larda yapmaz"
           ],
           "anchors": [
             "Varsayılan olarak yalnızca RuntimeException ve Error rollback'e yol açar, checked exception commit edilir."
@@ -5135,10 +5143,9 @@
           "aliases": [
             "yutul",
             "yutar",
-            "yakalanırsa",
-            "catch",
             "swallow",
-            "setrollbackonly"
+            "setrollbackonly",
+            "hatadan haberdar olmaz"
           ],
           "anchors": [
             "Metot içinde yakalanıp yutulan exception'da proxy hata görmez ve commit eder."
@@ -5176,10 +5183,11 @@
           "id": "proxy",
           "label": "@Transactional proxy ile uygulanır",
           "aliases": [
-            "proxy",
+            "bir proxy ile",
+            "proxy'de",
+            "proxy üzerinden",
             "vekil",
-            "cglib",
-            "interceptor"
+            "proxy'den geçer"
           ],
           "anchors": [
             "Spring @Transactional'ı bean'in önüne konan bir proxy ile uygular."
@@ -5204,9 +5212,11 @@
           "id": "diger-etkiler",
           "label": "private metot, @Async ve @Cacheable da etkilenir",
           "aliases": [
-            "private",
-            "async",
-            "cacheable"
+            "cacheable",
+            "private metotlar",
+            "async ve cacheable",
+            "iç çağrıyla tetiklenen",
+            "async için"
           ],
           "anchors": [
             "Proxy modunda private metotlardaki ve iç çağrıyla tetiklenen @Async, @Cacheable da çalışmaz."
@@ -5289,8 +5299,9 @@
           "aliases": [
             "garanti değil",
             "veritabanına bağlı",
-            "reddeder",
+            "her zaman engellemez",
             "güvenlik önlemi değil",
+            "güvenlik mekanizması değil",
             "yok sayar"
           ],
           "anchors": [
@@ -5328,11 +5339,11 @@
           "id": "managed-kume",
           "label": "EntityManager'ın yönettiği entity kümesi",
           "aliases": [
-            "entitymanager",
-            "managed",
-            "yönetilen",
-            "session",
-            "transaction boyunca"
+            "yönettiği entity",
+            "entity örneklerinin küme",
+            "managed entity",
+            "transaction boyunca yaşar",
+            "entitymanager'ın yönettiği"
           ],
           "anchors": [
             "Persistence context bir EntityManager'ın yönettiği entity örneklerinin kümesidir."
@@ -5343,7 +5354,7 @@
           "label": "Aynı id için tek örnek, first-level cache",
           "aliases": [
             "tek bir örnek",
-            "aynı nesne",
+            "aynı nesneyi döndür",
             "aynı örnek",
             "first-level",
             "first level",
@@ -5357,12 +5368,12 @@
           "id": "karsilastirma",
           "label": "Flush'ta ilk hâlle karşılaştırılır",
           "aliases": [
-            "kopyasını",
-            "kopyayla",
-            "snapshot",
-            "ilk hâl",
-            "ilk hal",
-            "flush"
+            "ilk hâlinin bir kopya",
+            "ilk halinin bir kopya",
+            "ilk yüklendiği hâl",
+            "ilk yüklendiği hal",
+            "kopyayla karşılaştır",
+            "mevcut haliyle karşılaştır"
           ],
           "anchors": [
             "Flush anında entity'nin mevcut hâli ilk yüklendiği hâlin kopyasıyla karşılaştırılır."
@@ -5374,7 +5385,7 @@
           "aliases": [
             "save gerekmez",
             "save çağırmak gerekmez",
-            "setter",
+            "setter çağırmak yeterli",
             "otomatik update",
             "kendiliğinden update",
             "update üret"
@@ -5417,7 +5428,7 @@
           "id": "detached",
           "label": "Detached: context kapanmış, izlenmez",
           "aliases": [
-            "izlenmez",
+            "artık izlenmez",
             "kapanmış",
             "kapandı",
             "context dışında",
@@ -5432,8 +5443,8 @@
           "label": "persist aynı örneği managed yapar",
           "aliases": [
             "aynı örnek",
-            "aynı nesne",
             "aynı instance",
+            "aynı nesneyi yönet",
             "insert"
           ],
           "anchors": [
@@ -5445,10 +5456,11 @@
           "label": "merge kopyalar, managed örneği döndürür",
           "aliases": [
             "kopyalar",
-            "döndürdüğü",
+            "managed bir kopya",
+            "kopyayı döndür",
             "dönen nesne",
             "managed örneği",
-            "yeni bir örnek"
+            "döndürdüğü"
           ],
           "anchors": [
             "merge detached nesnenin durumunu managed bir örneğe kopyalar ve o örneği döndürür."
@@ -5487,12 +5499,12 @@
           "id": "hemen-sonra",
           "label": "EAGER hemen, LAZY ilk erişimde",
           "aliases": [
-            "hemen",
+            "hemen yüklen",
             "ilk eriş",
             "erişildiğinde",
-            "ihtiyaç anında",
             "ayrı bir sorgu",
-            "on demand"
+            "on demand",
+            "birlikte hemen"
           ],
           "anchors": [
             "EAGER ilişkiyi hemen yükler, LAZY ilk erişildiğinde ayrı bir sorguyla getirir."
@@ -5502,7 +5514,9 @@
           "id": "proxy",
           "label": "LAZY'de proxy ya da persistent collection",
           "aliases": [
-            "proxy",
+            "bir proxy",
+            "proxy konur",
+            "proxy durur",
             "persistent collection",
             "persistentbag",
             "vekil"
@@ -5588,11 +5602,11 @@
           "id": "serilestirme",
           "label": "Controller ya da JSON serileştirmede",
           "aliases": [
-            "controller",
-            "serileştir",
-            "serializ",
-            "json",
-            "jackson"
+            "controller'da",
+            "json serileştir",
+            "serileştirme sırasında",
+            "jackson",
+            "view'da"
           ],
           "anchors": [
             "Tipik örnek ilişkiye controller'da ya da JSON serileştirmesinde dokunmaktır."
@@ -5606,7 +5620,7 @@
             "entitygraph",
             "projection",
             "dto'ya",
-            "transaction içinde"
+            "transaction içinde ve tek sorguda"
           ],
           "anchors": [
             "Gereken veri transaction içinde JOIN FETCH, @EntityGraph ya da DTO projection ile çekilir."
@@ -5630,12 +5644,12 @@
           "id": "osiv",
           "label": "open-in-view varsayılan açık, uyarı verir, bağlantıyı tutar",
           "aliases": [
+            "open-in-view=false",
             "varsayılan olarak açık",
-            "uyarı",
-            "warning",
-            "bağlantı",
-            "connection",
-            "open-in-view=false"
+            "bağlantısı yanıt",
+            "uzun süre meşgul",
+            "açılışta uyarı",
+            "session'ı view"
           ],
           "anchors": [
             "Spring Boot'ta open-in-view varsayılan olarak açıktır, açılışta uyarı verir ve bağlantıyı istek sonuna kadar tutabilir."
@@ -5693,6 +5707,7 @@
             "mapping düzey",
             "kapatılamaz",
             "ihtiyaç duymayan",
+            "ihtiyaç olmadığında da",
             "her sorguda yüklen",
             "gereksiz yük"
           ],
@@ -5747,7 +5762,7 @@
           "label": "L1: EntityManager başına, kapatılamaz",
           "aliases": [
             "persistence context",
-            "entitymanager",
+            "entitymanager başına",
             "session başına",
             "kapatılamaz",
             "her zaman açık",
@@ -5762,7 +5777,7 @@
           "label": "L2: SessionFactory düzeyinde, paylaşılan",
           "aliases": [
             "sessionfactory",
-            "paylaşılan",
+            "tüm oturumlar",
             "shared",
             "uygulama genelinde",
             "oturumlar arası"
@@ -5776,11 +5791,11 @@
           "label": "L2 varsayılan kapalı, sağlayıcı gerekir",
           "aliases": [
             "varsayılan olarak kapalı",
-            "sağlayıcı",
-            "provider",
+            "sağlayıcıyla",
             "ehcache",
             "jcache",
-            "infinispan"
+            "infinispan",
+            "caffeine"
           ],
           "anchors": [
             "Second-level cache varsayılan olarak kapalıdır ve bir önbellek sağlayıcısı gerektirir."
@@ -5792,10 +5807,10 @@
           "aliases": [
             "bayat",
             "stale",
-            "referans veri",
+            "eskimiş veri",
             "nadiren değişen",
-            "dağıtık",
-            "tutarsız"
+            "az değişen",
+            "dağıtık"
           ],
           "anchors": [
             "Second-level cache nadiren değişen veriye uygundur; dışarıdan yapılan değişikliklerde bayat veri riski vardır."
@@ -5835,9 +5850,9 @@
           "label": "@Version ile sürüm koşulu ve artış",
           "aliases": [
             "version + 1",
-            "versiyon",
+            "version alanı",
             "sürüm numara",
-            "sürümü",
+            "sürümü değiştir",
             "kilit tutmaz",
             "version kolonu"
           ],
@@ -5852,9 +5867,9 @@
             "optimisticlockexception",
             "optimisticlockingfailure",
             "sıfır satır",
-            "0 satır",
             "yeniden dene",
-            "retry"
+            "retry",
+            "verinin değiştiği"
           ],
           "anchors": [
             "Sürüm değiştiyse güncelleme sıfır satır etkiler ve OptimisticLockException fırlar."
@@ -5879,7 +5894,7 @@
           "label": "Seyrek çakışmada optimistic, yoğunda pessimistic",
           "aliases": [
             "seyrek",
-            "yoğun yazma",
+            "çakışma nadir",
             "yoğun eşzamanlı",
             "contention",
             "çakışma oranı",
@@ -5894,10 +5909,9 @@
           "label": "Deadlock ve beklemeye karşı timeout",
           "aliases": [
             "lock.timeout",
-            "timeout",
             "zaman aşım",
-            "deadlock",
-            "süre sınırı"
+            "süre sınırı",
+            "uzun bekleme"
           ],
           "anchors": [
             "Pessimistic kilitlerde deadlock ve uzun beklemeye karşı lock timeout konur."
@@ -5953,7 +5967,7 @@
             "ters taraf",
             "karşı taraf",
             "yalnızca owning",
-            "yazılmaz",
+            "foreign key yazılmaz",
             "dikkate alınmaz"
           ],
           "anchors": [
@@ -5968,7 +5982,6 @@
             "her iki taraf",
             "yardımcı metot",
             "helper",
-            "senkron",
             "setorder"
           ],
           "anchors": [
@@ -5981,8 +5994,9 @@
           "aliases": [
             "ara tablo",
             "join table",
+            "join tablo",
             "jointable",
-            "tek yönlü",
+            "fazladan bir",
             "fazladan tablo"
           ],
           "anchors": [
@@ -6037,11 +6051,11 @@
           "label": "Sıralı filtreler: CSRF, kimlik doğrulama, yetki",
           "aliases": [
             "csrffilter",
-            "usernamepasswordauthenticationfilter",
-            "bearertokenauthenticationfilter",
             "exceptiontranslationfilter",
             "authorizationfilter",
-            "sırayla"
+            "filtrelerini sırayla",
+            "sırayla güvenlik filtre",
+            "en sonda authorization"
           ],
           "anchors": [
             "Zincirdeki filtreler sırayla çalışır; en sonda AuthorizationFilter yetki kararını verir."
@@ -6138,10 +6152,10 @@
           "label": "Oturuma kaydedilir ya da her istekte token",
           "aliases": [
             "securitycontextrepository",
-            "session",
-            "oturum",
-            "stateless",
-            "her istek",
+            "oturuma kaydedil",
+            "session'lı uygulama",
+            "stateless bir api",
+            "kendi token'ıyla",
             "authenticationentrypoint"
           ],
           "anchors": [
@@ -6168,9 +6182,10 @@
           "label": "Authentication: kimsin?",
           "aliases": [
             "kimsin",
-            "kimlik",
+            "kimliğini doğrula",
+            "kim olduğu",
             "identity",
-            "kim olduğu"
+            "kim olduğunu kanıtla"
           ],
           "anchors": [
             "Authentication kullanıcının kim olduğunu doğrular."
@@ -6180,11 +6195,12 @@
           "id": "yetki",
           "label": "Authorization: neye erişebilir?",
           "aliases": [
-            "yetki",
+            "yetkin var mı",
+            "yetkilendirmedir",
             "permission",
-            "erişebilir mi",
             "neye erişe",
-            "erişim hakkı"
+            "erişim hakkı",
+            "erişip erişemeyece"
           ],
           "anchors": [
             "Authorization doğrulanmış kullanıcının bir kaynağa erişip erişemeyeceğini belirler."
@@ -6286,7 +6302,7 @@
             "authorization başlığı",
             "authorization header",
             "bearer",
-            "bellekte tut",
+            "access token bellekte",
             "başlığı ekleyemez"
           ],
           "anchors": [
@@ -6339,7 +6355,7 @@
           "id": "checked-vendor",
           "label": "SQLException checked ve sürücüye özgü",
           "aliases": [
-            "checked",
+            "checked exception'ıdır",
             "sqlstate",
             "vendor",
             "sürücüye özgü",
@@ -6383,7 +6399,7 @@
           "label": "Geçici hatalar: TransientDataAccessException",
           "aliases": [
             "transientdataaccess",
-            "geçici",
+            "geçici hata",
             "transient",
             "yeniden dene",
             "retry"
@@ -6399,7 +6415,7 @@
             "sqlexceptiontranslator",
             "jdbctemplate",
             "persistenceexceptiontranslation",
-            "repository",
+            "repository'lerinde",
             "exception translation"
           ],
           "anchors": [
