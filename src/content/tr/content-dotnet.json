@@ -15,11 +15,12 @@
           "id": "transient-new-instance",
           "label": "Transient her çağrıda yeni",
           "aliases": [
-            "transient",
-            "yeni örnek",
+            "her çağrıldığında",
+            "her istendiğinde",
+            "her seferinde yeni",
             "her defasında",
-            "new",
-            "farklı referans"
+            "yeni bir instance",
+            "yepyeni"
           ],
           "anchors": [
             "Transient olarak kaydedilen bir servis, her enjekte edildiğinde sıfırdan yeni bir örnek oluşturulur.",
@@ -30,11 +31,12 @@
           "id": "scoped-per-request",
           "label": "Scoped HTTP isteği başına",
           "aliases": [
-            "scoped",
             "request başı",
-            "istek",
+            "istek başına",
             "aynı istek",
-            "per request"
+            "per request",
+            "istek boyunca",
+            "her http isteği"
           ],
           "anchors": [
             "Scoped lifetime, gelen her bir HTTP isteği için bir nesne oluşturur ve o istek bitene kadar aynı örneği kullanır.",
@@ -45,11 +47,12 @@
           "id": "singleton-one-instance",
           "label": "Singleton uygulama boyunca tek",
           "aliases": [
-            "singleton",
             "tek örnek",
+            "tek bir nesne",
+            "tek bir instance",
             "uygulama kapanana kadar",
-            "paylaşımlı",
-            "global"
+            "uygulama boyunca",
+            "yaşam döngüsü boyunca"
           ],
           "anchors": [
             "Singleton servisler uygulama ayağa kalktığında bir kez oluşturulur ve tüm kullanıcılara aynı örnek hizmet verir.",
@@ -60,11 +63,12 @@
           "id": "dbcontext-scoped-transaction",
           "label": "DbContext'in Scoped olma sebebi",
           "aliases": [
-            "dbcontext",
-            "transaction paylaşımı",
-            "thread-safety",
+            "scoped kaydedil",
+            "scoped olarak kaydedil",
+            "aynı transaction",
             "unit of work",
-            "çakışma"
+            "thread-safety",
+            "thread-safe olma"
           ],
           "anchors": [
             "DbContext varsayılan olarak scoped'dur, böylece bir istek içindeki tüm veritabanı işlemleri aynı transaction üzerinden yürütülür.",
@@ -91,11 +95,12 @@
           "id": "iqueryable-sql-translation",
           "label": "IQueryable SQL'e çevrilir",
           "aliases": [
-            "iqueryable",
-            "sql",
             "expression tree",
-            "veritabanında çalışır",
-            "sunucu tarafı"
+            "ifade ağacı",
+            "sql'e çevir",
+            "sql'e dönüştür",
+            "veritabanında çalış",
+            "veritabanı tarafında"
           ],
           "anchors": [
             "IQueryable sorguyu hemen çalıştırmaz, ifade ağacı oluşturarak veritabanının anlayacağı SQL koduna dönüştürür.",
@@ -106,11 +111,12 @@
           "id": "ienumerable-in-memory",
           "label": "IEnumerable bellekte çalışır",
           "aliases": [
-            "ienumerable",
-            "bellek",
-            "ram",
-            "client-side",
-            "c# tarafı"
+            "belleğe al",
+            "belleğe çek",
+            "uygulamanın belleğinde",
+            "bellekte filtrele",
+            "uygulama tarafında",
+            "client-side"
           ],
           "anchors": [
             "IEnumerable arayüzü kullanıldığında işlemler veritabanında değil, uygulamanın çalıştığı sunucunun belleğinde gerçekleşir.",
@@ -121,11 +127,12 @@
           "id": "full-table-scan-risk",
           "label": "Tüm veriyi çekme riski",
           "aliases": [
-            "tüm tablo",
-            "select *",
-            "hepsini çeker",
-            "performans kaybı",
-            "ağ yükü"
+            "tüm tabloyu çek",
+            "tüm tabloyu belleğe",
+            "bütün tabloyu",
+            "out of memory",
+            "bellek taşma",
+            "milyonlarca kayıt"
           ],
           "anchors": [
             "IEnumerable ile veritabanı sorgusu atıldığında ilgili tablodaki tüm veriler gereksiz yere uygulamaya çekilmiş olur.",

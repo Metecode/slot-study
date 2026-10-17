@@ -29,10 +29,12 @@
           "id": "cakisma",
           "label": "Tersi gerekmez, çakışma normal",
           "aliases": [
-            "çakışma",
+            "normal bir çakışma",
+            "hash çakışma",
             "collision",
             "tersi gerekmez",
-            "tersi doğru değil"
+            "tersi doğru değil",
+            "tersi şart değil"
           ],
           "anchors": [
             "hashCode'u aynı olan iki nesne eşit olmayabilir; bu normal bir çakışmadır."
@@ -45,8 +47,8 @@
             "kova",
             "bucket",
             "önce hashcode",
-            "hashmap",
-            "hashset"
+            "hash tabanlı",
+            "kovada arar"
           ],
           "anchors": [
             "HashMap anahtarı önce hashCode ile kovada arar, sonra equals ile karşılaştırır."
@@ -70,7 +72,7 @@
           "id": "immutable",
           "label": "Anahtar alanları değişmemeli",
           "aliases": [
-            "değişmez",
+            "anahtarlar değişmez",
             "immutable",
             "anahtar değiş",
             "alan değiş",
@@ -99,9 +101,11 @@
           "id": "degistirilemez",
           "label": "İçerik değiştirilemez",
           "aliases": [
-            "değiştirilemez",
-            "değişmez",
-            "içeriği değiş"
+            "içeriği değiştirilemez",
+            "içeriği değiş",
+            "mevcut nesneyi değiştirmez",
+            "sonradan değiştirilemez",
+            "oluşturulduktan sonra değiş"
           ],
           "anchors": [
             "String oluşturulduktan sonra içeriği değiştirilemez."
@@ -125,10 +129,11 @@
           "label": "Literal'ler tek kopya paylaşılır",
           "aliases": [
             "literal",
-            "havuz",
             "tek kopya",
-            "paylaşıl",
-            "intern"
+            "havuzdaki",
+            "aynı nesne kullanılır",
+            "intern()",
+            "havuza ekle"
           ],
           "anchors": [
             "String pool'da aynı literal'ler tek kopya olarak paylaşılır."
@@ -138,11 +143,12 @@
           "id": "sebepler",
           "label": "Thread safety, güvenlik, hashCode önbelleği",
           "aliases": [
-            "thread-safe",
-            "thread safe",
-            "güvenlik",
-            "hashcode",
-            "senkronizasyon"
+            "senkronizasyonsuz",
+            "thread-safe yap",
+            "hashcode'un bir kez",
+            "dosya yolu",
+            "güvenlik sebebi",
+            "cache'lenebil"
           ],
           "anchors": [
             "Değişmezlik String'i thread-safe yapar, güvenlik sağlar ve hashCode'un saklanmasına izin verir."
@@ -152,8 +158,10 @@
           "id": "equals",
           "label": "Karşılaştırma equals ile",
           "aliases": [
-            "equals",
-            "=="
+            "equals ile",
+            "== ile",
+            "==",
+            "equals kullan"
           ],
           "anchors": [
             "String içeriği equals ile karşılaştırılmalıdır, == değil."
@@ -178,10 +186,12 @@
           "id": "string-immutable",
           "label": "String immutable",
           "aliases": [
-            "immutable",
-            "değişmez",
+            "string immutable",
+            "immutable'dır",
             "yeni bir nesne",
-            "yeni nesne"
+            "yeni nesne",
+            "her birleştirmede yeni",
+            "her değişiklik yeni"
           ],
           "anchors": [
             "String immutable'dır, her değişiklik yeni bir nesne üretir."
@@ -191,10 +201,11 @@
           "id": "builder-mutable",
           "label": "StringBuilder değiştirilebilir",
           "aliases": [
-            "mutable",
-            "değiştirilebilir",
+            "mutable'dır",
+            "karakter tampon",
             "append",
-            "aynı nesne"
+            "aynı nesne üzerinde",
+            "iç dizisine"
           ],
           "anchors": [
             "StringBuilder değiştirilebilirdir, append aynı nesneye yazar."
@@ -204,10 +215,11 @@
           "id": "buffer-sync",
           "label": "StringBuffer synchronized ve thread-safe",
           "aliases": [
-            "synchronized",
-            "thread-safe",
-            "thread safe",
-            "senkronize"
+            "metotları synchronized",
+            "synchronized olduğu",
+            "stringbuffer thread-safe",
+            "senkronize",
+            "thread-safe ama"
           ],
           "anchors": [
             "StringBuffer'ın metotları synchronized olduğu için thread-safe ama daha yavaştır."
@@ -217,8 +229,8 @@
           "id": "dongu",
           "label": "Döngüde StringBuilder",
           "aliases": [
-            "döngü",
-            "loop",
+            "döngü içinde",
+            "döngüde birleştir",
             "o(n²)",
             "o(n^2)",
             "n kare",
@@ -232,11 +244,12 @@
           "id": "derleyici",
           "label": "Tek satırı derleyici optimize eder",
           "aliases": [
-            "derleyici",
-            "compiler",
+            "derleyici optimize",
+            "derleyici bunu",
             "invokedynamic",
-            "tek satır",
-            "stringconcatfactory"
+            "tek satırlık",
+            "stringconcatfactory",
+            "verimli koda"
           ],
           "anchors": [
             "Tek satırlık birleştirmeyi derleyici zaten verimli koda çevirir."
@@ -261,10 +274,11 @@
           "id": "dizi-indeks",
           "label": "Bucket dizisi, hashCode'dan indeks",
           "aliases": [
-            "bucket",
-            "kova",
-            "indeks",
-            "hashcode"
+            "bucket dizisi",
+            "kova dizisi",
+            "dizi indeksi",
+            "indekse çevir",
+            "indeks bul"
           ],
           "anchors": [
             "HashMap bir bucket dizisi tutar, indeks anahtarın hashCode'undan hesaplanır."
@@ -274,9 +288,12 @@
           "id": "cakisma-equals",
           "label": "Kovada equals ile karşılaştırma",
           "aliases": [
-            "equals",
+            "kovadaki anahtarlar",
             "collision",
-            "aynı anahtar"
+            "aynı anahtar varsa",
+            "değer güncellen",
+            "aynı bucket'a düş",
+            "aynı kovaya düş"
           ],
           "anchors": [
             "Kova doluysa anahtarlar equals ile karşılaştırılır."
@@ -318,7 +335,7 @@
             "thread-safe değil",
             "thread safe değil",
             "concurrenthashmap",
-            "eşzamanlı"
+            "eşzamanlı yazma"
           ],
           "anchors": [
             "HashMap thread-safe değildir; eşzamanlı kullanımda ConcurrentHashMap gerekir."
@@ -346,7 +363,7 @@
             "dinamik dizi",
             "dynamic array",
             "resizable array",
-            "kaydır",
+            "elemanları kaydır",
             "dizi kullan"
           ],
           "anchors": [
@@ -373,9 +390,10 @@
           "aliases": [
             "bağlı liste",
             "linked list",
-            "düğüm",
-            "node",
-            "işaretçi"
+            "düğüm nesne",
+            "ayrı bir düğüm",
+            "iki işaretçi",
+            "her eleman bir node"
           ],
           "anchors": [
             "LinkedList her eleman için ayrı düğüm tutan çift yönlü bağlı listedir."
@@ -387,9 +405,10 @@
           "aliases": [
             "arraylist tercih",
             "arraylist seçilir",
-            "önbelle",
-            "cache",
-            "ardışık"
+            "ardışık bellek",
+            "işlemci önbelleğ",
+            "cache dostu",
+            "neredeyse her durumda"
           ],
           "anchors": [
             "Pratikte ArrayList tercih edilir; ardışık belleği işlemci önbelleğini iyi kullanır."
@@ -400,10 +419,10 @@
           "label": "Kuyruk için ArrayDeque",
           "aliases": [
             "arraydeque",
-            "kuyruk",
-            "queue",
-            "yığın",
-            "stack"
+            "kuyruk ya da yığın",
+            "kuyruk ya da stack",
+            "yığın gerek",
+            "deque"
           ],
           "anchors": [
             "Kuyruk ya da yığın için LinkedList yerine ArrayDeque kullanılır."
@@ -428,12 +447,12 @@
           "id": "checked-zorunlu",
           "label": "Checked: derleyici zorunlu kılar",
           "aliases": [
-            "derleyici",
-            "zorunlu",
-            "throws",
+            "zorunlu tutar",
             "derlenmez",
             "ioexception",
-            "compile"
+            "throws ile bildir",
+            "yakalanmalı ya da",
+            "derleme zamanında kontrol"
           ],
           "anchors": [
             "Checked exception'ları derleyici yakalamaya veya throws ile bildirmeye zorlar."
@@ -575,7 +594,7 @@
           "aliases": [
             "state tut",
             "instance alan",
-            "constructor",
+            "constructor tut",
             "durum tut",
             "alan tutabil"
           ],
@@ -602,10 +621,12 @@
           "id": "default",
           "label": "Interface default ve static metotları",
           "aliases": [
-            "default",
-            "java 8",
+            "default metot",
+            "default ve static",
+            "`default` ve `static`",
             "static metot",
-            "private metot"
+            "private metot",
+            "default method"
           ],
           "anchors": [
             "Interface Java 8'den beri default ve static metotlar içerebilir."
@@ -618,7 +639,8 @@
             "yetenek",
             "ortak kod",
             "şablon",
-            "esnek",
+            "ortak state",
+            "yakın ilişkili",
             "template method"
           ],
           "anchors": [
@@ -646,7 +668,7 @@
           "aliases": [
             "encapsulation",
             "kapsülleme",
-            "private"
+            "private alan"
           ],
           "anchors": [
             "Encapsulation, veriyi gizleyip yalnızca kontrollü metotlarla açmaktır."
@@ -672,8 +694,8 @@
             "polymorphism",
             "çok biçimlilik",
             "polimorfizm",
-            "override",
-            "overload"
+            "overload",
+            "override edilmiş metod"
           ],
           "anchors": [
             "Polymorphism, aynı arayüzün çalışma anında farklı nesnelerde farklı davranmasıdır."
@@ -808,11 +830,11 @@
           "id": "heap",
           "label": "Heap: paylaşılan, nesneler",
           "aliases": [
-            "new ile",
-            "tüm thread",
-            "paylaşılan",
+            "tüm thread'lerin paylaştığı",
+            "paylaştığı alan",
             "nesneler burada",
-            "shared"
+            "nesneler orada",
+            "new ile oluşturulan"
           ],
           "anchors": [
             "Heap tüm thread'lerin paylaştığı alandır, new ile oluşturulan nesneler burada yaşar."
@@ -827,7 +849,7 @@
             "reachable",
             "kök nokta",
             "gc root",
-            "işaretle"
+            "ulaşılamayan nesne"
           ],
           "anchors": [
             "GC kök noktalardan ulaşılabilen nesneleri işaretler, ulaşılamayanları toplar."
@@ -866,11 +888,11 @@
           "id": "race",
           "label": "Race condition: oku-artır-yaz",
           "aliases": [
-            "aynı anda",
             "count++",
             "çalışma sırası",
             "yarış durumu",
             "oku-artır-yaz",
+            "oku, artır, yaz",
             "artış kaybol"
           ],
           "anchors": [
@@ -883,9 +905,10 @@
           "aliases": [
             "karşılıklı dışlama",
             "mutual exclusion",
-            "kilit",
-            "atomik",
-            "tek thread"
+            "aynı kilit",
+            "kilit kullan",
+            "tek thread",
+            "bileşik işlem"
           ],
           "anchors": [
             "synchronized aynı kilitte tek thread'in çalışmasını sağlar, bileşik işlemleri atomik yapar."
@@ -897,9 +920,10 @@
           "aliases": [
             "görünürlük",
             "visibility",
-            "görünür",
+            "görünür kılar",
             "happens-before",
-            "önbellek"
+            "ana bellekten",
+            "değeri sonra okuyan"
           ],
           "anchors": [
             "Bir thread'in yazdığı değişikliklerin diğer thread'lerce görülmesi görünürlük garantisidir."
@@ -1035,7 +1059,8 @@
           "id": "pahali",
           "label": "Thread oluşturmak pahalı",
           "aliases": [
-            "pahalı",
+            "açmak pahalı",
+            "oluşturmak pahalı",
             "işletim sistemi kaynağı",
             "çöker",
             "her iş için",
@@ -1049,9 +1074,10 @@
           "id": "havuz",
           "label": "Thread havuzu ve yeniden kullanım",
           "aliases": [
-            "havuz",
-            "pool",
-            "yeniden kullan",
+            "thread havuzu",
+            "thread pool",
+            "havuz yönet",
+            "yeniden kullanılır",
             "reuse"
           ],
           "anchors": [
@@ -1062,10 +1088,11 @@
           "id": "kuyruk",
           "label": "İş kuyruğu, sınırlı eşzamanlılık",
           "aliases": [
-            "kuyruk",
-            "queue",
-            "sınırla",
-            "eşzamanlı thread sayısı"
+            "kuyrukta bekler",
+            "kuyruğa alın",
+            "thread sayısı sınırlan",
+            "eşzamanlı thread sayısı",
+            "work queue"
           ],
           "anchors": [
             "Fazla işler kuyrukta bekler, eşzamanlı thread sayısı sınırlanır."
@@ -1120,9 +1147,10 @@
           "aliases": [
             "deklaratif",
             "declarative",
-            "zincir",
             "ne yapılacağı",
-            "nasıl yerine"
+            "nasıl yerine",
+            "zincirlenebilir",
+            "fonksiyonel tarz"
           ],
           "anchors": [
             "Stream API nasıl yerine ne yapılacağını yazan deklaratif veri işleme sağlar."
@@ -1133,10 +1161,11 @@
           "label": "Ara operasyonlar yeni stream döndürür",
           "aliases": [
             "ara operasyon",
-            "filter",
+            "filter, map",
             "yeni bir stream",
             "sorted",
-            "zincirlen"
+            "zincirlen",
+            "hemen çalışmaz"
           ],
           "anchors": [
             "Intermediate operasyonlar yeni bir stream döndürür ve zincirlenir."
@@ -1146,11 +1175,12 @@
           "id": "terminal",
           "label": "Terminal operasyon sonucu üretir, tüketir",
           "aliases": [
-            "collect",
-            "reduce",
             "tüketir",
+            "sonucu üretir",
+            "stream'i tüket",
+            "collect, foreach",
             "foreach",
-            "sonucu üretir"
+            "terminal işlem"
           ],
           "anchors": [
             "Terminal operasyonlar sonucu üretir ve stream'i tüketir."
@@ -1204,9 +1234,10 @@
           "id": "tanim",
           "label": "Olabilir ya da olmayabilir kapsayıcısı",
           "aliases": [
-            "olmayabilir",
             "kapsayıcı",
-            "container",
+            "olmayabilece",
+            "olabileceğini ya da",
+            "olmayabilir",
             "değer yok",
             "boş olabilir"
           ],
@@ -1244,11 +1275,12 @@
           "id": "yanlis",
           "label": "get(), alan ve parametre olarak yanlış",
           "aliases": [
-            "get()",
+            "nosuchelement",
+            "get() metodu",
+            "ispresent",
             "alan olarak",
-            "field",
-            "parametre olarak",
-            "nosuchelement"
+            "metot parametresi",
+            "parametre olarak"
           ],
           "anchors": [
             "Doğrudan get() çağırmak ve Optional'ı alan ya da parametre yapmak yanlış kullanımdır."
@@ -1286,8 +1318,8 @@
           "id": "degismez",
           "label": "Değişmez veri taşıyıcı",
           "aliases": [
-            "değişmez",
-            "immutable",
+            "değişmez veri",
+            "immutable veri",
             "veri taşı",
             "final alan",
             "private final"
@@ -1300,11 +1332,12 @@
           "id": "otomatik",
           "label": "Otomatik equals, hashCode, toString",
           "aliases": [
-            "equals",
-            "hashcode",
             "tostring",
-            "otomatik",
-            "constructor"
+            "equals, hashcode",
+            "derleyici üretir",
+            "otomatik üret",
+            "accessor",
+            "erişim metot"
           ],
           "anchors": [
             "Derleyici record için constructor, equals, hashCode ve toString üretir."
@@ -1316,7 +1349,7 @@
           "aliases": [
             "compact constructor",
             "compact",
-            "doğrulama",
+            "kompakt",
             "validation"
           ],
           "anchors": [
@@ -1341,10 +1374,11 @@
           "id": "jpa",
           "label": "JPA entity için uygun değil",
           "aliases": [
-            "entity",
-            "hibernate",
+            "jpa entity",
+            "entity olarak",
             "parametresiz constructor",
-            "proxy"
+            "final olmayan sınıf",
+            "entity olamaz"
           ],
           "anchors": [
             "Record JPA entity olarak uygun değildir; JPA değiştirilebilir alan ve proxy ister."
@@ -1369,10 +1403,11 @@
           "id": "otomatik",
           "label": "Otomatik kapatma",
           "aliases": [
-            "otomatik",
+            "otomatik kapat",
             "autocloseable",
-            "closeable",
-            "kendiliğinden kapan"
+            "kendiliğinden kapan",
+            "close'u unut",
+            "kapatmayı unut"
           ],
           "anchors": [
             "try-with-resources AutoCloseable kaynakları blok bitince otomatik kapatır."
@@ -1408,11 +1443,11 @@
           "id": "havuz",
           "label": "Kapatılmayan bağlantı havuzu tüketir",
           "aliases": [
-            "havuz",
-            "pool",
-            "tüketir",
+            "bağlantı havuzu",
+            "connection leak",
+            "havuzu tüketir",
             "tükenir",
-            "connection leak"
+            "kapatılmayan bağlantı"
           ],
           "anchors": [
             "Kapatılmayan veritabanı bağlantıları bağlantı havuzunu tüketir."
@@ -1451,11 +1486,12 @@
           "id": "erasure",
           "label": "Tür bilgisi derlemeden sonra silinir",
           "aliases": [
-            "silin",
-            "çalışma anında",
-            "runtime",
+            "parametrelerini siler",
+            "tür bilgisi silin",
+            "tür bilgisi",
             "aynı list sınıfı",
-            "tür bilgisi"
+            "derlemeden sonra silin",
+            "çalışma zamanında aynı"
           ],
           "anchors": [
             "Type erasure'da tür parametreleri derlemeden sonra silinir, çalışma anında bulunmaz."
@@ -1533,11 +1569,12 @@
           "id": "comparator",
           "label": "Comparator: dışarıda, birden fazla",
           "aliases": [
-            "dışında",
+            "sınıfın dışında",
             "birden fazla sıra",
             "harici",
             "external",
-            "compare("
+            "compare(",
+            "ayrı bir sıralama"
           ],
           "anchors": [
             "Comparator sıralamayı sınıfın dışında tanımlar, birden fazla sıralama yazılabilir."
@@ -1561,8 +1598,9 @@
           "label": "Negatif, sıfır, pozitif",
           "aliases": [
             "negatif",
-            "sıfır",
-            "pozitif"
+            "pozitif",
+            "sıfır eşit",
+            "negatif önce"
           ],
           "anchors": [
             "Dönüş değeri negatifse önce, sıfırsa eşit, pozitifse sonra gelir."
@@ -1573,7 +1611,7 @@
           "label": "Çıkarma ile taşma tuzağı",
           "aliases": [
             "taşma",
-            "overflow",
+            "integer overflow",
             "integer.compare",
             "çıkarma"
           ],
@@ -1602,7 +1640,7 @@
           "aliases": [
             "işletim sistemi thread",
             "os thread",
-            "pahalı",
+            "oluşturması pahalı",
             "birebir",
             "kernel thread"
           ],
@@ -1697,9 +1735,9 @@
           "id": "jre-kutuphane",
           "label": "JRE: JVM + standart kütüphaneler",
           "aliases": [
-            "kütüphane",
+            "standart kütüphane",
+            "sınıf kütüphane",
             "library",
-            "libraries",
             "runtime environment",
             "çalışma ortamı"
           ],
@@ -1712,7 +1750,7 @@
           "label": "JDK: JRE + geliştirme araçları",
           "aliases": [
             "javac",
-            "derleyici",
+            "derleyicisini",
             "compiler",
             "geliştirme araç",
             "development kit",
@@ -1881,8 +1919,9 @@
           "id": "zgc-eszamanli",
           "label": "ZGC: eşzamanlı, milisaniye altı",
           "aliases": [
-            "eşzamanlı",
-            "concurrent",
+            "eşzamanlı yapar",
+            "uygulama thread'leriyle eşzamanlı",
+            "uygulama çalışırken",
             "milisaniyenin altı",
             "sub-millisecond",
             "heap boyutundan bağımsız"
@@ -1897,10 +1936,9 @@
           "aliases": [
             "throughput",
             "iş hacmi",
-            "ödün",
             "trade-off",
-            "generational",
-            "nesilli"
+            "generational zgc",
+            "bellek payı"
           ],
           "anchors": [
             "ZGC düşük gecikme karşılığında throughput ve bellekten ödün verir; generational ZGC bu yükü azaltır."
@@ -1940,9 +1978,9 @@
           "id": "kaynaklar",
           "label": "static koleksiyon, cache, listener, ThreadLocal",
           "aliases": [
-            "static",
-            "cache",
-            "önbellek",
+            "static bir koleksiyon",
+            "static koleksiyon",
+            "sınırsız cache",
             "listener",
             "dinleyici",
             "threadlocal"
@@ -2013,11 +2051,12 @@
           "id": "heap-dolar",
           "label": "Heap ya da metaspace dolar",
           "aliases": [
-            "heap",
+            "heap dol",
+            "heap space",
             "metaspace",
             "-xmx",
-            "sızıntı",
-            "leak"
+            "bellek sızıntı",
+            "heap'in yük"
           ],
           "anchors": [
             "OutOfMemoryError heap ya da metaspace dolduğunda ve GC yer açamadığında fırlar."
@@ -2056,12 +2095,12 @@
           "id": "ihtiyac-aninda",
           "label": "Bytecode'u ihtiyaç anında yükler",
           "aliases": [
-            "ihtiyaç anında",
-            "ilk kez",
-            "ilk kullan",
-            "lazy",
+            "ihtiyaç anında yüklen",
+            "ilk kez gerektiğinde",
+            "topluca değil",
             "dinamik yükle",
-            "çalışma anında yükle"
+            "çalışma anında yükle",
+            "belleğe yükle"
           ],
           "anchors": [
             "Class loader bir sınıfın bytecode'unu ilk gerektiğinde bulup JVM'e yükler."
@@ -2072,11 +2111,11 @@
           "label": "Bootstrap, platform, application",
           "aliases": [
             "bootstrap",
-            "platform",
-            "application",
+            "platform class loader",
+            "application class loader",
             "system class",
             "classpath",
-            "extension"
+            "extension class"
           ],
           "anchors": [
             "Hiyerarşide bootstrap, platform ve application class loader'ları vardır."
@@ -2104,9 +2143,9 @@
             "java.lang",
             "çekirdek sınıf",
             "core class",
-            "güvenlik",
             "ezilemez",
-            "yerine geç"
+            "kendi string",
+            "yerine geçiremez"
           ],
           "anchors": [
             "Delegasyon sayesinde uygulama çekirdek java sınıflarının yerine kendi sürümünü koyamaz."
@@ -2188,7 +2227,8 @@
           "id": "thread-safe",
           "label": "Thread-safe, güvenli anahtar",
           "aliases": [
-            "thread-safe",
+            "thread-safe olur",
+            "thread-safe olması",
             "thread safe",
             "senkronizasyon gerek",
             "hashmap anahtar",
@@ -2233,10 +2273,10 @@
           "aliases": [
             "referansı karşılaştır",
             "referans karşılaştır",
-            "reference",
-            "aynı nesne",
+            "değeri değil",
+            "aynı nesneyi gösterip",
             "kimlik karşılaştır",
-            "adresi"
+            "reference equality"
           ],
           "anchors": [
             "Nesnelerde == değeri değil, aynı nesne olup olmadığını karşılaştırır."
@@ -2247,10 +2287,11 @@
           "label": "-128 ile 127 arası önbellek",
           "aliases": [
             "-128",
-            "önbellek",
-            "cache",
+            "127 arası",
             "valueof",
-            "integercache"
+            "integercache",
+            "cache'ler",
+            "önbellekteki aynı"
           ],
           "anchors": [
             "Integer.valueOf -128 ile 127 arasındaki değerler için önbellekteki aynı nesneyi döndürür."
@@ -2260,11 +2301,12 @@
           "id": "equals-kullan",
           "label": "equals ya da int ile karşılaştır",
           "aliases": [
-            "equals",
+            "equals kullan",
+            "`equals` kullan",
+            "equals ile",
             "intvalue",
             "int'e aç",
-            "int'e çevir",
-            "primitive'e"
+            "int'e çevir"
           ],
           "anchors": [
             "Integer değerleri equals ile ya da int'e açılarak karşılaştırılmalıdır."
@@ -2303,10 +2345,10 @@
           "label": "throw gövdede nesneyi fırlatır",
           "aliases": [
             "throw new",
-            "gövde",
+            "metot gövdesinde",
             "metodun içinde",
-            "metot içinde",
-            "exception nesnesi"
+            "exception nesnesini",
+            "o anda fırlat"
           ],
           "anchors": [
             "throw metot gövdesinde bir exception nesnesini o anda fırlatır."
@@ -2316,11 +2358,12 @@
           "id": "imzada-bildirir",
           "label": "throws imzada bildirir",
           "aliases": [
-            "imza",
+            "metot imzasında",
+            "imzasında yer",
             "signature",
-            "bildir",
-            "deklar",
-            "declare"
+            "çağırana bildir",
+            "fırlatabileceğini bildir",
+            "throws ile bildir"
           ],
           "anchors": [
             "throws metot imzasında metodun fırlatabileceği exception'ları bildirir."
@@ -2330,10 +2373,11 @@
           "id": "checked-zorunlu",
           "label": "Checked için throws zorunlu",
           "aliases": [
-            "checked",
-            "zorunlu",
-            "derleyici",
-            "compile"
+            "checked bir",
+            "zorunlu tutulur",
+            "bildirmek zorunlu",
+            "bildirilmesi zorunlu",
+            "yakalamak ya da"
           ],
           "anchors": [
             "Yakalanmayan checked exception'ı throws ile bildirmek derleyicinin zorunluluğudur."
@@ -2449,8 +2493,8 @@
             "değişikliğe kapalı",
             "mevcut kodu değiştirmeden",
             "dokunmadan",
-            "extension",
-            "modification"
+            "open for extension",
+            "değiştirmeye kapalı"
           ],
           "anchors": [
             "Yeni davranış eklemek mevcut, test edilmiş kodu değiştirmeyi gerektirmemelidir."
@@ -2460,12 +2504,11 @@
           "id": "interface-impl",
           "label": "Interface ve yeni implementasyon",
           "aliases": [
-            "interface",
-            "arayüz",
-            "implementasyon",
-            "implementation",
-            "abstract",
-            "soyutlama"
+            "yeni implementasyon",
+            "yeni bir implementasyon",
+            "yeni bir sınıf olarak",
+            "arayüzü tanımla",
+            "interface ve"
           ],
           "anchors": [
             "Java'da bir interface tanımlanır, yeni davranış yeni bir implementasyonla eklenir."
@@ -2478,9 +2521,9 @@
             "if/else",
             "if-else",
             "if else",
-            "switch",
+            "switch zinciri",
             "koşul zinciri",
-            "instanceof"
+            "zincirini büyüt"
           ],
           "anchors": [
             "Her yeni tür için if/else ya da switch zincirini büyütmek prensibi ihlal eder."
@@ -2522,9 +2565,9 @@
             "yerine kullanılabil",
             "yerine geçebil",
             "yerine konabil",
-            "alt tür",
             "subtype",
-            "alt sınıf"
+            "beklendiği her yerde",
+            "yerine kullanıldığında"
           ],
           "anchors": [
             "Alt tür, üst türün beklendiği her yerde doğruluğu bozmadan kullanılabilmelidir."
@@ -2534,11 +2577,11 @@
           "id": "sozlesme",
           "label": "Üst türün sözleşmesi korunmalı",
           "aliases": [
-            "sözleşme",
+            "sözleşmesini",
             "contract",
-            "davranış",
-            "beklenti",
-            "ön koşul",
+            "davranışını bozmuş",
+            "beklenen şekilde",
+            "son koşul",
             "precondition"
           ],
           "anchors": [
@@ -2565,11 +2608,11 @@
           "label": "Belirtiler ve ortak arayüz çözümü",
           "aliases": [
             "unsupportedoperation",
-            "instanceof",
+            "instanceof ile",
             "ortak arayüz",
             "ortak bir arayüz",
             "kalıtımı kaldır",
-            "composition"
+            "kalıtım yerine"
           ],
           "anchors": [
             "UnsupportedOperationException ve instanceof ayıklaması ihlal belirtisidir; çözüm ortak arayüzdür."
@@ -2594,11 +2637,12 @@
           "id": "prensip-teknik",
           "label": "DIP prensip, DI teknik",
           "aliases": [
-            "prensip",
+            "tasarım prensibi",
+            "bir prensip",
+            "bir teknik",
+            "tasarım ilkesi",
             "principle",
-            "teknik",
-            "technique",
-            "tasarım ilkesi"
+            "technique"
           ],
           "anchors": [
             "Dependency Inversion bir tasarım prensibi, Dependency Injection ise bir tekniktir."
@@ -2608,12 +2652,12 @@
           "id": "soyutlama",
           "label": "DIP: soyutlamaya bağımlılık",
           "aliases": [
-            "soyutlama",
-            "abstraction",
-            "interface",
-            "arayüz",
+            "soyutlamalara",
+            "soyutlamaya bağlı",
             "üst seviye",
-            "high-level"
+            "high-level",
+            "arayüzlere bağımlı",
+            "detaylara değil"
           ],
           "anchors": [
             "DIP'te üst seviye modül detaylara değil soyutlamalara bağlıdır."
@@ -2623,11 +2667,11 @@
           "id": "disaridan",
           "label": "DI: bağımlılık dışarıdan verilir",
           "aliases": [
-            "dışarıdan",
-            "constructor",
-            "new ile",
             "kendisi oluşturmaz",
-            "enjekte"
+            "new ile oluşturmak yerine",
+            "constructor üzerinden al",
+            "dışarıdan, örneğin",
+            "dışarıdan alır"
           ],
           "anchors": [
             "DI'da nesne bağımlılıklarını kendisi oluşturmaz, dışarıdan alır."
@@ -2640,7 +2684,7 @@
             "somut",
             "concrete",
             "aynı şey değil",
-            "bir yolu",
+            "uygulamanın bir yolu",
             "yollarından"
           ],
           "anchors": [
@@ -2679,10 +2723,10 @@
           "id": "snapshot",
           "label": "Fail-safe: exception yok, anlık görüntü",
           "aliases": [
-            "fırlatmaz",
+            "exception fırlatmaz",
             "anlık görüntü",
             "snapshot",
-            "kopya",
+            "kopyası üzerinde",
             "weakly consistent",
             "copyonwrite"
           ],
@@ -2765,12 +2809,12 @@
           "id": "sirali-agac",
           "label": "TreeMap: sıralı, kırmızı-siyah ağaç",
           "aliases": [
-            "sıralı",
+            "sıralı tutar",
             "sorted",
             "kırmızı-siyah",
             "red-black",
-            "ağaç",
-            "comparator"
+            "ağaç üzerine",
+            "anahtarları sıralı"
           ],
           "anchors": [
             "TreeMap anahtarları kırmızı-siyah ağaçta sıralı tutar."
@@ -2823,10 +2867,12 @@
           "id": "hashmap-anahtar",
           "label": "İçeride HashMap, eleman anahtar olur",
           "aliases": [
-            "hashmap",
-            "anahtar",
-            "map'in",
-            "map kullan"
+            "içeride bir hashmap",
+            "arka planda bir hashmap",
+            "map'in anahtar",
+            "anahtarı olur",
+            "yer tutucu",
+            "dummy"
           ],
           "anchors": [
             "HashSet içeride bir HashMap kullanır, eleman o map'in anahtarı olur."
@@ -2836,10 +2882,11 @@
           "id": "hashcode-equals",
           "label": "Önce hashCode, sonra equals",
           "aliases": [
-            "hashcode",
-            "equals",
-            "kova",
-            "bucket"
+            "önce hashcode",
+            "hashcode ile kova",
+            "equals ile karşılaştır",
+            "kovası bulunur",
+            "bucket bulunur"
           ],
           "anchors": [
             "Önce hashCode ile kova bulunur, sonra equals ile eşitlik kontrol edilir."
@@ -2849,11 +2896,11 @@
           "id": "false-doner",
           "label": "Eşitse eklenmez, add false döner",
           "aliases": [
-            "false",
+            "false döner",
             "eklenmez",
-            "eklemez",
             "ekleme yapılmaz",
-            "eklenmiyor"
+            "eklenmiyor",
+            "add false"
           ],
           "anchors": [
             "Eşit eleman varsa ekleme yapılmaz ve add false döner."
@@ -2863,9 +2910,10 @@
           "id": "override",
           "label": "equals ve hashCode tutarlı override",
           "aliases": [
-            "override",
-            "tutarlı",
-            "sözleşme",
+            "birlikte override",
+            "tutarlı biçimde",
+            "ikisini de override",
+            "doğru override",
             "contract"
           ],
           "anchors": [
@@ -2935,9 +2983,9 @@
           "label": "Değiştirme denemesi UnsupportedOperationException",
           "aliases": [
             "unsupportedoperation",
-            "exception fırlat",
             "exception atar",
-            "hata verir"
+            "hata verir",
+            "desteklenmeyen işlem"
           ],
           "anchors": [
             "İzin verilmeyen değişiklik UnsupportedOperationException fırlatır."
@@ -3007,8 +3055,8 @@
           "aliases": [
             "trylock",
             "zaman aşım",
-            "timeout",
-            "süre sınırı"
+            "süre sınırı",
+            "zaman aşımlı deneme"
           ],
           "anchors": [
             "ReentrantLock.tryLock ile kilit süre sınırıyla denenebilir."
@@ -3048,12 +3096,12 @@
           "id": "bloklama",
           "label": "Future bloklar, CompletableFuture bloklamaz",
           "aliases": [
-            "blokla",
+            "bloklayarak",
+            "bloklamadan",
             "blocking",
             "non-blocking",
-            "get()",
-            "geri çağır",
-            "callback"
+            "geri çağrı",
+            "get ile blok"
           ],
           "anchors": [
             "Future sonucu get ile bloklayarak verir, CompletableFuture bloklamadan geri çağrılarla çalışır."
@@ -3079,9 +3127,10 @@
           "label": "exceptionally ve handle ile hata",
           "aliases": [
             "exceptionally",
-            "handle",
+            "handle(",
             "whencomplete",
-            "hata yönetimi"
+            "hata yönetimi",
+            "zincirin içinde"
           ],
           "anchors": [
             "Hatalar zincirin içinde exceptionally ya da handle ile ele alınır."
@@ -3122,10 +3171,10 @@
           "label": "Callable değer döndürür, Runnable void",
           "aliases": [
             "void",
-            "döndürmez",
+            "değer döndürmez",
             "değer döndür",
             "sonuç döndür",
-            "return"
+            "run() metodu"
           ],
           "anchors": [
             "Callable bir sonuç döndürür, Runnable'ın run metodu void'dir."
@@ -3135,7 +3184,7 @@
           "id": "checked",
           "label": "Callable checked exception fırlatabilir",
           "aliases": [
-            "checked",
+            "checked exception fırlat",
             "throws exception",
             "exception fırlatabil",
             "exception fırlatamaz"
@@ -3148,9 +3197,10 @@
           "id": "future",
           "label": "submit Future döner",
           "aliases": [
-            "future",
+            "future döner",
+            "future üzerinden",
             "submit",
-            "get()",
+            "future.get",
             "executionexception"
           ],
           "anchors": [
@@ -3162,10 +3212,11 @@
           "label": "Thread yalnızca Runnable alır",
           "aliases": [
             "new thread",
+            "`thread` constructor",
             "thread constructor",
-            "constructor",
             "yalnızca runnable",
-            "sadece runnable"
+            "sadece runnable",
+            "thread'e verilebilir"
           ],
           "anchors": [
             "Thread sınıfının constructor'ı yalnızca Runnable kabul eder."
@@ -3192,7 +3243,6 @@
           "aliases": [
             "trylock",
             "zaman aşım",
-            "timeout",
             "beklemeden",
             "süre sınırı"
           ],
@@ -3207,9 +3257,9 @@
             "lockinterruptibly",
             "kesilebil",
             "interrupt",
-            "fair",
+            "fair lock",
             "adil",
-            "condition"
+            "fair"
           ],
           "anchors": [
             "ReentrantLock kesilebilir bekleme, adil sıra ve birden fazla Condition sunar."
@@ -3234,7 +3284,7 @@
           "aliases": [
             "otomatik bırak",
             "daha sade",
-            "daha basit",
+            "basit durumlarda synchronized",
             "otomatik serbest",
             "kendiliğinden bırak"
           ],
@@ -3248,10 +3298,9 @@
           "aliases": [
             "pinning",
             "sabitlen",
-            "virtual thread",
-            "carrier",
+            "carrier'a",
             "class initializer",
-            "native"
+            "native çağrı"
           ],
           "anchors": [
             "Java 21–23'te synchronized virtual thread'i carrier'a sabitliyordu; Java 24'te giderildi, native çağrı ve class initializer'da hâlâ olabilir."
@@ -3278,10 +3327,10 @@
           "aliases": [
             "kendine ait",
             "kendi kopya",
+            "kendi ayrı",
             "her thread'in kendi",
-            "thread'e özel",
-            "per-thread",
-            "izole"
+            "thread başına",
+            "per-thread"
           ],
           "anchors": [
             "ThreadLocal her thread'e değişkenin kendine ait bir kopyasını verir."
@@ -3291,12 +3340,12 @@
           "id": "baglam",
           "label": "Bağlam taşıma (SecurityContext, transaction)",
           "aliases": [
-            "bağlam",
-            "context",
+            "bağlam bilgisi",
             "securitycontext",
             "kullanıcı bilgisi",
             "istek kimliği",
-            "request id"
+            "request id",
+            "parametre olarak taşımadan"
           ],
           "anchors": [
             "ThreadLocal bağlam bilgisini parametre taşımadan thread boyunca erişilebilir kılar."
@@ -3306,12 +3355,12 @@
           "id": "sizinti",
           "label": "Havuzda thread yeniden kullanılır, değer sızar",
           "aliases": [
-            "yeniden kullan",
-            "reuse",
+            "sonraki işe sız",
             "sızar",
-            "sızıntı",
-            "leak",
-            "başka bir istek"
+            "bellek sızıntısı",
+            "başka bir isteğin",
+            "başka kullanıcının",
+            "değer temizlenmez"
           ],
           "anchors": [
             "Havuzdaki thread yeniden kullanıldığı için temizlenmeyen değer sonraki işe sızar."
@@ -3321,9 +3370,9 @@
           "id": "remove",
           "label": "finally'de remove",
           "aliases": [
-            "remove",
-            "finally",
-            "temizle",
+            "remove()",
+            "remove çağır",
+            "finally'de remove",
             "clear"
           ],
           "anchors": [
@@ -3363,9 +3412,10 @@
           "id": "synchronized",
           "label": "wait synchronized içinden çağrılır",
           "aliases": [
-            "synchronized",
+            "synchronized blok",
+            "synchronized içinde",
             "illegalmonitorstate",
-            "monitör",
+            "monitörü",
             "monitor"
           ],
           "anchors": [
@@ -3403,8 +3453,7 @@
           "aliases": [
             "blockingqueue",
             "countdownlatch",
-            "java.util.concurrent",
-            "condition"
+            "java.util.concurrent"
           ],
           "anchors": [
             "Yeni kodda wait/notify yerine BlockingQueue gibi java.util.concurrent araçları kullanılır."
@@ -3444,10 +3493,12 @@
           "id": "this-kapsam",
           "label": "Yeni kapsam yok, this çevreleyen sınıf",
           "aliases": [
-            "this",
-            "kapsam",
-            "scope",
-            "çevreleyen"
+            "this çevreleyen",
+            "this dış",
+            "kapsam açma",
+            "yeni bir kapsam",
+            "çevreleyen sınıf",
+            "this anonim"
           ],
           "anchors": [
             "Lambda yeni kapsam açmaz; içindeki this çevreleyen sınıfın nesnesidir."
@@ -3518,7 +3569,7 @@
             "bir soyut",
             "tek bir soyut",
             "single abstract",
-            "tek metot",
+            "tek bir abstract",
             "tek abstract"
           ],
           "anchors": [
@@ -3542,8 +3593,10 @@
           "id": "default-static",
           "label": "default ve static metotlar sayılmaz",
           "aliases": [
-            "default",
-            "static",
+            "default ve static",
+            "`default` ve `static`",
+            "sayıya dahil değil",
+            "dahil değildir",
             "varsayılan metot"
           ],
           "anchors": [
@@ -3598,12 +3651,12 @@
           "id": "dort-tur",
           "label": "Statik, bağlı nesne, tür üzerinden, constructor",
           "aliases": [
-            "statik",
-            "static",
-            "constructor",
             "::new",
-            "kurucu",
-            "bound"
+            "statik metot",
+            "constructor referans",
+            "belirli bir nesnenin",
+            "herhangi bir nesnesinin",
+            "dört türü"
           ],
           "anchors": [
             "Dört türü statik metot, belirli nesne, türün herhangi bir nesnesi ve constructor referansıdır."
@@ -3613,12 +3666,12 @@
           "id": "ne-zaman",
           "label": "Tek çağrıda okunur, ek mantıkta lambda",
           "aliases": [
-            "okunur",
-            "okunabil",
-            "readab",
+            "daha okunur",
+            "okunabilirliği",
             "ek mantık",
             "tek bir metod",
-            "sadece çağır"
+            "sadece çağır",
+            "başka bir metodu çağırıyorsa"
           ],
           "anchors": [
             "Tek metodu iletmekte method reference, ek mantık varsa lambda daha okunurdur."
@@ -3659,8 +3712,9 @@
             "bire bir",
             "birebir",
             "one-to-one",
-            "one to one",
-            "aynı sayıda"
+            "aynı sayıda",
+            "eleman sayısı değişmez",
+            "tam olarak bir eleman"
           ],
           "anchors": [
             "map her elemanı bire bir başka bir değere dönüştürür."
@@ -3685,12 +3739,12 @@
           "id": "sifir-cok",
           "label": "Bir elemandan sıfır ya da çok eleman",
           "aliases": [
-            "sıfır",
+            "sıfır, bir ya da çok",
             "one-to-many",
             "çok eleman",
             "birden çok eleman",
-            "birden fazla eleman",
-            "bire çok"
+            "bire çok",
+            "sıfır ya da daha"
           ],
           "anchors": [
             "flatMap'te bir elemandan sıfır, bir ya da çok eleman çıkabilir."
@@ -3701,7 +3755,8 @@
           "label": "map ile iç içe Stream<Stream> oluşur",
           "aliases": [
             "stream<stream",
-            "iç içe",
+            "iç içe liste",
+            "iç içe stream",
             "nested",
             "optional<optional"
           ],
@@ -3729,9 +3784,9 @@
           "label": "permits ile alt türler sınırlanır",
           "aliases": [
             "permits",
-            "izin ver",
-            "sınırla",
-            "kısıtla",
+            "açıkça sınırlar",
+            "hangi sınıfların",
+            "hangi alt türlerin",
             "restrict"
           ],
           "anchors": [
@@ -3744,7 +3799,8 @@
           "aliases": [
             "non-sealed",
             "non sealed",
-            "final"
+            "final, sealed",
+            "final ya da sealed"
           ],
           "anchors": [
             "İzin verilen her alt tür final, sealed ya da non-sealed olmak zorundadır."
@@ -3757,9 +3813,9 @@
             "exhaustive",
             "tüm alt tür",
             "default istemez",
-            "default gerek",
-            "eksik kalan",
-            "derleme hatası"
+            "default case",
+            "tüm durumların",
+            "eksik kalan"
           ],
           "anchors": [
             "Sealed hiyerarşide switch exhaustive denetlenir, default gerekmez."
@@ -3769,11 +3825,11 @@
           "id": "kapali-kume",
           "label": "Kapalı seçenek kümesi, enum'dan farkı",
           "aliases": [
-            "kapalı",
-            "enum",
-            "record",
+            "kapalı bir",
+            "kapalı ve bilinen",
             "seçenek küme",
             "domain model",
+            "enum'dan farkı",
             "sonlu"
           ],
           "anchors": [
@@ -3799,12 +3855,12 @@
           "id": "tur-case",
           "label": "case'te tür kontrolü ve bağlama",
           "aliases": [
-            "instanceof",
-            "cast",
-            "tür kontrol",
             "türü kontrol",
+            "tür kontrol",
+            "tip kontrol",
             "type pattern",
-            "binding"
+            "değişkeni o türle",
+            "case circle c"
           ],
           "anchors": [
             "case etiketi türü kontrol edip değişkeni o türle bağlar, ayrı instanceof ve cast gerekmez."
@@ -3816,10 +3872,10 @@
           "aliases": [
             "ayrıştır",
             "deconstruct",
-            "bileşen",
+            "bileşenlerine",
+            "bileşenlerini",
             "destructur",
-            "iç içe kalıp",
-            "nested pattern"
+            "iç içe kalıp"
           ],
           "anchors": [
             "Record pattern bir record'u bileşenlerine ayrıştırır ve iç içe kullanılabilir."
@@ -3829,7 +3885,7 @@
           "id": "when-null",
           "label": "when koşulu ve case null",
           "aliases": [
-            "when",
+            "when ile",
             "case null",
             "guard",
             "ek koşul"
@@ -3844,10 +3900,10 @@
           "aliases": [
             "exhaustive",
             "default gerek",
-            "sealed",
+            "sealed bir",
+            "sealed tip",
             "eksik dal",
-            "tüm durum",
-            "eksiksiz"
+            "tüm durum"
           ],
           "anchors": [
             "Sealed hiyerarşide switch exhaustive olur, default gerekmez."
@@ -3872,12 +3928,12 @@
           "id": "extends-okuma",
           "label": "? extends: okunur, eklenemez",
           "aliases": [
-            "okunabil",
-            "okunur",
+            "olarak okunabilir",
+            "okuyabilirim ama",
             "eklenemez",
             "ekleyemezsin",
-            "read-only",
-            "salt okunur"
+            "ekleme yapamam",
+            "number olarak oku"
           ],
           "anchors": [
             "? extends ile tanımlı yapıdan okunabilir ama içine eklenemez."
@@ -3889,7 +3945,7 @@
           "aliases": [
             "eklenebil",
             "ekleyebilirsin",
-            "yazılabil",
+            "ekleyebilirim",
             "object olarak",
             "object döner"
           ],
@@ -3947,9 +4003,9 @@
           "aliases": [
             "inversion of control",
             "kontrolün tersine",
-            "yaşam döngüsü",
+            "kontrolün koddan",
             "oluşturma sorumlulu",
-            "framework",
+            "framework'e",
             "çerçeveye"
           ],
           "anchors": [
@@ -3974,11 +4030,11 @@
           "id": "enjeksiyon",
           "label": "Bağımlılık dışarıdan enjekte edilir",
           "aliases": [
-            "enjekte",
-            "new ile",
-            "constructor",
-            "dışarıdan",
-            "kendisi yaratmaz"
+            "kendisi yaratmaz",
+            "new ile yaratmaz",
+            "container onları",
+            "enjekte eder",
+            "kendisi new ile oluşturmaz"
           ],
           "anchors": [
             "DI'da bean bağımlılıklarını kendisi oluşturmaz, container onları enjekte eder."
@@ -3991,9 +4047,9 @@
             "gevşek bağ",
             "loose coupling",
             "loosely",
-            "mock",
-            "test edilebil",
-            "sahte"
+            "sahte (mock)",
+            "mock bir",
+            "mock vermek"
           ],
           "anchors": [
             "DI gevşek bağlılık sağlar; testte sahte implementasyon verilebilir."
@@ -4018,11 +4074,11 @@
           "id": "final-zorunlu",
           "label": "final alanlar, eksik bağımlılık olmaz",
           "aliases": [
-            "final",
-            "immutable",
-            "değişmez",
+            "final olabilir",
+            "alanlar final",
+            "eksik bağımlılık",
             "zorunlu bağımlılık",
-            "eksik bağımlılık"
+            "eksiksiz oluş"
           ],
           "anchors": [
             "Constructor injection'da alanlar final olur ve nesne eksik bağımlılıkla oluşmaz."
@@ -4032,11 +4088,11 @@
           "id": "test",
           "label": "Container olmadan test edilir",
           "aliases": [
-            "test",
-            "mock",
-            "new ile",
             "container olmadan",
-            "konteyner olmadan"
+            "konteyner olmadan",
+            "spring olmadan",
+            "new ile kurul",
+            "testte"
           ],
           "anchors": [
             "Constructor injection kullanan sınıf testte container olmadan new ile kurulabilir."
@@ -4059,9 +4115,8 @@
           "id": "field-gizler",
           "label": "Field: bağımlılığı gizler, final olamaz",
           "aliases": [
-            "gizler",
-            "gizli",
-            "görünmez",
+            "bağımlılıkları gizler",
+            "gizli kalır",
             "final olamaz",
             "reflection",
             "şiştiği"
@@ -4102,12 +4157,12 @@
           "id": "varsayilan",
           "label": "Varsayılan singleton, container başına tek örnek",
           "aliases": [
-            "varsayılan",
-            "default",
             "container başına",
             "tek örnek",
+            "tek bir örnek",
             "tek instance",
-            "aynı örnek"
+            "varsayılan scope singleton",
+            "aynı örnek verilir"
           ],
           "anchors": [
             "Varsayılan scope singleton'dır; container başına tek örnek oluşturulur."
@@ -4130,11 +4185,12 @@
           "id": "web-scope",
           "label": "request, session, application",
           "aliases": [
-            "request",
-            "session",
-            "application",
+            "request scope",
+            "session scope",
+            "request, session",
             "websocket",
-            "http isteği"
+            "http isteği başına",
+            "http oturumu başına"
           ],
           "anchors": [
             "Web uygulamalarında request, session ve application scope'ları vardır."
@@ -4145,11 +4201,10 @@
           "label": "Singleton paylaşılır: race condition, veri sızması",
           "aliases": [
             "race condition",
-            "paylaşıl",
-            "thread-safe",
-            "thread safe",
-            "sızma",
-            "eşzamanlı"
+            "başkasına sız",
+            "veriler karış",
+            "tüm istekler ve thread",
+            "kullanıcıya özel veri"
           ],
           "anchors": [
             "Singleton bean thread'ler arasında paylaşılır; değişebilir alan race condition'a yol açar."
@@ -4187,12 +4242,12 @@
           "id": "bir-kez",
           "label": "Enjeksiyon bir kez, hep aynı örnek",
           "aliases": [
-            "bir kez",
-            "tek sefer",
-            "aynı örnek",
-            "aynı instance",
-            "hep aynı",
-            "oluşturulurken"
+            "singleton oluşturulurken",
+            "bir kez enjekte",
+            "davranışı kaybolur",
+            "etkisini kaybeder",
+            "aynı prototype örneği",
+            "tek sefer"
           ],
           "anchors": [
             "Enjeksiyon singleton oluşturulurken bir kez yapılır, hep aynı prototype örneği kullanılır."
@@ -4203,10 +4258,10 @@
           "label": "ObjectProvider ile her seferinde al",
           "aliases": [
             "objectprovider",
-            "provider",
+            "jakarta.inject.provider",
             "getobject",
             "objectfactory",
-            "sağlayıcı"
+            "provider enjekte"
           ],
           "anchors": [
             "ObjectProvider enjekte edilip her ihtiyaçta getObject çağrılır."
@@ -4231,8 +4286,7 @@
             "scoped proxy",
             "proxymode",
             "target_class",
-            "scopedproxymode",
-            "proxy"
+            "scopedproxymode"
           ],
           "anchors": [
             "Bean scoped proxy ile tanımlanırsa proxy her kullanımda hedef örneği container'dan alır."
@@ -4257,11 +4311,11 @@
           "id": "olustur-enjekte",
           "label": "Önce oluşturma, sonra enjeksiyon",
           "aliases": [
-            "constructor",
-            "oluşturulur",
-            "oluşturur",
+            "önce bean'i oluştur",
+            "örneğini oluştur",
             "instantiat",
-            "aware"
+            "aware arayüz",
+            "beannameaware"
           ],
           "anchors": [
             "Bean önce constructor ile oluşturulur, sonra bağımlılıkları enjekte edilir."
@@ -4273,10 +4327,10 @@
           "aliases": [
             "bağımlılıklar hazır",
             "enjeksiyondan sonra",
+            "enjekte edildikten sonra",
             "afterpropertiesset",
             "initializingbean",
-            "initmethod",
-            "init-method"
+            "initmethod"
           ],
           "anchors": [
             "@PostConstruct bağımlılıklar enjekte edildikten sonra çalışır."
@@ -4289,7 +4343,7 @@
             "beanpostprocessor",
             "postprocessbefore",
             "postprocessafter",
-            "proxy"
+            "aop proxy"
           ],
           "anchors": [
             "BeanPostProcessor başlatmanın öncesinde ve sonrasında çalışır; AOP proxy'leri sonrasında oluşur."
@@ -4299,12 +4353,11 @@
           "id": "kapanis",
           "label": "Kapanışta @PreDestroy",
           "aliases": [
-            "kapanır",
-            "kapanış",
-            "shutdown",
+            "kapanırken",
+            "context kapan",
+            "container kapan",
             "disposablebean",
-            "destroymethod",
-            "close"
+            "destroymethod"
           ],
           "anchors": [
             "@PreDestroy context kapanırken çağrılır."
@@ -4314,10 +4367,10 @@
           "id": "prototype",
           "label": "Prototype'ta yok etme çağrılmaz",
           "aliases": [
-            "prototype",
-            "yönetmez",
-            "çağırmaz",
-            "çalıştırmaz"
+            "prototype bean'lerde",
+            "yok etme geri",
+            "prototype'larda",
+            "çağrılmaz"
           ],
           "anchors": [
             "Prototype bean'lerde Spring yok etme geri çağrılarını çalıştırmaz."
@@ -4374,7 +4427,7 @@
             "üçüncü parti",
             "third-party",
             "third party",
-            "kütüphane",
+            "kütüphanelerin sınıf",
             "kaynağını değiştir",
             "oluşturma mantığı"
           ],
@@ -4429,9 +4482,9 @@
           "id": "katman",
           "label": "Niyet ve katman",
           "aliases": [
-            "katman",
-            "layer",
-            "niyet",
+            "katmanı belirt",
+            "iş katmanını belgeler",
+            "niyeti",
             "semantik",
             "anlamsal"
           ],
@@ -4446,8 +4499,8 @@
             "exception translation",
             "dataaccessexception",
             "persistenceexceptiontranslation",
-            "çevirir",
-            "translation"
+            "hiyerarşisine çevir",
+            "exception'larını çevir"
           ],
           "anchors": [
             "@Repository, persistence exception'larını DataAccessException hiyerarşisine çevirir."
@@ -4502,10 +4555,11 @@
           "id": "varsayilan",
           "label": "@Primary varsayılan aday",
           "aliases": [
-            "varsayılan",
-            "default",
+            "varsayılan aday",
+            "varsayılan olarak işaret",
             "öncelikli",
-            "tercih edilen"
+            "tercih edilen",
+            "istenmeyen her yerde"
           ],
           "anchors": [
             "@Primary bir bean'i o tür için varsayılan aday yapar."
@@ -4515,9 +4569,9 @@
           "id": "belirli",
           "label": "@Qualifier belirli bean'i seçer",
           "aliases": [
-            "adıyla",
+            "adıyla seç",
             "ismiyle",
-            "belirli bir",
+            "belirli bir bean",
             "bean adı",
             "niteleyici"
           ],
@@ -4531,8 +4585,8 @@
           "aliases": [
             "önce gelir",
             "önceliklidir",
-            "ezer",
-            "baskın"
+            "baskın",
+            "primary'yi ezer"
           ],
           "anchors": [
             "@Qualifier, @Primary'den önce gelir."
@@ -4542,10 +4596,11 @@
           "id": "liste",
           "label": "Hepsini List ya da Map ile al",
           "aliases": [
-            "list<",
+            "list<paymentclient",
             "map<string",
-            "hepsini",
-            "tümünü",
+            "hepsine ihtiyaç",
+            "list ile hepsini",
+            "hepsini enjekte",
             "liste olarak"
           ],
           "anchors": [
@@ -4615,10 +4670,10 @@
           "id": "proxy",
           "label": "Çalışma anında proxy ile uygulanır",
           "aliases": [
-            "proxy",
+            "proxy ile uygula",
             "weaving",
-            "çalışma anında",
-            "transactional",
+            "çalışma anında proxy",
+            "mekanizmanın üzerine",
             "cacheable"
           ],
           "anchors": [
@@ -4644,9 +4699,11 @@
           "id": "arayuz",
           "label": "JDK proxy arayüz üzerinden çalışır",
           "aliases": [
-            "arayüz",
-            "interface",
+            "yalnızca arayüz",
+            "sadece arayüz",
+            "sadece interface",
             "somut sınıf",
+            "interface'ler üzerinden",
             "beannotofrequiredtype"
           ],
           "anchors": [
@@ -4657,11 +4714,10 @@
           "id": "alt-sinif",
           "label": "CGLIB alt sınıf üretir",
           "aliases": [
-            "alt sınıf",
+            "alt sınıfını",
             "subclass",
-            "kalıtım",
-            "extends",
-            "türetir"
+            "türetir",
+            "alt sınıf üret"
           ],
           "anchors": [
             "CGLIB çalışma anında bean sınıfının alt sınıfını üretir."
@@ -4671,9 +4727,12 @@
           "id": "final",
           "label": "final sınıf ve metotlar proxy'lenemez",
           "aliases": [
-            "final",
-            "private",
-            "override edilemez"
+            "final sınıf",
+            "final metot",
+            "proxy'lenemez",
+            "override edilemez",
+            "override edilemedi",
+            "private metot"
           ],
           "anchors": [
             "CGLIB final sınıfları proxy'leyemez, final ve private metotları yakalayamaz."
@@ -4727,11 +4786,11 @@
           "id": "diger-turler",
           "label": "@Before, @AfterReturning, @AfterThrowing, @After",
           "aliases": [
-            "before",
             "afterreturning",
             "afterthrowing",
-            "after",
-            "finally"
+            "metottan önce",
+            "finally gibi",
+            "after advice"
           ],
           "anchors": [
             "@Before önce, @AfterReturning normal dönüşte, @AfterThrowing exception'da, @After her durumda çalışır."
@@ -4743,8 +4802,9 @@
           "aliases": [
             "sarar",
             "sarmal",
-            "wrap",
             "etrafında",
+            "kendisinin kontrol",
+            "çağrılmasını kontrol",
             "kontrol eder"
           ],
           "anchors": [
@@ -4767,9 +4827,9 @@
           "label": "Süre ölçme, değer değiştirme, exception yutma",
           "aliases": [
             "süre ölç",
-            "argüman",
+            "argümanları değiş",
             "dönüş değerini değiş",
-            "yakalayıp",
+            "exception'ı yakalayıp",
             "exception'ı yut",
             "sonucu değiş"
           ],
@@ -4810,10 +4870,11 @@
           "id": "proxy-interceptor",
           "label": "Proxy ve TransactionInterceptor",
           "aliases": [
-            "proxy",
-            "interceptor",
+            "proxy'sine gelir",
+            "proxy çağrılır",
             "transactioninterceptor",
-            "araya gir"
+            "araya gir",
+            "proxy üzerinden"
           ],
           "anchors": [
             "Çağrı bean'in proxy'sine gelir, TransactionInterceptor transaction'ı başlatır."
@@ -4852,10 +4913,11 @@
           "id": "commit-rollback",
           "label": "Normal dönüşte commit, RuntimeException'da rollback",
           "aliases": [
-            "commit",
-            "rollback",
-            "geri al",
-            "runtimeexception"
+            "commit edilir",
+            "rollback yapılır",
+            "rollback yapar",
+            "commit yapar",
+            "commit'e engel"
           ],
           "anchors": [
             "Metot normal dönerse commit, RuntimeException ya da Error fırlarsa rollback yapılır."
@@ -4911,10 +4973,10 @@
           "aliases": [
             "askıya",
             "suspend",
-            "bağımsız",
+            "bağımsız bir transaction",
             "ayrı bir transaction",
             "ayrı bağlantı",
-            "audit"
+            "audit log"
           ],
           "anchors": [
             "REQUIRES_NEW dıştaki transaction'ı askıya alıp bağımsız yeni bir transaction açar."
@@ -4937,9 +4999,10 @@
           "label": "NESTED JPA'da varsayılan kapalı",
           "aliases": [
             "nestedtransactionallowed",
-            "jpatransactionmanager",
-            "jdbc",
-            "entitymanager"
+            "jdbc savepoint",
+            "varsayılan olarak kapalı",
+            "jpa ile varsayılan",
+            "jpatransactionmanager'da"
           ],
           "anchors": [
             "NESTED JDBC savepoint'ine dayanır; JpaTransactionManager'da varsayılan olarak kapalıdır."
@@ -5011,7 +5074,7 @@
             "yok sayılır",
             "katılan",
             "validateexistingtransaction",
-            "ignore"
+            "ignore edilir"
           ],
           "anchors": [
             "Isolation yalnızca yeni transaction başlarken uygulanır; mevcut transaction'a katılanınki yok sayılır."
@@ -5050,11 +5113,12 @@
           "id": "runtime-varsayilan",
           "label": "Varsayılan: RuntimeException ve Error",
           "aliases": [
-            "runtimeexception",
+            "rollback'e yol aç",
+            "yalnızca runtimeexception",
+            "runtimeexception ve error",
             "unchecked",
-            "error",
-            "checked exception",
-            "commit edilir"
+            "checked exception fırlarsa",
+            "checked'larda yapmaz"
           ],
           "anchors": [
             "Varsayılan olarak yalnızca RuntimeException ve Error rollback'e yol açar, checked exception commit edilir."
@@ -5079,10 +5143,9 @@
           "aliases": [
             "yutul",
             "yutar",
-            "yakalanırsa",
-            "catch",
             "swallow",
-            "setrollbackonly"
+            "setrollbackonly",
+            "hatadan haberdar olmaz"
           ],
           "anchors": [
             "Metot içinde yakalanıp yutulan exception'da proxy hata görmez ve commit eder."
@@ -5120,10 +5183,11 @@
           "id": "proxy",
           "label": "@Transactional proxy ile uygulanır",
           "aliases": [
-            "proxy",
+            "bir proxy ile",
+            "proxy'de",
+            "proxy üzerinden",
             "vekil",
-            "cglib",
-            "interceptor"
+            "proxy'den geçer"
           ],
           "anchors": [
             "Spring @Transactional'ı bean'in önüne konan bir proxy ile uygular."
@@ -5148,9 +5212,11 @@
           "id": "diger-etkiler",
           "label": "private metot, @Async ve @Cacheable da etkilenir",
           "aliases": [
-            "private",
-            "async",
-            "cacheable"
+            "cacheable",
+            "private metotlar",
+            "async ve cacheable",
+            "iç çağrıyla tetiklenen",
+            "async için"
           ],
           "anchors": [
             "Proxy modunda private metotlardaki ve iç çağrıyla tetiklenen @Async, @Cacheable da çalışmaz."
@@ -5233,8 +5299,9 @@
           "aliases": [
             "garanti değil",
             "veritabanına bağlı",
-            "reddeder",
+            "her zaman engellemez",
             "güvenlik önlemi değil",
+            "güvenlik mekanizması değil",
             "yok sayar"
           ],
           "anchors": [
@@ -5272,11 +5339,11 @@
           "id": "managed-kume",
           "label": "EntityManager'ın yönettiği entity kümesi",
           "aliases": [
-            "entitymanager",
-            "managed",
-            "yönetilen",
-            "session",
-            "transaction boyunca"
+            "yönettiği entity",
+            "entity örneklerinin küme",
+            "managed entity",
+            "transaction boyunca yaşar",
+            "entitymanager'ın yönettiği"
           ],
           "anchors": [
             "Persistence context bir EntityManager'ın yönettiği entity örneklerinin kümesidir."
@@ -5287,7 +5354,7 @@
           "label": "Aynı id için tek örnek, first-level cache",
           "aliases": [
             "tek bir örnek",
-            "aynı nesne",
+            "aynı nesneyi döndür",
             "aynı örnek",
             "first-level",
             "first level",
@@ -5301,12 +5368,12 @@
           "id": "karsilastirma",
           "label": "Flush'ta ilk hâlle karşılaştırılır",
           "aliases": [
-            "kopyasını",
-            "kopyayla",
-            "snapshot",
-            "ilk hâl",
-            "ilk hal",
-            "flush"
+            "ilk hâlinin bir kopya",
+            "ilk halinin bir kopya",
+            "ilk yüklendiği hâl",
+            "ilk yüklendiği hal",
+            "kopyayla karşılaştır",
+            "mevcut haliyle karşılaştır"
           ],
           "anchors": [
             "Flush anında entity'nin mevcut hâli ilk yüklendiği hâlin kopyasıyla karşılaştırılır."
@@ -5318,7 +5385,7 @@
           "aliases": [
             "save gerekmez",
             "save çağırmak gerekmez",
-            "setter",
+            "setter çağırmak yeterli",
             "otomatik update",
             "kendiliğinden update",
             "update üret"
@@ -5361,7 +5428,7 @@
           "id": "detached",
           "label": "Detached: context kapanmış, izlenmez",
           "aliases": [
-            "izlenmez",
+            "artık izlenmez",
             "kapanmış",
             "kapandı",
             "context dışında",
@@ -5376,8 +5443,8 @@
           "label": "persist aynı örneği managed yapar",
           "aliases": [
             "aynı örnek",
-            "aynı nesne",
             "aynı instance",
+            "aynı nesneyi yönet",
             "insert"
           ],
           "anchors": [
@@ -5389,10 +5456,11 @@
           "label": "merge kopyalar, managed örneği döndürür",
           "aliases": [
             "kopyalar",
-            "döndürdüğü",
+            "managed bir kopya",
+            "kopyayı döndür",
             "dönen nesne",
             "managed örneği",
-            "yeni bir örnek"
+            "döndürdüğü"
           ],
           "anchors": [
             "merge detached nesnenin durumunu managed bir örneğe kopyalar ve o örneği döndürür."
@@ -5431,12 +5499,12 @@
           "id": "hemen-sonra",
           "label": "EAGER hemen, LAZY ilk erişimde",
           "aliases": [
-            "hemen",
+            "hemen yüklen",
             "ilk eriş",
             "erişildiğinde",
-            "ihtiyaç anında",
             "ayrı bir sorgu",
-            "on demand"
+            "on demand",
+            "birlikte hemen"
           ],
           "anchors": [
             "EAGER ilişkiyi hemen yükler, LAZY ilk erişildiğinde ayrı bir sorguyla getirir."
@@ -5446,7 +5514,9 @@
           "id": "proxy",
           "label": "LAZY'de proxy ya da persistent collection",
           "aliases": [
-            "proxy",
+            "bir proxy",
+            "proxy konur",
+            "proxy durur",
             "persistent collection",
             "persistentbag",
             "vekil"
@@ -5532,11 +5602,11 @@
           "id": "serilestirme",
           "label": "Controller ya da JSON serileştirmede",
           "aliases": [
-            "controller",
-            "serileştir",
-            "serializ",
-            "json",
-            "jackson"
+            "controller'da",
+            "json serileştir",
+            "serileştirme sırasında",
+            "jackson",
+            "view'da"
           ],
           "anchors": [
             "Tipik örnek ilişkiye controller'da ya da JSON serileştirmesinde dokunmaktır."
@@ -5550,7 +5620,7 @@
             "entitygraph",
             "projection",
             "dto'ya",
-            "transaction içinde"
+            "transaction içinde ve tek sorguda"
           ],
           "anchors": [
             "Gereken veri transaction içinde JOIN FETCH, @EntityGraph ya da DTO projection ile çekilir."
@@ -5574,12 +5644,12 @@
           "id": "osiv",
           "label": "open-in-view varsayılan açık, uyarı verir, bağlantıyı tutar",
           "aliases": [
+            "open-in-view=false",
             "varsayılan olarak açık",
-            "uyarı",
-            "warning",
-            "bağlantı",
-            "connection",
-            "open-in-view=false"
+            "bağlantısı yanıt",
+            "uzun süre meşgul",
+            "açılışta uyarı",
+            "session'ı view"
           ],
           "anchors": [
             "Spring Boot'ta open-in-view varsayılan olarak açıktır, açılışta uyarı verir ve bağlantıyı istek sonuna kadar tutabilir."
@@ -5637,6 +5707,7 @@
             "mapping düzey",
             "kapatılamaz",
             "ihtiyaç duymayan",
+            "ihtiyaç olmadığında da",
             "her sorguda yüklen",
             "gereksiz yük"
           ],
@@ -5691,7 +5762,7 @@
           "label": "L1: EntityManager başına, kapatılamaz",
           "aliases": [
             "persistence context",
-            "entitymanager",
+            "entitymanager başına",
             "session başına",
             "kapatılamaz",
             "her zaman açık",
@@ -5706,7 +5777,7 @@
           "label": "L2: SessionFactory düzeyinde, paylaşılan",
           "aliases": [
             "sessionfactory",
-            "paylaşılan",
+            "tüm oturumlar",
             "shared",
             "uygulama genelinde",
             "oturumlar arası"
@@ -5720,11 +5791,11 @@
           "label": "L2 varsayılan kapalı, sağlayıcı gerekir",
           "aliases": [
             "varsayılan olarak kapalı",
-            "sağlayıcı",
-            "provider",
+            "sağlayıcıyla",
             "ehcache",
             "jcache",
-            "infinispan"
+            "infinispan",
+            "caffeine"
           ],
           "anchors": [
             "Second-level cache varsayılan olarak kapalıdır ve bir önbellek sağlayıcısı gerektirir."
@@ -5736,10 +5807,10 @@
           "aliases": [
             "bayat",
             "stale",
-            "referans veri",
+            "eskimiş veri",
             "nadiren değişen",
-            "dağıtık",
-            "tutarsız"
+            "az değişen",
+            "dağıtık"
           ],
           "anchors": [
             "Second-level cache nadiren değişen veriye uygundur; dışarıdan yapılan değişikliklerde bayat veri riski vardır."
@@ -5779,9 +5850,9 @@
           "label": "@Version ile sürüm koşulu ve artış",
           "aliases": [
             "version + 1",
-            "versiyon",
+            "version alanı",
             "sürüm numara",
-            "sürümü",
+            "sürümü değiştir",
             "kilit tutmaz",
             "version kolonu"
           ],
@@ -5796,9 +5867,9 @@
             "optimisticlockexception",
             "optimisticlockingfailure",
             "sıfır satır",
-            "0 satır",
             "yeniden dene",
-            "retry"
+            "retry",
+            "verinin değiştiği"
           ],
           "anchors": [
             "Sürüm değiştiyse güncelleme sıfır satır etkiler ve OptimisticLockException fırlar."
@@ -5823,7 +5894,7 @@
           "label": "Seyrek çakışmada optimistic, yoğunda pessimistic",
           "aliases": [
             "seyrek",
-            "yoğun yazma",
+            "çakışma nadir",
             "yoğun eşzamanlı",
             "contention",
             "çakışma oranı",
@@ -5838,10 +5909,9 @@
           "label": "Deadlock ve beklemeye karşı timeout",
           "aliases": [
             "lock.timeout",
-            "timeout",
             "zaman aşım",
-            "deadlock",
-            "süre sınırı"
+            "süre sınırı",
+            "uzun bekleme"
           ],
           "anchors": [
             "Pessimistic kilitlerde deadlock ve uzun beklemeye karşı lock timeout konur."
@@ -5897,7 +5967,7 @@
             "ters taraf",
             "karşı taraf",
             "yalnızca owning",
-            "yazılmaz",
+            "foreign key yazılmaz",
             "dikkate alınmaz"
           ],
           "anchors": [
@@ -5912,7 +5982,6 @@
             "her iki taraf",
             "yardımcı metot",
             "helper",
-            "senkron",
             "setorder"
           ],
           "anchors": [
@@ -5925,8 +5994,9 @@
           "aliases": [
             "ara tablo",
             "join table",
+            "join tablo",
             "jointable",
-            "tek yönlü",
+            "fazladan bir",
             "fazladan tablo"
           ],
           "anchors": [
@@ -5981,11 +6051,11 @@
           "label": "Sıralı filtreler: CSRF, kimlik doğrulama, yetki",
           "aliases": [
             "csrffilter",
-            "usernamepasswordauthenticationfilter",
-            "bearertokenauthenticationfilter",
             "exceptiontranslationfilter",
             "authorizationfilter",
-            "sırayla"
+            "filtrelerini sırayla",
+            "sırayla güvenlik filtre",
+            "en sonda authorization"
           ],
           "anchors": [
             "Zincirdeki filtreler sırayla çalışır; en sonda AuthorizationFilter yetki kararını verir."
@@ -6082,10 +6152,10 @@
           "label": "Oturuma kaydedilir ya da her istekte token",
           "aliases": [
             "securitycontextrepository",
-            "session",
-            "oturum",
-            "stateless",
-            "her istek",
+            "oturuma kaydedil",
+            "session'lı uygulama",
+            "stateless bir api",
+            "kendi token'ıyla",
             "authenticationentrypoint"
           ],
           "anchors": [
@@ -6112,9 +6182,10 @@
           "label": "Authentication: kimsin?",
           "aliases": [
             "kimsin",
-            "kimlik",
+            "kimliğini doğrula",
+            "kim olduğu",
             "identity",
-            "kim olduğu"
+            "kim olduğunu kanıtla"
           ],
           "anchors": [
             "Authentication kullanıcının kim olduğunu doğrular."
@@ -6124,11 +6195,12 @@
           "id": "yetki",
           "label": "Authorization: neye erişebilir?",
           "aliases": [
-            "yetki",
+            "yetkin var mı",
+            "yetkilendirmedir",
             "permission",
-            "erişebilir mi",
             "neye erişe",
-            "erişim hakkı"
+            "erişim hakkı",
+            "erişip erişemeyece"
           ],
           "anchors": [
             "Authorization doğrulanmış kullanıcının bir kaynağa erişip erişemeyeceğini belirler."
@@ -6197,12 +6269,12 @@
           "id": "otomatik-cookie",
           "label": "Tarayıcı cookie'yi kendiliğinden ekler",
           "aliases": [
-            "cookie",
-            "çerez",
-            "kendiliğinden",
-            "otomatik ekle",
-            "başka bir site",
-            "kötü niyetli site"
+            "cookie'leri isteğe",
+            "cookie'leri otomatik",
+            "cookie'yi otomatik",
+            "çerezleri otomatik",
+            "kendiliğinden ekle",
+            "başka bir site"
           ],
           "anchors": [
             "CSRF'te başka bir site tarayıcıya istek attırır; tarayıcı cookie'leri kendiliğinden ekler."
@@ -6230,7 +6302,7 @@
             "authorization başlığı",
             "authorization header",
             "bearer",
-            "bellekte",
+            "access token bellekte",
             "başlığı ekleyemez"
           ],
           "anchors": [
@@ -6283,7 +6355,7 @@
           "id": "checked-vendor",
           "label": "SQLException checked ve sürücüye özgü",
           "aliases": [
-            "checked",
+            "checked exception'ıdır",
             "sqlstate",
             "vendor",
             "sürücüye özgü",
@@ -6327,7 +6399,7 @@
           "label": "Geçici hatalar: TransientDataAccessException",
           "aliases": [
             "transientdataaccess",
-            "geçici",
+            "geçici hata",
             "transient",
             "yeniden dene",
             "retry"
@@ -6343,7 +6415,7 @@
             "sqlexceptiontranslator",
             "jdbctemplate",
             "persistenceexceptiontranslation",
-            "repository",
+            "repository'lerinde",
             "exception translation"
           ],
           "anchors": [
