@@ -41,6 +41,11 @@ public class QuestionSeeder {
     private static final Logger log = LoggerFactory.getLogger(QuestionSeeder.class);
 
     /**
+     * Güncelleme koşulu yazılan bütün kolonları karşılaştırır: category,
+     * topic, difficulty ve kind payload'ın dışında, ayrı kolonlarda duruyor.
+     * Koşul yalnızca payload'a baksaydı bu dört alandan yalnızca biri
+     * değişen soru "değişmedi" sayılır ve sunucuya hiç yazılmazdı.
+     *
      * "xmax = 0" satırın yeni mi eklendiğini yoksa ON CONFLICT ile mi
      * güncellendiğini ayırt etmek için kullanılıyor: xmax, satırı silen ya da
      * güncelleyen transaction'ın id'sidir; yeni eklenen bir satırda hiç
@@ -59,7 +64,8 @@ public class QuestionSeeder {
                 kind = EXCLUDED.kind,
                 payload = EXCLUDED.payload,
                 updated_at = now()
-            WHERE question.payload IS DISTINCT FROM EXCLUDED.payload
+            WHERE (question.category, question.topic, question.difficulty, question.kind, question.payload)
+                IS DISTINCT FROM (EXCLUDED.category, EXCLUDED.topic, EXCLUDED.difficulty, EXCLUDED.kind, EXCLUDED.payload)
             -- xmax = 0: belgelenmemiş iç davranış, yukarıdaki javadoc'a bakın.
             RETURNING (xmax = 0) AS inserted
             """;
