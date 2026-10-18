@@ -78,7 +78,7 @@
           "label": "Image salt okunur şablon",
           "aliases": [
             "şablon",
-            "template",
+            "read-only template",
             "salt okunur bir",
             "salt okunurdur",
             "read-only'dir"
@@ -308,7 +308,8 @@
           "aliases": [
             "birden fazla from",
             "iki from",
-            "aşama",
+            "aşamada",
+            "aşamalı",
             "as build"
           ],
           "anchors": [
@@ -712,7 +713,9 @@
           "id": "tek-sunucu",
           "label": "Tek sunucu için",
           "aliases": [
-            "tek sunucu",
+            "tek bir sunucu",
+            "tek sunucuda",
+            "tek sunucudur",
             "kubernetes",
             "orkestrasyon",
             "ölçekleme"
@@ -780,7 +783,7 @@
           "label": "condition: service_healthy",
           "aliases": [
             "service_healthy",
-            "condition",
+            "condition:",
             "sağlıklı"
           ],
           "anchors": [
@@ -890,7 +893,8 @@
             "base image",
             "alpine",
             "distroless",
-            "slim",
+            "-slim",
+            "slim image",
             "-jre"
           ],
           "anchors": [
@@ -902,7 +906,8 @@
           "label": "Multi-stage build",
           "aliases": [
             "multi-stage",
-            "aşama"
+            "multi stage",
+            "aşamalı"
           ],
           "anchors": [
             "Multi-stage build ile derleme araçları son image'a girmez."
@@ -1057,7 +1062,7 @@
           "id": "foreground",
           "label": "Ön planda çalışmalı",
           "aliases": [
-            "ön plan",
+            "ön planda",
             "foreground",
             "daemon",
             "arka plan"
@@ -1219,7 +1224,7 @@
             "137",
             "oom killer",
             "oomkilled",
-            "öldür"
+            "oom ile"
           ],
           "anchors": [
             "Bellek sınırı aşılınca container OOM killer ile öldürülür."
@@ -1387,7 +1392,8 @@
           "aliases": [
             "habersiz",
             "major",
-            "geri dön",
+            "önceki sürüme",
+            "eski sürüme",
             "yükseltme",
             "hangi sürüm"
           ],
