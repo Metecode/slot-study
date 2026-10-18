@@ -9,7 +9,7 @@
       "topic": "props.children",
       "difficulty": 1,
       "prompt": "React'te props.children nedir ve kompozisyon desenindeki rolü nedir?",
-      "modelAnswer": "Bir bileşenin açılış ve kapanış etiketleri arasına yazılan JSX, o bileşene children prop'u olarak geçer. Özel bir sözdizimi değil, sıradan bir prop'un JSX ile yazılmış hali.\n\n```jsx\nconst Card = ({ children }) => (\n  <div className='card'>{children}</div>\n);\n\n<Card>\n  <h2>Başlık</h2>\n  <p>İçerik</p>\n</Card>\n```\n\nBu, React'te kalıtım yerine kompozisyon kullanmayı mümkün kılan mekanizma. Card içeriğinin ne olacağını bilmeden yazılır; bilmesi de gerekmez.\n\nchildren'ın tipi sabit değildir: tek eleman, dizi, metin ya da hiçbir şey olabilir. Bu yüzden üzerinde doğrudan map çalıştırmak güvenli değildir; React.Children.map bu durumları normalize eder.",
+      "modelAnswer": "Bir bileşenin açılış ve kapanış etiketleri arasına yazılan JSX, o bileşene children prop'u olarak geçer; özel bir sözdizimi değil, sıradan bir prop'tur. Böylece kart ya da panel gibi sarmalayıcı bileşenler içlerinde ne gösterileceğini bilmeden yazılır ve React kodu kalıtım yerine bu tür kompozisyonla yeniden kullanır. children opak bir veri yapısıdır; tek eleman, dizi, metin ya da boş olabileceği için dizi olduğu varsayılıp doğrudan map çalıştırılmaz. Dönüştürmek gerekiyorsa React.Children.map kullanılır, ama bu API nadiren gerekir ve kırılgan kod üretebilir; çoğu durumda dizi alan bir prop ya da render prop daha sağlamdır.",
       "keyConcepts": [
         {
           "id": "children-is-a-prop",
@@ -56,7 +56,7 @@
           ],
           "anchors": [
             "children tek eleman, dizi, metin ya da undefined olabilir; her zaman dizi değildir.",
-            "Doğrudan map çalıştırmak yerine React.Children.map kullanmak gerekir."
+            "Doğrudan map çalıştırılmaz; dönüştürmek gerekirse React.Children.map kullanılır."
           ]
         }
       ],
@@ -73,7 +73,7 @@
       "topic": "Virtual DOM",
       "difficulty": 1,
       "prompt": "Virtual DOM nedir ve React güncelleme sırasında bunu nasıl kullanır?",
-      "modelAnswer": "Virtual DOM, arayüzün bellekteki hafif temsilidir: düz JavaScript nesnelerinden oluşan bir ağaç. State değiştiğinde React yeni ağacı öncekiyle karşılaştırır ve yalnızca farklı olan düğümleri gerçek DOM'a yazar.\n\nAmaç DOM işlemini hızlandırmak değil, sayısını azaltmak. Gerçek DOM'a dokunmak yeniden yerleşim ve boyama tetikler; bellekteki nesneleri karşılaştırmak ucuzdur.\n\nSık atlanan nokta: bu karşılaştırma tam bir ağaç karşılaştırması değil. Genel çözüm çok pahalı olduğu için React iki varsayımla kestirme yapar — farklı tipteki elemanlar farklı ağaç üretir, ve listelerdeki elemanların kimliği key ile belirtilir.",
+      "modelAnswer": "Virtual DOM, arayüzün bellekte tutulan hafif bir temsilidir, yani düz JavaScript nesnelerinden oluşan bir ağaçtır. State ya da props değiştiğinde React yeni ağacı öncekiyle karşılaştırır ve gerçek DOM'a yalnızca farklı olan düğümleri yazar; bu eşitleme sürecine reconciliation denir. Amaç DOM işlemini hızlandırmak değil sayısını azaltmaktır, çünkü gerçek DOM'a dokunmak yerleşim ve boyama hesaplarını tetikleyebilir, bellekteki nesneleri karşılaştırmak ise ucuzdur. Bu karşılaştırma tam bir ağaç karşılaştırması değildir; genel çözüm çok pahalı olduğu için React iki varsayımla kestirme yapar, farklı tipteki elemanlar farklı ağaç üretir ve listelerde kararlı kimliği key belirtir.",
       "keyConcepts": [
         {
           "id": "memory-tree",
@@ -1715,7 +1715,7 @@
       "difficulty": 1,
       "kind": "definition",
       "prompt": "Hook kuralları nelerdir?",
-      "modelAnswer": "İki kural vardır: hook'lar yalnızca en üst seviyede çağrılır (döngü, koşul, iç içe fonksiyon veya erken return sonrasında çağrılmaz) ve yalnızca function component'lerden ya da custom hook'lardan çağrılır. Sebebi, React'in hook state'ini çağrılma sırasına göre eşleştirmesidir; sıra her render'da aynı kalmalıdır. eslint-plugin-react-hooks bu kuralları denetler.",
+      "modelAnswer": "Hook'lar yalnızca bileşenin en üst seviyesinde çağrılır; döngü, koşul, iç içe fonksiyon ya da try/catch içinde ve erken return'den sonra çağrılmaz. Ayrıca yalnızca React fonksiyonlarından, yani function component'lerden ya da custom hook'lardan çağrılır; normal bir JavaScript fonksiyonundan, event handler'dan ya da class component'ten çağrılmaz. Sebebi, React'in hook state'ini çağrılma sırasına göre eşleştirmesidir; sıra her render'da aynı kalmalıdır. eslint-plugin-react-hooks bu kuralların ihlallerini yakalar.",
       "keyConcepts": [
         {
           "id": "ust-seviye",
