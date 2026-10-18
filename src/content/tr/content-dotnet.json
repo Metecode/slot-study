@@ -80,7 +80,7 @@
         "Singleton bir servisin içine Scoped bir servisi enjekte etmeye çalışırsan ne olur (Captive Dependency)?",
         "Arka plan görevlerinde (BackgroundService) Scoped servisleri nasıl kullanırsın?"
       ],
-      "source": "Kıdemli .NET Mülakatı, Ekim 2026"
+      "source": "Kendi derleme — Microsoft Learn: .NET Service lifetimes; EF Core: DbContext Lifetime, Configuration, and Initialization"
     },
     {
       "id": "dotnet-iqueryable-ienumerable",
@@ -144,7 +144,7 @@
         "Veritabanından çektiğin verilerde IQueryable içinde özel bir C# metodunu (örneğin ToUpper()) çağırırsan EF Core nasıl tepki verir?",
         "IQueryable arayüzünü nerede IEnumerable arayüzüne dönüştürmek (AsEnumerable çağrısı) mantıklı olabilir?"
       ],
-      "source": "Kıdemli .NET Mülakatı, Ekim 2026"
+      "source": "Kendi derleme — Microsoft Learn: EF Core Client vs. Server Evaluation, How Queries Work"
     }
   ]
 }
