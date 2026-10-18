@@ -668,7 +668,7 @@
       "topic": "Compose",
       "difficulty": 1,
       "prompt": "Docker Compose nedir ve ne işe yarar?",
-      "modelAnswer": "Docker Compose, birden fazla container'dan oluşan bir uygulamayı **tek bir YAML dosyasında** (`compose.yaml` / `docker-compose.yml`) tanımlayıp **tek komutla** yönetmeyi sağlayan araçtır.\n\n```yaml\nservices:\n  backend:\n    build: ./backend\n    ports: [\"127.0.0.1:8080:8080\"]\n    environment:\n      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/app\n    depends_on: [db]\n  db:\n    image: postgres:16\n    volumes: [\"pgdata:/var/lib/postgresql/data\"]\nvolumes:\n  pgdata:\n```\n\nTemel komutlar: `docker compose up -d` (hepsini başlat), `docker compose down` (durdur ve sil), `docker compose logs -f backend` (logları izle).\n\nCompose tüm servisleri **ortak bir ağa** koyar; servisler birbirine **servis adıyla** erişir. Yukarıdaki örnekte backend veritabanına `db` hostname'i ile bağlanır.\n\nSık atlanan nokta: Compose tek bir sunucu içindir. Birden fazla sunucuya yayılma, otomatik ölçekleme ve kendini iyileştirme gerekiyorsa Kubernetes gibi bir orkestrasyon aracı gerekir.",
+      "modelAnswer": "Docker Compose, birden fazla container'dan oluşan bir uygulamanın servislerini, ağlarını ve volume'larını tek bir YAML dosyasında (`compose.yaml`) tanımlayıp tek komutla yönetmeyi sağlar. `docker compose up -d` bütün servisleri başlatır, `docker compose down` servisleri durdurup container'ları ve ağı kaldırır. Compose varsayılan olarak uygulama için ortak bir ağ kurar ve her servis bu ağda servis adıyla bulunur; örneğin backend veritabanına `db` adıyla bağlanır. En kolay kullanım tek sunucudur; birden fazla sunucuya yayılmak ve ölçekleme için Swarm ya da Kubernetes gibi bir orkestrasyon katmanı gerekir.",
       "keyConcepts": [
         {
           "id": "yaml",
@@ -725,7 +725,7 @@
       "followUps": [
         "Compose'ta up ile up --build arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Compose application model, Networking in Compose, Use Compose in production"
     },
     {
       "id": "docker-depends-on-healthcheck",
@@ -734,7 +734,7 @@
       "topic": "Compose",
       "difficulty": 2,
       "prompt": "Compose'ta backend, veritabanından önce ayağa kalkıp bağlanamıyor. depends_on bunu neden çözmez ve doğru çözüm nedir?",
-      "modelAnswer": "Varsayılan `depends_on` yalnızca **başlatma sırasını** belirler: db container'ı **başlatıldıktan** sonra backend başlatılır. Ama container'ın başlamış olması, içindeki PostgreSQL'in bağlantı **kabul etmeye hazır** olduğu anlamına gelmez; veritabanının açılması birkaç saniye sürebilir.\n\nDoğru çözüm, veritabanına bir **healthcheck** tanımlayıp backend'i onun **sağlıklı** olmasına bağlamaktır:\n\n```yaml\nservices:\n  db:\n    image: postgres:16\n    healthcheck:\n      test: [\"CMD-SHELL\", \"pg_isready -U app\"]\n      interval: 5s\n      retries: 10\n  backend:\n    depends_on:\n      db:\n        condition: service_healthy\n```\n\nEk olarak uygulamanın kendisi de bağlantı hatasına dayanıklı olmalıdır (bağlantı havuzunun yeniden denemesi gibi). Veritabanı sonradan yeniden başlarsa depends_on işe yaramaz; o anda uygulamanın yeniden bağlanabilmesi gerekir.",
+      "modelAnswer": "Varsayılan `depends_on` yalnızca başlatma sırasını belirler; Compose bağımlılığın hazır olmasını değil yalnızca çalışmaya başlamasını bekler, oysa container'ı açılmış bir PostgreSQL'in bağlantı kabul etmeye başlaması birkaç saniye sürebilir. Doğru çözüm veritabanına `pg_isready` çalıştıran bir healthcheck tanımlayıp backend'in `depends_on` kaydına `condition: service_healthy` yazmaktır; böylece backend ancak veritabanı sağlıklı olduğunda başlatılır. Bu yalnızca açılıştaki sırayı çözer; veritabanı sonradan yeniden başlarsa `depends_on` bir şey yapmaz, bu yüzden uygulamanın kendisi de bağlantı hatasına dayanıklı olmalı ve bağlantı havuzu yeniden denemelidir.",
       "keyConcepts": [
         {
           "id": "sadece-sira",
@@ -804,7 +804,7 @@
       "followUps": [
         "Spring Boot uygulaması için healthcheck'i neyle yazarsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Control startup and shutdown order in Compose"
     },
     {
       "id": "docker-env-secrets",
@@ -813,7 +813,7 @@
       "topic": "Güvenlik",
       "difficulty": 2,
       "prompt": "Veritabanı şifresi gibi gizli bilgileri bir container'a nasıl verirsin? Neler yapılmamalıdır?",
-      "modelAnswer": "Yapılmaması gerekenler:\n- Şifreyi **Dockerfile'a** (`ENV DB_PASSWORD=...`) veya image'a kopyalanan bir dosyaya yazmak. Image'ı çeken herkes `docker history` veya `docker inspect` ile görür; image katmanlarından silinmiş gibi görünse bile önceki katmanda durur.\n- Şifreyi **git reposuna** commit etmek.\n\nDoğru yollar:\n- **Çalışma anında environment variable** vermek: `docker run -e` veya Compose'ta `env_file: .env`. `.env` dosyası `.gitignore`'a eklenir ve sunucuda tutulur.\n- **Docker secrets** (Swarm/Compose): şifre container'a `/run/secrets/` altında dosya olarak bağlanır, environment'ta görünmez.\n- Büyük sistemlerde **Vault** veya bulut sağlayıcının secret manager'ı.\n\nSık atlanan nokta: environment variable'lar da tamamen gizli değildir; `docker inspect` çıktısında ve bazen hata loglarında görünür. Yüksek güvenlik gereken yerlerde dosya tabanlı secret tercih edilir. Build sırasında gizli bilgi gerekiyorsa (özel bir paket deposu gibi) `RUN --mount=type=secret` kullanılır, böylece katmana yazılmaz.",
+      "modelAnswer": "Şifre Dockerfile'a `ENV` ile ya da image'a kopyalanan bir dosyaya yazılmaz, çünkü image'a gömülür ve image'ı çeken herkes `docker history` ya da `docker image inspect` ile görebilir, sonraki bir katmanda silinen dosya da önceki image katmanında durur; aynı şekilde git reposuna da commit edilmez. En basit yol şifreyi çalışma anında ortam değişkeni olarak vermektir (`docker run -e` ya da Compose'ta `env_file` ile, `.gitignore`'a eklenmiş bir `.env` dosyasından). Ortam değişkenleri de tam gizli değildir, container'daki bütün süreçler görebilir ve hata ayıklarken loglara düşebilir; bu yüzden Compose secret'ları tercih edilir, şifre container'a `/run/secrets/<ad>` altında dosya olarak bağlanır. Build sırasında gerekiyorsa `RUN --mount=type=secret` kullanılır, böylece şifre yalnızca o talimat süresince erişilebilir olur ve image'da kalmaz; büyük sistemlerde Vault gibi bir secret yöneticisi devreye girer.",
       "keyConcepts": [
         {
           "id": "dockerfile-yok",
@@ -872,7 +872,7 @@
       "followUps": [
         "Environment variable'ların docker inspect çıktısında görünmesi neden risklidir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Secrets in Compose, Build secrets, Building best practices"
     },
     {
       "id": "docker-image-size",
@@ -958,7 +958,7 @@
       "topic": "Hata ayıklama",
       "difficulty": 1,
       "prompt": "Bir container hata veriyor veya beklenmedik davranıyor. Sorunu bulmak için hangi komutları kullanırsın?",
-      "modelAnswer": "Adım adım:\n\n1. **`docker ps -a`**: Container çalışıyor mu, durduysa **exit code** ne? `-a` durmuş container'ları da gösterir.\n2. **`docker logs <container>`**: Uygulamanın stdout/stderr çıktısı. `-f` ile canlı izlenir, `--tail 100` ile son satırlar alınır. Çoğu sorun burada görünür.\n3. **`docker exec -it <container> sh`**: Çalışan container'ın içine girip dosyalara, ortam değişkenlerine, ağa bakmak. (bash olmayan imajlarda `sh`.)\n4. **`docker inspect <container>`**: Ayrıntılı yapılandırma; environment variable'lar, mount'lar, ağ ve IP, restart sayısı, son çıkış nedeni.\n5. **`docker stats`**: Anlık CPU ve bellek kullanımı; bellek sınırına dayanıyor mu?\n\nExit code ipucu verir: **137** genelde bellek yetmediği için kernel tarafından öldürüldüğünü (**OOMKilled**, `docker inspect`'te görünür) ya da SIGKILL aldığını, **1** uygulama hatasını, **0** normal bitişi gösterir.\n\nCompose kullanılıyorsa aynı komutların karşılıkları: `docker compose ps`, `docker compose logs -f backend`, `docker compose exec backend sh`.",
+      "modelAnswer": "Önce `docker ps -a` ile container'ın çalışıp çalışmadığına ve durduysa çıkış koduna bakılır; `-a` durmuş container'ları da gösterir. Sorunların çoğu uygulamanın stdout ve stderr çıktısında görünür, bunu `docker logs` verir (`-f` ile canlı izlenir). Çalışan container'ın içindeki dosyalara, ortam değişkenlerine ve ağa `docker exec -it <container> sh` ile girip bakılır; mount'lar, ağ ayarları, yeniden başlama sayısı ve son çıkış nedeni gibi ayrıntılı yapılandırmayı `docker inspect`, anlık CPU ve bellek kullanımını `docker stats` gösterir. Çıkış kodu da ipucu verir; 0 normal bitiş, 1 genelde uygulama hatasıdır, 137 (128 + 9) sürecin SIGKILL ile öldürüldüğünü gösterir ve sebep bellek yetmemesiyse `docker inspect` çıktısında OOMKilled true olur.",
       "keyConcepts": [
         {
           "id": "ps",
@@ -1029,7 +1029,7 @@
       "followUps": [
         "Container içinde shell yoksa (distroless) nasıl hata ayıklarsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: docker container run (Exit status), Docker Engine API (ContainerState); GNU Bash Reference Manual: Exit Status"
     },
     {
       "id": "docker-exits-immediately",
@@ -1038,7 +1038,7 @@
       "topic": "Hata ayıklama",
       "difficulty": 2,
       "prompt": "Bir container başlatıldıktan hemen sonra kapanıyor. Olası sebepler nelerdir?",
-      "modelAnswer": "Container, **ana süreci (PID 1) çalıştığı sürece** yaşar. Ana süreç biterse container da durur. Bu yüzden \"hemen kapanıyor\" sorununun sebepleri şunlardır:\n\n- **Ana komut ön planda çalışmıyor:** Servis arka plana (daemon) geçiyorsa ana süreç hemen biter. Örneğin nginx `daemon off;` ile, diğer servisler kendi foreground seçenekleriyle çalıştırılmalıdır.\n- **Komut işini bitirip çıkıyor:** `ubuntu` image'ı varsayılan olarak `bash` çalıştırır; `-it` verilmezse girdi olmadığı için bash hemen çıkar. Bu bir hata değil, beklenen davranıştır.\n- **Uygulama hata verip çöküyor:** Eksik environment variable, bağlanamayan veritabanı, bulunamayan dosya. Exit code 1 olur ve sebep loglardadır.\n- **Yanlış ENTRYPOINT/CMD:** Dosya bulunamıyor, script çalıştırılabilir değil (`chmod +x` unutulmuş) veya Windows'ta yazılmış script'te CRLF satır sonu yüzünden `/bin/sh^M` hatası.\n\nTanı için önce `docker ps -a` ile exit code'a, sonra `docker logs` ile çıktıya bakılır. Log boşsa container'ı komutu ezerek başlatıp içeriden denemek işe yarar: `docker run -it --entrypoint sh <image>`.",
+      "modelAnswer": "Container'ın ana süreci Dockerfile'daki ENTRYPOINT ve/veya CMD'dir; ana süreç (PID 1) biterse container da durur. En sık sebep servisin arka plana (daemon) geçmesidir, ana süreç hemen biter, bu yüzden nginx gibi servisler ön planda çalıştırılmalıdır; `ubuntu` gibi bash çalıştıran bir image da `-it` verilmezse girdi olmadığı için hemen çıkar ve bu bir hata değildir. Uygulama da eksik environment değişkeni ya da bağlanamayan bir veritabanı yüzünden çöküyor olabilir, o zaman çıkış kodu genelde 1'dir ve sebep loglardadır. Komut bulunamazsa Docker 127, çalıştırılamazsa 126 döner; script'in çalıştırılabilir olmaması (`chmod +x` unutulmuş) ya da Windows'ta yazılmış bir script'in CRLF satır sonu taşıması da container'ı başlar başlamaz düşürür. Tanı için önce `docker ps -a` ile çıkış koduna, sonra `docker logs` ile çıktıya bakılır; log boşsa `docker run -it --entrypoint sh <image>` ile içeriden denenir.",
       "keyConcepts": [
         {
           "id": "pid1",
@@ -1110,7 +1110,7 @@
       "followUps": [
         "Windows'ta geliştirip Linux container'ında çalıştırılan script'lerde CRLF sorununu kalıcı olarak nasıl önlersin?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Run multiple processes in a container, Running containers (Exit status), docker container run"
     },
     {
       "id": "docker-restart-policy",
@@ -1119,7 +1119,7 @@
       "topic": "Çalıştırma",
       "difficulty": 1,
       "prompt": "Restart policy nedir? Seçenekleri nelerdir ve canlıda hangisini kullanırsın?",
-      "modelAnswer": "Restart policy, container durduğunda Docker'ın onu **otomatik olarak yeniden başlatıp başlatmayacağını** belirler:\n\n- **no** (varsayılan): Hiç yeniden başlatma.\n- **on-failure[:N]**: Yalnızca **hata ile** (sıfır olmayan exit code) çıkarsa yeniden başlat; isteğe bağlı en fazla N kez.\n- **always**: Her durumda yeniden başlat; elle durdurulsa bile Docker servisi yeniden başladığında container da başlar.\n- **unless-stopped**: always gibi, ama **elle durdurulmuşsa** Docker yeniden başladığında başlatmaz.\n\nCanlıda genelde **unless-stopped** kullanılır: sunucu yeniden başlarsa veya uygulama çökerse container geri gelir, ama bakım için bilerek durdurulan bir container kendiliğinden açılmaz.\n\n```yaml\nservices:\n  backend:\n    restart: unless-stopped\n```\n\nSık atlanan nokta: restart policy sorunu gizleyebilir. Sürekli çöküp yeniden başlayan bir container dışarıdan çalışıyor gibi görünür; `docker ps` çıktısındaki \"Restarting\" durumu ve `docker inspect`'teki RestartCount kontrol edilmelidir.",
+      "modelAnswer": "Restart policy, container durduğunda Docker'ın onu otomatik olarak yeniden başlatıp başlatmayacağını belirler; varsayılan `no` hiç yeniden başlatmaz. `on-failure[:N]` yalnızca sıfır olmayan bir çıkış koduyla, yani hata ile çıkıldığında ve isteğe bağlı en fazla N kez yeniden başlatır; `always` her durumda yeniden başlatır ve elle durdurulan container'ı da Docker servisi yeniden başladığında geri getirir, `unless-stopped` ise elle durdurulmuş container'ı servis yeniden başlasa bile başlatmaz. Canlıda genelde `unless-stopped` kullanılır, çünkü sunucu yeniden başlarsa ya da uygulama çökerse container geri gelir ama bakım için bilerek durdurulan container kendiliğinden açılmaz. Policy ancak container en az 10 saniye ayakta kaldıktan sonra devreye girer; bundan sonra tekrar tekrar çöken bir container dışarıdan çalışıyor gibi görünüp sorunu gizleyebileceği için `docker ps`'teki Restarting durumu ve `docker inspect`'teki RestartCount takip edilir.",
       "keyConcepts": [
         {
           "id": "otomatik",
@@ -1175,7 +1175,7 @@
       "followUps": [
         "Docker servisinin kendisi sunucu açılışında başlamazsa restart policy işe yarar mı?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Start containers automatically, Docker Engine API (RestartCount)"
     },
     {
       "id": "docker-resource-limits",
@@ -1184,7 +1184,7 @@
       "topic": "Çalıştırma",
       "difficulty": 3,
       "prompt": "Bir container'ın bellek ve CPU kullanımını nasıl sınırlarsın? Java uygulamalarında nelere dikkat etmek gerekir?",
-      "modelAnswer": "Varsayılan olarak bir container host'un **tüm belleğini ve CPU'sunu** kullanabilir; bir container'daki bellek sızıntısı tüm sunucuyu etkiler. Sınırlar cgroup'lar üzerinden konur:\n\n```bash\ndocker run --memory=512m --cpus=1.5 myapp\n```\n\nCompose'ta `deploy.resources.limits` altında `memory` ve `cpus` olarak verilir.\n\nBellek sınırı aşılırsa kernel container'ı **OOM killer** ile öldürür; exit code **137** olur ve `docker inspect`'te `OOMKilled: true` görünür. CPU sınırı aşıldığında ise container öldürülmez, **yavaşlatılır** (throttling).\n\nJava'da dikkat edilecekler:\n- Modern JVM'ler (JDK 10+) **container farkındadır**; heap boyutunu host belleğine değil container sınırına göre hesaplar.\n- Varsayılan maksimum heap sınırın yalnızca **%25**'idir. Bu çoğu zaman azdır; `-XX:MaxRAMPercentage=75` ile artırılır.\n- Heap'i sınırın tamamına eşitlemek hatadır: JVM heap dışında da bellek kullanır (metaspace, thread stack'leri, direct buffer). Heap sınıra çok yakınsa container yine OOM ile öldürülür.",
+      "modelAnswer": "Varsayılan olarak bir container'ın kaynak sınırı yoktur, host'un tüm belleğini ve CPU'sunu kullanabilir; bu yüzden tek bir container'daki bellek sızıntısı bütün sunucuyu etkileyebilir. Sınırlar `docker run --memory=512m --cpus=1.5` gibi bayraklarla ya da Compose'ta `deploy.resources.limits` altında verilir ve Docker bunları container'ın cgroup ayarlarına yazar. Bellek sınırı aşılırsa kernel container'daki süreci OOM killer ile öldürür, çıkış kodu 137 olur ve `docker inspect` OOMKilled'ı gösterir; CPU sınırında ise container öldürülmez, yavaşlatılır (throttling). Java'da güncel JVM'ler Linux'ta varsayılan olarak container farkındadır ve heap'i container'ın bellek sınırına göre hesaplar, ama varsayılan en büyük heap sınırın yalnızca %25'idir ve çoğu zaman `-XX:MaxRAMPercentage=75` gibi bir değerle artırılır. Heap'i sınırın tamamına eşitlemek hatadır, çünkü JVM heap dışında da metaspace, thread stack'leri ve direct buffer için bellek kullanır ve container yine OOM ile öldürülür.",
       "keyConcepts": [
         {
           "id": "varsayilan",
@@ -1257,7 +1257,7 @@
       "followUps": [
         "Container'ın bellek kullanımını anlık olarak nasıl izlersin?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Resource constraints, Compose Deploy Specification (resources); Oracle Java SE 21: java komutu (UseContainerSupport, MaxRAMPercentage)"
     },
     {
       "id": "docker-non-root",
@@ -1266,7 +1266,7 @@
       "topic": "Güvenlik",
       "difficulty": 2,
       "prompt": "Container içinde uygulamayı neden root kullanıcısıyla çalıştırmamalısın? Nasıl önlersin?",
-      "modelAnswer": "Docker image'ları varsayılan olarak **root** kullanıcısıyla çalışır. Container yalıtılmış olsa da kernel paylaşıldığı için, uygulamadaki bir açıktan container'a giren saldırgan root yetkisiyle **container'dan kaçma** (container escape) açıklarını kullanabilir veya bağlı volume'lardaki dosyalara tam yetkiyle erişebilir.\n\nÇözüm Dockerfile'da yetkisiz bir kullanıcı oluşturup ona geçmektir:\n\n```dockerfile\nFROM eclipse-temurin:21-jre\nRUN useradd --system --uid 1001 app\nWORKDIR /app\nCOPY --chown=app:app app.jar .\nUSER app\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\n```\n\nBu, **en az yetki** (least privilege) ilkesinin uygulamasıdır.\n\nEk önlemler: `--read-only` ile container dosya sistemini salt okunur yapmak, `--cap-drop ALL` ile gereksiz Linux yetkilerini kaldırmak ve `--privileged` bayrağını gerçekten gerekmedikçe kullanmamak.\n\nSık atlanan nokta: root olmayan kullanıcı 1024'ün altındaki portları dinleyemez. Uygulama 80 yerine 8080 gibi bir portu dinlemeli, dışarıya port eşlemesiyle 80 olarak sunulmalıdır.",
+      "modelAnswer": "Container'daki varsayılan kullanıcı root'tur (UID 0); Docker container'ı kısıtlı bir yetki kümesiyle başlatsa da kernel paylaşıldığı için, uygulamadaki bir açıktan giren saldırgan root yetkisiyle container'dan kaçma açıklarını deneyebilir ya da bağlı host klasörlerindeki dosyalara tam yetkiyle yazabilir. Çözüm Dockerfile'da `useradd` ile yetkisiz bir kullanıcı oluşturmak, dosyaları ona `COPY --chown` ile vermek ve `USER` talimatıyla o kullanıcıya geçmektir; bu en az yetki ilkesinin uygulamasıdır. Ek önlem olarak `--read-only` ile kök dosya sistemi salt okunur yapılır, `--cap-drop ALL` ile gereksiz Linux yetkileri kaldırılır ve `--privileged` gerçekten gerekmedikçe kullanılmaz. Eskiden root olmayan kullanıcı 1024'ün altındaki portları dinleyemezdi; Docker 20.10'dan beri container'ın kendi ağında buna izin veren bir sysctl varsayılan olarak açıktır, ama host ağ modunda host'un kendi ayarı geçerli olduğu için uygulamayı 8080 gibi bir portta çalıştırmak hâlâ en taşınabilir seçimdir.",
       "keyConcepts": [
         {
           "id": "varsayilan-root",
@@ -1335,14 +1335,14 @@
             "80 yerine"
           ],
           "anchors": [
-            "Root olmayan kullanıcı 1024 altındaki portları dinleyemez."
+            "Docker 20.10'dan beri container ağında root olmayan kullanıcı da 1024 altı portu dinleyebilir; host ağ modunda bu geçerli değildir, 8080 gibi bir port taşınabilir seçimdir."
           ]
         }
       ],
       "followUps": [
         "Bind mount edilmiş bir klasöre root olmayan kullanıcı yazamıyorsa sorunu nasıl çözersin?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Building best practices (USER), Running containers (User, Runtime privilege and Linux capabilities), Docker Engine security, docker container run; Docker Engine 20.10 release notes (moby/moby#41030)"
     },
     {
       "id": "docker-image-tags",
@@ -1351,7 +1351,7 @@
       "topic": "Registry ve image",
       "difficulty": 2,
       "prompt": "Image tag'leri nasıl çalışır? Canlıda latest tag'ini kullanmak neden risklidir?",
-      "modelAnswer": "Bir image `repo:tag` biçiminde adlandırılır (`postgres:16.4`). Tag, image'ın belirli bir sürümüne işaret eden **değiştirilebilir bir etikettir**. Tag verilmezse varsayılan olarak **latest** kullanılır.\n\nlatest'ın sorunları:\n- **\"En yeni\" anlamına gelmez**, yalnızca tag verilmeden push edilen image'ın adıdır.\n- **Değişkendir:** Aynı `latest` bugün bir sürüme, yarın başka bir sürüme işaret eder. Sunucu image'ı yeniden çektiğinde habersiz bir major sürüm yükseltmesi olabilir (PostgreSQL 16'dan 17'ye geçip mevcut veriyi açamamak gibi).\n- **Geri dönüşü zorlaştırır:** Hangi sürümün çalıştığı belli olmadığı için önceki sürüme dönmek güçleşir.\n\nCanlıda **sabit sürüm tag'i** kullanılır: `postgres:16.4`, kendi uygulaman için semver (`1.4.2`) veya git commit hash'i.\n\nSık atlanan nokta: sabit tag bile teorik olarak üzerine yeniden push edilebilir. Tam garanti için image **digest**'iyle (`postgres@sha256:...`) çekilir; digest içeriğin hash'idir ve değiştirilemez.",
+      "modelAnswer": "Bir image'ın adı depo adından ve ona eklenen bir tag'den oluşur, örneğin `postgres:16.4`; tag belirli bir image'a işaret eden değiştirilebilir bir etikettir ve tag verilmezse Docker `latest` kullanır. Bu yüzden `latest` en yeni sürüm anlamına gelmez, yalnızca tag verilmeden push edilen image'ın etiketidir ve bugün bir sürüme, yarın başka bir sürüme işaret edebilir. Canlıda sunucu image'ı yeniden çektiğinde habersiz bir major sürüm yükseltmesi olabilir (PostgreSQL 16'dan 17'ye geçip mevcut veri dizinini açamamak gibi) ve hangi sürümün çalıştığı belli olmadığı için önceki sürüme dönmek zorlaşır. Bu yüzden sabit sürüm tag'i (`postgres:16.4`, kendi uygulaman için semver ya da commit hash'i) kullanılır; tag'ler de yeniden push edilebildiği için tam garanti istendiğinde image digest'iyle (`postgres@sha256:...`) çekilir, digest içeriğe bağlıdır ve değişmez.",
       "keyConcepts": [
         {
           "id": "format",
@@ -1414,7 +1414,7 @@
       "followUps": [
         "Kendi uygulamanın image'ını CI'da nasıl tag'lersin?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: docker image tag, docker image pull (Pull an image by digest), Building best practices (Pin base image versions)"
     },
     {
       "id": "docker-network-drivers",
@@ -1493,7 +1493,7 @@
       "topic": "Registry ve image",
       "difficulty": 1,
       "prompt": "Docker registry nedir? Bir image'ı registry'ye nasıl gönderir ve sunucuda nasıl kullanırsın?",
-      "modelAnswer": "Registry, Docker image'larının **saklandığı ve paylaşıldığı sunucudur**. En bilineni **Docker Hub**'dır; GitHub Container Registry (ghcr.io), AWS ECR, GitLab Registry veya kendi kurduğun özel bir registry de kullanılabilir.\n\nAkış:\n\n```bash\ndocker build -t ghcr.io/kullanici/app:1.4.2 .\ndocker login ghcr.io\ndocker push ghcr.io/kullanici/app:1.4.2\n\n# sunucuda:\ndocker pull ghcr.io/kullanici/app:1.4.2\ndocker run -d ghcr.io/kullanici/app:1.4.2\n```\n\nImage adının başındaki kısım (`ghcr.io/kullanici`) hangi registry'ye gideceğini belirler; registry yazılmazsa Docker Hub varsayılır.\n\nBu akışın faydası: image **bir kez CI'da build edilir**, test edilen aynı image tüm ortamlara (test, canlı) gönderilir. Sunucuda kaynak koddan yeniden build etmek gerekmez ve \"test ettiğim image ile canlıdaki farklı\" riski ortadan kalkar.\n\nSık atlanan nokta: kurumsal ortamlarda (bankalar gibi) internete açık Docker Hub'a erişim genelde kapalıdır; image'lar Nexus veya Artifactory gibi **kurum içi bir registry** üzerinden çekilir.",
+      "modelAnswer": "Registry, container image'larının saklandığı ve paylaşıldığı merkezi bir depodur; varsayılanı Docker Hub'dır, GitHub Container Registry (ghcr.io), AWS ECR ya da GitLab Container Registry gibi seçenekler de vardır. Image, adına registry adresi eklenerek etiketlenir (`ghcr.io/kullanici/app:1.4.2`), `docker login` ile giriş yapılıp `docker push` ile gönderilir, sunucuda `docker pull` ile çekilir; adda registry yazılmazsa Docker Hub varsayılır. Bu akışın faydası, image'ın CI'da bir kez build edilmesi ve test edilen aynı image'ın test ve canlı ortamlara gönderilmesidir, böylece sunucuda kaynak koddan yeniden build gerekmez. Harbor, JFrog Artifactory ya da Nexus ile kurum içi bir registry de çalıştırılabilir; internete kapalı ortamlarda image'lar yalnızca bu özel registry'den çekilir.",
       "keyConcepts": [
         {
           "id": "tanim",
@@ -1568,7 +1568,7 @@
       "followUps": [
         "Sunucunun özel bir registry'den image çekebilmesi için kimlik doğrulamayı nasıl yaparsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: What is a registry?, Docker overview (Docker registries), docker image tag"
     }
   ]
 }
