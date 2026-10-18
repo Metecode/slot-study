@@ -196,7 +196,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "React'in kütüphane, Angular'ın framework olarak anılması proje kurarken hangi kararları sana bırakır?"
+      ]
     },
     {
       "id": "react-ozellikleri",
@@ -275,7 +278,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Tek yönlü veri akışında bir child, parent'taki veriyi değiştirmek istediğinde ne yapılır?"
+      ]
     },
     {
       "id": "react-jsx",
@@ -330,7 +336,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "JSX içinde neden doğrudan if yazılamaz, koşullu render nasıl yapılır?"
+      ]
     },
     {
       "id": "react-element-vs-component",
@@ -399,7 +408,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir component'i JSX ile değil de düz fonksiyon gibi Profile() diye çağırmak neyi bozar?"
+      ]
     },
     {
       "id": "react-state",
@@ -470,7 +482,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "State'teki bir diziyi setter yerine push ile doğrudan değiştirirsen ne olur?"
+      ]
     },
     {
       "id": "react-props",
@@ -541,7 +556,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir component'in aldığı prop'u başlangıç değeri olarak state'e kopyalaması hangi soruna yol açabilir?"
+      ]
     },
     {
       "id": "react-state-vs-props",
@@ -610,7 +628,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir veri parçasının state mi, prop mu, yoksa hesaplanan bir değer mi olması gerektiğine nasıl karar verirsin?"
+      ]
     },
     {
       "id": "react-html-vs-react-event",
@@ -661,7 +682,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "onClick={handleClick()} yazılırsa ne olur?"
+      ]
     },
     {
       "id": "react-synthetic-event",
@@ -727,7 +751,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "React 17'de olay dinleyicilerinin document yerine kök elemana bağlanması neyi çözdü?"
+      ]
     },
     {
       "id": "react-key-prop",
@@ -798,7 +825,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "key olarak Math.random() vermek neden index vermekten bile kötüdür?"
+      ]
     },
     {
       "id": "react-shadow-dom-vs-virtual-dom",
@@ -869,7 +899,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir React bileşenini web component'in shadow root'u içine render ettiğinde stil ve olaylar açısından neye dikkat edersin?"
+      ]
     },
     {
       "id": "react-controlled-component",
@@ -923,7 +956,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir input'a value verip onChange vermezsen ne olur?"
+      ]
     },
     {
       "id": "react-uncontrolled-component",
@@ -977,7 +1013,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir input önce value olmadan, sonra value ile render edilirse React neden uyarı verir?"
+      ]
     },
     {
       "id": "react-fragment",
@@ -1045,7 +1084,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Fragment'a key dışında className gibi başka bir prop verilebilir mi?"
+      ]
     },
     {
       "id": "react-innerhtml",
@@ -1111,7 +1153,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Kullanıcı içeriğini HTML yerine Markdown olarak saklayıp render etmek XSS riskini tek başına ortadan kaldırır mı?"
+      ]
     },
     {
       "id": "react-reconciliation",
@@ -1180,7 +1225,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Aynı yerde koşula göre input yerine textarea render edilirse kullanıcının yazdığı metne ne olur?"
+      ]
     },
     {
       "id": "react-fiber",
@@ -1247,7 +1295,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Render işi yarıda kesilip yeniden başlatılabiliyorsa, render sırasında yan etki çalıştırmak neden sorun olur?"
+      ]
     },
     {
       "id": "react-lifting-state-up",
@@ -1302,7 +1353,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "State'i yukarı taşımak hangi durumda gereksiz render'lara yol açar, bunu nasıl sınırlarsın?"
+      ]
     },
     {
       "id": "react-hoc",
@@ -1370,7 +1424,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "HOC'ları iç içe kullanmanın dezavantajları nelerdir, custom hook bunları nasıl çözer?"
+      ]
     },
     {
       "id": "react-portal",
@@ -1437,7 +1494,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Portal ile açılan bir modalda klavye odağını ve erişilebilirliği nasıl yönetirsin?"
+      ]
     },
     {
       "id": "react-index-as-key",
@@ -1509,7 +1569,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Verinde kararlı bir id yoksa key'i nerede ve nasıl üretirsin?"
+      ]
     },
     {
       "id": "react-memo",
@@ -1578,7 +1641,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "React.memo'ya kendi karşılaştırma fonksiyonunu vermek ne zaman mantıklıdır, riski nedir?"
+      ]
     },
     {
       "id": "react-lazy",
@@ -1659,7 +1725,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Kullanıcı bir lazy sayfaya geçmeden önce o sayfanın kodunu önceden yüklemek için ne yaparsın?"
+      ]
     },
     {
       "id": "react-hook",
@@ -1722,7 +1791,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Hook'lar class component'teki yaşam döngüsü metotlarının birebir karşılığı mıdır?"
+      ]
     },
     {
       "id": "react-hook-kurallari",
@@ -1790,7 +1862,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir hook'un yalnızca bir koşul sağlandığında çalışması gerekiyorsa kuralı bozmadan bunu nasıl yaparsın?"
+      ]
     },
     {
       "id": "react-error-boundary",
@@ -1859,7 +1934,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir event handler'da oluşan hatayı error boundary'nin fallback'inde göstermek istersen ne yaparsın?"
+      ]
     },
     {
       "id": "react-code-splitting",
@@ -1942,7 +2020,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "React'te bir bölme noktasını nasıl kurarsın ve parça yüklenirken kullanıcıya ne gösterirsin?"
+      ]
     },
     {
       "id": "react-suspense",
@@ -2011,7 +2092,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Ekranda görünen bir içerik, alt bileşen yeniden askıya alınınca neden fallback'e dönebilir, bunu nasıl önlersin?"
+      ]
     },
     {
       "id": "react-windowing",
@@ -2079,7 +2163,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Satır yükseklikleri farklı olan bir listede windowing'i zorlaştıran nedir?"
+      ]
     },
     {
       "id": "react-useeffect",
@@ -2150,7 +2237,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Effect içinde veri çekerken component unmount olursa ya da yanıtlar sırasız gelirse ne yaparsın?"
+      ]
     },
     {
       "id": "react-server-components",
@@ -2231,7 +2321,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Bir server component'ten client component'e fonksiyon ya da class örneği gibi her türlü prop geçirilebilir mi?"
+      ]
     },
     {
       "id": "react-prop-drilling",
@@ -2286,7 +2379,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Context'e geçmeden önce prop drilling'i hangi durumda sorun saymazsın?"
+      ]
     },
     {
       "id": "react-usestate-vs-useref",
@@ -2357,7 +2453,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Render sırasında ref.current okumak ya da yazmak neden önerilmez?"
+      ]
     },
     {
       "id": "react-useeffect-vs-uselayouteffect",
@@ -2425,7 +2524,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "useLayoutEffect sunucu tarafı render'da çalışır mı, ölçüme dayanan bir arayüzde bu ne demektir?"
+      ]
     },
     {
       "id": "react-strictmode",
@@ -2493,7 +2595,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "StrictMode'da effect iki kez çalıştığı için bir API'ye iki istek gidiyorsa doğru düzeltme nedir?"
+      ]
     },
     {
       "id": "react-batching",
@@ -2559,7 +2664,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "flushSync'i sık kullanmak neden performansı düşürür?"
+      ]
     },
     {
       "id": "react-hydration",
@@ -2628,7 +2736,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Sunucuda ve istemcide farklı çıkan bir değeri, örneğin yerel saati, hydration hatası olmadan nasıl gösterirsin?"
+      ]
     },
     {
       "id": "react-usereducer-vs-usestate",
@@ -2698,7 +2809,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Reducer içinde API çağrısı yapmak ya da state'i doğrudan değiştirmek neden yanlıştır?"
+      ]
     },
     {
       "id": "react-updater-function",
@@ -2767,7 +2881,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Updater fonksiyonu StrictMode'da neden iki kez çağrılır, bu fonksiyon için ne anlama gelir?"
+      ]
     },
     {
       "id": "react-usememo-vs-usecallback",
@@ -2836,7 +2953,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "React Compiler kullanılan bir projede useMemo ve useCallback'e hâlâ ihtiyaç var mı?"
+      ]
     },
     {
       "id": "react-custom-hook",
@@ -2904,7 +3024,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "İki component aynı custom hook'u kullanırken aynı veriyi görmeleri gerekiyorsa ne yaparsın?"
+      ]
     },
     {
       "id": "react-usetransition-vs-usedeferredvalue",
@@ -2972,7 +3095,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Kontrollü bir input'un kendi değerini startTransition içinde güncellemek neden işe yaramaz?"
+      ]
     },
     {
       "id": "react-memo-context",
@@ -3042,7 +3168,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "use(Context) ile useContext arasında context okuma açısından ne fark var?"
+      ]
     },
     {
       "id": "react-client-vs-server-state",
@@ -3114,7 +3243,10 @@
           ]
         }
       ],
-      "source": "sudheerj/reactjs-interview-questions (MIT)"
+      "source": "sudheerj/reactjs-interview-questions (MIT)",
+      "followUps": [
+        "Server state'i useState ve useEffect ile elle yönetirken en sık hangi sorunlar çıkar?"
+      ]
     }
   ]
 }
