@@ -9,7 +9,7 @@
       "topic": "props.children",
       "difficulty": 1,
       "prompt": "React'te props.children nedir ve kompozisyon desenindeki rolü nedir?",
-      "modelAnswer": "Bir bileşenin açılış ve kapanış etiketleri arasına yazılan JSX, o bileşene children prop'u olarak geçer; özel bir sözdizimi değil, sıradan bir prop'tur. Böylece kart ya da panel gibi sarmalayıcı bileşenler içlerinde ne gösterileceğini bilmeden yazılır ve React kodu kalıtım yerine bu tür kompozisyonla yeniden kullanır. children opak bir veri yapısıdır; tek eleman, dizi, metin ya da boş olabileceği için dizi olduğu varsayılıp doğrudan map çalıştırılmaz. Dönüştürmek gerekiyorsa React.Children.map kullanılır, ama bu API nadiren gerekir ve kırılgan kod üretebilir; çoğu durumda dizi alan bir prop ya da render prop daha sağlamdır.",
+      "modelAnswer": "Bir bileşenin açılış ve kapanış etiketleri arasına yazılan JSX, o bileşene children prop'u olarak geçer; özel bir sözdizimi değil, sıradan bir prop'tur. Böylece kart ya da panel gibi kapsayıcı bileşenler içlerinde ne gösterileceğini bilmeden yazılır ve React kodu kalıtım yerine bu tür kompozisyonla yeniden kullanır. children opak bir veri yapısıdır; tek eleman, dizi, metin ya da boş olabileceği için dizi olduğu varsayılıp doğrudan map çalıştırılmaz. Dönüştürmek gerekiyorsa React.Children.map kullanılır, ama bu API nadiren gerekir ve kırılgan kod üretebilir; çoğu durumda dizi alan bir prop ya da render prop daha sağlamdır.",
       "keyConcepts": [
         {
           "id": "children-is-a-prop",
@@ -568,7 +568,7 @@
       "difficulty": 1,
       "kind": "definition",
       "prompt": "State ile props arasındaki fark nedir?",
-      "modelAnswer": "State component'in kendi içinde yönettiği ve değiştirebildiği veridir; props ise parent'tan gelen ve child için salt okunur olan girdilerdir. İkisi de değiştiğinde yeniden render tetiklenir. Kısacası props bir fonksiyona verilen argümanlara, state ise bileşenin hafızasına benzer.",
+      "modelAnswer": "State component'in kendi içinde yönettiği ve değiştirebildiği veridir; props ise parent'tan gelen ve child için salt okunur olan girdilerdir. İkisi de değiştiğinde yeniden render tetiklenir. Kısacası props bir fonksiyona verilen parametrelere, state ise bileşenin hafızasına benzer.",
       "keyConcepts": [
         {
           "id": "state-ic",
