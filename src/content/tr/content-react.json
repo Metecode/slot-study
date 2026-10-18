@@ -1587,59 +1587,75 @@
       "difficulty": 2,
       "kind": "definition",
       "prompt": "React.lazy nedir?",
-      "modelAnswer": "Dinamik import ile bir component'i ilk render edileceği ana kadar yüklemeyi erteleyen fonksiyondur; böylece component ayrı bir bundle'a (chunk) ayrılır. Default export döndüren bir Promise bekler ve yüklenirken gösterilecek fallback için Suspense ile birlikte kullanılır. Route bazlı code splitting'in temel aracıdır.",
+      "modelAnswer": "Bir bileşenin kodunu dinamik import ile yükleyen bir fonksiyon alır ve bu kodu bileşen ilk kez render edilene kadar indirmez. Fonksiyon, default export'u geçerli bir bileşen olan modüle çözülen bir Promise döndürmelidir; Promise ve sonucu saklandığı için yükleme bir kez yapılır. Kod yüklenirken en yakın Suspense sınırının fallback'i gösterilir, Promise reddedilirse hata en yakın Error Boundary'ye düşer. lazy çağrısı bileşen içinde değil modülün en üst düzeyinde yapılır; bileşen içinde tanımlanırsa her render'da yeni bir bileşen tipi oluşur ve alt ağacın state'i sıfırlanır.",
       "keyConcepts": [
         {
           "id": "dinamik-import",
-          "label": "Dinamik import",
+          "label": "Dinamik import'u ilk render'a kadar erteler",
           "aliases": [
             "import(",
             "dinamik import",
-            "dynamic import"
+            "dynamic import",
+            "ilk kez render",
+            "render edilene kadar",
+            "ihtiyaç duyulduğunda"
           ],
           "anchors": [
-            "React.lazy dinamik import ile çalışır."
+            "React.lazy bileşenin kodunu dinamik import ile, bileşen ilk kez render edilene kadar yüklemeden bekletir."
           ]
         },
         {
-          "id": "gec-yukleme",
-          "label": "İhtiyaç anında yükleme",
+          "id": "default-export",
+          "label": "default export'a çözülen Promise",
           "aliases": [
-            "tembel",
-            "gecikmeli",
-            "ihtiyaç an",
-            "ihtiyaç duyulduğunda",
-            "yüklemeyi ertele",
-            "sonradan yükle"
+            "default export",
+            "export default",
+            "varsayılan export",
+            "thenable",
+            "default olarak export"
           ],
           "anchors": [
-            "Component ilk render edileceği ana kadar yüklenmez."
+            "Yükleme fonksiyonu, default export'u geçerli bir bileşen olan modüle çözülen bir Promise döndürmelidir."
           ]
         },
         {
           "id": "suspense",
-          "label": "Suspense ile birlikte",
+          "label": "Yüklenirken Suspense fallback'i",
           "aliases": [
             "suspense",
             "fallback"
           ],
           "anchors": [
-            "Yükleme sırasında Suspense fallback'i gösterilir."
+            "Kod yüklenirken en yakın Suspense sınırının fallback'i gösterilir."
           ]
         },
         {
-          "id": "code-splitting",
-          "label": "Code splitting",
+          "id": "modul-duzeyi",
+          "label": "Bileşen dışında, modül düzeyinde tanımlanır",
           "aliases": [
-            "code splitting",
-            "code-splitting",
-            "chunk",
-            "ayrı bir bundle",
-            "ayrı bundle",
-            "ayrı dosya"
+            "modül düzeyinde",
+            "modülün en üst",
+            "dosyanın en üst",
+            "bileşen içinde tanımla",
+            "component içinde tanımla",
+            "state'i sıfırlan"
           ],
           "anchors": [
-            "Component ayrı bir chunk'a ayrılır."
+            "lazy bileşen içinde değil modülün en üst düzeyinde çağrılır; aksi halde her render'da yeni bir tip oluşur ve state sıfırlanır."
+          ]
+        },
+        {
+          "id": "error-boundary",
+          "label": "Yükleme hatası Error Boundary'ye düşer",
+          "aliases": [
+            "error boundary",
+            "hata sınırı",
+            "promise reddedil",
+            "reject",
+            "yüklenemezse"
+          ],
+          "anchors": [
+            "Promise reddedilirse React hatayı en yakın Error Boundary'ye fırlatır."
           ]
         }
       ],
@@ -1852,54 +1868,38 @@
       "difficulty": 2,
       "kind": "definition",
       "prompt": "Code splitting nedir?",
-      "modelAnswer": "Uygulama kodunu tek büyük bundle yerine, ihtiyaç anında yüklenen küçük parçalara (chunk) bölme tekniğidir. Vite veya Webpack gibi bundler'lar dinamik import() gördüğünde ayrı chunk üretir; React tarafında bu genelde React.lazy ve Suspense ile yapılır. İlk yükleme süresini kısaltır, en yaygın kullanımı route bazlı bölmedir.",
+      "modelAnswer": "Uygulamanın kodunu tek büyük bundle yerine ihtiyaç anında ya da paralel yüklenebilen parçalara (chunk) bölme tekniğidir; amaç ilk yüklemede indirilen kodu küçültmektir. Bundler bölme noktasını dinamik import() çağrısından anlar ve o modülü ayrı bir chunk'a koyar; en yaygın kullanım route bazlı bölmedir. Ortak bağımlılıklar da ayrı bir vendor chunk'ına alınır; uygulama kodundan daha seyrek değiştiği için çoğu zaman tarayıcı önbelleğinden gelir. Fazla bölmenin bedeli, artan istek sayısı ve bir chunk indirilip okunana kadar onun ihtiyaç duyduğu ortak chunk'ın fark edilmemesiyle oluşan istek şelalesidir. Yakında gerekecek parçalar prefetch, o anki gezinmede gerekecekler preload ile önceden istenir; Vite ortak chunk'ları dinamik import'la birlikte paralel yükleyerek bu şelaleyi kendiliğinden kaldırır.",
       "keyConcepts": [
         {
           "id": "parcalama",
-          "label": "Kodu parçalara bölme",
+          "label": "Kodu ihtiyaç anında yüklenen parçalara bölme",
           "aliases": [
-            "chunk",
+            "chunk'",
+            "chunklar",
             "parçalara böl",
-            "küçük parça",
             "ayrı bundle",
-            "bölme tekniği",
-            "tek büyük bundle"
+            "tek büyük bundle",
+            "ihtiyaç anında"
           ],
           "anchors": [
-            "Kod tek bundle yerine küçük parçalara bölünür."
-          ]
-        },
-        {
-          "id": "ihtiyac",
-          "label": "İhtiyaç anında yükleme",
-          "aliases": [
-            "ihtiyaç anında",
-            "gerektiğinde yüklen",
-            "ihtiyaç duyduğu",
-            "tembel yükle",
-            "talep üzerine",
-            "on demand"
-          ],
-          "anchors": [
-            "Parçalar ihtiyaç anında yüklenir."
+            "Kod tek bundle yerine ihtiyaç anında ya da paralel yüklenebilen parçalara (chunk) bölünür."
           ]
         },
         {
           "id": "dinamik-import",
-          "label": "Dinamik import",
+          "label": "Bölme noktası dinamik import()",
           "aliases": [
             "import(",
             "dinamik import",
-            "dynamic import",
-            "react.lazy"
+            "dynamic import"
           ],
           "anchors": [
-            "Bölme dinamik import ve React.lazy ile yapılır."
+            "Bundler dinamik import() gördüğü yerde modülü ayrı bir chunk'a ayırır."
           ]
         },
         {
           "id": "ilk-yukleme",
-          "label": "İlk yükleme süresi",
+          "label": "İlk yüklemede indirilen kodu küçültme",
           "aliases": [
             "ilk yükleme",
             "initial load",
@@ -1908,7 +1908,37 @@
             "ilk açılış"
           ],
           "anchors": [
-            "İlk yükleme süresini kısaltır."
+            "İlk yüklemede indirilen kod küçülür, sayfa daha hızlı açılır."
+          ]
+        },
+        {
+          "id": "route-vendor",
+          "label": "Route bazlı bölme ve vendor chunk",
+          "aliases": [
+            "route bazlı",
+            "route bazında",
+            "sayfa bazlı",
+            "vendor",
+            "ortak bağımlılık",
+            "splitchunks"
+          ],
+          "anchors": [
+            "En yaygın bölme route bazlıdır; ortak bağımlılıklar ayrı bir vendor chunk'ına alınıp önbellekte tutulur."
+          ]
+        },
+        {
+          "id": "sellale-prefetch",
+          "label": "Fazla bölmenin bedeli ve prefetch/preload",
+          "aliases": [
+            "şelale",
+            "waterfall",
+            "prefetch",
+            "preload",
+            "istek sayısı",
+            "gidiş-dönüş"
+          ],
+          "anchors": [
+            "Çok küçük parçalar istek sayısını ve istek şelalesini artırır; prefetch ve preload ile parçalar önceden istenir."
           ]
         }
       ],
