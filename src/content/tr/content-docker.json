@@ -9,7 +9,7 @@
       "topic": "Konteyner iletişimi",
       "difficulty": 2,
       "prompt": "Aynı host üzerinde çalışan A konteynerinden B konteynerine nasıl erişirsin? Konteyner adıyla erişmek her durumda çalışır mı?",
-      "modelAnswer": "İki konteyneri aynı kullanıcı tanımlı ağa koyarsın; o ağda konteyner adı DNS ismi gibi çözülür.\n\n```bash\ndocker network create app-net\ndocker run -d --name b --network app-net nginx\ndocker run -it --name a --network app-net alpine sh\n# a içinden:\nwget -qO- http://b:80\n```\n\nHer durumda çalışmaz: varsayılan bridge ağında Docker'ın gömülü DNS'i ad çözümlemesi yapmaz, konteynerler birbirine yalnızca IP ile erişir. IP'ler yeniden başlatmada değişebildiği için bu kırılgan bir yapıdır.\n\nSık atlanan bir nokta: konteynerler arası erişim için portu -p ile yayınlamak gerekmez. O bayrak servisi host makineye açar; aynı ağdaki konteynerler yayınlanmamış portlara da erişebilir.",
+      "modelAnswer": "İki konteyner aynı kullanıcı tanımlı ağa bağlanır (ağ `docker network create` ile açılır, konteynerler `--network` ile katılır); bu ağda Docker'ın gömülü DNS'i konteyner adını çözer ve A, B'ye adıyla ulaşır. Adla erişim her durumda çalışmaz, çünkü varsayılan bridge ağında ad çözümlemesi yoktur ve konteynerler birbirine yalnızca IP ile erişir. IP'ler yeniden başlatmada değişebildiği için bu kırılgan bir düzendir. Aynı ağdaki konteynerler birbirinin bütün portlarına erişebildiği için portu -p ile yayınlamak gerekmez; o bayrak portu host'a ve dış dünyaya açar.",
       "keyConcepts": [
         {
           "id": "shared-user-network",
@@ -62,7 +62,7 @@
         "Docker Compose kullandığında servisler birbirini nasıl buluyor?",
         "Konteyner içinden host makinedeki bir servise nasıl erişirsin?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — Docker Docs: Bridge network driver (Differences between user-defined bridges and the default bridge), Port publishing and mapping"
     },
     {
       "id": "docker-image-vs-container",
@@ -71,7 +71,7 @@
       "topic": "Temeller",
       "difficulty": 1,
       "prompt": "Image ile container arasındaki fark nedir?",
-      "modelAnswer": "**Image**, uygulamayı çalıştırmak için gereken her şeyi (dosya sistemi, bağımlılıklar, çalıştırılacak komut) içeren **salt okunur** bir şablondur. **Container** ise o image'dan başlatılmış **çalışan bir örnektir**.\n\nBenzetmeyle: image bir sınıf, container o sınıftan oluşturulmuş bir nesne gibidir. Aynı image'dan istediğin kadar container başlatabilirsin, her biri birbirinden yalıtılmış çalışır.\n\nImage **katmanlardan** oluşur ve değişmez. Container başlatılırken bu katmanların üstüne **yazılabilir ince bir katman** eklenir; container'ın çalışırken yaptığı tüm değişiklikler oraya yazılır.\n\nSık atlanan nokta: container silindiğinde bu yazılabilir katman da silinir. Kalıcı olması gereken veri (veritabanı dosyaları gibi) container içinde değil, **volume**'da tutulmalıdır.",
+      "modelAnswer": "Image, uygulamayı çalıştırmak için gereken dosya sistemini, bağımlılıkları ve başlangıç komutunu içeren salt okunur bir şablondur; container ise o image'dan başlatılmış çalışan bir örnektir. Bir sınıftan birden çok nesne üretilmesi gibi aynı image'dan birbirinden yalıtılmış istenen sayıda container başlatılabilir. Image katmanlardan oluşur ve değişmez; container başlarken bu katmanların üstüne ince, yazılabilir bir katman eklenir ve çalışırken yapılan bütün değişiklikler oraya yazılır. Container silindiğinde bu yazılabilir katman da silinir, bu yüzden kalıcı olması gereken veri container içinde değil volume'da tutulur.",
       "keyConcepts": [
         {
           "id": "image-sablon",
@@ -135,7 +135,7 @@
       "followUps": [
         "Çalışan bir container'da yaptığın değişikliği yeni bir image'a nasıl dönüştürürsün ve bu neden önerilmez?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Docker overview (Images, Containers), Storage drivers (Images and layers, Container and layers)"
     },
     {
       "id": "docker-vs-vm",
@@ -144,7 +144,7 @@
       "topic": "Temeller",
       "difficulty": 1,
       "prompt": "Docker container ile sanal makine (VM) arasındaki fark nedir?",
-      "modelAnswer": "**Sanal makine**, hypervisor üzerinde çalışan ve **kendi tam işletim sistemini** (kendi kernel'i dahil) barındıran bir bilgisayar sanallaştırmasıdır. **Container** ise host'un **kernel'ini paylaşır**; yalnızca uygulamayı ve bağımlılıklarını yalıtır.\n\nBu farkın sonuçları:\n- **Boyut:** VM imajları gigabaytlarca, container imajları genelde megabaytlarca.\n- **Başlama süresi:** VM dakikalar içinde açılır, container saniyeler hatta milisaniyeler içinde başlar.\n- **Yoğunluk:** Aynı sunucuda çok daha fazla container çalıştırılabilir.\n\nYalıtım Linux kernel özellikleriyle sağlanır: **namespace**'ler (container'ın göreceği süreçleri, ağı, dosya sistemini ayırır) ve **cgroup**'lar (CPU ve bellek kullanımını sınırlar).\n\nSık atlanan nokta: kernel paylaşıldığı için container yalıtımı VM kadar güçlü değildir. Kernel'deki bir açık tüm container'ları etkileyebilir; güvenlik sınırının kritik olduğu yerlerde VM tercih edilir. Ayrıca Linux container'ları Windows/Mac'te doğrudan değil, arka planda çalışan hafif bir Linux VM içinde çalışır.",
+      "modelAnswer": "Sanal makine hypervisor üzerinde kendi kernel'i dahil tam bir işletim sistemi çalıştırır; container ise host'un kernel'ini paylaşır ve yalnızca uygulamayı ve bağımlılıklarını yalıtır. Bu yüzden container image'ları genelde megabaytlarla ölçülür, container saniyeler içinde başlar ve aynı sunucuda çok daha fazla container çalıştırılabilir. Yalıtımı Linux kernel'inin namespace'leri (süreç, ağ ve dosya sistemi görünümü) ve cgroup'ları (CPU ve bellek sınırı) sağlar. Kernel paylaşıldığı için bu yalıtım VM kadar güçlü değildir; kernel'deki bir açık bütün container'ları etkileyebilir, güvenlik sınırının kritik olduğu yerde VM tercih edilir.",
       "keyConcepts": [
         {
           "id": "tam-os",
@@ -219,7 +219,7 @@
       "followUps": [
         "Docker Desktop Windows'ta Linux container'larını nasıl çalıştırır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: What is a container? (Containers versus virtual machines), Docker overview (The underlying technology), Resource constraints"
     },
     {
       "id": "docker-layer-cache",
@@ -228,7 +228,7 @@
       "topic": "Dockerfile",
       "difficulty": 2,
       "prompt": "Dockerfile'da katman önbelleği (layer cache) nasıl çalışır? Talimatların sırası build süresini neden etkiler?",
-      "modelAnswer": "Dockerfile'daki dosya sistemini değiştiren her talimat (RUN, COPY, ADD) bir **katman** üretir. Docker bir talimatı tekrar çalıştırmadan önce **önbellekte** aynı sonucu arar; talimat ve girdileri değişmediyse katmanı yeniden kullanır.\n\nKritik kural: bir katmanın önbelleği **bozulursa, ondan sonraki tüm katmanlar** da yeniden oluşturulur. Bu yüzden sık değişen şeyler en sona, nadiren değişenler başa konur.\n\n```dockerfile\n# Kötü: her kod değişikliği npm install'u tekrar çalıştırır\nCOPY . .\nRUN npm ci\n\n# İyi: bağımlılıklar yalnızca package dosyaları değişince kurulur\nCOPY package.json package-lock.json ./\nRUN npm ci\nCOPY . .\n```\n\nJava'da aynı mantık `pom.xml` kopyalanıp `mvn dependency:go-offline` çalıştırılarak, sonra kaynak kodu kopyalanarak uygulanır.\n\nSık atlanan nokta: `RUN apt-get update` tek başına bir katmanda kalırsa eski önbellekle eski paket listesi kullanılabilir. `apt-get update && apt-get install ...` aynı RUN içinde yazılmalıdır.",
+      "modelAnswer": "Dockerfile'da dosya sistemini değiştiren her talimat (RUN, COPY, ADD) bir katman üretir; Docker bir talimatı çalıştırmadan önce önbellekte aynı sonucu arar ve talimatla girdileri değişmediyse katmanı yeniden kullanır. Bir katman değiştiğinde ondan sonraki tüm katmanlar da yeniden oluşturulur, bu yüzden pahalı ve nadiren değişen adımlar başa, sık değişenler en sona konur. Tipik örnek, önce yalnızca `package.json` ile lock dosyasını kopyalayıp bağımlılıkları kurmak, kaynak kodu sonra kopyalamaktır; Java'da aynı sırayı `pom.xml` sağlar. `apt-get update` ayrı bir RUN'da kalırsa önbellekteki eski paket listesi kullanılabilir, bu yüzden `apt-get install` ile aynı RUN içinde yazılır.",
       "keyConcepts": [
         {
           "id": "talimat-katman",
@@ -291,7 +291,7 @@
       "followUps": [
         "Önbelleği tamamen yok sayarak build almak için ne yaparsın, ne zaman gerekir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Docker build cache, Optimize cache usage in builds (Order your layers), Building best practices (apt-get)"
     },
     {
       "id": "docker-multi-stage",
@@ -300,7 +300,7 @@
       "topic": "Dockerfile",
       "difficulty": 2,
       "prompt": "Multi-stage build nedir ve ne işe yarar? Bir Spring Boot uygulaması için örnek ver.",
-      "modelAnswer": "Multi-stage build, tek Dockerfile içinde **birden fazla FROM** kullanarak derleme ve çalıştırma ortamlarını ayırmaktır. İlk aşamada derleme araçlarıyla uygulama derlenir, son aşamaya yalnızca **çıktı (artifact)** kopyalanır.\n\n```dockerfile\nFROM maven:3.9-eclipse-temurin-21 AS build\nWORKDIR /app\nCOPY pom.xml .\nRUN mvn dependency:go-offline\nCOPY src ./src\nRUN mvn package -DskipTests\n\nFROM eclipse-temurin:21-jre\nWORKDIR /app\nCOPY --from=build /app/target/app.jar app.jar\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\n```\n\nFaydaları:\n- **Küçük image:** Son image'da Maven, JDK ve kaynak kod yoktur, yalnızca JRE ve jar vardır.\n- **Güvenlik:** Derleme araçları canlı image'da olmadığı için saldırı yüzeyi küçülür.\n- **Tek Dockerfile:** Derleme için ayrı bir script veya CI adımı gerekmez.\n\nSık atlanan nokta: ara aşamaların katmanları son image'a girmez, ama build sırasında önbellek için tutulur. Build'i hızlı tutmak için katman sırası kuralı ara aşamalarda da geçerlidir.",
+      "modelAnswer": "Multi-stage build, tek Dockerfile'da birden fazla FROM kullanarak derleme ve çalıştırma ortamını ayırmaktır; her FROM yeni bir aşama başlatır ve son image'a yalnızca seçilen çıktı kopyalanır. Spring Boot için ilk aşama `maven:3.9-eclipse-temurin-21 AS build` gibi bir image'da `mvn package` ile jar'ı üretir, ikinci aşama `eclipse-temurin:21-jre` üzerinde `COPY --from=build` ile yalnızca bu jar dosyasını alır ve `java -jar` ile başlatır. Son image'da Maven, JDK ve kaynak kod olmadığı için image küçülür ve derleme araçları canlıda bulunmadığından saldırı yüzeyi daralır. Ara aşamalardaki her talimat da build önbelleğinde bir katman olduğu için katman sırası kuralı o aşamalarda da geçerlidir.",
       "keyConcepts": [
         {
           "id": "birden-fazla-from",
@@ -360,7 +360,7 @@
       "followUps": [
         "Son aşamada distroless image kullanmanın artısı ve eksisi nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Multi-stage builds, Docker build cache"
     },
     {
       "id": "docker-cmd-vs-entrypoint",
@@ -369,7 +369,7 @@
       "topic": "Dockerfile",
       "difficulty": 2,
       "prompt": "CMD ile ENTRYPOINT arasındaki fark nedir? Exec form ile shell form farkı neden önemlidir?",
-      "modelAnswer": "**ENTRYPOINT** container başladığında çalışacak **ana komutu** belirler. **CMD** ise varsayılan komutu ya da ENTRYPOINT'e verilecek **varsayılan argümanları** belirler.\n\nFark `docker run` sırasında ortaya çıkar: `docker run image <argümanlar>` yazıldığında **CMD tamamen değiştirilir**, ENTRYPOINT ise korunur ve argümanlar ona eklenir. ENTRYPOINT'i değiştirmek için `--entrypoint` bayrağı gerekir.\n\n```dockerfile\nENTRYPOINT [\"java\", \"-jar\", \"app.jar\"]\nCMD [\"--spring.profiles.active=prod\"]\n```\n\nBurada `docker run image --spring.profiles.active=dev` yalnızca profili değiştirir.\n\nİki yazım biçimi vardır:\n- **Exec form** `[\"java\", \"-jar\", \"app.jar\"]`: komut doğrudan **PID 1** olarak çalışır.\n- **Shell form** `java -jar app.jar`: komut `/bin/sh -c` üzerinden çalışır; PID 1 shell olur.\n\nSık atlanan nokta: shell formda shell, `docker stop`'un gönderdiği **SIGTERM** sinyalini uygulamaya iletmez. Uygulama düzgün kapanamaz, 10 saniye sonra SIGKILL ile öldürülür. Bu yüzden exec form tercih edilmelidir.",
+      "modelAnswer": "ENTRYPOINT container başladığında çalışacak ana komutu, CMD ise varsayılan komutu ya da ENTRYPOINT'e eklenecek varsayılan argümanları belirler. `docker run image <argümanlar>` yazıldığında CMD tamamen değiştirilir, ENTRYPOINT korunur ve argümanlar ona eklenir; ENTRYPOINT'i değiştirmek için `--entrypoint` bayrağı gerekir. Örneğin ENTRYPOINT `java -jar app.jar`, CMD bir Spring profili olursa `docker run` yalnızca profili değiştirebilir. Exec form (JSON dizi) komutu doğrudan PID 1 olarak çalıştırır, shell form ise `/bin/sh -c` üzerinden çalıştırdığı için `docker stop`'un gönderdiği SIGTERM uygulamaya ulaşmaz ve uygulama varsayılan 10 saniyelik sürenin sonunda SIGKILL ile öldürülür.",
       "keyConcepts": [
         {
           "id": "entrypoint-ana",
@@ -432,7 +432,7 @@
       "followUps": [
         "Container başlarken önce bir hazırlık script'i çalıştırıp sonra uygulamayı başlatmak istersen ENTRYPOINT'i nasıl yazarsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Dockerfile reference (CMD, ENTRYPOINT, Understand how CMD and ENTRYPOINT interact), docker container stop"
     },
     {
       "id": "docker-copy-vs-add",
@@ -441,7 +441,7 @@
       "topic": "Dockerfile",
       "difficulty": 1,
       "prompt": "COPY ile ADD arasındaki fark nedir? Hangisini tercih edersin?",
-      "modelAnswer": "İkisi de dosyaları build context'inden image'a kopyalar. **ADD** iki ek özelliğe sahiptir:\n- Yerel bir **tar arşivini otomatik olarak açar**.\n- **URL**'den dosya indirebilir.\n\n**COPY** ise yalnızca kopyalar, başka bir şey yapmaz.\n\nTercih edilen **COPY**'dir, çünkü davranışı açık ve öngörülebilirdir. ADD ile bir `.tar.gz` kopyalandığında beklenmedik şekilde açılması gibi sürprizler olur.\n\nURL'den indirme için de ADD yerine `RUN curl` (veya `wget`) daha iyidir: indirme, doğrulama ve gereksiz dosyaları silme aynı RUN içinde yapılabilir ve fazladan katman oluşmaz.\n\nADD'i yalnızca yerel bir arşivin açılmasını özellikle istediğin durumda kullanırsın.",
+      "modelAnswer": "İkisi de dosyaları build context'inden image'a kopyalar; COPY yalnızca kopyalar, ADD ise yerel bir tar arşivini otomatik açar ve uzak bir URL'den ya da Git deposundan dosya indirebilir. Yerel dosyalar için COPY tercih edilir, çünkü davranışı öngörülebilirdir; ADD ile kopyalanan bir `.tar.gz` beklenmedik şekilde açılabilir. Uzak bir dosyayı build sırasında indirmek gerekiyorsa Docker'ın güncel önerisi `RUN curl` ya da `wget` yerine ADD'dir, çünkü build önbelleği daha isabetli çalışır ve `--checksum` ile indirilen içerik doğrulanabilir. Uzak URL'den gelen arşiv otomatik açılmaz, açma yalnızca yerel arşivlerde olur.",
       "keyConcepts": [
         {
           "id": "ikisi-kopyalar",
@@ -505,7 +505,7 @@
       "followUps": [
         "Build context nedir ve .dockerignore build'i nasıl etkiler?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Building best practices (ADD or COPY), Dockerfile reference (ADD)"
     },
     {
       "id": "docker-volume-vs-bind",
@@ -514,7 +514,7 @@
       "topic": "Veri ve depolama",
       "difficulty": 2,
       "prompt": "Volume ile bind mount arasındaki fark nedir? Bir veritabanı container'ı için hangisini kullanırsın?",
-      "modelAnswer": "Container'ın yazılabilir katmanı container silinince kaybolduğu için kalıcı veri dışarıda tutulur. İki ana yol vardır:\n\n- **Volume:** Docker tarafından yönetilen depolamadır (Linux'ta `/var/lib/docker/volumes` altında). İsimle oluşturulur ve yönetilir (`docker volume create`, `docker volume ls`). Host'un klasör yapısından bağımsızdır.\n- **Bind mount:** Host'taki **belirli bir klasörü** container'a bağlar (`-v /home/mete/app:/app`). Host'taki değişiklik container'da anında görünür.\n\n**Veritabanı için volume** kullanılır: Docker yönetir, yedeklemesi ve taşınması kolaydır, host'un dosya izinleriyle uğraşmak gerekmez ve Docker Desktop'ta performansı bind mount'tan iyidir.\n\n**Bind mount** ise geliştirmede kaynak kodu container'a bağlayıp anında yansıtmak (hot reload) veya bir konfigürasyon dosyasını vermek için uygundur.\n\nSık atlanan nokta: `docker compose down -v` veya `docker volume prune` volume'ları da siler. Veritabanı volume'u yanlışlıkla silinirse veri gider; canlıda volume yedeklemesi ayrıca planlanmalıdır.",
+      "modelAnswer": "Container'ın yazılabilir katmanı container silinince kaybolduğu için kalıcı veri dışarıda tutulur. Volume, Docker tarafından yönetilen ve host'ta Docker'ın kendi dizininde (Linux'ta genelde `/var/lib/docker/volumes`) duran depolamadır; bind mount ise host'taki belirli bir klasörü ya da dosyayı container'a bağlar. Veritabanı için volume kullanılır, çünkü Docker CLI ile yönetilir, yedeklenmesi ve taşınması bind mount'tan kolaydır ve host'un klasör yapısına bağlı değildir; bind mount ise geliştirmede kaynak kodu ya da bir konfigürasyon dosyasını container'la paylaşmak için uygundur. `docker compose down -v` Compose dosyasında tanımlı named volume'ları, `docker volume prune -a` da kullanılmayan bütün volume'ları sildiği için veritabanı volume'u yanlışlıkla silinebilir; canlıda yedekleme ayrıca planlanır.",
       "keyConcepts": [
         {
           "id": "kalici",
@@ -588,7 +588,7 @@
       "followUps": [
         "Bir PostgreSQL volume'unun yedeğini nasıl alırsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Volumes, Bind mounts, Storage drivers, docker compose down, docker volume prune"
     },
     {
       "id": "docker-expose-vs-publish",
@@ -597,7 +597,7 @@
       "topic": "Ağ",
       "difficulty": 1,
       "prompt": "Dockerfile'daki EXPOSE ile docker run'daki port yayınlama (-p) arasındaki fark nedir?",
-      "modelAnswer": "**EXPOSE** yalnızca **belgeleme** amaçlıdır: image'ın hangi portu dinlediğini bildirir ama portu dışarıya açmaz. Tek başına hiçbir erişim sağlamaz.\n\n**Port yayınlama** (`-p 8080:80`) ise host'un bir portunu container'ın bir portuna **gerçekten bağlar**. Soldaki host portu, sağdaki container portudur; host'ta 8080'e gelen istek container'ın 80 portuna gider.\n\nÖnemli ayrıntı: `-p 8080:80` varsayılan olarak host'un **tüm arayüzlerinde** (0.0.0.0) dinler, yani servis internete açılabilir. Yalnızca sunucunun kendisinden (ör. önündeki nginx'ten) erişilmesi isteniyorsa `-p 127.0.0.1:8080:80` yazılır.\n\nSık atlanan nokta: Linux'ta Docker yayınlanan portlar için kendi iptables kurallarını ekler ve bu kurallar **UFW gibi güvenlik duvarlarını atlar**. \"UFW'de portu kapattım\" diye düşünülen bir veritabanı portu internete açık kalabilir. Çözüm, portu yalnızca 127.0.0.1'e bağlamak veya hiç yayınlamamaktır.",
+      "modelAnswer": "EXPOSE yalnızca belgeleme amaçlıdır; image'ın hangi portu dinlediğini bildirir ama portu dışarı açmaz. `-p 8080:80` ise host'un 8080 portunu container'ın 80 portuna gerçekten bağlar, soldaki host portu sağdaki container portudur. Adres verilmezse Docker portu host'un tüm arayüzlerinde (`0.0.0.0` ve `[::]`) yayınlar, yani servis dışarıya açılır; yalnızca sunucunun kendisinden erişilecekse `-p 127.0.0.1:8080:80` yazılır. Linux'ta Docker yayınlanan portlar için kendi güvenlik duvarı kurallarını ekler ve bu trafik UFW gibi araçların kurallarından önce yönlendirildiği için UFW'de kapatıldığı sanılan bir port açık kalabilir.",
       "keyConcepts": [
         {
           "id": "expose-belge",
@@ -659,7 +659,7 @@
       "followUps": [
         "Container'ın yayınlanmış portlarını hangi komutla görürsün?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Dockerfile reference (EXPOSE), Port publishing and mapping, Packet filtering and firewalls (Docker and ufw)"
     },
     {
       "id": "docker-compose",
@@ -881,7 +881,7 @@
       "topic": "Dockerfile",
       "difficulty": 2,
       "prompt": "Bir Docker image'ının boyutunu nasıl küçültürsün?",
-      "modelAnswer": "Image küçüldükçe çekme (pull) ve deploy hızlanır, depolama azalır ve saldırı yüzeyi küçülür. Yöntemler:\n\n- **Küçük base image:** `eclipse-temurin:21` yerine `eclipse-temurin:21-jre` veya **alpine**/**distroless** varyantları. JDK yerine yalnızca JRE yeterlidir.\n- **Multi-stage build:** Derleme araçları ve kaynak kod son image'a girmez.\n- **RUN komutlarını birleştirmek ve aynı katmanda temizlemek:** Temizlik ayrı bir RUN'da yapılırsa dosyalar önceki katmanda kalır ve boyut düşmez.\n- **.dockerignore:** `node_modules`, `.git`, `target` gibi klasörlerin build context'e girmesini engeller.\n\nPaket kurulumu ve temizlik aynı RUN içinde:\n\n```dockerfile\nRUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*\n```\n\nBoyutun nereden geldiğini görmek için `docker history <image>` her katmanın boyutunu gösterir.\n\nSık atlanan nokta: alpine **musl libc** kullanır; bazı native kütüphanelerle (bazı Python paketleri, bazı JVM araçları) uyumsuzluk çıkarabilir. Küçük olması her zaman doğru seçim olduğu anlamına gelmez.",
+      "modelAnswer": "Image küçüldükçe çekme ve deploy hızlanır, depolama azalır ve saldırı yüzeyi küçülür. İlk adım küçük bir base image seçmektir, örneğin JDK yerine `eclipse-temurin:21-jre` ya da alpine veya distroless bir varyant; multi-stage build da derleme araçlarını ve kaynak kodu son image'ın dışında bırakır. Temizlik kurulumla aynı RUN içinde yapılmalıdır (`apt-get install` ardından `rm -rf /var/lib/apt/lists/*`), çünkü ayrı bir katmanda silinen dosya önceki katmanda durmaya devam eder; `.dockerignore` da `node_modules`, `.git` ve `target` gibi klasörleri build context'in dışında tutar. Boyutun hangi katmandan geldiğini `docker history` gösterir; alpine'ın glibc yerine musl libc kullandığı da unutulmamalıdır, glibc'ye göre derlenmiş native kütüphaneler orada çoğu zaman çalışmaz.",
       "keyConcepts": [
         {
           "id": "base",
@@ -949,7 +949,7 @@
       "followUps": [
         "Distroless image kullanan bir container'da hata ayıklamak neden zordur?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Building best practices (base image, multi-stage builds, apt-get, .dockerignore); Docker Hub: alpine; musl libc FAQ"
     },
     {
       "id": "docker-debug-container",
@@ -1423,7 +1423,7 @@
       "topic": "Ağ",
       "difficulty": 2,
       "prompt": "Docker'daki ağ sürücüleri (bridge, host, none) arasındaki fark nedir?",
-      "modelAnswer": "- **bridge** (varsayılan): Container'lar host içinde sanal bir ağa bağlanır ve kendi IP'lerini alır. Dışarıdan erişim için port yayınlama gerekir. **Kullanıcı tanımlı** bridge ağlarında container'lar birbirini adıyla bulur; varsayılan bridge'te bu çalışmaz.\n- **host**: Container **host'un ağını doğrudan kullanır**, ayrı bir ağ yalıtımı yoktur. Container 8080'i dinlerse host'un 8080'i doğrudan açılır, port eşlemesi gerekmez ve ağ katmanı ek yükü olmaz. Bedeli yalıtımın kaybolması ve port çakışmalarıdır. Docker Desktop'ta (Windows/Mac) beklendiği gibi çalışmaz.\n- **none**: Container'ın hiç ağı yoktur, yalnızca loopback vardır. Ağa ihtiyaç duymayan toplu işler veya güvenlik gereği tamamen yalıtılması gereken süreçler için.\n\nBunların yanında birden fazla host'a yayılan **overlay** ağı (Swarm/Kubernetes) vardır.\n\nPratikte çoğu uygulama için doğru seçim, her uygulama grubu için **kullanıcı tanımlı bir bridge** ağıdır; Compose bunu otomatik yapar.",
+      "modelAnswer": "Varsayılan sürücü bridge'dir; container'lar host içindeki sanal bir ağa bağlanıp kendi IP'lerini alır, dışarıdan erişim için port yayınlama gerekir ve kullanıcı tanımlı bridge ağlarında container'lar birbirini adıyla bulur. host sürücüsünde container ağ yalıtımı olmadan host'un ağını doğrudan kullanır, kendi IP'si olmaz ve `-p` seçenekleri yok sayılır; NAT olmadığı için ek yük yoktur, bedeli yalıtımın kaybolması ve port çakışmalarıdır. Linux'ta Docker Engine host sürücüsünü destekler, Docker Desktop'ta ise 4.34'ten beri ayarlardan açılarak ve yalnızca Linux container'larıyla kullanılabilir. none sürücüsünde container'ın yalnızca loopback arayüzü vardır, ağa ihtiyacı olmayan ya da tamamen yalıtılması gereken işler için kullanılır; birden fazla host'a yayılan ağ gerekiyorsa overlay sürücüsü vardır.",
       "keyConcepts": [
         {
           "id": "bridge",
@@ -1482,9 +1482,9 @@
         }
       ],
       "followUps": [
-        "host ağ modu Docker Desktop'ta neden beklendiği gibi çalışmaz?"
+        "host ağ modunda çalışan iki container aynı portu dinlemeye çalışırsa ne olur?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Docker Docs: Network drivers, Host network driver, None network driver, Bridge network driver"
     },
     {
       "id": "docker-registry",
