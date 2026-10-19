@@ -9,7 +9,7 @@
       "topic": "DI Yaşam Döngüleri",
       "difficulty": 2,
       "prompt": "ASP.NET Core'da yerleşik Dependency Injection kullanırken Transient, Scoped ve Singleton servis kayıtları arasındaki fark nedir? Entity Framework Core DbContext sınıfını kaydederken varsayılan olarak hangisi kullanılır ve neden?",
-      "modelAnswer": "Transient her çağrıldığında yepyeni bir nesne (instance) oluştururken, Singleton uygulamanın yaşam döngüsü boyunca ilk çağrıda tek bir nesne oluşturup tüm diğer isteklere bunu sunar. Scoped ise her HTTP isteği (request) başına bir nesne oluşturur ve o istek boyunca aynı nesneyi döndürür.\n\nSık atlanan nokta: DbContext varsayılan olarak Scoped kaydedilir. Çünkü veritabanı işlemleri genellikle tek bir HTTP isteği içinde başlar ve biter; aynı istek içindeki farklı servislerin aynı transaction'ı (ve Unit of Work modelini) paylaşabilmesi için DbContext'in Scoped olması hayati önem taşır. Singleton yapılsaydı eşzamanlı isteklerde veri çakışmaları ve thread-safety sorunları yaşanırdı.",
+      "modelAnswer": "Transient her istendiğinde yepyeni bir nesne oluşturur, Scoped her HTTP isteği başına bir nesne oluşturup istek boyunca aynısını verir, Singleton ise ilk istendiğinde tek bir nesne oluşturur ve uygulama kapanana kadar herkese onu verir. DbContext, AddDbContext ile varsayılan olarak Scoped kaydedilir, çünkü bir DbContext tek bir iş birimi (unit of work) için tasarlanmıştır ve web uygulamalarında her HTTP isteği genelde tek bir iş birimine denk gelir. Böylece aynı istekteki servisler aynı DbContext'i paylaşır, değişiklikler aynı change tracker'da toplanır ve tek seferde veritabanına yazılır. DbContext thread-safe değildir; Singleton yapılsaydı eşzamanlı istekler aynı örneği paralel kullanır, bu da hataya ve veri bozulmasına yol açardı.",
       "keyConcepts": [
         {
           "id": "transient-new-instance",
@@ -71,7 +71,7 @@
             "thread-safe olma"
           ],
           "anchors": [
-            "DbContext varsayılan olarak scoped'dur, böylece bir istek içindeki tüm veritabanı işlemleri aynı transaction üzerinden yürütülür.",
+            "DbContext varsayılan olarak scoped'dur; bir HTTP isteği tek bir iş birimine denk gelir ve o istekteki servisler aynı DbContext'i paylaşır.",
             "Eğer DbContext singleton olsaydı birden fazla kullanıcının eşzamanlı istekleri aynı veritabanı bağlantısı üzerinde çakışır ve thread-safety hatası alırdık."
           ]
         }
@@ -80,7 +80,7 @@
         "Singleton bir servisin içine Scoped bir servisi enjekte etmeye çalışırsan ne olur (Captive Dependency)?",
         "Arka plan görevlerinde (BackgroundService) Scoped servisleri nasıl kullanırsın?"
       ],
-      "source": "Kıdemli .NET Mülakatı, Ekim 2026"
+      "source": "Kendi derleme — Microsoft Learn: .NET Service lifetimes; EF Core: DbContext Lifetime, Configuration, and Initialization"
     },
     {
       "id": "dotnet-iqueryable-ienumerable",
@@ -89,7 +89,7 @@
       "topic": "IQueryable/IEnumerable",
       "difficulty": 2,
       "prompt": "Entity Framework Core ile veritabanından veri çekerken filtreleme işlemlerinde (Where) IEnumerable ve IQueryable kullanmanın SQL sorguları ve bellek tüketimi açısından farkı nedir?",
-      "modelAnswer": "IQueryable, C# üzerindeki filtreleme koşullarını veritabanına gidilmeden önce bir ifade ağacında (Expression Tree) tutar ve işlemi SQL'e çevirir.\n\n```csharp\nIQueryable<User> query = dbContext.Users.Where(u => u.Age > 18);\nvar result = query.ToList();\n```\n\nBu kod çalıştığında veritabanına doğrudan SELECT * FROM Users WHERE Age > 18 sorgusu gider, sadece ilgili satırlar ağdan çekilir.\n\nEğer tabloyu IEnumerable olarak belleğe alıp sonra filtrelerseniz:\n\n```csharp\nIEnumerable<User> users = dbContext.Users.AsEnumerable();\nvar result = users.Where(u => u.Age > 18).ToList();\n```\n\nAyırt edici nokta: IEnumerable kullanıldığında EF Core filtrelemeyi SQL'e çevirmez. Veritabanındaki tüm tabloyu (SELECT * FROM Users) çeker ve filtrelemeyi uygulamanın belleğinde (RAM üzerinde) yapar. Tabloda milyonlarca kayıt varsa bu durum anında bellek taşmasına (Out of Memory) ve ciddi ağ yavaşlamalarına sebep olur.",
+      "modelAnswer": "IQueryable üzerinde yazılan Where koşulu bir ifade ağacında (expression tree) tutulur; sorgu ToList gibi bir çağrıyla çalıştırıldığında EF Core onu SQL'e çevirir, yani filtre veritabanı tarafında uygulanır ve ağdan yalnızca eşleşen satırlar gelir. AsEnumerable ile IEnumerable'a geçildikten sonra yazılan Where ise SQL'e çevrilmez; EF Core filtresiz bir sorguyla tüm tabloyu çeker ve filtreyi uygulamanın belleğinde çalıştırır. Milyonlarca kayıtlı bir tabloda her satır ağdan gelip nesneye dönüştürüldüğü için bu hem ağı hem belleği gereksiz yere yorar ve bellek taşmasına kadar gidebilir.",
       "keyConcepts": [
         {
           "id": "iqueryable-sql-translation",
@@ -144,7 +144,7 @@
         "Veritabanından çektiğin verilerde IQueryable içinde özel bir C# metodunu (örneğin ToUpper()) çağırırsan EF Core nasıl tepki verir?",
         "IQueryable arayüzünü nerede IEnumerable arayüzüne dönüştürmek (AsEnumerable çağrısı) mantıklı olabilir?"
       ],
-      "source": "Kıdemli .NET Mülakatı, Ekim 2026"
+      "source": "Kendi derleme — Microsoft Learn: EF Core Client vs. Server Evaluation, How Queries Work"
     }
   ]
 }

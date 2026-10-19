@@ -4396,10 +4396,10 @@
           "label": "@Component sınıfa konur, taramayla bulunur",
           "aliases": [
             "sınıfa",
-            "scan",
+            "component scan",
+            "componentscan",
             "tarama",
             "otomatik bul",
-            "kendi sınıf",
             "kendi yazdı"
           ],
           "anchors": [
@@ -5055,7 +5055,8 @@
           "id": "farkli-db",
           "label": "Varsayılan veritabanına göre değişir",
           "aliases": [
-            "mysql",
+            "mysql innodb",
+            "mysql'de",
             "innodb",
             "oracle",
             "farklı veritabanı",

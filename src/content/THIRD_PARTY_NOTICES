@@ -1,0 +1,40 @@
+Üçüncü taraf bildirimleri
+=========================
+
+Bu dizindeki bazı içerikler aşağıdaki üçüncü taraf eserlerden türetilmiştir.
+Türetilen her soru, source alanında eserin adını taşır. Eserin lisans metni
+aşağıda, kaynağındaki hâliyle ve telif satırıyla birlikte yer alır.
+
+------------------------------------------------------------------------------
+
+sudheerj/reactjs-interview-questions
+https://github.com/sudheerj/reactjs-interview-questions
+
+Kullanıldığı yer: src/content/tr/content-react.json içinde source alanı
+"soru kaynağı: sudheerj/reactjs-interview-questions (MIT)" ile biten sorular.
+
+Lisans metni reponun LICENSE dosyasından alınmıştır (git blob
+beea88e682cf51f41e1088d7b45c15b32f55de76; dosyayı en son değiştiren commit
+942666fec23a498e76470c66334e7f87fac6a531, 2024-09-18).
+
+MIT License
+
+Copyright (c) 2017-Present Sudheer Jonna
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

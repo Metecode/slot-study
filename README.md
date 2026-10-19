@@ -125,6 +125,7 @@ Bu repo iki farklı lisansla korunmaktadır:
 
 - **Kaynak kod** — [MIT](LICENSE)
 - **Soru ve cevap içeriği** (`src/content/`) — [CC BY-SA 4.0](src/content/LICENSE)
+- **Üçüncü taraf bildirimleri** — sudheerj/reactjs-interview-questions kaynaklı React soruları için MIT bildirimi: [THIRD_PARTY_NOTICES](src/content/THIRD_PARTY_NOTICES)
 
 İçerikleri dilediğin gibi kullanabilir, değiştirebilir ve paylaşabilirsin. Sadece kaynağı (bu repoyu) belirtmen ve türettiğin işleri de aynı lisansla paylaşman yeterli.
 

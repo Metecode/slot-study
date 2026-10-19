@@ -12,3 +12,7 @@ Resmi lisans metni: https://creativecommons.org/licenses/by-sa/4.0/legalcode
 Not: Bu lisans yalnızca src/content/ altındaki soru ve içerik dosyaları
 için geçerlidir. Kaynak kodun geri kalanı repo kökündeki LICENSE
 dosyasında belirtilen MIT lisansına tabidir.
+
+İstisna: THIRD_PARTY_NOTICES dosyası CC BY-SA 4.0 kapsamında değildir.
+sudheerj/reactjs-interview-questions kaynaklı kısımlar için o dosyadaki
+MIT lisans bildirimi geçerlidir.
