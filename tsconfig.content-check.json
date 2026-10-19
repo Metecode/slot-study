@@ -1,0 +1,30 @@
+{
+  /*
+    İçerik denetimi (scripts/content-check) src/domain'i doğrudan import
+    eder. Oradaki import'lar uzantısız; nodenext çözümlemesi bunları
+    reddediyor, bu yüzden uygulamayla aynı "bundler" çözümlemesi.
+    Çalışma zamanında sorun yok: domain'in kendi içindeki import'ları
+    yalnızca tip ve Node onları siliyor.
+  */
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.content-check.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["scripts/content-check.ts", "scripts/content-check/**/*.ts"]
+}
