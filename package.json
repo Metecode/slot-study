@@ -24,7 +24,8 @@
     "icons": "node scripts/generate-icons.mjs",
     "store:screenshots": "node scripts/store-screenshots.mjs",
     "feature-graphic": "node scripts/generate-feature-graphic.mjs",
-    "merge-questions": "node scripts/merge-questions.ts"
+    "merge-questions": "node scripts/merge-questions.ts",
+    "check:content": "node scripts/content-check.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",

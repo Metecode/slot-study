@@ -1,0 +1,4 @@
+{
+  "dotnet-di-lifetimes": "Transient her istendiğinde yeni bir instance oluşturur. Scoped her HTTP isteği için bir instance oluşturur ve istek boyunca aynı instance kullanılır. Singleton uygulama boyunca tek bir instance olur ve herkes onu paylaşır. DbContext varsayılan olarak scoped kaydedilir çünkü bir istek içindeki işlemlerin aynı context'i ve transaction'ı kullanması gerekir, DbContext thread-safe olmadığı için singleton olursa eşzamanlı isteklerde sorun çıkar.",
+  "dotnet-iqueryable-ienumerable": "IQueryable sorguyu expression tree olarak tutar ve Where koşulunu SQL'e çevirerek veritabanında çalıştırır, sadece filtrelenmiş kayıtlar gelir. IEnumerable'da ise veriler önce belleğe çekilir ve filtreleme uygulama tarafında yapılır. Büyük tablolarda IEnumerable ile tüm tabloyu çekmek ciddi performans ve bellek sorunlarına yol açar."
+}
