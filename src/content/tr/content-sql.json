@@ -9,7 +9,7 @@
       "topic": "Index türleri",
       "difficulty": 2,
       "prompt": "PostgreSQL'de index türleri nelerdir ve hangisi hangi sorgu tipine uyar?",
-      "modelAnswer": "B-Tree varsayılandır ve işlerin çoğunu görür: eşitlik, aralık ve sıralama. Hash yalnızca eşitlikte çalışır, aralık ve sıralamada kullanılamaz; pratikte B-Tree eşitlikte de yeterince iyi olduğu için nadiren tercih edilir.\n\nDiğerleri veri tipine göre ayrışır. GIN, bir satırda birden çok değer barındıran alanlar içindir: dizi elemanı arama, JSONB içinde anahtar arama, tam metin arama. GiST geometrik veri ve aralık tipleri gibi 'yakınlık' sorularına cevap verir. BRIN ise fiziksel sırayla korelasyonu yüksek büyük tablolarda kullanılır — zaman damgasına göre eklenen log tablosu gibi; çok küçük yer kaplar ama sadece o korelasyon varsa işe yarar.\n\nSık atlanan nokta: index okumayı hızlandırırken yazmayı yavaşlatır. Her INSERT ve UPDATE tüm ilgili index'leri güncellemek zorundadır, bu yüzden 'her kolona index atalım' yaklaşımı yazma ağırlıklı tablolarda zarar verir.",
+      "modelAnswer": "PostgreSQL'de varsayılan index B-tree'dir; sıralanabilen veride eşitlik, aralık, BETWEEN, IN ve IS NULL koşullarında çalışır ve sonucu index sırasıyla da döndürebildiği için çoğu durumu karşılar. Hash index yalnızca eşitlik karşılaştırmasında kullanılabilir. GIN, dizi, JSONB ya da tam metin arama için `tsvector` gibi bir satırda birden çok değer barındıran alanlar içindir; GiST ve SP-GiST geometrik veri ve aralık tipleri gibi farklı arama stratejilerine altyapı sağlar. BRIN ardışık disk bloklarının özetini tuttuğu için çok küçük yer kaplar, ama yalnızca değerleri fiziksel sırayla güçlü ilişkili kolonlarda, örneğin zaman damgasına göre eklenen bir log tablosunda işe yarar. Her index okumayı hızlandırırken yazmayı yavaşlatır, çünkü INSERT ve UPDATE ilgili bütün index'leri güncellemek zorundadır; hiç kullanılmayan index'ler kaldırılmalıdır.",
       "keyConcepts": [
         {
           "id": "btree-default",
@@ -93,7 +93,7 @@
         "Bileşik index'te kolon sırası neden önemli?",
         "Bir index'in gerçekten kullanılıp kullanılmadığını nasıl anlarsın?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Index Types, GIN Indexes, Indexes (Introduction)"
     },
     {
       "id": "sql-many-to-many-employee-project",
@@ -451,7 +451,7 @@
       "topic": "Performans",
       "difficulty": 2,
       "prompt": "Bir sorgu yavaş çalışıyor. Sebebini bulmak için hangi komutu kullanırsın ve çıktısında nelere bakarsın?",
-      "modelAnswer": "Sorgunun nasıl çalıştırıldığını görmek için **EXPLAIN**, gerçekten çalıştırıp ölçmek için **EXPLAIN ANALYZE** kullanılır:\n\n```sql\nEXPLAIN (ANALYZE, BUFFERS)\nSELECT * FROM transactions WHERE account_id = 100;\n```\n\nÇıktı bir **execution plan**'dır (sorgu planı). Bakılacak yerler:\n- Büyük tabloda **Seq Scan** (tüm tabloyu tarama) varsa ve az satır dönüyorsa eksik index vardır; Index Scan beklenir.\n- **Tahmini satır sayısı** (rows) ile **gerçek satır sayısı** (actual rows) çok farklıysa istatistikler eskidir, `ANALYZE` ile güncellenir.\n- En çok zamanı alan düğüm (actual time) darboğazdır; pahalı Nested Loop veya disk'e taşan Sort/Hash bunun tipik örnekleridir.\n\nSık atlanan nokta: EXPLAIN ANALYZE sorguyu gerçekten çalıştırır. UPDATE veya DELETE için kullanacaksan bir transaction içinde çalıştırıp ROLLBACK yapmalısın.",
+      "modelAnswer": "Sorgunun nasıl çalıştırılacağını görmek için EXPLAIN, gerçekten çalıştırıp ölçmek için EXPLAIN ANALYZE kullanılır; çıktı her düğümde maliyet ve satır tahminini gösteren bir sorgu planıdır (execution plan) ve PostgreSQL 18'den beri ANALYZE, BUFFERS bilgisini de varsayılan olarak verir. Büyük bir tabloda az satır dönen bir sorguda Seq Scan görülüyorsa, yani tablo baştan sona taranıyorsa, genelde eksik ya da kullanılamayan bir index vardır. En önemli kontrol tahmini satır sayısının (rows) gerçek satır sayısına (actual rows) yakın olup olmadığıdır; tahmin çok saparsa planlayıcı yanlış plan seçebilir ve sebeplerden biri eski istatistiktir, `ANALYZE` ile güncellenir. En çok zamanı alan düğüm darboğazdır; pahalı bir Nested Loop ya da diske taşan bir Sort veya Hash tipik örneklerdir. EXPLAIN ANALYZE sorguyu gerçekten çalıştırdığı için UPDATE ya da DELETE incelenecekse komut bir transaction içinde çalıştırılıp ardından ROLLBACK yapılır.",
       "keyConcepts": [
         {
           "id": "explain",
@@ -523,7 +523,7 @@
       "followUps": [
         "Sorgu planında index olmasına rağmen Seq Scan görüyorsan olası sebepler nelerdir?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Using EXPLAIN; PostgreSQL 18 release notes (EXPLAIN BUFFERS)"
     },
     {
       "id": "sql-find-slow-queries",
@@ -532,7 +532,7 @@
       "topic": "Performans",
       "difficulty": 2,
       "prompt": "Canlı sistemde hangi sorguların yavaş olduğunu, daha hiçbir sorguyu bilmeden nasıl tespit edersin?",
-      "modelAnswer": "Tek tek EXPLAIN çalıştırmadan önce yavaş sorguları bulmak gerekir. PostgreSQL'de iki temel araç vardır:\n\n- **pg_stat_statements** eklentisi: her sorgu kalıbının kaç kez çalıştığını, toplam ve ortalama süresini tutar. Toplam süreye göre sıralamak, sistemi en çok yoran sorguyu verir (tek seferlik yavaş sorgu değil, çok sık çalışan orta hızlı sorgu çoğu zaman asıl suçludur).\n- **log_min_duration_statement** ayarı: belirli bir sürenin (ör. 500 ms) üzerindeki sorguları loga yazar. MySQL'deki karşılığı slow query log'dur.\n\nO anda çalışan ve takılı kalan sorgular için **pg_stat_activity** görünümüne bakılır; kilit bekleyen sorgular da buradan görülür.\n\nYavaş sorgu bulunduktan sonra EXPLAIN ANALYZE ile planı incelenir.",
+      "modelAnswer": "PostgreSQL'de ilk araç `pg_stat_statements` eklentisidir; sunucu başlarken yüklenir ve her sorgu kalıbının kaç kez çalıştığını (`calls`), toplam ve ortalama süresini (`total_exec_time`, `mean_exec_time`) tutar. Toplam süreye göre sıralamak sistemi en çok yoran sorguyu verir; asıl yük çoğu zaman tek seferlik yavaş bir sorgudan değil, çok sık çalışan orta hızlı bir sorgudan gelir. İkinci araç `log_min_duration_statement` ayarıdır, belirlenen süreden (örneğin 500 ms) uzun süren her sorguyu süresi ve metniyle loga yazar; MySQL'deki karşılığı slow query log'dur. O anda çalışan ve takılı kalan sorgular için `pg_stat_activity` görünümüne bakılır; `wait_event_type` değeri Lock olan satırlar kilit bekleyen sorgulardır ve bulunan yavaş sorgunun planı sonra EXPLAIN ANALYZE ile incelenir.",
       "keyConcepts": [
         {
           "id": "pg-stat-statements",
@@ -590,7 +590,7 @@
       "followUps": [
         "Uygulama tarafında N+1 problemi olduğunu pg_stat_statements çıktısından nasıl anlarsın?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: pg_stat_statements, Error Reporting and Logging (log_min_duration_statement), The Cumulative Statistics System (pg_stat_activity); MySQL 8.4 Reference Manual: The Slow Query Log"
     },
     {
       "id": "sql-exception-handling-db",
@@ -885,7 +885,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 1,
       "prompt": "JOIN türleri nelerdir? INNER JOIN ile LEFT JOIN arasındaki farkı örnekle açıkla.",
-      "modelAnswer": "JOIN iki tabloyu ortak bir kolon üzerinden birleştirir:\n\n- **INNER JOIN:** Yalnızca iki tabloda da eşleşen satırları döner. Müşteri–hesap birleştirmesinde hesabı olmayan müşteri sonuçta yer almaz.\n- **LEFT JOIN:** Soldaki tablonun tüm satırlarını döner; sağda eşleşme yoksa sağın kolonları NULL gelir. Hesabı olmayan müşteri de listelenir.\n- **RIGHT JOIN:** LEFT'in tersi; pratikte tablolar yer değiştirilip LEFT JOIN yazılır.\n- **FULL OUTER JOIN:** İki taraftaki tüm satırlar, eşleşmeyenler NULL ile.\n- **CROSS JOIN:** Her satırı her satırla eşler (kartezyen çarpım).\n\nSık atlanan nokta: LEFT JOIN'den sonra WHERE'de sağ tabloya koşul yazmak (`WHERE a.status = 'ACTIVE'`) NULL satırları eler ve sorguyu fiilen INNER JOIN'e çevirir. Sağ tablo koşulu ON içine yazılmalıdır.",
+      "modelAnswer": "JOIN iki tabloyu bir koşul üzerinden birleştirir; INNER JOIN yalnızca iki tabloda da eşleşen satırları döner, yani hesabı olmayan müşteri sonuçta yer almaz. LEFT JOIN önce aynı eşleşmeyi yapar, sonra soldaki tablonun eşleşmeyen satırlarını da ekler; bu satırlarda sağ tablonun kolonları NULL gelir, böylece hesabı olmayan müşteri de listelenir. RIGHT JOIN bunun tersidir, FULL OUTER JOIN iki taraftaki eşleşmeyenleri de NULL'larla ekler, CROSS JOIN ise iki tablonun kartezyen çarpımını üretir. Dış birleştirmede ON içindeki koşul birleştirmeden önce, WHERE'deki koşul sonra uygulanır; LEFT JOIN'den sonra WHERE'de sağ tabloya koşul yazmak NULL satırları eler ve sorguyu fiilen INNER JOIN'e çevirir, bu yüzden sağ tablo koşulu ON içine yazılır.",
       "keyConcepts": [
         {
           "id": "inner",
@@ -962,7 +962,7 @@
       "followUps": [
         "Hiç hesabı olmayan müşterileri bulmak için hangi JOIN'i ve hangi koşulu kullanırsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Table Expressions (Joined Tables)"
     },
     {
       "id": "sql-where-vs-having",
@@ -971,7 +971,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 1,
       "prompt": "WHERE ile HAVING arasındaki fark nedir?",
-      "modelAnswer": "**WHERE**, gruplama yapılmadan önce satırları filtreler; tek tek satırlara uygulanır ve aggregate fonksiyon (SUM, COUNT) içeremez. **HAVING** ise **GROUP BY** sonrası oluşan grupları filtreler ve aggregate sonuçları üzerinde koşul koyar.\n\n```sql\nSELECT account_id, SUM(amount)\nFROM transactions\nWHERE status = 'COMPLETED'\nGROUP BY account_id\nHAVING SUM(amount) > 10000;\n```\n\nÇalışma sırası: FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY.\n\nSık atlanan nokta: aggregate içermeyen bir koşulu HAVING'e yazmak çalışır ama gereksiz satırların önce gruplanmasına yol açar. Satır bazlı koşullar her zaman WHERE'de olmalıdır, böylece daha az veri gruplanır.",
+      "modelAnswer": "WHERE gruplama yapılmadan önce tek tek satırları filtreler ve SUM ya da COUNT gibi aggregate fonksiyon içeremez; HAVING ise GROUP BY'dan sonra oluşan grupları filtreler ve koşulunu aggregate sonuçlarına koyabilir. Örneğin `WHERE status = 'COMPLETED'` yalnızca tamamlanmış işlemleri gruplamaya sokar, `HAVING SUM(amount) > 10000` de toplamı 10.000'i aşan hesapları bırakır. Mantıksal çalışma sırası FROM, WHERE, GROUP BY, HAVING, SELECT ve ORDER BY şeklindedir. Aggregate içermeyen bir koşulu HAVING'e yazmak çalışır ama gereksiz satırların önce gruplanmasına yol açar, bu yüzden satır bazlı koşullar WHERE'de durmalıdır.",
       "keyConcepts": [
         {
           "id": "where-once",
@@ -1034,7 +1034,7 @@
       "followUps": [
         "SELECT içinde verdiğin bir takma adı (alias) WHERE içinde neden kullanamazsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Table Expressions (The WHERE Clause, The GROUP BY and HAVING Clauses)"
     },
     {
       "id": "sql-primary-foreign-key",
@@ -1214,7 +1214,7 @@
       "topic": "Index türleri",
       "difficulty": 2,
       "prompt": "(account_id, created_at) üzerinde bileşik bir index var. Hangi sorgular bu index'i kullanabilir, hangileri kullanamaz?",
-      "modelAnswer": "Bileşik index soldan sağa sıralanmış bir yapıdır: önce account_id'ye, aynı account_id içinde created_at'e göre sıralıdır. Buna **leftmost prefix** (en soldaki kolon) kuralı denir.\n\nKullanabilenler:\n- `WHERE account_id = 5`\n- `WHERE account_id = 5 AND created_at > '2026-01-01'`\n- `WHERE account_id = 5 ORDER BY created_at` (sıralama için ek iş gerekmez)\n\nKullanamayan (verimli şekilde):\n- `WHERE created_at > '2026-01-01'` — ilk kolon koşulda yok, index'in sırası işe yaramaz.\n\nKolon sırası seçilirken kural: **eşitlik** koşulu konan kolon önce, **aralık** (>, <, BETWEEN) koşulu konan kolon sonra gelir. Aralık kolonu önde olursa, ondan sonraki kolonlar index'ten verimli yararlanamaz.",
+      "modelAnswer": "(account_id, created_at) index'i soldan sağa sıralıdır, yani önce account_id'ye, aynı account_id içinde de created_at'e göre dizilir; en verimli hâliyle en soldaki kolondan başlayan koşullarda kullanılır. `WHERE account_id = 5`, `WHERE account_id = 5 AND created_at > '2026-01-01'` ve `WHERE account_id = 5 ORDER BY created_at` index'ten tam yararlanır, sonuncusunda ek sıralama da gerekmez. Yalnızca created_at üzerinde koşul olan bir sorguda ilk kolon koşulda yoktur; PostgreSQL 17 ve öncesinde index bu koşulla ancak baştan sona okunarak kullanılabilir ve planlayıcı çoğu zaman tablonun tamamını okumayı seçer, PostgreSQL 18'deki skip scan ise account_id'nin farklı değer sayısı azsa her değer için ayrı arama yaparak index'i verimli kullanabilir. Kolon sırası seçilirken eşitlik koşulu konan kolon önce, aralık (`>`, `<`, `BETWEEN`) koşulu konan kolon sonra gelir; aralık kolonu önde olursa ondan sonraki kolonlar taranan index aralığını daraltamaz.",
       "keyConcepts": [
         {
           "id": "soldan-saga",
@@ -1232,7 +1232,7 @@
         },
         {
           "id": "ilk-kolon-yok",
-          "label": "İlk kolon yoksa kullanılamaz",
+          "label": "İlk kolon koşulda yoksa verimsiz (PG 18 skip scan istisnası)",
           "aliases": [
             "ilk kolon",
             "koşulda yok",
@@ -1242,7 +1242,7 @@
             "yalnızca ikinci"
           ],
           "anchors": [
-            "Koşulda ilk kolon yoksa index verimli kullanılamaz."
+            "Koşulda ilk kolon yoksa index verimli kullanılamaz; PostgreSQL 18'de ilk kolonun farklı değer sayısı azsa skip scan devreye girebilir."
           ]
         },
         {
@@ -1278,7 +1278,7 @@
       "followUps": [
         "created_at tek başına da sık sorgulanıyorsa ne yaparsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Multicolumn Indexes; PostgreSQL 18 release notes (skip scan)"
     },
     {
       "id": "sql-index-not-used",
@@ -1287,7 +1287,7 @@
       "topic": "Index türleri",
       "difficulty": 3,
       "prompt": "Kolonda index olmasına rağmen veritabanı neden index'i kullanmayabilir? Örnekler ver.",
-      "modelAnswer": "Index'in var olması kullanılacağı anlamına gelmez. Tipik sebepler:\n\n- **Kolona fonksiyon uygulamak:** `WHERE LOWER(email) = 'a@b.com'` düz email index'ini kullanamaz. Çözüm ifade üzerine index açmaktır (`CREATE INDEX ON users (LOWER(email))`).\n- **Baştan joker ile LIKE:** `LIKE '%ahmet'` B-Tree kullanamaz; `LIKE 'ahmet%'` kullanabilir.\n- **Tip uyuşmazlığı:** Metin kolonunu sayıyla karşılaştırmak dönüşüm gerektirir ve index'i devre dışı bırakır.\n- **Düşük seçicilik:** Sorgu tablonun büyük kısmını döndürecekse (ör. %40'ı) optimizer tüm tabloyu taramayı daha ucuz bulur. Bu bir hata değil, doğru karardır.\n- **Eski istatistikler:** Optimizer satır sayısını yanlış tahmin ediyorsa yanlış plan seçer; ANALYZE ile güncellenir.\n\nHangisi olduğunu EXPLAIN çıktısı gösterir.",
+      "modelAnswer": "Kolona fonksiyon uygulamak düz index'i devre dışı bırakır; `WHERE lower(email) = 'a@b.com'` email index'ini kullanamaz, çözüm ifade üzerine index açmaktır (`CREATE INDEX ON users (lower(email))`). Baştan joker içeren `LIKE '%ahmet'` B-tree kullanamaz; `LIKE 'ahmet%'` ise PostgreSQL'de veritabanı C locale kullanıyorsa ya da index `text_pattern_ops` gibi özel bir operator class ile açılmışsa kullanabilir. Tip uyuşmazlığında dönüşüm kolon tarafında yapılırsa index kullanılamaz; MySQL'de metin kolonunu sayıyla karşılaştırmak örtük dönüşüm yüzünden index'i devre dışı bırakır, PostgreSQL ise metinle sayıyı örtük karşılaştırmaz ve hata verir. Sorgu tablonun büyük kısmını döndürecekse planlayıcı tüm tabloyu taramayı daha ucuz bulur, bu bir hata değil doğru karardır. İstatistikler eskiyse planlayıcı satır sayısını yanlış tahmin edip kötü plan seçebilir, ANALYZE istatistikleri günceller; hangi sebebin geçerli olduğunu EXPLAIN gösterir.",
       "keyConcepts": [
         {
           "id": "fonksiyon",
@@ -1363,7 +1363,7 @@
       "followUps": [
         "Büyük/küçük harf duyarsız email araması için index'i nasıl tasarlarsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Indexes on Expressions, Index Types (LIKE), Operator Classes and Operator Families; PostgreSQL 8.3 release notes (casts to text); MySQL 8.4 Reference Manual: Type Conversion in Expression Evaluation"
     },
     {
       "id": "sql-covering-index",
@@ -1372,7 +1372,7 @@
       "topic": "Index türleri",
       "difficulty": 3,
       "prompt": "Covering index (kapsayan index) nedir ve index-only scan ne sağlar?",
-      "modelAnswer": "Covering index, bir sorgunun ihtiyaç duyduğu **tüm kolonları** içeren index'tir. Bu durumda veritabanı tabloya hiç gitmeden cevabı index'ten okuyabilir; buna **index-only scan** denir.\n\n```sql\nCREATE INDEX idx_tx_account ON transactions (account_id) INCLUDE (amount, created_at);\n\nSELECT amount, created_at FROM transactions WHERE account_id = 5;\n```\n\n`INCLUDE` ile eklenen kolonlar aramada kullanılmaz, yalnızca index'te taşınır. Böylece tabloya (heap) yapılan rastgele disk erişimleri ortadan kalkar ve sorgu belirgin şekilde hızlanır.\n\nSık atlanan nokta: PostgreSQL'de index-only scan, satırın görünürlüğünü kontrol etmek için **visibility map**'e bakar. Tablo sık güncelleniyor ve VACUUM geride kalıyorsa veritabanı yine tabloya gitmek zorunda kalır. Ayrıca her eklenen kolon index'i büyütür ve yazmayı yavaşlatır.",
+      "modelAnswer": "Covering index, bir sorgunun ihtiyaç duyduğu tüm kolonları içeren index'tir; böylece PostgreSQL tabloya (heap) hiç gitmeden cevabı index'ten okuyabilir, buna index-only scan denir. Arama anahtarı olmayan kolonlar `INCLUDE` ile eklenir; örneğin `CREATE INDEX ON transactions (account_id) INCLUDE (amount, created_at)` varken `SELECT amount, created_at FROM transactions WHERE account_id = 5` yalnızca index'ten cevaplanabilir, INCLUDE kolonları aramada kullanılmaz, yalnızca index'te taşınır. PostgreSQL'de index-only scan önce visibility map'e bakar; sayfa tümüyle görünür olarak işaretli değilse satırın görünürlüğü için yine heap'e gidilir, bu işareti VACUUM koyduğu için sık güncellenen tablolarda kazanç azalır. Her ek kolon index'i büyütür ve yazmayı yavaşlatır, geniş kolonlar eklemek index'i şişirip aramayı da yavaşlatabilir.",
       "keyConcepts": [
         {
           "id": "tum-kolonlar",
@@ -1433,7 +1433,7 @@
       "followUps": [
         "INCLUDE ile kolon eklemek ile o kolonu bileşik index'in parçası yapmak arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Index-Only Scans and Covering Indexes, Routine Vacuuming (Updating the Visibility Map)"
     },
     {
       "id": "sql-clustered-index",
@@ -1442,7 +1442,7 @@
       "topic": "Index türleri",
       "difficulty": 2,
       "prompt": "Clustered ve non-clustered index arasındaki fark nedir?",
-      "modelAnswer": "**Clustered index**, tablodaki satırların diskte fiziksel olarak o index'in sırasına göre saklanmasıdır; yani index ile tablo verisi aynı yapıdır. Fiziksel sıra tek olabileceği için tabloda **yalnızca bir** clustered index olur. SQL Server ve MySQL InnoDB'de primary key varsayılan olarak clustered'dır.\n\n**Non-clustered index** ayrı bir yapıdır: index değerlerini ve gerçek satırın yerini gösteren bir işaretçi tutar. Bir tabloda birden fazla olabilir; arama sonrası satıra ulaşmak için ek bir okuma gerekir.\n\nClustered index aralık sorgularında çok hızlıdır çünkü ardışık değerler diskte yan yanadır.\n\nSık atlanan nokta: PostgreSQL'de kalıcı clustered index yoktur; tüm index'ler non-clustered'dır ve tablo verisi ayrı tutulur. `CLUSTER` komutu tabloyu bir kez fiziksel olarak sıralar ama sonraki eklemelerde bu sıra korunmaz.",
+      "modelAnswer": "Clustered index'te tablo satırları diskte fiziksel olarak index sırasına göre saklanır, yani index ile tablo verisi aynı yapıdır; fiziksel sıra tek olabileceği için tabloda yalnızca bir clustered index bulunur. SQL Server'da primary key, başka clustered index yoksa varsayılan olarak clustered açılır, MySQL InnoDB'de ise satır verisi her zaman, genelde primary key olan clustered index'te durur. Non-clustered index ayrı bir yapıdır; anahtar değerlerini ve satırın yerini gösteren bir işaretçiyi (InnoDB'de primary key değerini) tutar, bu yüzden satıra ulaşmak için ek bir okuma gerekir ama bir tabloda birden fazla olabilir. PostgreSQL'de kalıcı clustered index yoktur, tablo verisi heap olarak ayrı tutulur ve bütün index'ler non-clustered'dır; `CLUSTER` komutu tabloyu bir kez fiziksel olarak sıralar ama sonraki eklemeler ve güncellemelerde bu sıra korunmaz.",
       "keyConcepts": [
         {
           "id": "fiziksel",
@@ -1506,7 +1506,7 @@
       "followUps": [
         "InnoDB'de primary key olarak rastgele UUID kullanmak neden yazma performansını düşürür?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: CLUSTER; Microsoft Learn: Create a Clustered Index (SQL Server); MySQL 8.4 Reference Manual: Clustered and Secondary Indexes"
     },
     {
       "id": "sql-cte",
@@ -1515,7 +1515,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 2,
       "prompt": "CTE (WITH ifadesi) nedir? Subquery yerine ne zaman tercih edilir, recursive CTE ne işe yarar?",
-      "modelAnswer": "CTE (Common Table Expression), `WITH` ile tanımlanan ve sorgu boyunca bir tablo gibi kullanılan isimli geçici sonuç kümesidir.\n\n```sql\nWITH monthly AS (\n  SELECT account_id, SUM(amount) AS total\n  FROM transactions\n  GROUP BY account_id\n)\nSELECT * FROM monthly WHERE total > 10000;\n```\n\nİç içe subquery'lere göre **okunabilirliği** artırır ve aynı ara sonuca sorguda birden fazla kez başvurmayı sağlar.\n\n**Recursive CTE** kendine başvurarak hiyerarşik veriyi dolaşır: organizasyon şeması (yönetici–çalışan), kategori ağacı veya hesap hiyerarşisi gibi.\n\nSık atlanan nokta: PostgreSQL 12 öncesinde CTE her zaman ayrı hesaplanırdı ve optimizer dışarıdaki koşulları içeri taşıyamazdı (optimization fence). 12'den itibaren tek kez kullanılan CTE'ler sorguya gömülür; eski davranış `MATERIALIZED` ile istenir.",
+      "modelAnswer": "CTE (Common Table Expression), `WITH` ile tanımlanan ve yalnızca o sorgu boyunca var olan isimli, geçici bir sonuç kümesidir; dış sorgu ona bir tablo gibi başvurur. İç içe subquery'lere göre okunabilirliği artırır ve aynı ara sonuca sorguda birden fazla kez başvurmayı sağlar. `WITH RECURSIVE` ile CTE kendine başvurabilir; organizasyon şeması ya da kategori ağacı gibi hiyerarşik veriyi dolaşmanın standart yolu budur. PostgreSQL 12'den önce CTE her zaman ayrı hesaplanır ve dış sorgunun koşulları içeri taşınamazdı; 12'den beri yan etkisiz, recursive olmayan ve bir kez kullanılan CTE dış sorguya gömülür, ayrı hesaplama istenirse `MATERIALIZED`, gömme zorlanacaksa `NOT MATERIALIZED` yazılır.",
       "keyConcepts": [
         {
           "id": "with",
@@ -1578,7 +1578,7 @@
       "followUps": [
         "Bir çalışanın en üst yöneticiye kadar tüm yönetici zincirini recursive CTE ile nasıl yazarsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: WITH Queries (Common Table Expressions); PostgreSQL 12 release notes"
     },
     {
       "id": "sql-subquery-vs-join",
@@ -1587,7 +1587,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 2,
       "prompt": "Subquery ile JOIN arasındaki fark nedir? EXISTS ile IN ne zaman tercih edilir?",
-      "modelAnswer": "**Subquery**, başka bir sorgunun içinde çalışan sorgudur; **JOIN** ise tabloları satır bazında birleştirir. Birçok subquery JOIN olarak yeniden yazılabilir ve modern optimizer'lar bu dönüşümü çoğu zaman kendisi yapar.\n\nSubquery türleri:\n- **Bağımsız (non-correlated):** Bir kez çalışır, sonucu dış sorguya verilir.\n- **Correlated (ilişkili):** Dış sorgunun kolonuna başvurur, mantıksal olarak her satır için yeniden değerlendirilir ve yanlış yazılırsa yavaştır.\n\n**EXISTS** bir eşleşme bulduğu anda durur, yalnızca varlık sorgular. **IN** ise listeyle karşılaştırır.\n\nSık atlanan nokta: `NOT IN` alt sorgusu tek bir **NULL** değer döndürürse sonuç tamamen boş gelir, çünkü NULL ile karşılaştırma bilinmeyen (unknown) üretir. Bu yüzden \"olmayanları bul\" sorgularında `NOT EXISTS` daha güvenlidir.",
+      "modelAnswer": "Subquery başka bir sorgunun içinde çalışan sorgudur, JOIN ise tabloları satır bazında birleştirir; birçok subquery JOIN olarak yeniden yazılabilir. Bağımsız bir subquery bir kez çalışır, correlated (ilişkili) subquery ise dış sorgunun kolonuna başvurduğu için mantıksal olarak her satır için yeniden değerlendirilir. EXISTS yalnızca varlık sorar ve en az bir satır bulduğu anda durur; IN ise değeri alt sorgunun döndürdüğü listeyle karşılaştırır. `NOT IN` alt sorgusu tek bir NULL döndürürse koşul hiçbir satır için doğru olmaz ve sonuç boş gelir, bu yüzden 'olmayanları bul' sorgularında `NOT EXISTS` daha güvenlidir.",
       "keyConcepts": [
         {
           "id": "tanim",
@@ -1650,7 +1650,7 @@
       "followUps": [
         "Hiç işlem yapmamış hesapları bulmak için LEFT JOIN ve NOT EXISTS çözümlerini karşılaştır."
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Subquery Expressions (EXISTS, IN, NOT IN)"
     },
     {
       "id": "sql-rank-functions",
@@ -1748,7 +1748,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 1,
       "prompt": "DELETE, TRUNCATE ve DROP arasındaki fark nedir?",
-      "modelAnswer": "- **DELETE:** Satırları siler, **WHERE** ile koşul alabilir. Satır satır çalışır, trigger'ları tetikler ve transaction içinde geri alınabilir. Büyük tablolarda yavaştır.\n- **TRUNCATE:** Tablodaki **tüm satırları** tek seferde siler, WHERE almaz. Satır satır işlem yapmadığı için çok hızlıdır; satır bazlı trigger'ları tetiklemez.\n- **DROP:** Tablonun kendisini, yapısıyla (kolonlar, index'ler, kısıtlar) birlikte tamamen kaldırır.\n\nDELETE bir DML, TRUNCATE ve DROP ise DDL komutudur.\n\nSık atlanan nokta: \"TRUNCATE geri alınamaz\" bilgisi her veritabanı için doğru değildir. PostgreSQL'de TRUNCATE transaction içinde ROLLBACK ile geri alınabilir; Oracle ve MySQL'de ise örtük commit yapar. Ayrıca başka tablonun foreign key ile referans verdiği bir tablo, CASCADE belirtilmeden TRUNCATE edilemez.",
+      "modelAnswer": "DELETE satırları WHERE ile koşullu silebilir, satır satır çalışır, DELETE trigger'larını tetikler ve büyük tablolarda yavaştır. TRUNCATE ise WHERE almaz, tablodaki tüm satırları dolaşmadan tek seferde siler ve diski hemen geri verir; PostgreSQL'de ON DELETE trigger'larını değil yalnızca ON TRUNCATE trigger'larını tetikler. DROP tablonun kendisini kolonları, index'leri ve kısıtlarıyla birlikte tamamen kaldırır; DELETE bir DML komutudur, TRUNCATE ve DROP ise DDL sayılır. 'TRUNCATE geri alınamaz' bilgisi her veritabanı için doğru değildir; PostgreSQL'de TRUNCATE transaction içinde ROLLBACK ile geri alınabilir, MySQL'de ise örtük commit yapar, Oracle'da da geri alınamaz. PostgreSQL başka tabloların foreign key ile referans verdiği bir tabloyu, o tablolar da aynı komuta eklenmedikçe ya da CASCADE yazılmadıkça TRUNCATE etmez.",
       "keyConcepts": [
         {
           "id": "delete",
@@ -1813,7 +1813,7 @@
       "followUps": [
         "Milyonlarca satırlık bir tablodan eski kayıtları silmen gerekiyor; tek bir DELETE çalıştırmak neden risklidir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: TRUNCATE; MySQL 8.4 Reference Manual: Statements That Cause an Implicit Commit; Oracle Database 23ai SQL Language Reference: TRUNCATE TABLE"
     },
     {
       "id": "sql-union-vs-union-all",
@@ -1822,7 +1822,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 1,
       "prompt": "UNION ile UNION ALL arasındaki fark nedir?",
-      "modelAnswer": "İkisi de iki sorgunun sonucunu alt alta birleştirir. **UNION** sonuçtaki **tekrar eden satırları kaldırır**; **UNION ALL** tüm satırları olduğu gibi döner.\n\nUNION, tekrarları bulmak için sonucu sıralar veya hash'ler; bu ek bir maliyettir. Bu yüzden tekrar olmayacağı biliniyorsa ya da tekrarlar isteniyorsa **UNION ALL daha hızlıdır** ve tercih edilmelidir.\n\nHer iki sorgunun **kolon sayısı ve tipleri uyumlu** olmalıdır; sonuç kolon isimleri ilk sorgudan alınır.\n\nSık atlanan nokta: \"emin olmak için\" alışkanlıkla UNION yazmak büyük veri setlerinde gereksiz sıralamaya yol açar. Örneğin farklı yıllara ait arşiv tablolarını birleştirirken satırlar zaten çakışmayacağı için UNION ALL doğru seçimdir.",
+      "modelAnswer": "İkisi de iki sorgunun sonucunu alt alta birleştirir; UNION sonuçtaki tekrar eden satırları DISTINCT gibi kaldırır, UNION ALL ise tüm satırları olduğu gibi döner. Tekrarları bulmak için veritabanı sonucu sıralar ya da hash'ler, bu ek bir maliyettir; bu yüzden tekrar olmayacağı biliniyorsa ya da tekrarlar isteniyorsa UNION ALL daha hızlıdır. İki sorgu birleşime uygun olmalıdır, yani aynı sayıda kolon döndürmeli ve karşılıklı kolonların tipleri uyumlu olmalıdır. Farklı yıllara ait arşiv tablolarını birleştirmek gibi satırların zaten çakışmadığı durumlarda alışkanlıkla UNION yazmak büyük veride gereksiz bir sıralama demektir.",
       "keyConcepts": [
         {
           "id": "tekrar",
@@ -1887,7 +1887,7 @@
       "followUps": [
         "UNION ile INTERSECT ve EXCEPT arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Combining Queries (UNION, INTERSECT, EXCEPT)"
     },
     {
       "id": "sql-null-handling",
@@ -1896,7 +1896,7 @@
       "topic": "Sorgu temelleri",
       "difficulty": 2,
       "prompt": "SQL'de NULL nasıl davranır? NULL = NULL neden doğru dönmez?",
-      "modelAnswer": "NULL bir değer değil, **bilinmeyen** veya eksik değer anlamına gelir. Bu yüzden NULL ile yapılan her karşılaştırma TRUE ya da FALSE değil **UNKNOWN** döner; `NULL = NULL` bile doğru değildir. SQL bu üç değerli mantıkla çalışır.\n\n- NULL kontrolü `= NULL` ile değil **IS NULL / IS NOT NULL** ile yapılır.\n- **COALESCE** ilk NULL olmayan değeri döner: `COALESCE(phone, 'yok')`.\n- Aggregate fonksiyonlar NULL'ları **yok sayar**: `COUNT(phone)` NULL olmayanları sayar, `COUNT(*)` tüm satırları. `AVG` da yalnızca dolu değerlerin ortalamasını alır.\n- `WHERE status <> 'CLOSED'` koşulu status'u NULL olan satırları da dışarıda bırakır.\n\nSık atlanan nokta: NULL ile yapılan aritmetik işlemin sonucu da NULL'dır. `balance + bonus` ifadesinde bonus NULL ise sonuç NULL olur; bunu önlemek için `balance + COALESCE(bonus, 0)` yazılır.",
+      "modelAnswer": "NULL bir değer değil, bilinmeyen ya da eksik değer anlamına gelir; bu yüzden NULL ile yapılan sıradan karşılaştırma TRUE ya da FALSE değil UNKNOWN (null) üretir ve iki bilinmeyenin eşit olup olmadığı bilinmediği için `NULL = NULL` bile doğru dönmez. Kontrol `= NULL` ile değil `IS NULL` ya da `IS NOT NULL` ile yapılır; iki NULL'u eşit saymak gerekirse PostgreSQL'de `IS NOT DISTINCT FROM` kullanılır. Aggregate fonksiyonlar NULL girdileri yok sayar, `COUNT(*)` bütün satırları, `COUNT(phone)` yalnızca NULL olmayanları sayar, satır yoksa `SUM` sıfır değil NULL döner. NULL ile yapılan aritmetiğin sonucu da NULL'dır, bu yüzden `balance + bonus` yerine `balance + COALESCE(bonus, 0)` yazılır; `WHERE status <> 'CLOSED'` da status'u NULL olan satırları dışarıda bırakır.",
       "keyConcepts": [
         {
           "id": "bilinmeyen",
@@ -1967,7 +1967,7 @@
       "followUps": [
         "Bir kolonun UNIQUE kısıtı varken iki satırda NULL değer olabilir mi? Neden?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Comparison Functions and Operators, Aggregate Functions, Conditional Expressions (COALESCE)"
     },
     {
       "id": "sql-n-plus-one",
@@ -1976,7 +1976,7 @@
       "topic": "Performans",
       "difficulty": 2,
       "prompt": "N+1 sorgu problemi nedir, nasıl fark edilir ve nasıl çözülür?",
-      "modelAnswer": "N+1 problemi, bir liste için **1 sorgu** atıldıktan sonra listedeki **her eleman için ayrı bir sorgu** daha atılmasıdır. 100 müşteri listelenip her müşterinin hesapları ayrı ayrı çekilirse toplamda 101 sorgu çalışır. Her biri hızlı olsa da toplam ağ gidiş-dönüşü sistemi yavaşlatır.\n\nGenelde ORM'lerdeki **lazy loading** yüzünden fark edilmeden oluşur: JPA'da `@OneToMany` ilişkiye döngü içinde erişmek her seferinde yeni sorgu tetikler.\n\nFark etmenin yolu SQL loglarını açmak (`spring.jpa.show-sql`) veya Hibernate statistics ile tek bir istekte çalışan sorgu sayısına bakmaktır.\n\nÇözümler:\n- **JOIN FETCH** veya `@EntityGraph` ile ilişkiyi tek sorguda çekmek.\n- `@BatchSize` ile ilişkileri tek tek değil, `IN (...)` ile toplu yüklemek.\n- Yalnızca gereken alanlar için DTO projection kullanmak.\n\nSık atlanan nokta: koleksiyonlarda JOIN FETCH ile sayfalama birlikte kullanılırsa Hibernate sayfalamayı bellekte yapar; bu durumda batch fetching daha uygundur.",
+      "modelAnswer": "N+1 problemi, bir liste için 1 sorgu atıldıktan sonra listedeki her eleman için ayrı bir sorgu daha atılmasıdır; 100 müşteri listelenip her birinin hesapları ayrı ayrı çekilirse 101 sorgu çalışır ve her biri hızlı olsa da toplam gidiş-dönüş sistemi yavaşlatır. JPA'da genelde lazy loading yüzünden fark edilmeden oluşur, örneğin `@OneToMany` bir ilişkiye döngü içinde erişmek her seferinde yeni bir sorgu tetikler; aynı sorun elle yazılmış JDBC kodunda da görülür. Fark etmenin yolu SQL loglarını açmak (`spring.jpa.show-sql`) ya da Hibernate statistics ile tek bir istekte çalışan sorgu sayısına bakmaktır. Çözüm ilişkiyi `JOIN FETCH` ya da `@EntityGraph` ile tek sorguda çekmek, `@BatchSize` ile ilişkileri birincil anahtar grupları hâlinde toplu yüklemek ya da yalnızca gereken alanlar için DTO projection kullanmaktır. Koleksiyon `JOIN FETCH` ile sayfalama birleştirilirse Hibernate bütün eşleşen sonuçları çekip sınırı bellekte uygular, bu durumda batch fetching daha uygundur.",
       "keyConcepts": [
         {
           "id": "tanim",
@@ -2051,7 +2051,7 @@
       "followUps": [
         "JOIN FETCH ile iki farklı koleksiyonu aynı anda çekmeye çalışırsan ne olur?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Hibernate ORM 7.0: Introduction (Association fetching, Batch fetching), User Guide (pagination with fetch join)"
     },
     {
       "id": "sql-injection",
@@ -2363,7 +2363,7 @@
       "topic": "Performans",
       "difficulty": 3,
       "prompt": "Büyük bir tabloda sayfalama yaparken OFFSET kullanmanın sorunu nedir? Alternatifi nedir?",
-      "modelAnswer": "`LIMIT 20 OFFSET 100000` sorgusunda veritabanı ilk 100.000 satırı **okuyup atar**, sonra 20 tanesini döner. Sayfa ilerledikçe sorgu **yavaşlar**.\n\nİkinci sorun **tutarsızlıktır**: kullanıcı sayfalar arasında gezinirken araya yeni kayıt eklenirse satırlar kayar; aynı kayıt iki sayfada görünebilir veya bir kayıt hiç görünmeyebilir.\n\nAlternatif **keyset (cursor) pagination**'dır. Son görülen kaydın değeri hatırlanır ve bir sonraki sayfa ondan başlatılır:\n\n```sql\nSELECT * FROM transactions\nWHERE (created_at, id) < (:lastCreatedAt, :lastId)\nORDER BY created_at DESC, id DESC\nLIMIT 20;\n```\n\nIndex'li kolon üzerinden doğrudan konuma atladığı için **her sayfa aynı hızdadır**. Sıralamaya `id` eklenmesi, aynı zaman damgasına sahip kayıtlarda sıranın kesin olmasını sağlar.\n\nDezavantajı: \"47. sayfaya git\" gibi rastgele bir sayfaya atlanamaz; yalnızca önceki/sonraki gezinmesi yapılır. Bu yüzden sonsuz kaydırma ve hesap hareketleri listesi için uygundur.",
+      "modelAnswer": "`LIMIT 20 OFFSET 100000` sorgusunda PostgreSQL atlanan 100.000 satırı yine de üretip okur ve atar, sonra 20 tanesini döner; bu yüzden sayfa ilerledikçe sorgu yavaşlar. İkinci sorun tutarsızlıktır; kullanıcı sayfalar arasında gezinirken araya yeni kayıt eklenirse satırlar kayar, aynı kayıt iki sayfada görünebilir ya da bir kayıt hiç görünmeyebilir, sıralama benzersiz bir anahtarla yapılmıyorsa sonuç zaten belirsizdir. Alternatif keyset (cursor) pagination'dır; son görülen kaydın değerleri hatırlanır ve sonraki sayfa `WHERE (created_at, id) < (:lastCreatedAt, :lastId) ORDER BY created_at DESC, id DESC LIMIT 20` gibi bir koşulla ondan başlatılır. Bu sorgu index'li kolon üzerinden doğrudan konuma atladığı için her sayfa aynı hızda gelir, sıralamaya eklenen `id` de aynı zaman damgalı kayıtlarda sırayı kesinleştirir. Bedeli, rastgele bir sayfaya atlanamaması ve yalnızca önceki/sonraki gezinmenin yapılabilmesidir, bu yüzden sonsuz kaydırma ve hesap hareketleri listesi için uygundur.",
       "keyConcepts": [
         {
           "id": "offset-yavas",
@@ -2441,7 +2441,7 @@
       "followUps": [
         "Keyset pagination'da geri (önceki sayfa) gitmeyi nasıl uygularsın?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: LIMIT and OFFSET, Row and Array Comparisons (Row Constructor Comparison)"
     }
   ]
 }
