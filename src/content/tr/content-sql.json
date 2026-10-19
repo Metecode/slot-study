@@ -102,7 +102,7 @@
       "topic": "Veri modelleme",
       "difficulty": 2,
       "prompt": "Çalışanlar ve projeler var. Bir çalışan birden fazla projede yer alabilir, bir projede birden fazla çalışan olabilir. Tabloları yaz ve kararlarını açıkla.",
-      "modelAnswer": "Çok-a-çok ilişki iki tabloyla ifade edilemez; araya bir bağlantı tablosu girer.\n\n```sql\nCREATE TABLE employee (\n  id        BIGSERIAL PRIMARY KEY,\n  full_name TEXT NOT NULL\n);\n\nCREATE TABLE project (\n  id   BIGSERIAL PRIMARY KEY,\n  name TEXT NOT NULL\n);\n\nCREATE TABLE employee_project (\n  employee_id BIGINT NOT NULL REFERENCES employee(id) ON DELETE CASCADE,\n  project_id  BIGINT NOT NULL REFERENCES project(id)  ON DELETE CASCADE,\n  role        TEXT,\n  assigned_at DATE NOT NULL DEFAULT CURRENT_DATE,\n  PRIMARY KEY (employee_id, project_id)\n);\n\nCREATE INDEX idx_emp_proj_project ON employee_project (project_id);\n```\n\nBağlantı tablosunun birincil anahtarı iki yabancı anahtarın bileşimidir; hem aynı çalışanın aynı projeye iki kez atanmasını engeller hem ayrı bir yüzey anahtara gerek bırakmaz.\n\nRol ve atanma tarihi bağlantı tablosunda durur, çünkü bu bilgi ne çalışana ne projeye aittir.\n\nSık atlanan nokta: bileşik anahtar (employee_id, project_id) sırasıyla kurulduğu için yalnızca 'bu çalışanın projeleri' sorgusu index'ten yararlanır. Ters yön için project_id üzerine ayrı bir index gerekir.",
+      "modelAnswer": "Çok-a-çok ilişki iki tabloyla ifade edilemez; `employee` ve `project` tablolarının arasına, iki tarafın kimliklerini tutan `employee_project` adlı bir bağlantı tablosu girer. Bu tabloda `employee_id` ve `project_id` kendi tablolarına foreign key olarak bağlanır (silinen çalışanın ya da projenin atamaları için `ON DELETE CASCADE`), birincil anahtar da ikisinin bileşimidir; bu hem aynı çalışanın aynı projeye iki kez atanmasını engeller hem ayrı bir yapay anahtara gerek bırakmaz. Rol ve atanma tarihi gibi alanlar da bağlantı tablosunda durur, çünkü bu bilgi ne çalışana ne projeye, ikisinin ilişkisine aittir. Bileşik anahtar (employee_id, project_id) sırasıyla kurulduğu için 'bu çalışanın projeleri' sorgusu doğrudan index'ten yararlanır; ters yön için, yani bir projedeki çalışanları bulmak için project_id üzerine ayrı bir index açılır, çünkü PostgreSQL foreign key kolonuna kendiliğinden index açmaz.",
       "keyConcepts": [
         {
           "id": "junction-table",
@@ -173,7 +173,7 @@
         "Bir çalışan aynı projeye farklı rollerle iki kez atanabilseydi şema nasıl değişirdi?",
         "Bağlantı tablosuna ayrı bir id kolonu koymanın artısı ve eksisi ne olurdu?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Constraints (Primary Keys, Foreign Keys), Multicolumn Indexes"
     },
     {
       "id": "sql-transaction-dirty-read",
@@ -182,7 +182,7 @@
       "topic": "Kirli Okuma ve İzolasyon",
       "difficulty": 2,
       "prompt": "Finansal bir sistemde 'Dirty Read' (kirli okuma) anomalisi nasıl oluşur ve varsayılan olarak bunu hangi izolasyon seviyesi engeller?",
-      "modelAnswer": "Dirty Read, A işlemi bir hesaba para ekleyip henüz commit etmeden önce, B işleminin bu yeni (ve belki de iptal edilecek) bakiyeyi okumasıyla oluşur. Eğer A işlemi hata alıp rollback yaparsa, B işlemi hiç var olmamış bir bakiye üzerinden işlem yapmış olur. Çoğu modern ilişkisel veritabanında (PostgreSQL, SQL Server) varsayılan izolasyon seviyesi olan 'Read Committed' bu sorunu çözer.\n\nSık atlanan nokta: Read Committed kirli okumayı engellese de, aynı işlem içinde aynı satırın iki kez okunması durumunda farklı değerler gelmesini (Non-repeatable read) engellemez; bunun için Repeatable Read veya Snapshot izolasyonu gerekir.",
+      "modelAnswer": "Dirty read, A işlemi bir hesaba para ekleyip henüz commit etmeden B işleminin bu yeni bakiyeyi okumasıyla oluşur; A hata alıp rollback yaparsa B hiç var olmamış bir bakiye üzerinden işlem yapmış olur. PostgreSQL ve SQL Server'da varsayılan izolasyon seviyesi olan Read Committed yalnızca commit edilmiş veriyi okuttuğu için bunu engeller; MySQL InnoDB'de varsayılan daha katı olan Repeatable Read'dir. PostgreSQL'de Read Uncommitted istense bile Read Committed gibi davrandığı için dirty read hiç oluşmaz. Read Committed ise aynı transaction içinde aynı satır iki kez okunduğunda farklı değer gelmesini (non-repeatable read) engellemez, çünkü her komut kendi başladığı andaki veriyi görür; bunun için Repeatable Read ya da Serializable gerekir.",
       "keyConcepts": [
         {
           "id": "dirty-read-definition",
@@ -233,7 +233,7 @@
       "followUps": [
         "Sadece Read Committed kullanarak, para çekme işlemi sırasında bakiyenin eksiye düşmesini (Lost Update) nasıl engellersin?"
       ],
-      "source": "Banka teknik mülakatları genel derlemesi"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Transaction Isolation; Microsoft Learn: SET TRANSACTION ISOLATION LEVEL (SQL Server); MySQL 8.4 Reference Manual: Transaction Isolation Levels"
     },
     {
       "id": "sql-locking-lost-update",
@@ -242,7 +242,7 @@
       "topic": "Kilitleme stratejileri",
       "difficulty": 3,
       "prompt": "Aynı hesaptan aynı anda para çekilmeye çalışıldığında bakiyenin yanlış hesaplanmasını (Lost Update) önlemek için SELECT ... FOR UPDATE (Pessimistic) ile Versiyon kolonu (Optimistic) stratejilerini karşılaştır. Banka hesabında hangisini tercih edersin?",
-      "modelAnswer": "Pessimistic locking, satırı veritabanı seviyesinde kilitler:\n\n```sql\nSELECT balance FROM accounts WHERE id = 1 FOR UPDATE;\nUPDATE accounts SET balance = balance - 100 WHERE id = 1;\n```\n\nBu yöntemde ikinci işlem, ilk işlem bitip kilit açılana kadar veritabanında bekletilir (block olur).\n\nOptimistic locking ise kilit koymaz, bir `version` kolonu kullanır:\n\n```sql\nUPDATE accounts SET balance = balance - 100, version = 2 \nWHERE id = 1 AND version = 1;\n```\n\nEğer başka biri araya girip versiyonu artırdıysa, sorgu `0 rows affected` döner ve uygulamanın işlemi tekrar etmesi (retry) gerekir. Finansal hesap işlemlerinde, aynı hesaba peş peşe çok fazla istek gelme ihtimali (çakışma oranı) yüksekse Pessimistic Locking tercih edilir, çünkü Optimistic Locking sürekli retry döngülerine girip sistemi yorabilir.",
+      "modelAnswer": "Pessimistic yaklaşımda bakiye `SELECT balance FROM accounts WHERE id = 1 FOR UPDATE` ile okunur; bu satırı kilitler, aynı satırı güncellemek ya da kilitlemek isteyen ikinci işlem ilki commit ya da rollback yapana dek bekletilir, ardından güncelleme güncel bakiye üzerinden yapılır. Optimistic yaklaşım kilit koymaz; satırda bir version kolonu tutulur ve güncelleme `UPDATE accounts SET balance = balance - 100, version = version + 1 WHERE id = 1 AND version = 7` gibi yazılır, araya başka bir işlem girip sürümü artırdıysa sıfır satır etkilenir ve uygulama işlemi baştan tekrarlar. Aynı hesaba kısa sürede çok istek geliyorsa, yani çakışma oranı yüksekse pessimistic tercih edilir, çünkü optimistic sürekli retry döngüsüne girip sistemi yorar; çakışma seyrekse optimistic kilit tutmadığı için daha iyi ölçeklenir. PostgreSQL'in varsayılan Read Committed seviyesinde tek başına `UPDATE accounts SET balance = balance - 100 WHERE id = 1` zaten güncel satıra uygulanır; kayıp güncelleme asıl olarak bakiyeyi okuyup yeni değeri uygulamada hesaplayıp geri yazınca ortaya çıkar.",
       "keyConcepts": [
         {
           "id": "pessimistic-lock-db",
@@ -295,7 +295,7 @@
       "followUps": [
         "Pessimistic locking kullanırken Deadlock (kördüğüm) oluşmasını engellemek için birden fazla satırı güncellerken nelere dikkat etmeliyiz?"
       ],
-      "source": "Banka teknik mülakatları genel derlemesi"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Explicit Locking (Row-Level Locks), Transaction Isolation (Read Committed Isolation Level)"
     },
     {
       "id": "sql-window-running-total",
@@ -304,7 +304,7 @@
       "topic": "Pencere Fonksiyonu",
       "difficulty": 2,
       "prompt": "Müşterinin 'transactions' tablosunda, tarih sırasına göre her işlem sonrası oluşan güncel bakiyesini (running total) hesaplayan sorguyu nasıl yazarsın?",
-      "modelAnswer": "Kümülatif toplam hesaplamak için Window (Pencere) fonksiyonlarından yararlanırız. GROUP BY kullanmadan, satır bazında toplama işlemi yapmak için SUM() fonksiyonunu OVER bloğu ile birleştiririz.\n\n```sql\nSELECT \n  transaction_date, \n  amount, \n  SUM(amount) OVER (ORDER BY transaction_date) as running_balance\nFROM transactions\nWHERE account_id = 100;\n```\n\nOVER içindeki `ORDER BY`, SUM işleminin baştan başlayıp o anki satıra kadar olan kayıtları toplamasını sağlar.\n\nSık atlanan nokta: Eğer aynı günde birden fazla işlem varsa ve tarih kolonu saat bilgisi içermiyorsa, `ORDER BY transaction_date` aynı değerli satırları tek bir blok olarak kabul edip hepsine aynı ara toplamı basar. Bunu çözmek için `ORDER BY transaction_date, id` gibi eşsiz bir kırılım (tie-breaker) eklemek şarttır.",
+      "modelAnswer": "Kümülatif toplam için pencere fonksiyonu kullanılır; GROUP BY satırları tek satıra indirirken `SUM(amount) OVER (ORDER BY transaction_date)` her satırı korur ve yanına o ana kadarki toplamı yazar, örneğin `SELECT transaction_date, amount, SUM(amount) OVER (ORDER BY transaction_date) AS running_balance FROM transactions WHERE account_id = 100`. OVER içinde ORDER BY verilince varsayılan pencere bölümün başından o anki satıra kadar uzanır, bu yüzden toplam ilk işlemden o anki satıra kadar birikir. Bu varsayılan pencere RANGE modunda olduğu için ORDER BY değeri aynı olan satırları da içerir; tarih kolonunda saat yoksa aynı gündeki bütün işlemler aynı ara toplamı alır. Bunu çözmek için sıralamaya `ORDER BY transaction_date, id` gibi eşsiz bir kırılım (tie-breaker) eklenir ya da pencere `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` ile satır bazına çevrilir.",
       "keyConcepts": [
         {
           "id": "sum-over-window",
@@ -357,7 +357,7 @@
       "followUps": [
         "Müşterilerin değil de bankanın tüm şubelerinin kümülatif hesap hareketlerini tek sorguda 'şube bazlı' ayrı ayrı göstermek istesek sorguya hangi ifadeyi eklerdik?"
       ],
-      "source": "Banka teknik mülakatları genel derlemesi"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Window Functions (Tutorial), Value Expressions (Window Function Calls)"
     },
     {
       "id": "sql-exception",
@@ -366,7 +366,7 @@
       "topic": "Hata yönetimi",
       "difficulty": 2,
       "prompt": "SQL exception nedir? Veritabanında bir sorgu hata verdiğinde ne olur ve uygulama tarafında nasıl ele alınır?",
-      "modelAnswer": "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır: kısıt ihlali (unique, foreign key, not null), sözdizimi hatası, tip uyuşmazlığı, deadlock veya bağlantı kopması gibi. Her hata standart bir **SQLSTATE** koduyla gelir; örneğin `23505` unique ihlali, `40P01` deadlock'tur. Java tarafında bu hata JDBC'de `SQLException` olarak yakalanır, Spring bunu `DataAccessException` hiyerarşisine (ör. `DataIntegrityViolationException`) çevirir.\n\nTransaction içinde bir komut hata verirse o transaction bozulur; PostgreSQL'de sonraki komutlar da reddedilir ve işlem **ROLLBACK** ile geri alınmalıdır. Spring'de `@Transactional` metottan RuntimeException fırlarsa rollback otomatik yapılır.\n\nSık atlanan nokta: hatayı yakalayıp yutmak. Exception loglanmadan geçilirse veri tutarsız kalabilir; hata ya anlamlı bir iş hatasına çevrilmeli ya da yukarı fırlatılmalıdır. Deadlock ve serialization hataları ise geçicidir, bu tür hatalarda işlemi yeniden denemek (retry) doğru yaklaşımdır.",
+      "modelAnswer": "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır; kısıt ihlali (unique, foreign key, not null), sözdizimi hatası, tip uyuşmazlığı, deadlock ya da bağlantı kopması gibi. Her hata standart bir SQLSTATE koduyla gelir; PostgreSQL'de örneğin 23505 unique ihlali, 23503 foreign key ihlali, 40P01 deadlock, 40001 serialization hatasıdır. Java'da hata JDBC'de `SQLException` olarak gelir, Spring bunu `DataAccessException` hiyerarşisine çevirir; örneğin unique ihlali bir `DataIntegrityViolationException` alt türü olan `DuplicateKeyException` olur. PostgreSQL'de transaction içinde bir komut hata verirse transaction bozulur, sonraki komutlar da 25P02 (in_failed_sql_transaction) ile reddedilir ve işlem ROLLBACK ile geri alınmalıdır; Spring'de `@Transactional` metottan RuntimeException fırlarsa rollback kendiliğinden yapılır. Hatayı yakalayıp yutmak veriyi tutarsız bırakabilir, hata ya anlamlı bir iş hatasına çevrilmeli ya da yukarı fırlatılmalıdır; deadlock ve serialization gibi geçici hatalarda ise işlemi yeniden denemek doğrudur.",
       "keyConcepts": [
         {
           "id": "tanim",
@@ -442,7 +442,7 @@
       "followUps": [
         "Hatayı yakalayıp logladıktan sonra transaction'a devam etmek isteseydin hangi mekanizmayı kullanırdın?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: PostgreSQL Error Codes; Spring Framework: DuplicateKeyException (Javadoc), Rolling Back a Declarative Transaction"
     },
     {
       "id": "sql-slow-query-explain",
@@ -599,7 +599,7 @@
       "topic": "Hata yönetimi",
       "difficulty": 3,
       "prompt": "Veritabanı tarafında (stored procedure veya fonksiyon içinde) bir hatayı nasıl yakalar ve ele alırsın?",
-      "modelAnswer": "PostgreSQL'de PL/pgSQL blokları **EXCEPTION** bölümüyle hata yakalar; SQL Server'daki karşılığı **TRY...CATCH**, Oracle'da yine EXCEPTION bloğudur.\n\n```sql\nBEGIN\n  INSERT INTO accounts (id, balance) VALUES (1, 0);\nEXCEPTION\n  WHEN unique_violation THEN\n    RAISE NOTICE 'Hesap zaten var';\nEND;\n```\n\nHata belirli bir türe göre yakalanabilir (`unique_violation`, `division_by_zero`) ya da `WHEN OTHERS` ile genel olarak. Kendi hatanı fırlatmak için **RAISE EXCEPTION** kullanılır; bu, iş kuralı ihlalini (ör. yetersiz bakiye) veritabanında durdurmanın yoludur.\n\nSık atlanan nokta: PostgreSQL'de EXCEPTION bloğu arka planda bir savepoint açar. Hata yakalandığında yalnızca o bloğun içindeki değişiklikler geri alınır, dış transaction devam eder. Bunun maliyeti vardır; döngü içinde EXCEPTION bloğu kullanmak performansı ciddi düşürür.",
+      "modelAnswer": "PostgreSQL'de PL/pgSQL blokları hatayı EXCEPTION bölümüyle yakalar (`BEGIN ... EXCEPTION WHEN unique_violation THEN ... END`); SQL Server'da bunun karşılığı TRY...CATCH, Oracle PL/SQL'de yine bloğun EXCEPTION bölümüdür. Hata belirli bir türe göre (`unique_violation`, `division_by_zero`) ya da `WHEN OTHERS` ile genel olarak yakalanabilir; kendi hatanı fırlatmak için `RAISE EXCEPTION` kullanılır ve yetersiz bakiye gibi bir iş kuralı ihlalini veritabanında durdurmanın yolu budur. Hata yakalandığında yalnızca o bloğun içindeki kalıcı veritabanı değişiklikleri geri alınır ve dış transaction devam eder, çünkü EXCEPTION bölümü olan blok arka planda bir alt transaction oluşturur; bu yüzden böyle bir bloğun içinde transaction bitirilemez. Bu alt transaction'ın bedeli vardır; EXCEPTION bölümü olan bir bloğa girip çıkmak belirgin biçimde pahalıdır, döngü içinde gereksiz EXCEPTION bloğu performansı düşürür.",
       "keyConcepts": [
         {
           "id": "exception-blok",
@@ -663,7 +663,7 @@
       "followUps": [
         "Uygulama tarafında birden fazla adımlı bir işlemde sadece bir adımı geri almak isteseydin SQL'de hangi komutu kullanırdın?"
       ],
-      "source": "Vakıfbank teknik mülakatı, Eylül 2026"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: PL/pgSQL Control Structures (Trapping Errors), PL/pgSQL Transaction Management; Microsoft Learn: TRY...CATCH (Transact-SQL); Oracle Database 23ai PL/SQL Language Reference: Overview of Exception Handling"
     },
     {
       "id": "sql-deadlock",
@@ -672,7 +672,7 @@
       "topic": "Kilitleme stratejileri",
       "difficulty": 3,
       "prompt": "Deadlock nedir, nasıl oluşur ve nasıl önlenir?",
-      "modelAnswer": "Deadlock, iki (veya daha fazla) transaction'ın birbirinin tuttuğu kilidi beklemesiyle oluşan kilitlenmedir. Örneğin A işlemi önce 1 numaralı hesabı, sonra 2'yi kilitlemek ister; B işlemi aynı anda önce 2'yi, sonra 1'i ister. İkisi de diğerini sonsuza kadar bekler.\n\nVeritabanı bunu **tespit eder** ve işlemlerden birini hata ile sonlandırır (PostgreSQL'de SQLSTATE `40P01`); diğeri devam eder. Uygulama, sonlandırılan işlemi yeniden denemelidir.\n\nÖnlemenin temel yolu kilitleri **her zaman aynı sırayla** almaktır: iki hesap arasında transferde önce küçük id'li hesap kilitlenir. Ayrıca transaction'ları kısa tutmak ve kilit tutarken dış servis çağrısı yapmamak riski azaltır. `lock_timeout` ile bekleme süresine sınır konabilir.",
+      "modelAnswer": "Deadlock, iki ya da daha fazla transaction'ın birbirinin tuttuğu kilidi beklemesiyle oluşan kilitlenmedir; A önce 1 numaralı hesabı sonra 2'yi, B aynı anda önce 2'yi sonra 1'i kilitlemek isterse ikisi de diğerini sonsuza kadar bekler. PostgreSQL bu durumu kendiliğinden tespit eder ve işlemlerden birini 40P01 (deadlock_detected) hatasıyla sonlandırıp diğerinin bitmesine izin verir; uygulama sonlandırılan işlemi yeniden denemelidir. En iyi önlem, aynı nesneler üzerindeki kilitleri bütün uygulamalarda hep aynı sırayla almaktır, örneğin iki hesap arasında transferde önce küçük id'li hesabı kilitlemek. Transaction'ları kısa tutmak ve kilit tutarken kullanıcı girdisi ya da dış servis beklememek de riski azaltır; deadlock olmayan uzun kilit beklemelerine `lock_timeout` ile sınır konabilir.",
       "keyConcepts": [
         {
           "id": "karsilikli-bekleme",
@@ -735,7 +735,7 @@
       "followUps": [
         "Deadlock ile uzun süren kilit beklemesi (lock wait) arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Explicit Locking (Deadlocks), PostgreSQL Error Codes, Client Connection Defaults (lock_timeout)"
     },
     {
       "id": "sql-acid",
@@ -744,7 +744,7 @@
       "topic": "Transaction",
       "difficulty": 1,
       "prompt": "ACID nedir? Her harfi bir banka transferi örneğiyle açıkla.",
-      "modelAnswer": "ACID, bir transaction'ın güvenilir olması için gereken dört özelliktir:\n\n- **Atomicity (bölünmezlik):** İşlem ya tamamen yapılır ya hiç yapılmaz. Transferde bir hesaptan para düşüp diğerine eklenmeden hata çıkarsa her şey geri alınır.\n- **Consistency (tutarlılık):** İşlem veritabanını bir geçerli durumdan başka bir geçerli duruma taşır; kısıtlar (bakiye negatif olamaz gibi) ihlal edilemez.\n- **Isolation (izolasyon):** Eşzamanlı işlemler birbirinin yarım kalmış değişikliklerini görmez; derecesi izolasyon seviyesiyle belirlenir.\n- **Durability (kalıcılık):** Commit edilen işlem, sistem çökse bile kaybolmaz; veritabanı bunu önce WAL (write-ahead log) gibi bir loga yazarak sağlar.",
+      "modelAnswer": "ACID, bir transaction'ın eşzamanlı çalışmada ve hata ya da elektrik kesintisi gibi durumlarda bile güvenilir kalması için gereken dört özelliktir. Atomicity'de işlem ya tamamen yapılır ya hiç yapılmaz; transferde bir hesaptan para düşülüp diğerine eklenmeden hata çıkarsa her şey geri alınır. Consistency'de veri her zaman bütünlük kısıtlarına uyar, örneğin bakiyenin negatif olamayacağını söyleyen bir CHECK kısıtı ihlal edilerek commit yapılamaz. Isolation'da eşzamanlı işlemler birbirinin commit edilmemiş değişikliklerini görmez ve bunun derecesini izolasyon seviyesi belirler; Durability'de ise commit edilen transfer sistem çökse bile kaybolmaz, PostgreSQL bunu değişikliği veri dosyalarına yazmadan önce WAL'a (write-ahead log) yazıp kalıcı depolamaya göndererek sağlar.",
       "keyConcepts": [
         {
           "id": "atomicity",
@@ -808,7 +808,7 @@
       "followUps": [
         "Durability'yi sağlamak için veritabanı commit anında diske tam olarak ne yazar?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Glossary (ACID, Atomicity, Consistency, Isolation, Durability), Write-Ahead Logging (WAL)"
     },
     {
       "id": "sql-isolation-levels",
@@ -817,7 +817,7 @@
       "topic": "Kirli Okuma ve İzolasyon",
       "difficulty": 3,
       "prompt": "Dört izolasyon seviyesini ve her birinin hangi anomalileri engellediğini anlat.",
-      "modelAnswer": "SQL standardı dört seviye tanımlar; yukarı çıktıkça daha az anomali, daha fazla bekleme veya çakışma olur:\n\n- **Read Uncommitted:** Commit edilmemiş veriyi bile okur, **dirty read** mümkündür. (PostgreSQL bunu Read Committed gibi davranır.)\n- **Read Committed:** Yalnızca commit edilmiş veriyi okur, dirty read engellenir. Ama aynı satır iki kez okunduğunda farklı değer gelebilir (**non-repeatable read**). PostgreSQL ve SQL Server'da varsayılandır.\n- **Repeatable Read:** Okunan satırlar transaction boyunca değişmez görünür. Standartta yeni eklenen satırların görünmesi (**phantom read**) mümkündür; PostgreSQL snapshot kullandığı için phantom'u da engeller.\n- **Serializable:** İşlemler sırayla çalışmış gibi sonuç verir, tüm anomaliler engellenir. Bedeli, çakışmada işlemlerden birinin hata alması ve uygulamanın yeniden denemesidir.\n\nMySQL InnoDB'de varsayılan Repeatable Read'dir.",
+      "modelAnswer": "SQL standardı dört seviye tanımlar ve yukarı çıktıkça daha az anomali, daha fazla bekleme ya da çakışma hatası olur. Read Uncommitted commit edilmemiş veriyi bile okuyabilir, yani dirty read mümkündür; PostgreSQL bu seviyeyi Read Committed gibi uygular. Read Committed yalnızca commit edilmiş veriyi gösterir ama aynı satır iki kez okunduğunda farklı değer gelebilir (non-repeatable read); PostgreSQL, SQL Server ve Oracle'da varsayılandır, MySQL InnoDB'de ise varsayılan Repeatable Read'dir. Repeatable Read'de okunan satırlar transaction boyunca değişmez görünür; standart yeni eklenen satırların görünmesine (phantom read) izin verir ama PostgreSQL'in Repeatable Read'i phantom'u da engeller ve eşzamanlı güncellemede serialization hatası verir. Serializable işlemler sırayla çalışmış gibi sonuç verir ve bütün anomalileri engeller; PostgreSQL bunu Serializable Snapshot Isolation ile yapar, bedeli çakışmada bir işlemin 40001 hatası alması ve uygulamanın onu yeniden denemesidir.",
       "keyConcepts": [
         {
           "id": "dirty",
@@ -876,7 +876,7 @@
       "followUps": [
         "Serializable seviyesinde çalışan bir uygulama serialization failure hatası aldığında ne yapmalıdır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Transaction Isolation; Microsoft Learn: SET TRANSACTION ISOLATION LEVEL (SQL Server); Oracle Database 23ai Concepts: Data Concurrency and Consistency; MySQL 8.4 Reference Manual: Transaction Isolation Levels"
     },
     {
       "id": "sql-join-types",
@@ -1043,7 +1043,7 @@
       "topic": "Veri modelleme",
       "difficulty": 1,
       "prompt": "Primary key ve foreign key nedir? Foreign key'de ON DELETE seçenekleri ne işe yarar?",
-      "modelAnswer": "**Primary key**, bir tablodaki her satırı benzersiz tanımlayan kolondur (veya kolonlar). Benzersiz (unique) ve NOT NULL olmak zorundadır, tabloda yalnızca bir tane olur ve veritabanı otomatik olarak üzerine index açar.\n\n**Foreign key**, bir tablodaki kolonun başka bir tablonun primary key'ine referans vermesidir. **Referans bütünlüğünü** sağlar: var olmayan bir müşteriye hesap eklenemez.\n\nReferans verilen satır silindiğinde ne olacağını ON DELETE belirler:\n- **RESTRICT / NO ACTION:** Bağlı satır varsa silmeyi engeller (varsayılan).\n- **CASCADE:** Bağlı satırları da siler.\n- **SET NULL:** Bağlı satırlardaki foreign key'i NULL yapar.\n\nSık atlanan nokta: PostgreSQL foreign key kolonuna otomatik index açmaz. Index yoksa üst tablodan silme ve JOIN'ler yavaşlar, bu yüzden foreign key kolonuna genelde elle index eklenir.",
+      "modelAnswer": "Primary key bir tablodaki her satırı benzersiz tanımlayan kolon ya da kolon grubudur; değerleri benzersiz ve NOT NULL olmak zorundadır, tabloda en fazla bir tane olur ve PostgreSQL üzerine otomatik olarak benzersiz bir B-tree index açar. Foreign key ise bir kolonun değerinin başka bir tablonun primary key'ine (ya da benzersiz bir kolonuna) karşılık gelmesini şart koşar ve referans bütünlüğünü sağlar, yani var olmayan bir müşteriye hesap eklenemez. Referans verilen satır silindiğinde ne olacağını ON DELETE belirler; varsayılan NO ACTION ve RESTRICT bağlı satır varsa silmeyi hata ile engeller (NO ACTION'da denetim transaction sonuna ertelenebilir, RESTRICT ertelenemez), CASCADE bağlı satırları da siler, SET NULL ve SET DEFAULT bağlı satırdaki foreign key'i NULL'a ya da kolonun DEFAULT değerine çeker. PostgreSQL foreign key kolonuna otomatik index açmaz; üst tablodan silme ve güncelleme bağlı tabloda eşleşen satırları aramak zorunda kaldığı için bu kolona genelde elle index eklenir.",
       "keyConcepts": [
         {
           "id": "pk",
@@ -1118,7 +1118,7 @@
       "followUps": [
         "Natural key yerine surrogate key (yapay id) kullanmanın avantajları nelerdir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Constraints (Primary Keys, Foreign Keys)"
     },
     {
       "id": "sql-normalization",
@@ -1127,7 +1127,7 @@
       "topic": "Veri modelleme",
       "difficulty": 2,
       "prompt": "Normalizasyon nedir? 1NF, 2NF ve 3NF'yi kısaca açıkla.",
-      "modelAnswer": "Normalizasyon, veriyi tekrarı ve güncelleme anomalilerini azaltacak şekilde tablolara bölmektir. Amaç her bilginin tek bir yerde durmasıdır.\n\n- **1NF:** Her hücre tek (atomik) değer tutar; tekrar eden gruplar ve virgülle ayrılmış listeler olmaz.\n- **2NF:** 1NF'ye ek olarak, bileşik anahtarlı tablolarda her kolon anahtarın tamamına bağlıdır, bir parçasına değil (kısmi bağımlılık yok).\n- **3NF:** 2NF'ye ek olarak, anahtar olmayan kolonlar birbirine bağlı değildir (geçişli bağımlılık yok). Örneğin siparişte müşteri id'si yanında müşterinin şehrini tutmak 3NF'yi bozar; şehir müşteri tablosuna aittir.\n\nNormalize edilmemiş tabloda bir bilgiyi güncellemek birçok satırı değiştirmeyi gerektirir ve biri unutulursa veri tutarsızlaşır (update anomaly).\n\nSık atlanan nokta: aşırı normalizasyon okumada çok fazla JOIN gerektirir. Raporlama gibi okuma ağırlıklı yerlerde bilinçli **denormalizasyon** yapılabilir.",
+      "modelAnswer": "Normalizasyon, veriyi tekrarı ve tutarsız bağımlılıkları azaltacak şekilde tablolara bölmektir; amaç her bilginin tek bir yerde durması, böylece bir değişikliğin yalnızca bir kez yapılmasıdır. 1NF'de her hücre tek ve atomik bir değer tutar; tekrar eden gruplar (Tedarikçi1, Tedarikçi2 gibi kolonlar) ve virgülle ayrılmış listeler olmaz. 2NF'de, 1NF'ye ek olarak, bileşik anahtarlı tablolarda her kolon anahtarın tamamına bağlıdır, yalnızca bir parçasına bağlı kolon (kısmi bağımlılık) ayrı tabloya taşınır. 3NF'de anahtar olmayan kolonlar birbirine bağlı değildir (geçişli bağımlılık yoktur); siparişte müşteri id'sinin yanında müşterinin şehrini tutmak 3NF'yi bozar, çünkü şehir müşteriye aittir. Aşırı normalizasyon okumada çok fazla JOIN gerektirdiği için raporlama gibi okuma ağırlıklı yerlerde bilinçli denormalizasyon yapılabilir.",
       "keyConcepts": [
         {
           "id": "amac",
@@ -1205,7 +1205,7 @@
       "followUps": [
         "Bir bankanın raporlama veritabanında neden bilerek denormalize tablolar kullanılır?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — Microsoft Learn: Database normalization description"
     },
     {
       "id": "sql-composite-index-order",
@@ -1659,7 +1659,7 @@
       "topic": "Pencere Fonksiyonu",
       "difficulty": 2,
       "prompt": "ROW_NUMBER, RANK ve DENSE_RANK arasındaki fark nedir? Her müşterinin en büyük işlemini nasıl bulursun?",
-      "modelAnswer": "Üçü de pencere fonksiyonudur ve sıralamaya göre numara verir; fark eşit değerlerde ortaya çıkar. Değerler 100, 90, 90, 80 olsun:\n\n- **ROW_NUMBER:** 1, 2, 3, 4. Eşitlerde bile benzersiz numara verir.\n- **RANK:** 1, 2, 2, 4. Eşitler aynı sırayı alır, sonrasında **boşluk** bırakılır.\n- **DENSE_RANK:** 1, 2, 2, 3. Eşitler aynı sırayı alır, boşluk bırakılmaz.\n\nGrup bazında \"ilk N\" için **PARTITION BY** kullanılır:\n\n```sql\nSELECT * FROM (\n  SELECT t.*, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY amount DESC) AS rn\n  FROM transactions t\n) x\nWHERE rn = 1;\n```\n\nPencere fonksiyonu WHERE'de doğrudan kullanılamaz, çünkü WHERE pencere fonksiyonlarından önce çalışır; bu yüzden sorgu dış bir katmana (subquery veya CTE) alınır.",
+      "modelAnswer": "Üçü de pencere fonksiyonudur ve ORDER BY'a göre numara verir, fark eşit değerlerde ortaya çıkar; değerler 100, 90, 90, 80 olsun. ROW_NUMBER eşitlerde bile benzersiz numara verir (1, 2, 3, 4), RANK eşitlere aynı sırayı verip sonrasında boşluk bırakır (1, 2, 2, 4), DENSE_RANK ise eşitlere aynı sırayı verir ama boşluk bırakmaz (1, 2, 2, 3). Her müşterinin en büyük işlemi için `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY amount DESC)` ile müşteri bazında numara verilir ve numarası 1 olan satırlar alınır. Pencere fonksiyonları yalnızca SELECT listesinde ve ORDER BY'da kullanılabilir, WHERE'den sonra mantıksal olarak çalıştıkları için WHERE'de kullanılamaz; bu yüzden numaralandırma bir alt sorguya ya da CTE'ye alınır ve filtre dış katmanda `WHERE rn = 1` olarak yazılır.",
       "keyConcepts": [
         {
           "id": "row-number",
@@ -1739,7 +1739,7 @@
       "followUps": [
         "Her şubenin en yüksek bakiyeli 3 müşterisini, eşitlik durumunda hepsini gösterecek şekilde nasıl listelersin?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Window Functions (functions-window), Window Functions (Tutorial)"
     },
     {
       "id": "sql-delete-truncate-drop",
@@ -2134,7 +2134,7 @@
       "topic": "Veritabanı nesneleri",
       "difficulty": 2,
       "prompt": "View ile materialized view arasındaki fark nedir? Hangisi ne zaman kullanılır?",
-      "modelAnswer": "**View**, kaydedilmiş bir sorgudur; veri tutmaz. Her sorgulandığında arkasındaki SQL **yeniden çalışır**, dolayısıyla her zaman güncel veriyi gösterir. Karmaşık JOIN'leri gizlemek ve kullanıcılara tablonun yalnızca belirli kolonlarını göstermek (güvenlik) için kullanılır.\n\n**Materialized view** sorgunun sonucunu **diskte saklar**. Sorgulandığında hesaplama yapılmaz, bu yüzden pahalı raporlarda çok hızlıdır. Bedeli, verinin **eski (stale)** olabilmesidir; güncel hâli için **REFRESH** çalıştırılması gerekir:\n\n```sql\nREFRESH MATERIALIZED VIEW CONCURRENTLY daily_summary;\n```\n\n`CONCURRENTLY` yenileme sırasında okumaları engellemez ama view üzerinde unique index ister.\n\nSeçim: veri sürekli güncel olmalıysa view; ağır, sık okunan ve birkaç dakika/saat gecikmeyi tolere eden raporlar için materialized view.",
+      "modelAnswer": "View kaydedilmiş bir sorgudur ve veri tutmaz; PostgreSQL'de view fiziksel olarak saklanmaz, her başvurulduğunda arkasındaki sorgu yeniden çalışır, dolayısıyla her zaman güncel veriyi gösterir. Karmaşık JOIN'leri gizlemek ya da kullanıcıya tablonun yalnızca bazı kolonlarını açmak için kullanılır. Materialized view ise sorgunun sonucunu diskte saklar, sorgulandığında hesaplama yapılmadığı için pahalı raporlarda çok hızlıdır; bedeli verinin son yenilemeden beri eskiyebilmesidir ve `REFRESH MATERIALIZED VIEW` ile içerik baştan oluşturulur. `CONCURRENTLY` seçeneği yenileme sırasında okumaları engellemez ama materialized view üzerinde yalnızca kolon adlarından oluşan, koşulsuz bir unique index ister. Veri sürekli güncel olmalıysa view, ağır, sık okunan ve birkaç dakikalık ya da saatlik gecikmeyi tolere eden raporlar için materialized view seçilir.",
       "keyConcepts": [
         {
           "id": "view",
@@ -2198,7 +2198,7 @@
       "followUps": [
         "Bir view üzerinden INSERT veya UPDATE yapılabilir mi?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: CREATE VIEW, REFRESH MATERIALIZED VIEW"
     },
     {
       "id": "sql-procedure-vs-function",
@@ -2207,7 +2207,7 @@
       "topic": "Veritabanı nesneleri",
       "difficulty": 2,
       "prompt": "Stored procedure ile function arasındaki fark nedir? İş mantığını veritabanına koymanın artıları ve eksileri neler?",
-      "modelAnswer": "**Function** bir değer (veya tablo) **döndürür** ve SELECT içinde kullanılabilir: `SELECT calculate_interest(balance) FROM accounts`. **Stored procedure** ise `CALL` ile çağrılır, bir işlem dizisini çalıştırır ve SELECT içinde kullanılamaz. PostgreSQL'de procedure'lerin farkı içeride **COMMIT/ROLLBACK** ile transaction kontrolü yapabilmeleridir; function'lar çağıranın transaction'ı içinde çalışır.\n\nİş mantığını veritabanına koymanın artıları: veri yanında çalıştığı için ağ trafiği azalır, birden fazla uygulama aynı kuralı paylaşır.\n\nEksileri: **test etmesi ve versiyonlaması** zordur, hata ayıklama araçları sınırlıdır, mantık uygulama ve veritabanı arasında bölünür ve belirli bir veritabanına **bağımlılık** (vendor lock-in) oluşur.\n\nBankalarda yoğun kullanılmasının sebebi genelde eski sistemler ve toplu (batch) işlemlerde veri yanında çalışmanın sağladığı performanstır.",
+      "modelAnswer": "PostgreSQL'de function bir değer ya da tablo döndürür ve bir sorgunun içinde çağrılır, örneğin `SELECT calculate_interest(balance) FROM accounts`; procedure ise değer döndürmez (gerekirse OUT parametreleriyle veri verir), CALL ile tek başına çağrılır ve SELECT içinde kullanılamaz. Procedure, çağıran CALL açık bir transaction bloğunun içinde değilse çalışırken COMMIT ya da ROLLBACK yapabilir; function bunu yapamaz ve çağıranın transaction'ı içinde çalışır. İş mantığını veritabanına koymanın artısı, kodun veri yanında çalışıp ağ trafiğini azaltması ve birden fazla uygulamanın aynı kuralı paylaşmasıdır. Eksisi, test etmenin ve versiyonlamanın zorlaşması, hata ayıklama araçlarının sınırlı kalması, mantığın uygulama ile veritabanı arasında bölünmesi ve belirli bir veritabanına bağımlılık (vendor lock-in) oluşmasıdır.",
       "keyConcepts": [
         {
           "id": "function-deger",
@@ -2282,7 +2282,7 @@
       "followUps": [
         "Uygulamada mı yoksa stored procedure'de mi faiz hesaplaması yapardın? Neden?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: User-Defined Procedures, PL/pgSQL Transaction Management"
     },
     {
       "id": "sql-trigger",
@@ -2291,7 +2291,7 @@
       "topic": "Veritabanı nesneleri",
       "difficulty": 2,
       "prompt": "Trigger nedir, ne için kullanılır ve riskleri nelerdir?",
-      "modelAnswer": "Trigger, bir tabloda **INSERT, UPDATE veya DELETE** gerçekleştiğinde **otomatik olarak çalışan** fonksiyondur. İşlemden önce (**BEFORE**) veya sonra (**AFTER**), her satır için ya da komut başına bir kez çalışabilir.\n\nTipik kullanımlar:\n- **Audit log:** Hesap bakiyesi değiştiğinde eski ve yeni değeri bir log tablosuna yazmak.\n- `updated_at` kolonunu otomatik güncellemek.\n- Uygulama kodunu atlayan değişikliklerde bile bir kuralı zorlamak.\n\nRiskleri:\n- **Gizli davranış:** Kodu okuyan kişi bir UPDATE'in arka planda başka tablolara yazdığını görmez; hata ayıklama zorlaşır.\n- **Performans:** Her satırda çalıştığı için toplu işlemleri ciddi yavaşlatabilir.\n- **Zincirleme:** Bir trigger'ın başka bir trigger'ı tetiklemesi öngörülemeyen sonuçlar doğurur.\n\nBu yüzden trigger'lar dar ve iyi belgelenmiş işler için kullanılmalı, iş mantığının ana yeri olmamalıdır.",
+      "modelAnswer": "Trigger, bir tabloda INSERT, UPDATE, DELETE ya da TRUNCATE gerçekleştiğinde veritabanının otomatik olarak çalıştırdığı bir fonksiyondur; işlemden önce (BEFORE), sonra (AFTER) ya da view'larda işlemin yerine (INSTEAD OF), her satır için ya da komut başına bir kez çalışabilir. Tipik kullanımlar, hesap bakiyesi değiştiğinde eski ve yeni değeri bir audit log tablosuna yazmak, `updated_at` kolonunu güncellemek ve uygulama kodunu atlayan değişikliklerde bile bir kuralı zorlamaktır. Riski gizli davranıştır; kodu okuyan kişi bir UPDATE'in arka planda başka tablolara yazdığını görmez ve hata ayıklama zorlaşır, satır başına çalışan trigger'lar da toplu işlemleri ciddi yavaşlatabilir. Bir trigger'ın çalıştırdığı SQL başka trigger'ları da tetikleyebilir; PostgreSQL bu zincirleme tetiklemeye derinlik sınırı koymaz, sonsuz döngüyü önlemek trigger'ı yazanın sorumluluğundadır, bu yüzden trigger'lar dar ve iyi belgelenmiş işler için kullanılmalıdır.",
       "keyConcepts": [
         {
           "id": "otomatik",
@@ -2354,7 +2354,7 @@
       "followUps": [
         "Audit log'u trigger yerine uygulama katmanında tutmanın avantajı ve dezavantajı nedir?"
       ],
-      "source": "Kendi derleme"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Overview of Trigger Behavior"
     },
     {
       "id": "sql-pagination",
