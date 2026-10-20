@@ -45,7 +45,7 @@
           "id": "post-degil",
           "label": "PUT ve DELETE idempotent, POST ve PATCH değil",
           "aliases": [
-            "delete",
+            "put ve delete",
             "iki kayıt",
             "çift kayıt",
             "duplicate",
@@ -104,7 +104,7 @@
           "id": "okuma-gonderme",
           "label": "GET okur, POST veriyi işlenmek üzere gönderir",
           "aliases": [
-            "okuma",
+            "okumak için",
             "kayıt oluştur",
             "form gönder",
             "durum değiştir",
@@ -149,8 +149,8 @@
           "id": "onbellek",
           "label": "GET önbelleğe alınır ve yer imine eklenir",
           "aliases": [
-            "önbellek",
-            "cache",
+            "cache'len",
+            "cache'e alın",
             "yer imi",
             "bookmark",
             "paylaşılabilir"
@@ -163,12 +163,12 @@
           "id": "hassas-veri",
           "label": "Hassas veri URL'ye konmaz; gizliliği HTTPS sağlar",
           "aliases": [
-            "loglar",
+            "loglarda",
+            "loglara",
             "geçmiş",
             "history",
             "referer",
-            "hassas",
-            "https"
+            "hassas"
           ],
           "anchors": [
             "Query string loglara ve tarayıcı geçmişine düştüğü için hassas veri GET ile gönderilmez."
@@ -208,9 +208,8 @@
           "id": "kismi",
           "label": "PATCH yalnızca değişiklikleri taşır",
           "aliases": [
-            "kısmi",
+            "kısmi güncelleme",
             "partial",
-            "değişiklikleri",
             "yalnızca değişen",
             "sadece değişen"
           ],
@@ -295,7 +294,7 @@
           "label": "HEAD ile indirmeden boyut ve değişiklik kontrolü",
           "aliases": [
             "content-length",
-            "boyut",
+            "dosya boyut",
             "değişip değişmediğ",
             "link kontrol",
             "linkin",
@@ -369,9 +368,9 @@
           "aliases": [
             "bilgilendirme",
             "informational",
-            "başarı",
+            "2xx başarı",
             "success",
-            "yönlendirme",
+            "3xx yönlendirme",
             "redirect"
           ],
           "anchors": [
@@ -416,7 +415,7 @@
             "tekrar dene",
             "retry",
             "bekleyip",
-            "geçici"
+            "geçici durum"
           ],
           "anchors": [
             "Geçici 5xx durumlarında bekleyip yeniden denemek anlamlıdır, 4xx'te değil."
@@ -430,8 +429,7 @@
             "monitoring",
             "alarm",
             "alert",
-            "hata oranı",
-            "metrik"
+            "hata oranı"
           ],
           "anchors": [
             "5xx oranındaki artış sunucu arızası olarak alarm üretir."
@@ -456,7 +454,8 @@
           "id": "kalici",
           "label": "301 ve 308 kalıcı",
           "aliases": [
-            "kalıcı",
+            "kalıcı yönlendirme",
+            "301 kalıcı",
             "permanent",
             "moved permanently",
             "arama motoru"
@@ -469,7 +468,8 @@
           "id": "gecici",
           "label": "302 ve 307 geçici",
           "aliases": [
-            "geçici",
+            "geçici yönlendirme",
+            "302 geçici",
             "temporary",
             "eski adres",
             "eski url"
@@ -558,7 +558,7 @@
           "aliases": [
             "anlamsal",
             "semantic",
-            "doğrulama",
+            "doğrulama hata",
             "validation",
             "iş kuralı",
             "geçersiz alan"
@@ -617,7 +617,6 @@
           "aliases": [
             "mevcut durum",
             "çeliş",
-            "çakış",
             "zaten var",
             "duplicate",
             "state conflict"
@@ -646,9 +645,7 @@
           "label": "ETag ile sürüm karşılaştırması",
           "aliases": [
             "etag",
-            "entity tag",
-            "sürüm",
-            "version"
+            "entity tag"
           ],
           "anchors": [
             "İstemcinin gönderdiği ETag kaynağın güncel ETag'iyle eşleşmezse işlem yapılmaz."
@@ -747,7 +744,6 @@
           "label": "Jitter ile istemcilerin aynı anda dönmesi önlenir",
           "aliases": [
             "jitter",
-            "rastgele",
             "random",
             "hep birlikte",
             "aynı anda geri",
@@ -778,8 +774,8 @@
           "aliases": [
             "beklenmeyen",
             "yakalanmamış",
+            "yakalanmayan",
             "unhandled",
-            "exception",
             "genel sunucu hata",
             "uygulama hata"
           ],
@@ -795,7 +791,6 @@
             "load balancer",
             "gateway",
             "ara katman",
-            "proxy",
             "nginx"
           ],
           "anchors": [
@@ -821,7 +816,6 @@
           "label": "504: arkadan zamanında yanıt gelmedi",
           "aliases": [
             "zaman aşımı",
-            "timeout",
             "time out",
             "zamanında",
             "gateway timeout"
@@ -834,7 +828,7 @@
           "id": "gecici",
           "label": "503: geçici olarak hizmet dışı",
           "aliases": [
-            "geçici",
+            "geçici olarak",
             "temporar",
             "aşırı yük",
             "overload",
@@ -937,7 +931,7 @@
           "id": "temsil",
           "label": "Aynı kaynağın birden fazla temsilinden seçim",
           "aliases": [
-            "temsil",
+            "birden fazla temsil",
             "representation",
             "json ya da xml",
             "json veya xml",
@@ -1170,7 +1164,7 @@
           "id": "kullanim",
           "label": "Hassas veri için no-store",
           "aliases": [
-            "hassas",
+            "hassas veri",
             "kişisel veri",
             "sensitive",
             "gizli veri",
@@ -1201,7 +1195,8 @@
           "aliases": [
             "taze",
             "freshness",
-            "saniye",
+            "saniye boyunca",
+            "cache'te kal",
             "sormadan",
             "sunucuya gitmeden"
           ],
@@ -1213,7 +1208,7 @@
           "id": "paylasilan",
           "label": "private: yalnızca tarayıcı, paylaşılan önbellek saklamaz",
           "aliases": [
-            "paylaşılan",
+            "paylaşılan önbellek",
             "shared",
             "ortak cache",
             "ortak önbellek",
@@ -1228,8 +1223,8 @@
           "id": "authorization",
           "label": "public: normalde saklanmayacak yanıtı paylaşılan önbelleğe açar",
           "aliases": [
-            "authorization",
-            "normalde saklanmayacak",
+            "authorization header",
+            "normalde saklanmayaca",
             "kimlik doğrulamalı",
             "her önbellek",
             "tüm önbellek",
@@ -1247,7 +1242,6 @@
             "cdn için",
             "proxy için",
             "geçersiz kılar",
-            "override",
             "ayrı süre"
           ],
           "anchors": [
@@ -1263,7 +1257,7 @@
             "dosya adında",
             "fingerprint",
             "yenilemede",
-            "reload"
+            "sayfa yenile"
           ],
           "anchors": [
             "immutable, adında içerik hash'i olan dosyanın sayfa yenilemede bile yeniden doğrulanmamasını ister."
@@ -1291,7 +1285,6 @@
             "if-none-match",
             "if-modified-since",
             "if none match",
-            "doğrula",
             "revalidat"
           ],
           "anchors": [
@@ -1317,7 +1310,6 @@
           "id": "saniye",
           "label": "Last-Modified saniye çözünürlüklü, ETag daha kesin",
           "aliases": [
-            "saniye",
             "çözünürlük",
             "resolution",
             "daha kesin",
@@ -1375,7 +1367,7 @@
           "id": "anahtar",
           "label": "İstek başlıklarını önbellek anahtarına ekler",
           "aliases": [
-            "anahtar",
+            "önbellek anahtar",
             "cache key",
             "hangi istek başlık",
             "başlıklarına göre",
@@ -1489,9 +1481,9 @@
           "id": "onbellek",
           "label": "Önbelleğe alınabilirlik",
           "aliases": [
-            "önbellek",
+            "önbelleğe alınabilir",
             "cacheable",
-            "cache"
+            "cache'len"
           ],
           "anchors": [
             "Yanıtlar önbelleğe alınabilir olup olmadıklarını açıkça belirtir."
@@ -1608,7 +1600,8 @@
             "oturum paylaş",
             "session replication",
             "sunucu belleğ",
-            "bellekte tut"
+            "oturumu bellekte",
+            "session'ı bellekte"
           ],
           "anchors": [
             "Sticky session ya da örnekler arası oturum paylaşımı gerekmez."
@@ -1707,7 +1700,7 @@
           "id": "linkler",
           "label": "Yanıt sonraki adımların linklerini içerir",
           "aliases": [
-            "link",
+            "linkler",
             "hypermedia",
             "hipermedya",
             "_links",
