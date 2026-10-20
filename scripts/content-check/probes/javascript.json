@@ -1,0 +1,3 @@
+{
+  "javascript-null-vs-undefined": "undefined, değişken tanımlanmış ama değer atanmamış demek, JavaScript bunu kendisi verir. null ise bilerek atanan boş değerdir, geliştirici burada değer yok demek için kullanır. null == undefined true döner ama === ile false. typeof null 'object' döner, bu dilin eski bir bug'ı. Default parametreler sadece undefined gelince çalışır, null gönderirsen default değer kullanılmaz."
+}

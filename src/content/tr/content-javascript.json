@@ -9,12 +9,18 @@
       "topic": "null ve undefined",
       "difficulty": 1,
       "prompt": "JavaScript'te null ile undefined arasındaki fark nedir?",
-      "modelAnswer": "undefined, bir değişkenin tanımlandığı ama değer atanmadığı durumdur; motor verir. null ise geliştiricinin bilerek atadığı boşluk değeridir.\n\nKarşılaştırmada ayrışırlar: null == undefined doğru döner, null === undefined yanlış döner. Bu yüzden bir değerin ikisinden biri olup olmadığını tek seferde kontrol etmek için gevşek eşitlik kullanılır.\n\nİki tuzak var. Birincisi typeof null sonucu 'object' döner — dilin ilk sürümünden kalma bir hata, geriye dönük uyumluluk için düzeltilmedi. İkincisi varsayılan parametre değerleri yalnızca undefined geldiğinde devreye girer; null geçerli bir değer sayılır ve varsayılan uygulanmaz.",
+      "modelAnswer": "`undefined`, bir değişken tanımlanıp henüz değer atanmadığında, var olmayan bir özellik okunduğunda ya da fonksiyon bir şey döndürmediğinde motorun kendiliğinden verdiği değerdir; `null` ise geliştiricinin bir değerin bilinçli olarak boş olduğunu belirtmek için atadığı değerdir. İkisi gevşek eşitlikte birbirine eşittir ama türleri farklı olduğu için katı eşitlikte ayrışır (`null == undefined` true, `null === undefined` false döner); bu yüzden \"ikisinden biri mi\" kontrolü tek bir `== null` ile yapılabilir. `typeof null` sonucunun `\"object\"` olması dilin ilk uygulamasından kalma bir hatadır; düzeltmek için yapılan öneri reddedildiği için bugün de böyledir. Varsayılan parametre değerleri yalnızca parametreye hiçbir şey geçilmediğinde ya da `undefined` geçildiğinde devreye girer; `null` geçerli bir değer sayılır ve varsayılan uygulanmaz.",
       "keyConcepts": [
         {
           "id": "undefined-is-absence",
           "label": "undefined atanmamışlık",
-          "aliases": ["değer atanmamış", "varsayılan", "motor verir", "unassigned"],
+          "aliases": [
+            "değer atanma",
+            "atanmamış",
+            "değer verilme",
+            "unassigned",
+            "kendiliğinden ver"
+          ],
           "anchors": [
             "undefined bir değişken tanımlanıp değer atanmadığında motorun verdiği değerdir.",
             "Bir şey döndürmeyen fonksiyonun sonucu da undefined olur."
@@ -23,7 +29,14 @@
         {
           "id": "null-is-intentional",
           "label": "null bilinçli boşluk",
-          "aliases": ["bilinçli", "kasıtlı", "geliştirici atar", "boş değer"],
+          "aliases": [
+            "bilinçli",
+            "kasıtlı",
+            "bilerek boş",
+            "bilerek atan",
+            "boş değer",
+            "geliştirici atar"
+          ],
           "anchors": [
             "null geliştiricinin bir değerin bilerek boş olduğunu belirtmek için atadığı değerdir.",
             "Değerin yokluğu kasıtlıysa null kullanılır."
@@ -32,7 +45,12 @@
         {
           "id": "typeof-null-object",
           "label": "typeof null → 'object'",
-          "aliases": ["typeof", "object döner", "dil hatası", "tip kontrolü"],
+          "aliases": [
+            "typeof",
+            "object döner",
+            "dil hatası",
+            "tip kontrolü"
+          ],
           "anchors": [
             "typeof null sonucu object döner, bu dilin ilk sürümünden kalma bir hatadır.",
             "null üzerinde typeof çalıştırmak object verir, bu yüzden tip kontrolü yanıltıcıdır."
@@ -41,7 +59,13 @@
         {
           "id": "default-params-only-undefined",
           "label": "Varsayılan parametre yalnızca undefined'da",
-          "aliases": ["default parameter", "varsayılan değer", "null geçerse", "devreye girmez"],
+          "aliases": [
+            "varsayılan parametre",
+            "default param",
+            "varsayılan değer",
+            "null geçerse",
+            "devreye girmez"
+          ],
           "anchors": [
             "Varsayılan parametre değeri yalnızca undefined geldiğinde devreye girer.",
             "null geçirilirse varsayılan uygulanmaz, null geçerli bir değer sayılır."
@@ -52,7 +76,7 @@
         "Bir nesnede alanın hiç olmaması ile değerinin null olmasını nasıl ayırt edersin?",
         "?? ile || operatörleri null ve undefined karşısında nasıl farklı davranır?"
       ],
-      "source": "Frontend mülakat notları"
+      "source": "Kendi derleme — ECMA-262: undefined value, null value; MDN: typeof (typeof null), Equality (==), Default parameters"
     }
   ]
 }

@@ -70,7 +70,7 @@ Alias başka bir cevapta bir kelimenin ortasında eşleşebilir: "slim" "teslim"
 
 Her soru için model cevaba bakmadan yazılmış kısa, gündelik bir mülakat cevabı. Model cevabın kendi kavramlarını tutması yetmez, alias'lar böyle bir cevabı da tutmalı. Özet tabloda tutulan / toplam kavram sayısı görünür; `-v` kaçan kavramları listeler.
 
-Yeni soru eklerken `probes/<kategori>.json` dosyasına `"soru-id": "cevap"` satırı ekle. Cevabı model cevaba ve alias'lara bakmadan, mülakatta söyleyeceğin gibi yaz. Sonra alias'ları cevaba göre düzelt; cevabı alias'lara göre düzeltme. Setteki bir id içerikte yoksa rapor bunu ayrıca listeler. javascript'in seti yok.
+Yeni soru eklerken `probes/<kategori>.json` dosyasına `"soru-id": "cevap"` satırı ekle. Cevabı model cevaba ve alias'lara bakmadan, mülakatta söyleyeceğin gibi yaz. Sonra alias'ları cevaba göre düzelt; cevabı alias'lara göre düzeltme. Setteki bir id içerikte yoksa rapor bunu ayrıca listeler.
 
 ## Genel kelime listeleri (`generic.ts`)
 
