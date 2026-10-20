@@ -30,7 +30,7 @@
           "id": "bellekte-access-token",
           "label": "Access token yalnızca bellekte",
           "aliases": [
-            "bellekte tut",
+            "token'ı bellekte",
             "bellekte sakla",
             "yalnızca bellekte",
             "in-memory",
@@ -75,7 +75,7 @@
           "id": "csrf-tradeoff",
           "label": "Yeni risk CSRF, SameSite ile sınırlanır",
           "aliases": [
-            "csrf",
+            "csrf risk",
             "cross-site request forgery",
             "samesite",
             "kendiliğinden ekle",
@@ -125,7 +125,6 @@
             "survey",
             "toplulu",
             "test verisi",
-            "güncellen",
             "birkaç yılda"
           ],
           "anchors": [
@@ -390,7 +389,6 @@
           "id": "alan-allowlist",
           "label": "Bağlanabilecek alanlar allowlist ile sınırlanır, denylist eskir",
           "aliases": [
-            "allowlist",
             "allow-list",
             "whitelist",
             "setallowedfields",
@@ -708,7 +706,6 @@
             "göreli yol",
             "relative path",
             "relative url",
-            "allowlist",
             "whitelist",
             "izin verilen adres"
           ],
@@ -780,7 +777,6 @@
           "id": "allowlist-ip",
           "label": "Hedef allowlist'i ve çözümlenen IP kontrolü",
           "aliases": [
-            "allowlist",
             "whitelist",
             "çözümlenen ip",
             "özel ip",
@@ -840,7 +836,6 @@
           "id": "kutuphane-api",
           "label": "Mümkünse komut yerine dilin ya da kütüphanenin API'si",
           "aliases": [
-            "kütüphane",
             "library",
             "dilin kendi",
             "kendi api",
@@ -870,7 +865,7 @@
           "id": "allowlist-az-yetki",
           "label": "Argüman allowlist'i ve az yetkili süreç",
           "aliases": [
-            "allowlist",
+            "allowlist ile",
             "whitelist",
             "izin verilen değer",
             "az yetki",
@@ -1247,7 +1242,6 @@
           "aliases": [
             "serialization filter",
             "objectinputfilter",
-            "allowlist",
             "whitelist",
             "imzala",
             "imzayla"
@@ -1770,7 +1764,6 @@
           "id": "encryption-iki-yonlu",
           "label": "Encryption anahtarla iki yönlüdür",
           "aliases": [
-            "anahtarla",
             "anahtarı bilen",
             "iki yönlü",
             "two-way",
@@ -2955,8 +2948,8 @@
           "id": "algoritma-sabit",
           "label": "Kabul edilen algoritma doğrulayıcıda sabitlenir",
           "aliases": [
-            "sabitle",
-            "allowlist",
+            "algoritma sabit",
+            "algoritmayı sabitle",
             "beklenen algoritma",
             "izin verilen algoritma",
             "tek bir algoritma",
@@ -3017,7 +3010,7 @@
           "aliases": [
             "çalınma işareti",
             "çalındığ",
-            "kopyalan",
+            "token kopyalan",
             "reuse detection",
             "zaten geçersiz",
             "zaten kullanılmış"
@@ -3048,7 +3041,7 @@
             "tolerans",
             "grace period",
             "grace",
-            "eşzamanlı",
+            "eşzamanlı yenileme",
             "iki sekme",
             "kısa bir pencere"
           ],

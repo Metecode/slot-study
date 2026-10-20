@@ -111,7 +111,7 @@
           "id": "ienumerable-in-memory",
           "label": "IEnumerable bellekte çalışır",
           "aliases": [
-            "belleğe al",
+            "veriyi belleğe",
             "belleğe çek",
             "uygulamanın belleğinde",
             "bellekte filtrele",
