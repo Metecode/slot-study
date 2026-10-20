@@ -1,6 +1,14 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
+  /*
+    Yalnızca `cap add`'in tohumu: platform eklenirken iOS bundle id'sine,
+    Android'de applicationId'ye ve namespace'e yazılır. cap sync bunlara
+    dokunmaz, çalışma anında da okunmaz. Kimliklerin kaynağı native projeler:
+    iOS pbxproj (com.meteucar.slot), Android android/app/build.gradle
+    applicationId (com.meteucar.slot.app). Burada iOS bundle id'si ve Android
+    namespace'iyle aynı değer durur.
+  */
   appId: "com.meteucar.slot",
   appName: "Slot",
   // Vite'ın çıktı klasörü (vite.config.ts'te build.outDir yok, varsayılan).

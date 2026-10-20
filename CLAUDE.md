@@ -473,6 +473,18 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   etmez; her yüklemeden önce sürüm artar.
 - minor ya da patch 99'u aşarsa ya da sürüm `X.Y.Z` değilse (ön sürüm
   etiketi dahil) derleme durur: 1.0.100 → 10100, 1.1.0 ile aynı kod olurdu.
+- **Paket kimliği `com.meteucar.slot.app`, gerisi `com.meteucar.slot`.**
+  `com.meteucar.slot` ilk Play konsolunda kilitli kaldı (yalnızca dahili
+  testteydi, gerçek kullanıcı yok); uygulama başka bir hesaptan yeni
+  kimlikle yayımlanıyor. Yalnızca `applicationId` değişti: namespace,
+  `MainActivity`'nin paketi, `capacitor.config.ts` `appId`'si ve iOS bundle
+  id'si `com.meteucar.slot`. Debug `com.meteucar.slot.app.debug` olur.
+  `appId` yalnızca `cap add`'in tohumu; `cap sync` `applicationId`'ye
+  dokunmaz. `android/` silinip `cap add android` yeniden çalıştırılırsa
+  `applicationId` ve namespace `appId`'ye döner, `MainActivity` taşınır;
+  elle geri alınır. Depo klasörü `Application Support/com.meteucar.slot`
+  paket kimliği değil, uygulama deposundaki klasörün adı; değişmez
+  (değişirse iOS'taki ilerleme görünmez olur).
 
 ## iOS sürümü
 

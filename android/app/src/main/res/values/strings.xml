@@ -1,7 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
+<!--
+  package_name ve custom_url_scheme Capacitor şablonundan kalma; uygulama ve
+  eklentiler okumuyor. package_name yanıltmasın diye applicationId ile aynı
+  tutulur. custom_url_scheme bir paket kimliği değil; manifest'te onu kullanan
+  bir deep link yok, gelirse şema ayrıca seçilir.
+-->
 <resources>
     <string name="app_name">Slot</string>
     <string name="title_activity_main">Slot</string>
-    <string name="package_name">com.meteucar.slot</string>
+    <string name="package_name">com.meteucar.slot.app</string>
     <string name="custom_url_scheme">com.meteucar.slot</string>
 </resources>
