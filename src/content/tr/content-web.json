@@ -1803,11 +1803,11 @@
           "id": "guvenilir-sirali",
           "label": "TCP kaybı yeniden gönderir ve sırayla teslim eder",
           "aliases": [
-            "güvenilir",
             "reliable",
             "sıralı",
-            "sırayla",
+            "eksiksiz",
             "yeniden gönder",
+            "tekrar gönder",
             "retransmi"
           ],
           "anchors": [
@@ -1892,7 +1892,7 @@
             "sıra numara",
             "sequence number",
             "sequence numara",
-            "senkron",
+            "senkronize",
             "numaralarında anlaş"
           ],
           "anchors": [
@@ -1918,7 +1918,6 @@
           "id": "tahmin-edilemez",
           "label": "Numaralar tahmin edilemez; eski ve sahte segment karışmaz",
           "aliases": [
-            "rastgele",
             "random",
             "tahmin edile",
             "eski paket",
@@ -1937,8 +1936,7 @@
             "gidiş dönüş",
             "round trip",
             "round-trip",
-            "1 rtt",
-            "gecikme"
+            "1 rtt"
           ],
           "anchors": [
             "El sıkışma ilk veriden önce bir tam gidiş-dönüş gecikmesi ekler."
@@ -1981,8 +1979,7 @@
             "root server",
             "root dns",
             "tld sunucu",
-            "top-level",
-            ".com"
+            "top-level"
           ],
           "anchors": [
             "Resolver önce kök sunuculara, sonra TLD sunucusuna, en son yetkili sunucuya sorar."
@@ -2086,8 +2083,7 @@
             "isteği gönder",
             "istek gönder",
             "get isteği",
-            "http request",
-            "yönlendirme"
+            "http request"
           ],
           "anchors": [
             "Bağlantı kurulunca HTTP isteği gönderilir, yanıt yönlendirmeyse adımlar tekrarlanır."
@@ -2142,12 +2138,12 @@
           "id": "kalici",
           "label": "Bağlantı kalıcıdır, sonraki istekler aynı bağlantıdan gider",
           "aliases": [
-            "kalıcı",
+            "kalıcı bağlantı",
+            "bağlantısı kapanmaz",
             "persistent",
             "yeniden kullan",
             "açık kalır",
-            "aynı tcp bağlantı",
-            "birden fazla istek için"
+            "aynı tcp bağlantı"
           ],
           "anchors": [
             "HTTP/1.1'de bağlantı yanıttan sonra kapanmaz, sonraki istekler aynı bağlantıyı kullanır."
@@ -2202,7 +2198,7 @@
             "altı bağlantı",
             "domain sharding",
             "sprite",
-            "birleştir"
+            "dosya birleştir"
           ],
           "anchors": [
             "Tarayıcılar host başına 6 paralel bağlantı açar; domain sharding ve dosya birleştirme geçici çözümlerdir."
@@ -2227,8 +2223,8 @@
           "id": "stream-frame",
           "label": "İkili frame'ler ve stream'ler",
           "aliases": [
-            "stream",
-            "frame",
+            "stream'ler",
+            "frame'ler",
             "binary",
             "ikili",
             "iç içe",
@@ -2246,8 +2242,7 @@
             "tek bir bağlantı",
             "tek tcp",
             "tek bir tcp",
-            "aynı anda",
-            "eşzamanlı"
+            "aynı anda"
           ],
           "anchors": [
             "Birçok istek tek TCP bağlantısında eşzamanlı yürür, yavaş yanıt diğerlerini bekletmez."
@@ -2331,7 +2326,7 @@
           "id": "bagimsiz-stream",
           "label": "Stream'ler taşıma katmanında bağımsız",
           "aliases": [
-            "bağımsız",
+            "stream bağımsız",
             "kendi stream",
             "yalnızca o stream",
             "sadece o stream",
@@ -2526,7 +2521,6 @@
           "id": "imza-dogrulama",
           "label": "Her imza bir üsttekinin açık anahtarıyla doğrulanır",
           "aliases": [
-            "imza",
             "signature",
             "açık anahtar",
             "public key",
@@ -2811,8 +2805,8 @@
           "aliases": [
             "chromium",
             "chrome",
-            "varsayılan",
-            "default",
+            "default lax",
+            "olarak lax",
             "firefox",
             "safari"
           ],
@@ -2869,7 +2863,7 @@
           "label": "Başka bir alt alan okuyabilir ya da üzerine yazabilir",
           "aliases": [
             "üzerine yaz",
-            "okuyabil",
+            "cookie'yi okuyabil",
             "ele geçiril",
             "takeover",
             "cookie tossing",
@@ -3017,10 +3011,9 @@
           "id": "uclu",
           "label": "Origin: scheme, host ve port",
           "aliases": [
-            "port",
             "protokol",
             "scheme",
-            "host",
+            "host ve port",
             "domain ve port",
             "alan adı ve port"
           ],
@@ -3135,7 +3128,7 @@
           "label": "JSON gövde, PUT/DELETE ya da özel başlık tetikler",
           "aliases": [
             "application/json",
-            "authorization",
+            "özel bir başlık",
             "özel başlık",
             "custom header",
             "put ya da delete",
@@ -3212,7 +3205,6 @@
             "origin başlığı",
             "aynen geri",
             "izin listesi",
-            "allowlist",
             "origin'i açıkça",
             "belirli origin"
           ],
@@ -3323,7 +3315,9 @@
           "id": "csrf",
           "label": "Durum değiştiren istekler için CSRF koruması ayrıca gerekir",
           "aliases": [
-            "csrf",
+            "csrf koruma",
+            "csrf için",
+            "csrf'e karşı",
             "cross-site request forgery",
             "csrf token",
             "samesite"
@@ -3428,7 +3422,6 @@
             "açık bağlantı",
             "bağlantıyı açık",
             "zaman aşımı",
-            "timeout",
             "kaynak tüket"
           ],
           "anchors": [
@@ -3573,7 +3566,7 @@
           "id": "kalici-kanal",
           "label": "Kalıcı bağlantı, istek-yanıt döngüsü yok",
           "aliases": [
-            "kalıcı",
+            "kalıcı bağlantı",
             "sürekli açık",
             "açık kalır",
             "persistent",
