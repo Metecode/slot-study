@@ -6,7 +6,7 @@ import type { Category } from "../domain/question";
 
 export const CATEGORY_LABELS: Record<Category, string> = {
   java: "Java",
-  javascript: "JavaScript",
+  javascript: "JS & TypeScript",
   sql: "SQL",
   react: "React",
   web: "HTTP & Web",
