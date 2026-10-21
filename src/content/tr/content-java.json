@@ -3270,7 +3270,7 @@
           "label": "finally'de elle unlock",
           "aliases": [
             "unlock",
-            "finally",
+            "finally bloğ",
             "elle bırak",
             "manuel"
           ],
@@ -4172,7 +4172,7 @@
           "id": "prototype",
           "label": "prototype: her istendiğinde yeni örnek",
           "aliases": [
-            "prototype",
+            "prototype scope",
             "her istendiğinde",
             "yeni örnek",
             "yeni instance"
