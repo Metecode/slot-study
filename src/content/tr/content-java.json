@@ -4761,7 +4761,7 @@
             "self invocation",
             "kendi içinden",
             "iç çağrı",
-            "this"
+            "this üzerinden"
           ],
           "anchors": [
             "Hiçbir proxy türü nesnenin kendi içinden yaptığı çağrıları yakalamaz."
@@ -5198,7 +5198,7 @@
           "id": "ic-cagri",
           "label": "İç çağrı proxy'den geçmez",
           "aliases": [
-            "this",
+            "this.save",
             "self-invocation",
             "self invocation",
             "iç çağrı",
