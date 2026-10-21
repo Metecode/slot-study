@@ -1061,7 +1061,7 @@
           "id": "extends-chain",
           "label": "extends prototype zincirini kurar",
           "aliases": [
-            "extends",
+            "extends de",
             "zinciri kur",
             "iki prototype",
             "prototype zincirini kur"
@@ -2527,6 +2527,735 @@
         "Strict mode'da `arguments` nesnesi ile parametreler neden artık birbirini izlemez?"
       ],
       "source": "Kendi derleme — MDN: Strict mode; ECMA-262: Strict Mode Code"
+    },
+    {
+      "id": "javascript-ts-type-vs-interface",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 1,
+      "prompt": "TypeScript'te type alias ile interface arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
+      "modelAnswer": "İkisi de bir nesnenin şeklini adlandırabilir ve çoğu durumda biri ötekinin yerine kullanılabilir. Asıl fark, interface'in aynı adla ikinci kez tanımlandığında öncekiyle birleşmesidir (declaration merging); bir kütüphanenin ya da tarayıcının global tiplerine alan eklemek bu yüzden interface ile yapılır, type alias ise bir kez tanımlanır ve yeniden açılamaz. Type alias ise yalnızca nesneye değil her tipe ad verebilir; union (`'a' | 'b'`), tuple, ilkel tipler ve bir fonksiyon imzası adlandırılabilir, conditional ve mapped type'lar da ancak type ile yazılır. Genişletmede interface `extends`, type ise kesişim (`&`) kullanır; Handbook'un önerisi, type'ın özelliklerine ihtiyaç duyulana kadar interface kullanmaktır.",
+      "keyConcepts": [
+        {
+          "id": "declaration-merging",
+          "label": "interface aynı adla birleşir, type yeniden açılamaz",
+          "aliases": [
+            "declaration merging",
+            "birleşiyor",
+            "aynı adla",
+            "yeniden açılamaz",
+            "tekrar açılamaz"
+          ],
+          "anchors": [
+            "interface aynı adla tekrar tanımlanınca birleşir.",
+            "type alias bir kez tanımlanır, yeniden açılamaz."
+          ]
+        },
+        {
+          "id": "type-anything",
+          "label": "type her tipe ad verebilir",
+          "aliases": [
+            "union, tuple",
+            "union ve tuple",
+            "her tipe ad",
+            "her şeyi tanımla",
+            "fonksiyon imza"
+          ],
+          "anchors": [
+            "type alias union, tuple ve fonksiyon imzası gibi her tipe ad verebilir."
+          ]
+        },
+        {
+          "id": "interface-object",
+          "label": "interface yalnızca nesne şekli",
+          "aliases": [
+            "sadece obje",
+            "yalnızca nesne",
+            "obje şekli",
+            "nesne şekli",
+            "nesnenin şekli"
+          ],
+          "anchors": [
+            "interface yalnızca nesne şeklini tanımlar."
+          ]
+        },
+        {
+          "id": "extends-vs-intersection",
+          "label": "extends ve kesişim (&)",
+          "aliases": [
+            "interface extends",
+            "extends ile",
+            "kesişim",
+            "intersection",
+            "& ile"
+          ],
+          "anchors": [
+            "interface extends ile, type kesişim (&) ile genişletilir."
+          ]
+        },
+        {
+          "id": "recommendation",
+          "label": "Varsayılan interface, gerekince type",
+          "aliases": [
+            "interface kullan",
+            "obje için interface",
+            "union için type",
+            "type kullan",
+            "ihtiyaç duyulana kadar"
+          ],
+          "anchors": [
+            "Nesne şekilleri için interface, union ve karmaşık tipler için type kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Declaration merging ile bir kütüphanenin tipine nasıl alan eklenir?",
+        "Hata mesajlarında interface ve type adları nasıl farklı görünür?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Everyday Types (Differences Between Type Aliases and Interfaces), Declaration Merging"
+    },
+    {
+      "id": "javascript-ts-structural-typing",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 2,
+      "prompt": "TypeScript'in tip sistemi neden \"structural\" olarak tanımlanır? Nominal tiplemeden farkı nedir?",
+      "modelAnswer": "TypeScript iki tipin uyumlu olup olmadığına adlarına ya da açıkça hangi tipten türetildiklerine bakarak değil, üyelerine bakarak karar verir; bir değer beklenen tipin bütün üyelerini doğru tiplerle taşıyorsa o tipe atanabilir, bu da duck typing'in derleme anındaki karşılığıdır. Java ve C#'taki nominal tiplemede ise aynı alanlara sahip iki sınıf, aralarında açık bir kalıtım ya da `implements` ilişkisi yoksa birbirinin yerine kullanılamaz. Fazla alan taşımak da uyumu bozmaz; bunun dışında kalan tek durum, bir nesne literalinin doğrudan beklenen tipe yazılmasıdır, orada bilinmeyen alanlar excess property check ile hata verir. Bunun bedeli, yapısı aynı olan `UserId` ve `OrderId` gibi iki string tipinin karıştırılabilmesidir; ayırmak için `string & { __brand: 'UserId' }` gibi branded type'lar kullanılır, `private` alanı olan class'lar ise nominal gibi davranır.",
+      "keyConcepts": [
+        {
+          "id": "members-not-names",
+          "label": "Adlara değil üyelere bakılır",
+          "aliases": [
+            "üyelerine bak",
+            "yapısına göre",
+            "yapılarına göre",
+            "isimlerine göre değil",
+            "adlarına göre değil",
+            "şekline göre"
+          ],
+          "anchors": [
+            "TypeScript tipleri adlarına göre değil üyelerine göre karşılaştırır."
+          ]
+        },
+        {
+          "id": "duck-typing",
+          "label": "Açık türetme gerekmez, duck typing",
+          "aliases": [
+            "duck typing",
+            "ördek",
+            "türetilmemiş olsa",
+            "açıkça türetil",
+            "implements etmese"
+          ],
+          "anchors": [
+            "Gereken üyeleri taşıyan değer, açıkça türetilmemiş olsa da uyumludur."
+          ]
+        },
+        {
+          "id": "excess-property",
+          "label": "Fazla alan serbest, literal'de excess property check",
+          "aliases": [
+            "excess property",
+            "fazla alan",
+            "fazla property",
+            "nesne literal",
+            "obje literal"
+          ],
+          "anchors": [
+            "Fazla alan uyumu bozmaz.",
+            "Doğrudan yazılan nesne literalinde bilinmeyen alan hata verir."
+          ]
+        },
+        {
+          "id": "branded",
+          "label": "Aynı yapılı tipler karışabilir, branded type",
+          "aliases": [
+            "branded",
+            "__brand",
+            "karıştırılabil",
+            "karışabilir",
+            "brand alan"
+          ],
+          "anchors": [
+            "Aynı yapıdaki iki string tipi karışabilir, ayırmak için branded type kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Branded type nasıl tanımlanır, değeri o tipe nasıl sokarsın?",
+        "Fonksiyon parametreleri karşılaştırılırken `strictFunctionTypes` neyi değiştirir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Type Compatibility, Object Types"
+    },
+    {
+      "id": "javascript-ts-any-unknown-never",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 2,
+      "prompt": "any, unknown ve never tipleri arasındaki fark nedir?",
+      "modelAnswer": "`any` tip denetimini o değer için tamamen kapatır; her özelliğe erişilebilir, her yere atanabilir ve bu gevşeklik etkileşilen başka değerlere de bulaşır. `unknown` da her değeri kabul eder ama üzerinde hiçbir işlem yapılmasına izin vermez; önce `typeof`, `instanceof` ya da bir şema doğrulamasıyla daraltılması gerekir, bu yüzden `JSON.parse` sonucu ya da `catch` değişkeni gibi kaynağı belirsiz değerler için güvenli seçimdir. `never` ise hiçbir değerin sahip olamayacağı tiptir; her zaman hata fırlatan ya da hiç dönmeyen bir fonksiyonun dönüş tipi olur ve daraltmada bütün ihtimaller elendiğinde kalan tip de odur. Bu son özellik eksiksizlik kontrolünde kullanılır; `switch`'in `default` kolunda değeri `never` tipli bir değişkene atamak, union'a yeni bir üye eklenip ele alınmadığında derleme hatası verir.",
+      "keyConcepts": [
+        {
+          "id": "any-off",
+          "label": "any denetimi tamamen kapatır",
+          "aliases": [
+            "denetimini tamamen",
+            "kontrolünü tamamen",
+            "her şeyi yapabil",
+            "hata yakalanmaz",
+            "her yere atanabil"
+          ],
+          "anchors": [
+            "any tip denetimini tamamen kapatır.",
+            "any ile her şey yapılabilir, hata yakalanmaz."
+          ]
+        },
+        {
+          "id": "unknown-narrow",
+          "label": "unknown kullanmadan önce daraltılır",
+          "aliases": [
+            "daraltıl",
+            "daraltman",
+            "daraltmadan",
+            "önce kontrol",
+            "tipini kontrol"
+          ],
+          "anchors": [
+            "unknown bir değer kullanılmadan önce daraltılmalıdır."
+          ]
+        },
+        {
+          "id": "unknown-input",
+          "label": "Kaynağı belirsiz değer için unknown",
+          "aliases": [
+            "json.parse",
+            "catch değişken",
+            "kaynağı belirsiz",
+            "dışarıdan gelen veri",
+            "güvenli seçim"
+          ],
+          "anchors": [
+            "JSON.parse sonucu gibi kaynağı belirsiz değerler için unknown güvenlidir."
+          ]
+        },
+        {
+          "id": "never-no-value",
+          "label": "never: hiç oluşmayan değer",
+          "aliases": [
+            "hiç dönmeyen",
+            "hata fırlatan",
+            "hiçbir değer",
+            "oluşmayacak",
+            "throw eden"
+          ],
+          "anchors": [
+            "never hiçbir değerin sahip olamayacağı tiptir.",
+            "Her zaman hata fırlatan fonksiyonun dönüş tipi never'dır."
+          ]
+        },
+        {
+          "id": "exhaustive",
+          "label": "default'ta never ile eksiksizlik kontrolü",
+          "aliases": [
+            "exhaustive",
+            "eksiksizlik",
+            "default'ta never",
+            "tüm durumları",
+            "bütün ihtimaller"
+          ],
+          "anchors": [
+            "default kolunda değeri never'a atamak eksik durumu derleme hatasına çevirir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`catch (e)` içindeki `e` neden `unknown` olarak ele alınmalıdır?",
+        "`void` ile `never` dönüş tipi arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Everyday Types (any), More on Functions (unknown, never), Narrowing (Exhaustiveness checking)"
+    },
+    {
+      "id": "javascript-ts-type-erasure",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 2,
+      "prompt": "TypeScript tipleri çalışma anında neden yoktur? Bu, dışarıdan gelen verinin doğrulanması açısından ne anlama gelir?",
+      "modelAnswer": "TypeScript derleyicisi tip denetimini yaptıktan sonra tip açıklamalarını, `interface` ve `type` tanımlarını tamamen atar ve geriye düz JavaScript kalır; Java'da yalnızca generic parametreleri silinirken burada bütün tip katmanı yok olur, bu yüzden bir değerin bir interface'e uyup uymadığını sonradan sorgulamanın yolu yoktur. Node.js'in type stripping desteği bunu en sade hâliyle gösterir: tipleri boşlukla değiştirir ve hiçbir tip denetimi yapmaz. Sonuç olarak `as User` ya da `fetch` sonucuna verilen bir tip bir iddiadan ibarettir; ağdan, dosyadan ya da `localStorage`'dan gelen veri beklenen şekilde değilse derleme yine geçer, hata ancak çalışırken ve çoğu zaman uzak bir yerde ortaya çıkar. Bu yüzden sistem sınırına gelen veri Zod gibi bir kütüphaneyle çalışırken şemaya karşı doğrulanır; tip de `z.infer` ile şemadan türetilirse tip ve doğrulama tek kaynaktan gelir, ikisi birbirinden kopamaz.",
+      "keyConcepts": [
+        {
+          "id": "erased",
+          "label": "Derlemede tipler tamamen atılır",
+          "aliases": [
+            "tamamen sil",
+            "tamamen atar",
+            "siliniyor",
+            "tip açıklamaları",
+            "düz javascript",
+            "boşlukla değiştir"
+          ],
+          "anchors": [
+            "Derleyici tip açıklamalarını tamamen atar, geriye düz JavaScript kalır."
+          ]
+        },
+        {
+          "id": "no-runtime-info",
+          "label": "Çalışırken tip bilgisi sorgulanamaz",
+          "aliases": [
+            "hiç tip bilgisi",
+            "sonradan sorgula",
+            "interface'e uyup",
+            "tip katmanı",
+            "tip bilgisi kalmaz"
+          ],
+          "anchors": [
+            "Çalışırken bir değerin bir interface'e uyup uymadığı sorgulanamaz."
+          ]
+        },
+        {
+          "id": "assertion-is-claim",
+          "label": "as bir iddiadır, veriyi doğrulamaz",
+          "aliases": [
+            "iddia",
+            "as user",
+            "doğrulamaz",
+            "derleme yine geçer",
+            "patlar"
+          ],
+          "anchors": [
+            "as User veriyi doğrulamaz, yalnızca bir iddiadır.",
+            "Yanlış veri gelirse hata çalışırken çıkar."
+          ]
+        },
+        {
+          "id": "zod-validate",
+          "label": "Sınırda Zod gibi şema doğrulaması",
+          "aliases": [
+            "zod gibi",
+            "zod ile",
+            "şemaya karşı",
+            "şema doğrula",
+            "sistem sınır"
+          ],
+          "anchors": [
+            "Dış kaynaktan gelen veri Zod gibi bir kütüphaneyle şemaya karşı doğrulanır."
+          ]
+        },
+        {
+          "id": "single-source",
+          "label": "z.infer ile tip şemadan türetilir",
+          "aliases": [
+            "z.infer",
+            "tek kaynak",
+            "tek yerden",
+            "şemadan türet"
+          ],
+          "anchors": [
+            "Tip z.infer ile şemadan türetilirse tip ve doğrulama tek kaynaktan gelir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Zod'un `parse` ile `safeParse` metotları arasındaki fark nedir?",
+        "Java'daki type erasure ile TypeScript'teki tip silme nasıl ayrılır?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: The Basics (Erased Types); Node.js: Modules: TypeScript (Type stripping)"
+    },
+    {
+      "id": "javascript-ts-generics-constraints",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS generics",
+      "difficulty": 2,
+      "prompt": "TypeScript'te generic nedir? Generic constraint (extends) ne işe yarar?",
+      "modelAnswer": "Generic, bir fonksiyonun, class'ın ya da tipin bir tip parametresi (`<T>`) alarak farklı tiplerle aynı kodu çalıştırmasını ve girdiyle çıktı arasındaki tip ilişkisini korumasını sağlar; `function first<T>(arr: T[]): T` sayı dizisiyle çağrılınca number, string dizisiyle çağrılınca string döner, `any` kullanılsaydı bu bilgi ortadan kalkardı. Tip parametresi çoğu zaman çağrıdaki değerden kendiliğinden çıkarılır (inference), gerektiğinde `first<string>(list)` diye açıkça verilir. Constraint, tip parametresinin kabul edeceği tipleri sınırlar ve bu sayede fonksiyon içinde o tipin üyelerine erişmeye izin verir; `T extends { length: number }` yalnızca `length`'i olan değerleri kabul eder ve fonksiyon içinde `x.length` güvenle okunur. `K extends keyof T` kalıbı bir anahtarın gerçekten o nesnede bulunmasını zorunlu kılar, `get(user, 'nme')` gibi bir yazım hatası derlemede yakalanır; Handbook'un önerisi de tip parametresini az kullanmak, iki yerde geçmiyorsa hiç tanımlamamaktır.",
+      "keyConcepts": [
+        {
+          "id": "type-parameter",
+          "label": "Tip parametresiyle farklı tiplerde aynı kod",
+          "aliases": [
+            "tip parametre",
+            "type parameter",
+            "parametre olarak alan",
+            "farklı tiplerle",
+            "aynı kod"
+          ],
+          "anchors": [
+            "Generic, tip parametresi alarak farklı tiplerle aynı kodu çalıştırır."
+          ]
+        },
+        {
+          "id": "vs-any",
+          "label": "any'den farkı: tip ilişkisi korunur",
+          "aliases": [
+            "any kullanmaya gerek",
+            "any kullanılsaydı",
+            "any yerine",
+            "ilişkisini koru",
+            "girdiyle çıktı"
+          ],
+          "anchors": [
+            "Generic girdiyle çıktı arasındaki tip ilişkisini korur, any bu bilgiyi siler."
+          ]
+        },
+        {
+          "id": "inference",
+          "label": "Tip parametresi çıkarılır",
+          "aliases": [
+            "inference",
+            "kendiliğinden çıkar",
+            "kendisi çıkar",
+            "tipi çıkar",
+            "otomatik çıkar"
+          ],
+          "anchors": [
+            "Tip parametresi çoğu zaman çağrıdaki değerden kendiliğinden çıkarılır."
+          ]
+        },
+        {
+          "id": "constraint",
+          "label": "Constraint kabul edilen tipleri sınırlar, üyelere erişim verir",
+          "aliases": [
+            "kabul edebileceği",
+            "kabul edeceği",
+            "t extends {",
+            "length'i olan",
+            "üyelerine eriş"
+          ],
+          "anchors": [
+            "Constraint tip parametresinin kabul edeceği tipleri sınırlar.",
+            "T extends { length: number } ile gövdede length okunabilir."
+          ]
+        },
+        {
+          "id": "keyof-constraint",
+          "label": "K extends keyof T",
+          "aliases": [
+            "extends keyof",
+            "keyof t"
+          ],
+          "anchors": [
+            "K extends keyof T bir anahtarın nesnede bulunmasını zorunlu kılar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir generic fonksiyonda tip parametresi yalnızca bir yerde geçiyorsa neden gereksizdir?",
+        "Generic bir tip parametresine varsayılan değer (`<T = string>`) vermek ne sağlar?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Generics, More on Functions (Constraints, Guidelines for Writing Good Generic Functions)"
+    },
+    {
+      "id": "javascript-ts-keyof-typeof",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS generics",
+      "difficulty": 2,
+      "prompt": "TypeScript'te keyof ve tip bağlamındaki typeof operatörleri ne yapar?",
+      "modelAnswer": "`keyof`, bir nesne tipinin anahtarlarını string ya da sayı literal'lerinden oluşan bir union olarak verir; `keyof { x: number; y: number }` ifadesi `'x' | 'y'` demektir, string index signature'lı bir tipte ise sonuç `string | number` olur. Tip tarafında kullanılan `typeof` ise JavaScript'teki çalışma anı operatöründen farklıdır; bir değişkenin ya da özelliğinin derleyicinin çıkardığı tipini alır ve yalnızca isimler üzerinde kullanılabilir. İkisi birlikte değerden tip türetmenin temelidir; `keyof typeof config` bir nesnenin anahtarlarını, `ReturnType<typeof createUser>` bir fonksiyonun dönüş tipini elle tekrar yazmadan üretir. Bu sayede tip, kaynağı olan değer değiştiğinde kendiliğinden güncellenir; `as const` ile birleştirildiğinde `(typeof ROLES)[number]` bir dizideki değerlerden literal union çıkarır.",
+      "keyConcepts": [
+        {
+          "id": "keyof-union",
+          "label": "keyof anahtarları union olarak verir",
+          "aliases": [
+            "anahtarlarını union",
+            "anahtarların union",
+            "'x' | 'y'",
+            "anahtar union",
+            "anahtarlarını verir"
+          ],
+          "anchors": [
+            "keyof bir nesne tipinin anahtarlarını union olarak verir."
+          ]
+        },
+        {
+          "id": "typeof-type",
+          "label": "Tip tarafında typeof değişkenin tipini alır",
+          "aliases": [
+            "tip tarafında",
+            "değişkenin tipini",
+            "çalışma anı operatör",
+            "çıkardığı tipini",
+            "type context"
+          ],
+          "anchors": [
+            "Tip tarafında typeof bir değişkenin tipini alır."
+          ]
+        },
+        {
+          "id": "keyof-typeof",
+          "label": "keyof typeof ile değerin anahtarları",
+          "aliases": [
+            "keyof typeof",
+            "anahtarlarını tip olarak"
+          ],
+          "anchors": [
+            "keyof typeof config bir nesnenin anahtarlarını tip olarak verir."
+          ]
+        },
+        {
+          "id": "returntype-typeof",
+          "label": "ReturnType<typeof fn>",
+          "aliases": [
+            "returntype<typeof",
+            "typeof fn",
+            "typeof createuser",
+            "fonksiyonun tipini"
+          ],
+          "anchors": [
+            "ReturnType<typeof fn> bir fonksiyonun dönüş tipini üretir."
+          ]
+        },
+        {
+          "id": "derive-from-value",
+          "label": "Tip değerden türetilir, kendiliğinden güncellenir",
+          "aliases": [
+            "değerden tip",
+            "elle tekrar yazmadan",
+            "kendiliğinden güncellen",
+            "config objesinden tip",
+            "tip üretmek"
+          ],
+          "anchors": [
+            "Tip değerden türetildiği için değer değişince kendiliğinden güncellenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`T[K]` (indexed access type) nedir, keyof ile nasıl birlikte kullanılır?",
+        "Tip bağlamındaki `typeof` neden bir fonksiyon çağrısı üzerinde kullanılamaz?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Keyof Type Operator, Typeof Type Operator"
+    },
+    {
+      "id": "javascript-ts-utility-types",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS tip türetme",
+      "difficulty": 1,
+      "prompt": "TypeScript'teki Partial, Pick, Omit, Record ve ReturnType gibi utility type'lar ne işe yarar?",
+      "modelAnswer": "Utility type'lar mevcut bir tipten yenisini türeten, import gerekmeden her yerde kullanılabilen hazır generic tiplerdir; aynı alanları ikinci kez elle yazmayı ve iki tanımın zamanla birbirinden ayrılmasını önlerler. `Partial<T>` bütün alanları isteğe bağlı yapar ve bir güncelleme isteğinin gövdesini tiplemek için kullanılır, `Required<T>` bunun tersini yapar, `Readonly<T>` ise alanları yalnızca ilk seviyede readonly yapar. `Pick<T, 'id' | 'name'>` yalnızca seçilen alanları alır, `Omit<T, 'password'>` verilen alanları çıkarır; `Record<K, V>` anahtar ve değer tipinden bir nesne tipi kurar, `Record<Role, string[]>` her rol için bir liste tutar. `ReturnType<typeof fn>` ve `Parameters<typeof fn>` bir fonksiyonun dönüş ve parametre tiplerini, `Awaited<T>` ise bir promise'in çözüldüğü değerin tipini verir; çoğu mapped ve conditional type'larla yazılmıştır.",
+      "keyConcepts": [
+        {
+          "id": "derive",
+          "label": "Mevcut tipten yeni tip türetir",
+          "aliases": [
+            "mevcut bir tipten",
+            "var olan bir tipten",
+            "yeni tip üret",
+            "türeten",
+            "elle yazma"
+          ],
+          "anchors": [
+            "Utility type'lar mevcut bir tipten yeni tip türetir."
+          ]
+        },
+        {
+          "id": "partial",
+          "label": "Alanları isteğe bağlı yapar",
+          "aliases": [
+            "opsiyonel",
+            "isteğe bağlı",
+            "optional",
+            "güncelleme isteği",
+            "update fonksiyon"
+          ],
+          "anchors": [
+            "Partial bütün alanları isteğe bağlı yapar."
+          ]
+        },
+        {
+          "id": "pick-omit",
+          "label": "Seçilen alanları al ya da çıkar",
+          "aliases": [
+            "seçilen alan",
+            "seçtiğin alan",
+            "alanları çıkar",
+            "verilen alanları",
+            "istenmeyen alan"
+          ],
+          "anchors": [
+            "Pick seçilen alanları alır, Omit verilen alanları çıkarır."
+          ]
+        },
+        {
+          "id": "record",
+          "label": "Anahtar ve değer tipinden nesne tipi",
+          "aliases": [
+            "anahtar ve değer",
+            "anahtar tipi",
+            "record<"
+          ],
+          "anchors": [
+            "Record anahtar ve değer tipinden bir nesne tipi kurar."
+          ]
+        },
+        {
+          "id": "function-types",
+          "label": "Fonksiyonun dönüş ve parametre tipleri",
+          "aliases": [
+            "dönüş tipi",
+            "parameters<",
+            "awaited",
+            "fonksiyonun dönüş"
+          ],
+          "anchors": [
+            "ReturnType bir fonksiyonun dönüş tipini verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Omit` neden anahtar olarak tipte bulunmayan bir değeri de kabul eder?",
+        "`Readonly<T>` iç içe nesneleri neden korumaz, derin readonly nasıl yazılır?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Utility Types"
+    },
+    {
+      "id": "javascript-ts-conditional-types",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS tip türetme",
+      "difficulty": 3,
+      "prompt": "TypeScript'te conditional type nedir? infer anahtar kelimesi ne işe yarar?",
+      "modelAnswer": "Tip düzeyinde bir if-else olan conditional type `T extends U ? X : Y` biçiminde yazılır; `T`, `U`'ya atanabiliyorsa sonuç `X`, değilse `Y` olur ve çoğunlukla generic bir tip parametresiyle kullanılır. `infer` yalnızca `extends` koşulunun içinde kullanılabilir ve eşleşen yapının bir parçasını yeni bir adla yakalar; `T extends (infer U)[] ? U : T` bir dizinin eleman tipini, standart kütüphanedeki `ReturnType` de aynı yolla bir fonksiyonun dönüş tipini çıkarır. Koşul çıplak bir tip parametresine uygulanıp parametreye bir union geldiğinde dağılır (distributive); `ToArray<string | number>` sonucu `string[] | number[]` olur, bu istenmiyorsa iki taraf köşeli paranteze alınır (`[T] extends [U]`). `Exclude`, `Extract` ve `NonNullable` bu dağılmaya dayanır; koşulda `never`'a düşen üyeler union'dan kendiliğinden çıkar.",
+      "keyConcepts": [
+        {
+          "id": "if-else",
+          "label": "Tip düzeyinde if-else",
+          "aliases": [
+            "if-else",
+            "t extends u",
+            "atanabiliyorsa",
+            "ternary",
+            "üçlü operatör"
+          ],
+          "anchors": [
+            "Conditional type tip düzeyinde bir if-else'tir.",
+            "T, U'ya atanabiliyorsa X, değilse Y olur."
+          ]
+        },
+        {
+          "id": "infer-capture",
+          "label": "infer bir parçayı tip değişkeni olarak yakalar",
+          "aliases": [
+            "yeni bir adla",
+            "eleman tipini",
+            "parçasını yakala",
+            "içinde bir tipi yakala",
+            "infer u"
+          ],
+          "anchors": [
+            "infer koşulun içinde eşleşen parçayı yeni bir adla yakalar."
+          ]
+        },
+        {
+          "id": "distributive",
+          "label": "Union'a dağılır",
+          "aliases": [
+            "distributive",
+            "dağılır",
+            "dağıtıl",
+            "her elemana ayrı",
+            "her üyesine"
+          ],
+          "anchors": [
+            "Union verildiğinde koşul her üyeye ayrı ayrı uygulanır."
+          ]
+        },
+        {
+          "id": "builtins",
+          "label": "Exclude, Extract, NonNullable, ReturnType",
+          "aliases": [
+            "exclude",
+            "extract",
+            "nonnullable",
+            "returntype"
+          ],
+          "anchors": [
+            "Exclude ve Extract conditional type ile yazılmıştır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`[T] extends [U]` yazmak dağılmayı neden durdurur?",
+        "`ReturnType` aşırı yüklenmiş (overload) bir fonksiyonda hangi imzanın dönüş tipini verir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Conditional Types"
+    },
+    {
+      "id": "javascript-ts-mapped-types",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS tip türetme",
+      "difficulty": 3,
+      "prompt": "TypeScript'te mapped type nedir? Hangi durumlarda kullanılır?",
+      "modelAnswer": "Mapped type, bir anahtar kümesi üzerinde dolaşarak her anahtar için bir alan üreten tiptir; çoğunlukla `{ [K in keyof T]: T[K] }` biçiminde, mevcut bir tipin bütün alanlarını aynı kurala göre dönüştürmek için kullanılır. `Partial`, `Required` ve `Readonly` aslında birer mapped type'tır; `readonly` ve `?` belirleyicileri `+` ile eklenir, `-readonly` ve `-?` ile kaldırılır, örneğin `{ -readonly [K in keyof T]: T[K] }` bir tipi yeniden yazılabilir yapar. `as` ile anahtar yeniden adlandırılabilir; template literal tiplerle `getName`, `getEmail` gibi yeni adlar üretilebilir, bir anahtar `never`'a eşlenirse tipten düşer, bu da belirli alanları süzmenin yoludur. Tipik kullanımlar bir form tipinden her alan için hata mesajı tipi üretmek, bir nesnenin bütün metotlarını async sürümlere çevirmek ya da bir olay haritasından dinleyici adları türetmektir; amaç aynı yapıyı ikinci kez yazmamak ve kaynak tip güncellendiğinde türetilenin de güncel kalmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "iterate-keys",
+          "label": "Anahtarlar üzerinde dolaşır",
+          "aliases": [
+            "[k in keyof",
+            "in keyof",
+            "anahtarları üzerinde",
+            "anahtar kümesi",
+            "her anahtar için"
+          ],
+          "anchors": [
+            "Mapped type anahtarlar üzerinde dolaşarak her anahtar için bir alan üretir."
+          ]
+        },
+        {
+          "id": "modifiers",
+          "label": "readonly ve ? eklenip kaldırılır",
+          "aliases": [
+            "-readonly",
+            "-?",
+            "belirleyici",
+            "modifier",
+            "koyarak kaldır"
+          ],
+          "anchors": [
+            "readonly ve ? belirleyicileri - ile kaldırılır."
+          ]
+        },
+        {
+          "id": "built-on",
+          "label": "Partial ve Readonly mapped type'tır",
+          "aliases": [
+            "partial ve readonly",
+            "partial, required",
+            "aslında birer",
+            "mapped type ile yazılmış"
+          ],
+          "anchors": [
+            "Partial, Required ve Readonly aslında birer mapped type'tır."
+          ]
+        },
+        {
+          "id": "key-remap",
+          "label": "as ile yeniden adlandırma, never ile süzme",
+          "aliases": [
+            "yeniden adlandır",
+            "template literal",
+            "getname",
+            "never'a eşle",
+            "never'a map"
+          ],
+          "anchors": [
+            "as ile anahtar yeniden adlandırılır.",
+            "never'a eşlenen anahtar tipten düşer."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir nesnenin yalnızca fonksiyon olan alanlarını seçen mapped type nasıl yazılır?",
+        "Homomorphic mapped type, kaynak tipteki `readonly` ve `?` belirleyicilerini neden korur?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Mapped Types, Template Literal Types"
     }
   ]
 }
