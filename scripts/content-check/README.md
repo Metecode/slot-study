@@ -91,7 +91,7 @@ Tek kaynak `generic.ts`. Listeyi değiştirirsen bu bölümü de güncelle.
 | java | java, spring |
 | web | başlık, header, bağlantı, connection, adres, durum kodu, status, java |
 | cybersecurity | web listesi + security, secure, saldırı, attack, saldırgan, attacker, şifre, parola, password, zafiyet, vulnerability, risk, koruma, korur, önlem, token, cookie, çerez, erişim, access, kimlik, anahtar, key, doğrulama, validation, sorgu, query, script, javascript, html, tehlikeli, zararlı, kötü niyetli, malicious |
-| javascript | yok, yalnızca ortak liste |
+| javascript | javascript, typescript, tip, tipi, type, tür, türü, motor, engine, node, node.js |
 
 ## Dosyalar
 
