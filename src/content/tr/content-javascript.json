@@ -210,8 +210,7 @@
             "boş dizi",
             "boş nesne",
             "boş obje",
-            "boş array",
-            "[]"
+            "boş array"
           ],
           "anchors": [
             "Boş dizi ve boş nesne truthy'dir.",
@@ -3059,7 +3058,6 @@
           "aliases": [
             "opsiyonel",
             "isteğe bağlı",
-            "optional",
             "güncelleme isteği",
             "update fonksiyon"
           ],
@@ -3256,6 +3254,578 @@
         "Homomorphic mapped type, kaynak tipteki `readonly` ve `?` belirleyicilerini neden korur?"
       ],
       "source": "Kendi derleme — TypeScript Handbook: Mapped Types, Template Literal Types"
+    },
+    {
+      "id": "javascript-ts-narrowing-type-guards",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS narrowing",
+      "difficulty": 2,
+      "prompt": "TypeScript'te narrowing nedir? Type guard nasıl yazılır?",
+      "modelAnswer": "Narrowing, geniş bir tipin, çoğunlukla bir union'ın, kod içindeki kontrollerle daha dar bir tipe indirilmesidir; TypeScript `if`, `return` ve `switch` gibi yapıların kontrol akışını izler ve her kolda değerin olabileceği tipleri yeniden hesaplar. typeof kontrolü ilkel tipleri, instanceof class örneklerini, in operatörü bir alanın varlığını, null ya da belirli bir literal'le karşılaştırma da eşitliği kullanarak dar tipe indirir; erken bir `return`'den sonraki kodda elenen tipler artık yoktur. Bu yerleşik kontroller yetmediğinde dönüş tipi `value is Fish` olan bir fonksiyon yazılır (type predicate); fonksiyon true döndüğünde çağıran tarafta değer o tipe indirilir, `asserts value is Fish` biçimindeki assertion function ise koşul sağlanmazsa hata fırlatarak sonraki satırlarda aynı etkiyi verir. Type guard'ın gövdesini derleyici doğrulamaz, yanlış yazılmış bir predicate tip sistemini sessizce yanıltır; ayrıca `typeof null` sonucu `'object'` olduğu için `typeof` ile `'object'` arayan bir kontrol null'ı da içeri alır.",
+      "keyConcepts": [
+        {
+          "id": "control-flow",
+          "label": "Kontrol akışı izlenir",
+          "aliases": [
+            "kontrol akışı",
+            "control flow",
+            "her kolda",
+            "erken bir return",
+            "return'den sonra"
+          ],
+          "anchors": [
+            "TypeScript kontrol akışını izler, her kolda tipi yeniden hesaplar.",
+            "Erken return'den sonraki kodda elenen tipler yoktur."
+          ]
+        },
+        {
+          "id": "builtin-guards",
+          "label": "typeof, instanceof, in ve eşitlik",
+          "aliases": [
+            "in operatörü",
+            "typeof kontrol",
+            "typeof x",
+            "instanceof, in",
+            "eşitlik"
+          ],
+          "anchors": [
+            "typeof, instanceof, in operatörü ve eşitlik kontrolleri tipi daraltır."
+          ]
+        },
+        {
+          "id": "type-predicate",
+          "label": "value is T dönüş tipli fonksiyon",
+          "aliases": [
+            "is fish",
+            "value is fish",
+            "type predicate",
+            "asserts",
+            "kendi type guard"
+          ],
+          "anchors": [
+            "Dönüş tipi value is Fish olan fonksiyon kendi type guard'ını tanımlar."
+          ]
+        },
+        {
+          "id": "not-verified",
+          "label": "Predicate'in gövdesi doğrulanmaz",
+          "aliases": [
+            "doğrulamaz",
+            "sessizce yanılt",
+            "yanlış yazılmış",
+            "güvenmek zorunda"
+          ],
+          "anchors": [
+            "Derleyici type guard'ın gövdesini doğrulamaz, yanlış predicate tip sistemini yanıltır."
+          ]
+        },
+        {
+          "id": "typeof-null",
+          "label": "typeof null 'object' döner",
+          "aliases": [
+            "typeof null",
+            "null'ı da",
+            "null da object"
+          ],
+          "anchors": [
+            "typeof null 'object' döndüğü için object kontrolü null'ı da içeri alır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Array.prototype.filter` ile bir union dizisinden yalnızca bir tipi süzerken neden type predicate gerekir?",
+        "Assertion function (`asserts value is T`) ne zaman type predicate yerine tercih edilir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Narrowing (typeof, Truthiness, Equality, in, instanceof, Control flow analysis, Using type predicates, Assertion functions)"
+    },
+    {
+      "id": "javascript-ts-discriminated-union",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS narrowing",
+      "difficulty": 2,
+      "prompt": "Discriminated union nedir? TypeScript'te neden bu kadar sık kullanılır?",
+      "modelAnswer": "Discriminated union, her üyesinin aynı adlı ve literal tipli ortak bir alan (discriminant) taşıdığı bir union'dır, örneğin `{ kind: 'circle'; radius: number } | { kind: 'square'; size: number }`. Bu alan `switch` ya da `if` ile kontrol edildiğinde TypeScript union'ı o kola ait tek üyeye indirir; `radius` yalnızca daire kolunda erişilebilir olur ve olmayan bir alana yanlışlıkla erişmek derlemede yakalanır. `default` kolunda değeri `never` tipli bir değişkene atamak eksiksizlik kontrolü (exhaustiveness check) sağlar; union'a yeni bir üye eklenip ele alınmazsa derleme tam o satırda durur. Opsiyonel alanlarla dolu tek bir tip yerine her durumu ayrı tanımladığı için geçersiz durumları ifade edilemez kılar; yükleniyor, başarılı ve hatalı gibi istek durumları, reducer action'ları ve API yanıtları bu yüzden çoğunlukla bu kalıpla modellenir.",
+      "keyConcepts": [
+        {
+          "id": "common-literal",
+          "label": "Ortak literal alan (discriminant)",
+          "aliases": [
+            "ortak bir alan",
+            "ortak bir literal",
+            "literal alan",
+            "literal tipli",
+            "discriminant",
+            "kind:"
+          ],
+          "anchors": [
+            "Her üye aynı adlı, literal tipli ortak bir alan taşır."
+          ]
+        },
+        {
+          "id": "switch-narrows",
+          "label": "switch ile tek üyeye iner",
+          "aliases": [
+            "otomatik daralt",
+            "switch ile kontrol",
+            "her case'de",
+            "o kola ait",
+            "tek üyeye"
+          ],
+          "anchors": [
+            "Ortak alan switch ile kontrol edilince union o kola ait tek üyeye iner."
+          ]
+        },
+        {
+          "id": "exhaustive",
+          "label": "never ile eksiksizlik kontrolü",
+          "aliases": [
+            "exhaustive",
+            "eksiksizlik",
+            "never tipine",
+            "never tipli",
+            "yeni bir üye",
+            "yeni bir tip eklendiğinde"
+          ],
+          "anchors": [
+            "default kolunda never'a atama, ele alınmayan yeni üyeyi derleme hatasına çevirir."
+          ]
+        },
+        {
+          "id": "invalid-states",
+          "label": "Geçersiz durumlar ifade edilemez",
+          "aliases": [
+            "geçersiz durum",
+            "ifade edilemez",
+            "opsiyonel alanlarla dolu",
+            "her durumu ayrı"
+          ],
+          "anchors": [
+            "Her durumu ayrı tanımlamak geçersiz durumları ifade edilemez kılar."
+          ]
+        },
+        {
+          "id": "use-cases",
+          "label": "İstek durumları, reducer action'ları, API yanıtları",
+          "aliases": [
+            "reducer action",
+            "redux action",
+            "api sonuçlarını",
+            "api yanıtları",
+            "success/error",
+            "istek durumları"
+          ],
+          "anchors": [
+            "İstek durumları ve reducer action'ları bu kalıpla modellenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Discriminant alan bir `boolean` olabilir mi, `success: true | false` ile nasıl kullanılır?",
+        "Zod'da discriminated union şeması nasıl tanımlanır?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Narrowing (Discriminated unions, The never type, Exhaustiveness checking)"
+    },
+    {
+      "id": "javascript-ts-as-vs-satisfies",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS as ve literal",
+      "difficulty": 2,
+      "prompt": "TypeScript'te as (type assertion) ile satisfies arasındaki fark nedir?",
+      "modelAnswer": "`as`, derleyiciye \"bu değerin tipini ben senden iyi biliyorum\" demektir ve ifadenin tipini doğrudan verilen tiple değiştirir. Çalışma anında hiçbir kontrol üretmez, yalnızca birbiriyle hiç örtüşmeyen tiplere (`'abc' as number`) itiraz eder; yanlış bir iddia derlemeden geçer ve hata ancak çalışırken çıkar, `as unknown as T` ile bu son engel de aşılabilir. TypeScript 4.9'la gelen `satisfies` ise ifadenin bir tipe uyduğunu denetler ama ifadenin çıkarılan tipine dokunmaz; `const routes = { home: '/' } satisfies Record<string, string>` hem eksik ya da hatalı alanı yakalar hem de `routes.home` alanının varlığını ve literal ayrıntıları korur. Kısaca `as` denetimi gevşetip derleyiciyi susturur, `satisfies` denetimi korurken çıkarımı da korur; `const x: T = value` biçimindeki tip açıklaması da denetler ama değişkenin tipini `T`'ye genişletir.",
+      "keyConcepts": [
+        {
+          "id": "as-overrides",
+          "label": "as tipi zorla değiştirir",
+          "aliases": [
+            "ben biliyorum",
+            "senden iyi",
+            "tipini değiştir",
+            "derleyiciyi sustur",
+            "derleyiciye"
+          ],
+          "anchors": [
+            "as derleyiciye değerin tipini bildiğini söyler ve tipi değiştirir."
+          ]
+        },
+        {
+          "id": "as-no-check",
+          "label": "as çalışma anında kontrol üretmez",
+          "aliases": [
+            "kontrol etmez",
+            "kontrol üretmez",
+            "çalışırken çık",
+            "çalışma anında hata",
+            "as unknown as"
+          ],
+          "anchors": [
+            "as çalışma anında hiçbir kontrol üretmez, yanlış iddia çalışırken patlar."
+          ]
+        },
+        {
+          "id": "satisfies-checks",
+          "label": "satisfies tipe uyduğunu denetler",
+          "aliases": [
+            "tipe uyduğunu",
+            "uyduğunu kontrol",
+            "uyduğunu denetle",
+            "hatalı alanı",
+            "eksik alan"
+          ],
+          "anchors": [
+            "satisfies ifadenin bir tipe uyduğunu denetler."
+          ]
+        },
+        {
+          "id": "keeps-inferred",
+          "label": "Çıkarılan tip korunur",
+          "aliases": [
+            "çıkarılan tipi",
+            "çıkarılan tipine",
+            "spesifik tip",
+            "literal ayrıntı",
+            "tipine dokunmaz",
+            "çıkarımı da korur"
+          ],
+          "anchors": [
+            "satisfies ifadenin çıkarılan tipini değiştirmez, daha dar tip korunur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Non-null assertion (`value!`) hangi durumda kullanılabilir, riski nedir?",
+        "`satisfies` ile `as const` birlikte kullanıldığında ne elde edilir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Everyday Types (Type Assertions); TypeScript 4.9 sürüm notları: The satisfies Operator"
+    },
+    {
+      "id": "javascript-ts-as-const-readonly",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS as ve literal",
+      "difficulty": 2,
+      "prompt": "TypeScript'te as const ve readonly ne işe yarar? Değeri gerçekten değiştirilemez yapar mı?",
+      "modelAnswer": "`as const` bir ifadenin tipini mümkün olan en dar hâliyle çıkarır: string'ler literal tipe dönüşür, diziler readonly tuple olur ve nesnenin iç içe bütün alanları readonly işaretlenir; `['a', 'b'] as const` ifadesinin tipi `string[]` değil `readonly ['a', 'b']`'dir. Bu sayede `(typeof ROLES)[number]` gibi bir ifadeyle bir değer listesinden literal union türetilebilir ve aynı değerleri tip olarak ikinci kez yazmak gerekmez. `readonly` ise bir alanın ya da dizinin tip denetimi sırasında yeniden atanmasını engeller; `readonly string[]` üzerinde `push` yoktur. İkisi de yalnızca derleme anında vardır ve çıktıda hiçbir iz bırakmaz, değeri çalışma anında dondurmaz; bunun için `Object.freeze` gerekir, o da yalnızca ilk seviyeyi dondurur. `readonly` ayrıca sığdır, iç nesnenin alanları yine yazılabilir, ve uyumluluk karşılaştırmasında dikkate alınmadığı için aynı nesneyi gösteren yazılabilir başka bir referans üzerinden değer yine değişebilir.",
+      "keyConcepts": [
+        {
+          "id": "narrowest",
+          "label": "En dar literal tip",
+          "aliases": [
+            "en dar hâl",
+            "en dar literal",
+            "literal tipe",
+            "dar literal"
+          ],
+          "anchors": [
+            "as const ifadenin tipini en dar literal hâliyle çıkarır."
+          ]
+        },
+        {
+          "id": "readonly-tuple",
+          "label": "Diziler readonly tuple olur",
+          "aliases": [
+            "readonly tuple",
+            "readonly ['a'",
+            "string[] değil",
+            "tuple olur",
+            "bütün alanları readonly"
+          ],
+          "anchors": [
+            "as const ile dizi string[] değil readonly tuple olur."
+          ]
+        },
+        {
+          "id": "compile-only",
+          "label": "Yalnızca derleme anında, çalışma anında dondurmaz",
+          "aliases": [
+            "derleme anında",
+            "hiçbir iz",
+            "çalışma anında dondurmaz",
+            "object.freeze",
+            "freeze değil",
+            "çalışma anında hiçbir"
+          ],
+          "anchors": [
+            "readonly ve as const çalışma anında değeri dondurmaz.",
+            "Değeri dondurmak için Object.freeze gerekir."
+          ]
+        },
+        {
+          "id": "shallow",
+          "label": "readonly sığdır, takma ad üzerinden değişebilir",
+          "aliases": [
+            "sığdır",
+            "ilk seviye",
+            "sadece o seviye",
+            "iç nesne",
+            "içteki obje",
+            "başka bir referans"
+          ],
+          "anchors": [
+            "readonly sığdır, iç nesnenin alanları yazılabilir kalır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`readonly` bir dizi parametresi almak fonksiyonun çağıranlarına ne güvence verir?",
+        "`Object.freeze` ile `as const` arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Object Types (readonly Properties, The ReadonlyArray Type, readonly Tuple Types), Everyday Types (Literal Inference)"
+    },
+    {
+      "id": "javascript-ts-enum-vs-literal-union",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS as ve literal",
+      "difficulty": 2,
+      "prompt": "TypeScript'te enum ile string literal union arasındaki fark nedir? Hangisini tercih edersin?",
+      "modelAnswer": "`enum`, TypeScript'in tip silmeyle tamamen ortadan kalkmayan birkaç yapısından biridir; derlendiğinde JavaScript'te gerçek bir nesne üretir ve sayısal enum'larda değerden ada ters eşleme de bu nesnede tutulur. `'admin' | 'user'` gibi bir string literal union ise yalnızca tip düzeyinde vardır, derlemede tamamen silinir ve ek kod üretmez; değerler düz string olduğu için JSON'da, API'de ve loglarda olduğu gibi okunur. Enum'un çalışma anı kodu üretmesi, Node.js'in TypeScript dosyalarını doğrudan çalıştırırken kullandığı type stripping'de desteklenmemesine de yol açar; TypeScript 5.8'le gelen `erasableSyntaxOnly` ayarı bu yüzden enum'u, çalışma anı kodu olan namespace'leri ve parameter property'leri hata sayar. `const enum` kullanım yerlerine değeri gömerek nesneyi ortadan kaldırır ama her dosyayı ayrı derleyen araçlarla (`isolatedModules`) uyumsuzdur. Bu yüzden yeni kodda çoğunlukla literal union ya da `as const` ile tanımlanmış bir nesne ve ondan türetilen tip tercih edilir; enum, mevcut kodla uyum gerektiğinde ya da sabit grubunun gerçekten bir nesne olarak dolaşması gerektiğinde mantıklıdır.",
+      "keyConcepts": [
+        {
+          "id": "enum-runtime",
+          "label": "enum çalışma anında gerçek nesne üretir",
+          "aliases": [
+            "gerçek bir nesne",
+            "gerçek bir obje",
+            "nesne üretir",
+            "obje oluştur",
+            "runtime kod",
+            "çalışma anı kodu"
+          ],
+          "anchors": [
+            "enum derlenince JavaScript'te gerçek bir nesne üretir."
+          ]
+        },
+        {
+          "id": "reverse-mapping",
+          "label": "Sayısal enum'da ters eşleme",
+          "aliases": [
+            "ters eşleme",
+            "reverse mapping",
+            "değerden ada"
+          ],
+          "anchors": [
+            "Sayısal enum'larda değerden ada ters eşleme vardır."
+          ]
+        },
+        {
+          "id": "union-erased",
+          "label": "Literal union tamamen silinir, kod üretmez",
+          "aliases": [
+            "tamamen silin",
+            "ek kod üretme",
+            "hiç kod",
+            "yalnızca tip düzeyinde",
+            "sadece tip düzeyinde"
+          ],
+          "anchors": [
+            "Literal union derlemede tamamen silinir, ek kod üretmez."
+          ]
+        },
+        {
+          "id": "erasable",
+          "label": "Type stripping ve erasableSyntaxOnly enum'u kabul etmez",
+          "aliases": [
+            "type stripping",
+            "erasablesyntaxonly",
+            "strip-types",
+            "strip types"
+          ],
+          "anchors": [
+            "Node.js'in type stripping desteği enum'u çalıştıramaz.",
+            "erasableSyntaxOnly enum'u hata sayar."
+          ]
+        },
+        {
+          "id": "prefer",
+          "label": "Literal union ya da as const nesne tercih edilir",
+          "aliases": [
+            "as const",
+            "const enum",
+            "isolatedmodules",
+            "literal union tercih",
+            "as const obje"
+          ],
+          "anchors": [
+            "Yeni kodda literal union ya da as const nesne tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`as const` bir nesneden enum benzeri bir tip nasıl türetilir?",
+        "Sayısal enum'a enum'da olmayan bir sayı atanabilir mi?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Enums (Objects vs Enums, const enums); TypeScript 5.8 sürüm notları: The --erasableSyntaxOnly Option; Node.js: Modules: TypeScript (Type stripping)"
+    },
+    {
+      "id": "javascript-ts-tsconfig-strict",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS yapılandırma",
+      "difficulty": 2,
+      "prompt": "tsconfig'teki strict ayarı neleri açar? En önemli strict seçenekleri nelerdir?",
+      "modelAnswer": "Tek bir `strict` ayarı, ayrı ayrı da açılabilen bir grup katı denetimi birlikte açar; aralarında `strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `noImplicitThis`, `useUnknownInCatchVariables` ve `alwaysStrict` vardır, yeni TypeScript sürümleri bu gruba yeni denetimler ekleyebilir ve 6.0'dan beri ayar varsayılan olarak açıktır. En etkilisi `strictNullChecks`'tir; null ve undefined'ı her tipe atanabilir olmaktan çıkarıp ayrı tipler yapar, bu yüzden `string | null` bir değer kontrol edilmeden kullanılamaz ve \"undefined'ın özelliği okunamıyor\" hatalarının çoğu derlemede yakalanır. `noImplicitAny` tipi çıkarılamayan parametrelerin sessizce any'ye düşmesini hata yapar, `strictFunctionTypes` fonksiyon parametrelerini daha sağlam (contravariant) karşılaştırır, `strictPropertyInitialization` de constructor'da atanmayan class alanlarını yakalar. `noUncheckedIndexedAccess` ve `exactOptionalPropertyTypes` gibi bazı faydalı ayarlar `strict`'e dahil değildir ve ayrıca açılır; mevcut bir projeye strict kademeli eklenirken bayraklar teker teker açılıp hatalar parça parça giderilir.",
+      "keyConcepts": [
+        {
+          "id": "umbrella",
+          "label": "Bir grup katı denetimi birlikte açar",
+          "aliases": [
+            "bir grup",
+            "birlikte açar",
+            "birlikte açıl",
+            "katı denetim",
+            "katı kontrol"
+          ],
+          "anchors": [
+            "strict bir grup katı denetimi birlikte açar."
+          ]
+        },
+        {
+          "id": "strict-null",
+          "label": "strictNullChecks null ve undefined'ı ayırır",
+          "aliases": [
+            "strictnullchecks",
+            "null ve undefined'ı ayrı",
+            "kontrol etmeden kullan",
+            "kontrol edilmeden kullan"
+          ],
+          "anchors": [
+            "strictNullChecks null ve undefined'ı ayrı tipler yapar.",
+            "string | null bir değer kontrol edilmeden kullanılamaz."
+          ]
+        },
+        {
+          "id": "no-implicit-any",
+          "label": "noImplicitAny gizli any'yi hata yapar",
+          "aliases": [
+            "noimplicitany",
+            "gizli any",
+            "sessizce any",
+            "örtük any"
+          ],
+          "anchors": [
+            "noImplicitAny tipi çıkarılamayan yerde gizli any'yi hata yapar."
+          ]
+        },
+        {
+          "id": "others",
+          "label": "strictFunctionTypes, strictPropertyInitialization",
+          "aliases": [
+            "strictfunctiontypes",
+            "strictpropertyinitialization",
+            "useunknownincatchvariables",
+            "strictbindcallapply",
+            "noimplicitthis"
+          ],
+          "anchors": [
+            "strictFunctionTypes ve strictPropertyInitialization da strict grubundadır."
+          ]
+        },
+        {
+          "id": "outside-strict",
+          "label": "noUncheckedIndexedAccess strict'e dahil değil",
+          "aliases": [
+            "nouncheckedindexedaccess",
+            "exactoptionalpropertytypes",
+            "dahil değil",
+            "kademeli"
+          ],
+          "anchors": [
+            "noUncheckedIndexedAccess strict'e dahil değildir, ayrıca açılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`noUncheckedIndexedAccess` açıldığında `array[0]` ifadesinin tipi nasıl değişir?",
+        "Büyük bir JavaScript projesini TypeScript'e geçirirken strict'i nasıl kademeli açarsın?"
+      ],
+      "source": "Kendi derleme — TSConfig Reference: strict, noUncheckedIndexedAccess, exactOptionalPropertyTypes; TypeScript 6.0 duyurusu"
+    },
+    {
+      "id": "javascript-ts-declaration-files",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS yapılandırma",
+      "difficulty": 2,
+      "prompt": "TypeScript'te declaration dosyaları (.d.ts) nedir? Ne zaman gerekir?",
+      "modelAnswer": "Declaration dosyası yalnızca tip bilgisi taşıyan, hiçbir çalışan kod içermeyen bir dosyadır; JavaScript ile yazılmış ya da önceden derlenmiş bir kodun dışa açtığı fonksiyon, class ve değişkenlerin tiplerini derleyiciye anlatır. Bir kütüphane kendi tiplerini paketinde taşıyorsa (`package.json`'daki `types` alanı) ek bir şey gerekmez; taşımıyorsa topluluğun DefinitelyTyped deposunda yazdığı tipler `@types/lodash` gibi bir paketle geliştirme bağımlılığı olarak kurulur. Kendi kütüphanesini yayımlayan biri `tsconfig`'te `declaration: true` açarak derleyicinin her `.js` çıktısının yanına bir `.d.ts` üretmesini sağlar, böylece kullanıcılar kaynak koda ihtiyaç duymadan tipleri alır. Elle yazılan declaration'larda `declare` anahtar kelimesi kod üretmeden bir değerin var olduğunu bildirir (`declare const APP_VERSION: string`), `declare module` ile var olan bir modülün tipleri genişletilir, `declare global` ile de global tiplere alan eklenir.",
+      "keyConcepts": [
+        {
+          "id": "types-only",
+          "label": "Yalnızca tip bilgisi, çalışan kod yok",
+          "aliases": [
+            "yalnızca tip bilgisi",
+            "sadece tip bilgisi",
+            "çalışan kod içermeyen",
+            "kod içermeyen",
+            "implementasyon yok"
+          ],
+          "anchors": [
+            "Declaration dosyası yalnızca tip bilgisi taşır, çalışan kod içermez."
+          ]
+        },
+        {
+          "id": "js-libraries",
+          "label": "JavaScript kütüphanelerini tiplemek",
+          "aliases": [
+            "javascript ile yazılmış",
+            "javascript kütüphane",
+            "js kütüphane",
+            "önceden derlenmiş"
+          ],
+          "anchors": [
+            "JavaScript ile yazılmış bir kütüphanenin tiplerini derleyiciye anlatır."
+          ]
+        },
+        {
+          "id": "definitely-typed",
+          "label": "Paketteki types alanı ya da DefinitelyTyped",
+          "aliases": [
+            "definitelytyped",
+            "types/",
+            "types alanı",
+            "kendi tiplerini"
+          ],
+          "anchors": [
+            "Kütüphane kendi tiplerini taşımıyorsa DefinitelyTyped'dan types paketi kurulur."
+          ]
+        },
+        {
+          "id": "declaration-option",
+          "label": "declaration: true ile üretim",
+          "aliases": [
+            "declaration: true",
+            "declaration true",
+            "--declaration",
+            "yanına bir .d.ts"
+          ],
+          "anchors": [
+            "declaration: true ile derleyici .d.ts dosyalarını üretir."
+          ]
+        },
+        {
+          "id": "declare",
+          "label": "declare, declare module, declare global",
+          "aliases": [
+            "declare module",
+            "declare global",
+            "declare const",
+            "declare ile",
+            "augmentation"
+          ],
+          "anchors": [
+            "declare kod üretmeden bir değerin var olduğunu bildirir.",
+            "declare module ile var olan bir modülün tipleri genişletilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir paketin `@types` paketi ile kendi tipleri farklı sürümde olursa ne olur?",
+        "`declare global` neden bir modül dosyasında `export {}` gerektirir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Declaration Files (Introduction, Consumption, Publishing)"
     }
   ]
 }
