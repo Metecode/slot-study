@@ -542,7 +542,6 @@
           "label": "400: istek bozuk, ayrıştırılamıyor",
           "aliases": [
             "sözdizimi",
-            "syntax",
             "bozuk json",
             "malformed",
             "ayrıştırıla",

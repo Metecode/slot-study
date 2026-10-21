@@ -128,7 +128,7 @@
           "id": "pool",
           "label": "Literal'ler tek kopya paylaşılır",
           "aliases": [
-            "literal",
+            "literal string",
             "tek kopya",
             "havuzdaki",
             "aynı nesne kullanılır",
@@ -1515,7 +1515,7 @@
           "aliases": [
             "new t()",
             "t.class",
-            "instanceof",
+            "instanceof list",
             "overload",
             "primitive"
           ],
@@ -4104,7 +4104,6 @@
           "aliases": [
             "isteğe bağlı",
             "opsiyonel",
-            "optional",
             "sonradan değiş"
           ],
           "anchors": [
@@ -5117,7 +5116,6 @@
             "rollback'e yol aç",
             "yalnızca runtimeexception",
             "runtimeexception ve error",
-            "unchecked",
             "checked exception fırlarsa",
             "checked'larda yapmaz"
           ],
@@ -6371,10 +6369,11 @@
           "id": "unchecked",
           "label": "DataAccessException unchecked",
           "aliases": [
-            "unchecked",
+            "unchecked ol",
             "runtimeexception",
             "throws gerekmez",
-            "throws ile dol"
+            "throws ile dol",
+            "unchecked'tır"
           ],
           "anchors": [
             "DataAccessException hiyerarşisi unchecked'tir."

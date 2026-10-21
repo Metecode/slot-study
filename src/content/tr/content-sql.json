@@ -376,7 +376,7 @@
             "constraint",
             "unique ihlal",
             "sözdizimi hata",
-            "syntax",
+            "syntax hata",
             "bağlantı kop"
           ],
           "anchors": [
@@ -1904,7 +1904,6 @@
           "aliases": [
             "bilinmeyen",
             "eksik değer",
-            "unknown",
             "değer değil"
           ],
           "anchors": [
@@ -2329,8 +2328,7 @@
           "aliases": [
             "audit",
             "log tablosu",
-            "eski ve yeni",
-            "denetim"
+            "eski ve yeni"
           ],
           "anchors": [
             "Trigger'lar değişiklikleri log tablosuna yazmak için kullanılır."
