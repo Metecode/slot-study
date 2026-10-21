@@ -26,7 +26,7 @@ npm run check:content -- --base main                    # PR öncesi
 Önerilen akış:
 
 1. Değişikliği merge-questions biçiminde bir dosyaya yaz.
-2. `--edits <dosya> --base HEAD` ile farkı gör. Yeni çift, uyarı ya da tuzak çıkarsa çoğu zaman yeni cevaptaki bir kelimeyi değiştirmek yeter; başka sorunun alias'ına dokunma.
+2. `--edits <dosya> --base HEAD` ile farkı gör. Yeni çift, uyarı ya da tuzak çıkarsa çoğu zaman yeni cevaptaki bir kelimeyi değiştirmek yeter; başka sorunun alias'ına dokunma. Tek istisna, başka kategorideki **tek kelimelik genel alias**: yeni içerik o kelimeyi kaçınılmaz olarak kullanıyorsa ("this", "promise", `addEventListener`'ın içindeki "listener") alias ifadeye daraltılabilir ya da çıkarılabilir. Şartlar: o sorunun model cevabı aynı kalır ve kendi kavramlarının hepsini yine tutar, kategorinin doğal cevap skoru değişmez, her değişiklik ("soru-id: eski → yeni") commit mesajında ve raporda listelenir.
 3. `npm run merge-questions -- <dosya> --replace`
 4. PR'dan önce `--base main`.
 
