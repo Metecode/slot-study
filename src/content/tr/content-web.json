@@ -3581,7 +3581,7 @@
           "aliases": [
             "yeniden bağlan",
             "reconnect",
-            "ping",
+            "ping mesaj",
             "heartbeat",
             "hangi sunucu",
             "sticky"

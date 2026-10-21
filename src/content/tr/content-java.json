@@ -609,7 +609,7 @@
             "tek abstract",
             "tek bir abstract",
             "birden fazla interface",
-            "extends",
+            "extend edebil",
             "implements",
             "çoklu kalıtım"
           ],
@@ -680,7 +680,7 @@
           "aliases": [
             "inheritance",
             "kalıtım",
-            "extends",
+            "extends ile",
             "miras"
           ],
           "anchors": [
