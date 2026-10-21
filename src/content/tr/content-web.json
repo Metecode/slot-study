@@ -2023,8 +2023,7 @@
             "time-to-live",
             "ttl süre",
             "ttl dol",
-            "yayılma",
-            "propagation"
+            "yayılma"
           ],
           "anchors": [
             "Kayıtlar TTL boyunca önbellekte kalır, bu yüzden DNS değişiklikleri hemen yayılmaz."
@@ -3363,7 +3362,6 @@
             "aralıklarla",
             "periyodik",
             "her saniye",
-            "interval",
             "düzenli aralık",
             "belirli aralık"
           ],

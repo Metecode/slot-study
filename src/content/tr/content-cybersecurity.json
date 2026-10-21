@@ -1453,7 +1453,6 @@
             "outerhtml",
             "document.write",
             "eval",
-            "settimeout",
             "insertadjacenthtml"
           ],
           "anchors": [
