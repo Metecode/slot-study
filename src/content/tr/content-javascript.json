@@ -634,7 +634,7 @@
           "aliases": [
             "kopyalamaz",
             "kopyalamıyor",
-            "referansla",
+            "referansla hatırla",
             "güncel hâlini",
             "güncel değeri"
           ],
@@ -1651,6 +1651,882 @@
         "Bir event listener içinden çağrılan async fonksiyonun hatası nereye gider?"
       ],
       "source": "Kendi derleme — MDN: async function, Window: unhandledrejection event; Node.js: CLI --unhandled-rejections"
+    },
+    {
+      "id": "javascript-esm-vs-commonjs",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Modüller",
+      "difficulty": 3,
+      "prompt": "ES modülleri (ESM) ile CommonJS arasındaki farklar nelerdir? İkisi birlikte nasıl kullanılır?",
+      "modelAnswer": "CommonJS, Node.js'in tarihsel modül sistemidir; `require` çalışma anında senkron olarak çağrılan sıradan bir fonksiyondur ve modülün `module.exports` nesnesini döndürür, bu nesneden destructuring ile alınan bir değer de o anki hâliyle kalır. ESM ise dilin standart modül sistemidir; `import` ve `export` statiktir, bağımlılık grafiği kod çalışmadan önce çözülüp bağlanır, bu da tree shaking'e ve top-level `await`'e imkân verir, modüller de her zaman strict mode'dadır. ESM'de içe aktarılan isimler live binding'dir: dışa aktaran modül değişkeni güncellerse içe aktaran yeni değeri görür, ama kendisi o isme atama yapamaz. Birlikte kullanımda ESM bir CommonJS modülünü `import` edebilir ve `module.exports` default export olarak gelir; isimli export'lar statik analizle en iyi çabayla çıkarılır, sonradan eklenenler görünmez. Ters yönde CommonJS uzun süre ESM'i yalnızca dinamik `import()` ile yükleyebiliyordu; güncel Node.js sürümlerinde top-level await içermeyen bir ES modülü `require` ile de yüklenebilir ve modülün namespace nesnesi döner.",
+      "keyConcepts": [
+        {
+          "id": "cjs-runtime",
+          "label": "CommonJS: require çalışma anında ve senkron",
+          "aliases": [
+            "module.exports",
+            "require(",
+            "require ile",
+            "senkron yükle",
+            "çalışma anında",
+            "senkron olarak"
+          ],
+          "anchors": [
+            "CommonJS'te require çalışma anında senkron çağrılan bir fonksiyondur.",
+            "require modülün module.exports nesnesini döndürür."
+          ]
+        },
+        {
+          "id": "esm-static",
+          "label": "ESM statik: önceden bağlanır, tree shaking, top-level await",
+          "aliases": [
+            "statiktir",
+            "statik olduğu",
+            "statik yapı",
+            "tree shaking",
+            "tree-shaking",
+            "kod çalışmadan önce"
+          ],
+          "anchors": [
+            "ESM'de import ve export statiktir, kod çalışmadan önce bağlanır.",
+            "Statik yapı tree shaking'e imkân verir."
+          ]
+        },
+        {
+          "id": "live-binding",
+          "label": "İçe aktarılan isimler live binding",
+          "aliases": [
+            "live binding",
+            "canlı bağ",
+            "yeni değeri gör",
+            "atama yapamaz"
+          ],
+          "anchors": [
+            "İçe aktarılan isim live binding'dir, dışa aktaran güncellerse yeni değer görülür."
+          ]
+        },
+        {
+          "id": "esm-imports-cjs",
+          "label": "ESM'den CommonJS: module.exports default olarak gelir",
+          "aliases": [
+            "default export",
+            "default olarak",
+            "isimli export",
+            "named export",
+            "en iyi çaba"
+          ],
+          "anchors": [
+            "ESM'den import edilen CommonJS modülünde module.exports default export olur."
+          ]
+        },
+        {
+          "id": "cjs-loads-esm",
+          "label": "CommonJS'ten ESM: import() ya da yeni sürümlerde require",
+          "aliases": [
+            "dinamik import",
+            "dynamic import",
+            "import()",
+            "require(esm)",
+            "require ile yüklen",
+            "namespace"
+          ],
+          "anchors": [
+            "CommonJS ESM'i dinamik import() ile yükler.",
+            "Güncel Node.js'te top-level await içermeyen ES modülü require ile yüklenebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Node.js bir `.js` dosyasının ESM mi CommonJS mi olduğuna nasıl karar verir?",
+        "Bir paketi hem ESM hem CommonJS kullanıcılarına sunmanın riski nedir (dual package hazard)?"
+      ],
+      "source": "Kendi derleme — MDN: import, JavaScript modules; Node.js: Modules (Loading ECMAScript modules using require()), ECMAScript modules (Interoperability with CommonJS)"
+    },
+    {
+      "id": "javascript-event-propagation",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "DOM olayları",
+      "difficulty": 1,
+      "prompt": "DOM'da bir olay hangi aşamalardan geçer? Event bubbling ve capturing nedir?",
+      "modelAnswer": "Bir olay tetiklendiğinde önce `window`'dan hedef elemana doğru iner (capture), sonra hedefin kendisinde çalışır (target) ve ardından aynı yolu tersine izleyerek üst elemanlara çıkar (bubble). `addEventListener` dinleyiciyi varsayılan olarak bubble aşamasına kaydeder; üçüncü parametreye `{ capture: true }` verilirse dinleyici iniş sırasında çalışır, yani üst eleman hedeften önce tetiklenir. `event.target` olayın asıl başladığı eleman, `event.currentTarget` ise o anda çalışan dinleyicinin bağlı olduğu elemandır. `stopPropagation` olayın sonraki elemanlara yayılmasını keser ama tarayıcının varsayılan davranışına dokunmaz, onun için `preventDefault` gerekir; `focus` gibi bazı olaylar ise hiç yukarı çıkmaz.",
+      "keyConcepts": [
+        {
+          "id": "capture-down",
+          "label": "Önce dıştan hedefe iniş (capture)",
+          "aliases": [
+            "hedefe doğru",
+            "hedef elemana doğru",
+            "dıştan içe",
+            "en dıştan",
+            "üç aşama",
+            "hedefte çalış"
+          ],
+          "anchors": [
+            "Olay önce window'dan hedef elemana doğru iner.",
+            "Sonra hedefin kendisinde çalışır."
+          ]
+        },
+        {
+          "id": "bubble-up",
+          "label": "Sonra üst elemanlara çıkış (bubble)",
+          "aliases": [
+            "yukarı doğru",
+            "üst eleman",
+            "parent'lara",
+            "yukarı çık",
+            "tersine"
+          ],
+          "anchors": [
+            "Olay hedeften sonra üst elemanlara doğru çıkar."
+          ]
+        },
+        {
+          "id": "listener-phase",
+          "label": "addEventListener varsayılanı bubble, capture: true ile iniş",
+          "aliases": [
+            "capture: true",
+            "{ capture",
+            "üçüncü parametre",
+            "varsayılan olarak bubble",
+            "bubbling aşamasında"
+          ],
+          "anchors": [
+            "addEventListener varsayılan olarak bubble aşamasında dinler.",
+            "capture: true verilirse dinleyici iniş sırasında çalışır."
+          ]
+        },
+        {
+          "id": "target-current",
+          "label": "target ve currentTarget",
+          "aliases": [
+            "currenttarget",
+            "event.target",
+            "current target"
+          ],
+          "anchors": [
+            "event.target olayın başladığı eleman, currentTarget dinleyicinin bağlı olduğu elemandır."
+          ]
+        },
+        {
+          "id": "stop-prevent",
+          "label": "stopPropagation yayılmayı keser, preventDefault varsayılanı",
+          "aliases": [
+            "stoppropagation",
+            "preventdefault",
+            "yayılmayı durdur",
+            "yayılmasını kes"
+          ],
+          "anchors": [
+            "stopPropagation olayın yayılmasını keser.",
+            "Varsayılan davranışı engellemek için preventDefault gerekir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`stopPropagation` ile `stopImmediatePropagation` arasındaki fark nedir?",
+        "Hangi olaylar yukarı çıkmaz, delegation için yerine ne kullanılır?"
+      ],
+      "source": "Kendi derleme — DOM standardı: 2.9 Dispatching events; MDN: Event bubbling, EventTarget.addEventListener()"
+    },
+    {
+      "id": "javascript-event-delegation",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "DOM olayları",
+      "difficulty": 2,
+      "prompt": "Event delegation nedir? Hangi durumlarda tercih edilir?",
+      "modelAnswer": "Event delegation, çok sayıda alt elemanın her birine ayrı dinleyici eklemek yerine ortak bir üst elemana tek bir dinleyici ekleyip olayları bubbling sayesinde orada yakalamaktır. Dinleyici içinde `event.target` olayın başladığı elemanı verir; tıklanan şey bir ikon ya da metin gibi alt düğüm olabileceği için genellikle `event.target.closest('li')` gibi bir seçiciyle asıl ilgilenilen eleman bulunur ve dinleyicinin kendi kapsayıcısı içinde olup olmadığı kontrol edilir. Kazanç, daha az dinleyici ve bellek ile sonradan DOM'a eklenen elemanların ek kod gerekmeden kendiliğinden kapsanmasıdır; uzun listelerde, tablolarda ve dinamik içerikte bu yüzden tercih edilir. `focus` ve `blur` gibi kabarmayan olaylar için `focusin` ve `focusout` kullanılır; alt elemanlardan birinde yayılma kesilirse olay dinleyiciye hiç ulaşmaz.",
+      "keyConcepts": [
+        {
+          "id": "single-parent-listener",
+          "label": "Üst elemana tek dinleyici",
+          "aliases": [
+            "üst elemana",
+            "parent'a",
+            "tek bir dinleyici",
+            "tek bir listener",
+            "tek listener",
+            "kapsayıcı"
+          ],
+          "anchors": [
+            "Her çocuğa ayrı dinleyici yerine üst elemana tek bir dinleyici eklenir."
+          ]
+        },
+        {
+          "id": "relies-on-bubbling",
+          "label": "Bubbling'e dayanır",
+          "aliases": [
+            "bubbling",
+            "bubble ed",
+            "yukarı çık",
+            "kabarcık"
+          ],
+          "anchors": [
+            "Alt elemandaki olay bubbling ile üst elemana ulaşır."
+          ]
+        },
+        {
+          "id": "target-closest",
+          "label": "event.target ve closest ile asıl eleman",
+          "aliases": [
+            "event.target",
+            "closest",
+            "hangi elemana",
+            "hangi eleman"
+          ],
+          "anchors": [
+            "event.target ile olayın başladığı eleman bulunur.",
+            "closest ile asıl ilgilenilen eleman seçilir."
+          ]
+        },
+        {
+          "id": "benefits",
+          "label": "Az dinleyici, dinamik elemanlar kendiliğinden kapsanır",
+          "aliases": [
+            "sonradan eklenen",
+            "dinamik eleman",
+            "dinamik içerik",
+            "daha az listener",
+            "daha az dinleyici"
+          ],
+          "anchors": [
+            "Sonradan eklenen elemanlar ek kod gerekmeden kapsanır.",
+            "Daha az dinleyici ve bellek kullanılır."
+          ]
+        },
+        {
+          "id": "non-bubbling",
+          "label": "Kabarmayan olaylar, focusin/focusout",
+          "aliases": [
+            "focusin",
+            "focusout",
+            "bubble etmeyen",
+            "kabarmayan",
+            "bubbling yapmayan",
+            "focus gibi"
+          ],
+          "anchors": [
+            "focus gibi kabarmayan olaylarda focusin ve focusout kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "React kendi olay sisteminde delegation'ı nasıl kullanır?",
+        "Delegation'da `event.target` ile `event.currentTarget` neden farklı sonuç verir?"
+      ],
+      "source": "Kendi derleme — MDN: Event bubbling (Event delegation), Element.closest(), Element: focusin event"
+    },
+    {
+      "id": "javascript-debounce-throttle",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "DOM olayları",
+      "difficulty": 1,
+      "prompt": "Debounce ile throttle arasındaki fark nedir? Hangisi nerede kullanılır?",
+      "modelAnswer": "İkisi de çok sık tetiklenen bir olayın (yazma, kaydırma, pencere boyutu değişimi) pahalı bir işi gereğinden fazla çalıştırmasını önleyen tekniklerdir. Debounce, çağrılar sürdükçe zamanlayıcıyı yeniden başlatır ve iş ancak çağrılar belirli bir süre kesildiğinde bir kez çalışır; arama kutusunda kullanıcı yazmayı bırakınca istek göndermek tipik örneğidir. Throttle ise olay sürdüğü sürece işi belirli bir aralıkta en fazla bir kez çalıştırır; kaydırma konumuna göre arayüzü güncellemek ya da sonsuz kaydırmada sayfa sonunu kontrol etmek gibi sürekli ama seyreltilmiş tepki gereken yerlerde kullanılır. İkisinde de işin aralığın başında (leading) ya da sonunda (trailing) çalışması seçilebilir ve genellikle `setTimeout` ile tutulan bir zamanlayıcıyı saklayan bir closure üzerine kurulur.",
+      "keyConcepts": [
+        {
+          "id": "debounce-quiet",
+          "label": "Debounce: çağrılar kesilince bir kez",
+          "aliases": [
+            "yazmayı bırak",
+            "kesildiğinde",
+            "son tetiklemeden",
+            "yeniden başlat",
+            "durduktan sonra",
+            "sustuğunda"
+          ],
+          "anchors": [
+            "Debounce çağrılar belirli bir süre kesildiğinde işi bir kez çalıştırır.",
+            "Her yeni çağrı zamanlayıcıyı yeniden başlatır."
+          ]
+        },
+        {
+          "id": "throttle-rate",
+          "label": "Throttle: aralık başına en fazla bir kez",
+          "aliases": [
+            "en fazla bir kez",
+            "belirli aralık",
+            "belli aralık",
+            "sabit aralık",
+            "düzenli çalış"
+          ],
+          "anchors": [
+            "Throttle işi belirli bir aralıkta en fazla bir kez çalıştırır."
+          ]
+        },
+        {
+          "id": "search-use",
+          "label": "Debounce: arama kutusu",
+          "aliases": [
+            "arama kutu",
+            "otomatik tamamla",
+            "autocomplete",
+            "kullanıcı yazarken"
+          ],
+          "anchors": [
+            "Arama kutusunda kullanıcı yazmayı bırakınca istek gönderilir."
+          ]
+        },
+        {
+          "id": "scroll-use",
+          "label": "Throttle: kaydırma ve boyut değişimi",
+          "aliases": [
+            "scroll",
+            "kaydırma",
+            "resize",
+            "boyut değiş"
+          ],
+          "anchors": [
+            "Throttle kaydırma ve boyut değişimi gibi sürekli olaylarda kullanılır."
+          ]
+        },
+        {
+          "id": "edges-impl",
+          "label": "leading/trailing, setTimeout ile kurulur",
+          "aliases": [
+            "leading edge",
+            "trailing edge",
+            "(leading)",
+            "settimeout ile",
+            "cleartimeout"
+          ],
+          "anchors": [
+            "İşin aralığın başında ya da sonunda çalışması seçilebilir.",
+            "Genellikle setTimeout ile kurulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Debounce edilmiş bir fonksiyon React bileşeninde neden her render'da yeniden oluşturulmamalıdır?",
+        "`requestAnimationFrame` throttle yerine ne zaman kullanılır?"
+      ],
+      "source": "Kendi derleme — MDN: Debounce (Glossary), Throttle (Glossary)"
+    },
+    {
+      "id": "javascript-gc-and-leaks",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Bellek",
+      "difficulty": 2,
+      "prompt": "JavaScript'te garbage collection nasıl çalışır? Otomatik bellek yönetimine rağmen bellek sızıntısı nasıl oluşur?",
+      "modelAnswer": "Modern motorlar belleği erişilebilirliğe (reachability) göre yönetir; global nesne ve o an çalışan kodun eriştiği değişkenler gibi köklerden başlayıp bağlantılar üzerinden ulaşılabilen her nesneyi işaretler, erişilemeyenleri toplar (mark-and-sweep). Bu yüzden birbirini gösteren ama köklerden kopmuş nesneler de toplanır, eski reference counting yaklaşımının döngüsel referans sorunu burada yoktur; toplamanın ne zaman yapılacağı ise koddan kontrol edilemez. Sızıntı, artık kullanılmayan bir nesneye hâlâ erişilebilir bir referans kalmasıyla oluşur; kaldırılmayan event listener'lar, `clearInterval` ile kapatılmayan `setInterval`'lar, sınırsız büyüyen global ya da modül düzeyi önbellekler ve sayfadan çıkarıldığı hâlde koddan referans verilen DOM düğümleri (detached DOM) tipik örneklerdir. Closure'lar da sızıntı kaynağı olabilir; uzun yaşayan bir callback, ihtiyaç duymadığı büyük bir nesneyi yakaladığı değişkenler arasında tutuyorsa o nesne de callback yaşadıkça serbest kalmaz. Tespit için Chrome DevTools'un Memory panelinde alınan heap snapshot'lar karşılaştırılır ve nesneyi tutan referans yolu (retainers) incelenir.",
+      "keyConcepts": [
+        {
+          "id": "reachability",
+          "label": "Erişilebilirlik: köklerden ulaşılamayan toplanır",
+          "aliases": [
+            "reachability",
+            "ulaşılabil",
+            "erişilemiyor",
+            "erişilemeyen",
+            "köklerden",
+            "kök obje"
+          ],
+          "anchors": [
+            "Köklerden ulaşılamayan nesneler toplanır.",
+            "Bellek erişilebilirliğe göre yönetilir."
+          ]
+        },
+        {
+          "id": "mark-and-sweep",
+          "label": "Mark-and-sweep, döngüsel referans sorun değil",
+          "aliases": [
+            "mark-and-sweep",
+            "mark and sweep",
+            "döngüsel referans",
+            "işaretliyor",
+            "işaretleyip"
+          ],
+          "anchors": [
+            "Motor ulaşılabilen nesneleri işaretler, kalanları süpürür.",
+            "Döngüsel referanslar da toplanabilir."
+          ]
+        },
+        {
+          "id": "leak-causes",
+          "label": "Kaldırılmayan listener, setInterval, büyüyen önbellek",
+          "aliases": [
+            "kaldırılmayan",
+            "removeeventlistener",
+            "setinterval",
+            "clearinterval",
+            "sınırsız büyü",
+            "sürekli büyü"
+          ],
+          "anchors": [
+            "Kaldırılmayan event listener ve durdurulmayan setInterval sızıntıya yol açar.",
+            "Sınırsız büyüyen önbellek bellek tutar."
+          ]
+        },
+        {
+          "id": "closure-leak",
+          "label": "Gereksiz büyük nesneyi tutan closure",
+          "aliases": [
+            "closure kaynaklı",
+            "closure'lar da",
+            "büyük bir objeyi",
+            "büyük bir nesneyi",
+            "tutan closure"
+          ],
+          "anchors": [
+            "Uzun yaşayan bir closure ihtiyaç duymadığı büyük bir nesneyi tutabilir."
+          ]
+        },
+        {
+          "id": "detached-tools",
+          "label": "Detached DOM ve heap snapshot",
+          "aliases": [
+            "heap snapshot",
+            "detached",
+            "dom'dan silinen",
+            "sayfadan çıkarıl",
+            "memory panel"
+          ],
+          "anchors": [
+            "Sayfadan çıkarılmış ama referans verilen DOM düğümü bellekte kalır.",
+            "Heap snapshot karşılaştırılarak sızıntı bulunur."
+          ]
+        }
+      ],
+      "followUps": [
+        "`removeEventListener` neden eklenirken verilen fonksiyon referansının aynısını ister?",
+        "İki heap snapshot karşılaştırılırken nelere bakılır?"
+      ],
+      "source": "Kendi derleme — MDN: Memory management (Garbage collection, Mark-and-sweep algorithm)"
+    },
+    {
+      "id": "javascript-weakmap-weakref",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Bellek",
+      "difficulty": 3,
+      "prompt": "WeakMap ve WeakRef nedir? Map'ten ve normal referanstan farkları nelerdir?",
+      "modelAnswer": "`WeakMap` anahtarlarını zayıf tutar; anahtar olan nesneye başka hiçbir yerden güçlü referans kalmadığında garbage collector onu toplayabilir, kayıttaki değer de toplanmaya aday olur. Bu yüzden anahtar yalnızca nesne ya da kayda geçmemiş bir symbol olabilir ve hangi anahtarların yaşadığı GC zamanlamasına bağlı olacağı için `WeakMap` üzerinde dolaşılamaz, `size` ya da `keys()` sunmaz. Tipik kullanımı bir nesneye, örneğin bir DOM düğümüne, onun ömrünü uzatmadan ek veri bağlamaktır; aynı işi `Map` yapsaydı düğüm sayfadan kalksa bile map onu bellekte tutardı. `WeakRef` ise tek bir nesneye zayıf referans tutar; `deref()` nesne hâlâ yaşıyorsa onu, toplanmışsa undefined döndürür, ama nesnenin ne zaman toplanacağı, hatta toplanıp toplanmayacağı garanti edilmez. Bu belirsizlik yüzünden MDN `WeakRef` ve `FinalizationRegistry`'yi mümkünse kaçınılması gereken, yalnızca uzun yaşayan programlarda bellek optimizasyonu için düşünülmüş araçlar olarak tanımlar; programın doğruluğu GC davranışına bağlanmamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "weak-keys",
+          "label": "Anahtarlar zayıf tutulur",
+          "aliases": [
+            "zayıf tut",
+            "zayıf referans",
+            "weakly held",
+            "güçlü referans",
+            "toplanmaya aday"
+          ],
+          "anchors": [
+            "WeakMap anahtarları zayıf tutar, başka referans yoksa anahtar toplanabilir."
+          ]
+        },
+        {
+          "id": "object-keys",
+          "label": "Anahtar yalnızca nesne",
+          "aliases": [
+            "anahtar obje",
+            "anahtar nesne",
+            "anahtar yalnızca",
+            "obje olmak zorunda",
+            "primitive anahtar"
+          ],
+          "anchors": [
+            "WeakMap'te anahtar yalnızca nesne ya da kayda geçmemiş symbol olabilir."
+          ]
+        },
+        {
+          "id": "not-iterable",
+          "label": "Gezilemez, size yok",
+          "aliases": [
+            "dolaşılamaz",
+            "iterate edilemez",
+            "iterable değil",
+            "size'ı yok",
+            "size yok",
+            "keys()"
+          ],
+          "anchors": [
+            "WeakMap üzerinde dolaşılamaz, size ya da keys sunmaz."
+          ]
+        },
+        {
+          "id": "metadata-use",
+          "label": "Nesneye ömrünü uzatmadan ek veri",
+          "aliases": [
+            "ek bilgi",
+            "ek veri bağla",
+            "dom düğümüne",
+            "dom elemanlarına",
+            "private veri",
+            "ömrünü uzatmadan"
+          ],
+          "anchors": [
+            "WeakMap DOM düğümüne ömrünü uzatmadan ek veri bağlamak için kullanılır."
+          ]
+        },
+        {
+          "id": "weakref-deref",
+          "label": "deref undefined dönebilir, GC garanti edilmez",
+          "aliases": [
+            "deref",
+            "garanti edilmez",
+            "güvenme",
+            "finalizationregistry",
+            "toplanmışsa undefined"
+          ],
+          "anchors": [
+            "WeakRef'in deref metodu nesne toplanmışsa undefined döner.",
+            "Toplamanın zamanı garanti edilmez, WeakRef'e güvenilmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "WeakMap ile önbellek kurmak neden her zaman iyi bir fikir değildir?",
+        "`FinalizationRegistry` callback'ine kaynak kapatma gibi kritik bir iş bırakmak neden yanlıştır?"
+      ],
+      "source": "Kendi derleme — MDN: WeakMap, WeakRef, Memory management (WeakMaps and WeakSets, WeakRefs and FinalizationRegistry)"
+    },
+    {
+      "id": "javascript-generator-iterator",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 2,
+      "prompt": "Iterator ve generator nedir? Generator fonksiyonları nasıl çalışır?",
+      "modelAnswer": "Iterator, her çağrıda `{ value, done }` biçiminde bir nesne döndüren `next()` metoduna sahip nesnedir; iterable ise `Symbol.iterator` metodu bir iterator veren nesnedir ve `for...of`, spread ile destructuring bu protokolü kullanır, `Array`, `String`, `Map` ve `Set` hazır iterable'dır. Generator fonksiyonu `function*` ile tanımlanır ve çağrıldığında gövdesini çalıştırmaz, bir generator nesnesi döndürür. Her `next()` çağrısında gövde bir sonraki `yield`'e kadar çalışır, değeri dışarı verir ve durumunu koruyarak duraklar; `next(x)` ile verilen değer duraklanan `yield` ifadesinin sonucu olur. Değerler istendikçe üretildiği için (lazy) sonsuz diziler ya da büyük veri akışları belleğe yüklenmeden işlenebilir; generator nesnesi hem iterator hem iterable olduğu için doğrudan `for...of` ile gezilebilir ama yalnızca bir kez tüketilir.",
+      "keyConcepts": [
+        {
+          "id": "iterator-protocol",
+          "label": "next() ve { value, done }",
+          "aliases": [
+            "next()",
+            "next metodu",
+            "value ve done",
+            "{ value, done }"
+          ],
+          "anchors": [
+            "Iterator, value ve done döndüren next metoduna sahip nesnedir."
+          ]
+        },
+        {
+          "id": "iterable-protocol",
+          "label": "Symbol.iterator, for...of, spread",
+          "aliases": [
+            "symbol.iterator",
+            "for...of",
+            "for of",
+            "spread"
+          ],
+          "anchors": [
+            "Iterable, Symbol.iterator metodu olan ve for...of ile gezilebilen nesnedir."
+          ]
+        },
+        {
+          "id": "yield-pause",
+          "label": "yield'de durur, kaldığı yerden devam eder",
+          "aliases": [
+            "yield",
+            "duraklar",
+            "kaldığı yerden",
+            "durup devam",
+            "askıya"
+          ],
+          "anchors": [
+            "Generator yield'de duraklar, next çağrılınca kaldığı yerden devam eder."
+          ]
+        },
+        {
+          "id": "lazy",
+          "label": "Değerler istendikçe üretilir",
+          "aliases": [
+            "lazy olarak",
+            "(lazy)",
+            "istendikçe",
+            "ihtiyaç olunca",
+            "sonsuz dizi",
+            "talep edildikçe"
+          ],
+          "anchors": [
+            "Generator değerleri istendikçe üretir, sonsuz diziler yazılabilir."
+          ]
+        },
+        {
+          "id": "generator-object",
+          "label": "function* generator nesnesi döndürür",
+          "aliases": [
+            "function*",
+            "generator nesnesi",
+            "gövdesini çalıştırmaz",
+            "hem iterator hem iterable"
+          ],
+          "anchors": [
+            "function* çağrıldığında gövdesini çalıştırmaz, generator nesnesi döndürür.",
+            "Generator nesnesi hem iterator hem iterable'dır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Async generator (`async function*`) ve `for await...of` ne işe yarar?",
+        "Bir generator'ı `return()` ile erken bitirmek ne sağlar?"
+      ],
+      "source": "Kendi derleme — MDN: Iterators and generators, Iteration protocols, function*"
+    },
+    {
+      "id": "javascript-symbol",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 2,
+      "prompt": "JavaScript'te Symbol nedir? Ne için kullanılır?",
+      "modelAnswer": "`Symbol()` her çağrıldığında başka hiçbir şeye eşit olmayan, tekil bir ilkel değer üretir; verilen açıklama yalnızca hata ayıklama içindir, aynı açıklamayla oluşturulan iki symbol bile birbirine eşit değildir. Başlıca kullanımı, başka kodun eklediği özelliklerle ad çakışmasına yol açmadan nesneye özellik eklemektir; symbol anahtarlı özellikler `for...in`, `Object.keys` ve `JSON.stringify` tarafından görülmez. Ancak gerçek anlamda gizli değildir, `Object.getOwnPropertySymbols` ve `Reflect.ownKeys` ile bulunabilir; gerçek gizlilik için class'ın `#` alanları kullanılır. `Symbol.for('key')` global kayıttan aynı anahtar için hep aynı symbol'ü verir; `Symbol.iterator`, `Symbol.hasInstance` ve `Symbol.asyncIterator` gibi well-known symbol'ler ise nesnenin `for...of` ya da `instanceof` gibi dil işlemlerindeki davranışını özelleştirmeye yarar.",
+      "keyConcepts": [
+        {
+          "id": "unique",
+          "label": "Her çağrıda tekil bir değer",
+          "aliases": [
+            "benzersiz olan",
+            "her oluşturulduğunda",
+            "eşit olmayan",
+            "tekil bir",
+            "birbirine eşit değil"
+          ],
+          "anchors": [
+            "Her Symbol çağrısı tekil bir değer üretir, ikisi asla eşit olmaz."
+          ]
+        },
+        {
+          "id": "collision-free",
+          "label": "Ad çakışması olmadan özellik anahtarı",
+          "aliases": [
+            "isim çakış",
+            "ad çakış",
+            "property anahtarı",
+            "özellik anahtarı",
+            "anahtar olarak"
+          ],
+          "anchors": [
+            "Symbol, ad çakışması olmadan özellik anahtarı olarak kullanılır."
+          ]
+        },
+        {
+          "id": "hidden-not-private",
+          "label": "Numaralandırmada görünmez ama gizli değil",
+          "aliases": [
+            "object.keys",
+            "json.stringify",
+            "getownpropertysymbols",
+            "reflect.ownkeys",
+            "tamamen private değil",
+            "gerçek anlamda gizli"
+          ],
+          "anchors": [
+            "Symbol anahtarlı özellikler Object.keys ve JSON.stringify'da görünmez.",
+            "getOwnPropertySymbols ile bulunabildiği için gerçek anlamda gizli değildir."
+          ]
+        },
+        {
+          "id": "global-registry",
+          "label": "Symbol.for ile global kayıt",
+          "aliases": [
+            "symbol.for",
+            "global kayıt",
+            "global registry",
+            "ortak kayıt"
+          ],
+          "anchors": [
+            "Symbol.for global kayıttan aynı anahtar için aynı symbol'ü verir."
+          ]
+        },
+        {
+          "id": "well-known",
+          "label": "Well-known symbol'ler dil davranışını özelleştirir",
+          "aliases": [
+            "symbol.iterator",
+            "symbol.hasinstance",
+            "well-known",
+            "asynciterator",
+            "hazır symbol"
+          ],
+          "anchors": [
+            "Symbol.iterator gibi well-known symbol'ler dil davranışını özelleştirir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Symbol.toPrimitive` bir nesnenin `+` operatöründeki davranışını nasıl değiştirir?",
+        "Symbol neden `new` ile oluşturulamaz?"
+      ],
+      "source": "Kendi derleme — MDN: Symbol, Symbol.for(), Symbol.iterator"
+    },
+    {
+      "id": "javascript-optional-chaining-nullish",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 1,
+      "prompt": "Optional chaining (?.) ve nullish coalescing (??) operatörleri ne işe yarar?",
+      "modelAnswer": "`?.` solundaki değer null ya da undefined ise özelliğe erişmeye çalışıp `TypeError` fırlatmak yerine undefined döndürür ve zincirin geri kalanını hiç değerlendirmez (short-circuit); `user?.address?.city` gibi iç içe okumalarda her adımı ayrı ayrı kontrol etme ihtiyacını kaldırır. Aynı operatör metot çağrısında `obj.method?.()`, köşeli parantezle erişimde `arr?.[0]` biçiminde de kullanılır; ancak atamanın sol tarafında kullanılamaz ve hiç tanımlanmamış bir değişkeni korumaz. `??` ise yalnızca sol taraf null ya da undefined olduğunda sağdaki değeri döndürür; `||` ile farkı `0`, boş string ve `false` gibi geçerli ama falsy değerleri olduğu gibi bırakmasıdır. İkisi sık sık birlikte kullanılır (`user?.name ?? 'Misafir'`); `??` parantez olmadan `&&` ya da `||` ile aynı ifadede yazılırsa `SyntaxError` alınır.",
+      "keyConcepts": [
+        {
+          "id": "returns-undefined",
+          "label": "Hata yerine undefined döner",
+          "aliases": [
+            "undefined döndür",
+            "undefined döner",
+            "hata atmak yerine",
+            "typeerror fırlatmak yerine",
+            "hata vermeden"
+          ],
+          "anchors": [
+            "Soldaki değer null ya da undefined ise hata yerine undefined döner."
+          ]
+        },
+        {
+          "id": "short-circuit",
+          "label": "Zincirin geri kalanı değerlendirilmez",
+          "aliases": [
+            "short-circuit",
+            "short circuit",
+            "kısa devre",
+            "zincirin devamı",
+            "geri kalanı"
+          ],
+          "anchors": [
+            "Zincirin geri kalanı hiç değerlendirilmez."
+          ]
+        },
+        {
+          "id": "call-and-index",
+          "label": "?.() ve ?.[] biçimleri",
+          "aliases": [
+            "?.()",
+            "?.[",
+            "method?.",
+            "köşeli parantez"
+          ],
+          "anchors": [
+            "Metot çağrısında obj.method?.() biçiminde kullanılır."
+          ]
+        },
+        {
+          "id": "nullish-vs-or",
+          "label": "?? yalnızca null/undefined'da devreye girer, || falsy'de",
+          "aliases": [
+            "|| ile farkı",
+            "||'den farkı",
+            "0, boş string",
+            "geçerli ama falsy",
+            "false'ı değer",
+            "0'ı korur"
+          ],
+          "anchors": [
+            "?? yalnızca null ve undefined'da sağdaki değeri verir.",
+            "|| ise 0 ve boş string gibi falsy değerleri de ezer."
+          ]
+        },
+        {
+          "id": "combine",
+          "label": "Birlikte kullanım, parantez kuralı",
+          "aliases": [
+            "birlikte kullan",
+            "syntaxerror",
+            "parantez olmadan",
+            "?? 'misafir'"
+          ],
+          "anchors": [
+            "?. ve ?? birlikte kullanılır.",
+            "?? parantezsiz || ile yazılırsa SyntaxError alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`??=` ile `||=` atama operatörleri arasındaki fark nedir?",
+        "`a?.b.c` ifadesinde `a` null ise neden hata alınmaz?"
+      ],
+      "source": "Kendi derleme — MDN: Optional chaining (?.), Nullish coalescing operator (??)"
+    },
+    {
+      "id": "javascript-strict-mode",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 1,
+      "prompt": "Strict mode nedir? Neleri değiştirir?",
+      "modelAnswer": "Strict mode, dosyanın ya da fonksiyonun başına yazılan `\"use strict\"` yönergesiyle açılan ve dilin bazı eski, hataya açık davranışlarını kapatan daha katı bir çalışma biçimidir; ES modülleri ve class gövdeleri yönerge olmadan da her zaman strict çalışır. En önemli fark, sessizce geçiştirilen hataların gerçek hataya dönüşmesidir; tanımlanmamış bir isme değer yazmak global bir değişken yaratmak yerine `ReferenceError`, yazılamaz bir özelliğe atama yapmak `TypeError` fırlatır. Düz çağrılan bir fonksiyonda this, global nesne yerine undefined kalır, bu da yanlışlıkla global nesneyi değiştirmeyi önler. Ayrıca `with` kullanılamaz, aynı adlı iki parametre tanımlanamaz, `eval` içinde tanımlanan değişkenler çevreleyen kapsama sızmaz ve `private`, `interface` gibi kelimeler ileride kullanılmak üzere ayrılır.",
+      "keyConcepts": [
+        {
+          "id": "use-strict",
+          "label": "\"use strict\" yönergesiyle açılır",
+          "aliases": [
+            "use strict",
+            "yönerge",
+            "directive"
+          ],
+          "anchors": [
+            "Strict mode \"use strict\" yönergesiyle açılır."
+          ]
+        },
+        {
+          "id": "silent-to-errors",
+          "label": "Sessiz hatalar gerçek hataya dönüşür",
+          "aliases": [
+            "sessizce geç",
+            "sessiz hata",
+            "gerçek hataya",
+            "silent"
+          ],
+          "anchors": [
+            "Sessizce geçiştirilen hatalar gerçek hataya dönüşür."
+          ]
+        },
+        {
+          "id": "undeclared-assignment",
+          "label": "Tanımlanmamış değişkene atama hata verir",
+          "aliases": [
+            "tanımlanmamış bir değişken",
+            "global değişken oluşturmak yerine",
+            "global bir değişken yaratmak",
+            "yanlışlıkla global",
+            "referenceerror"
+          ],
+          "anchors": [
+            "Tanımlanmamış bir değişkene atama ReferenceError fırlatır, global değişken oluşmaz."
+          ]
+        },
+        {
+          "id": "this-undefined",
+          "label": "Düz çağrıda this undefined",
+          "aliases": [
+            "this varsayılan olarak undefined",
+            "this undefined",
+            "global nesne yerine",
+            "global obje değil",
+            "global nesneyi değiştir"
+          ],
+          "anchors": [
+            "Düz çağrılan fonksiyonda this global nesne yerine undefined olur."
+          ]
+        },
+        {
+          "id": "modules-classes",
+          "label": "Modüller ve class'lar otomatik strict",
+          "aliases": [
+            "modüller ve class",
+            "class gövde",
+            "otomatik olarak strict",
+            "her zaman strict",
+            "es modül"
+          ],
+          "anchors": [
+            "ES modülleri ve class gövdeleri her zaman strict çalışır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Rest ya da varsayılan parametre kullanan bir fonksiyonun içine `\"use strict\"` yazılırsa ne olur?",
+        "Strict mode'da `arguments` nesnesi ile parametreler neden artık birbirini izlemez?"
+      ],
+      "source": "Kendi derleme — MDN: Strict mode; ECMA-262: Strict Mode Code"
     }
   ]
 }
