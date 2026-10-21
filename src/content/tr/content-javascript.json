@@ -6,7 +6,7 @@
       "id": "javascript-null-vs-undefined",
       "category": "javascript",
       "kind": "definition",
-      "topic": "null ve undefined",
+      "topic": "Tipler ve eşitlik",
       "difficulty": 1,
       "prompt": "JavaScript'te null ile undefined arasındaki fark nedir?",
       "modelAnswer": "`undefined`, bir değişken tanımlanıp henüz değer atanmadığında, var olmayan bir özellik okunduğunda ya da fonksiyon bir şey döndürmediğinde motorun kendiliğinden verdiği değerdir; `null` ise geliştiricinin bir değerin bilinçli olarak boş olduğunu belirtmek için atadığı değerdir. İkisi gevşek eşitlikte birbirine eşittir ama türleri farklı olduğu için katı eşitlikte ayrışır (`null == undefined` true, `null === undefined` false döner); bu yüzden \"ikisinden biri mi\" kontrolü tek bir `== null` ile yapılabilir. `typeof null` sonucunun `\"object\"` olması dilin ilk uygulamasından kalma bir hatadır; düzeltmek için yapılan öneri reddedildiği için bugün de böyledir. Varsayılan parametre değerleri yalnızca parametreye hiçbir şey geçilmediğinde ya da `undefined` geçildiğinde devreye girer; `null` geçerli bir değer sayılır ve varsayılan uygulanmaz.",
@@ -77,6 +77,872 @@
         "?? ile || operatörleri null ve undefined karşısında nasıl farklı davranır?"
       ],
       "source": "Kendi derleme — ECMA-262: undefined value, null value; MDN: typeof (typeof null), Equality (==), Default parameters"
+    },
+    {
+      "id": "javascript-equality-coercion",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Tipler ve eşitlik",
+      "difficulty": 1,
+      "prompt": "JavaScript'te == ile === arasındaki fark nedir?",
+      "modelAnswer": "`===` (strict equality) iki değeri hiçbir dönüşüm yapmadan karşılaştırır; tipleri farklıysa sonuç doğrudan false olur. `==` (loose equality) ise tipler farklıysa önce örtük dönüşüm (type coercion) uygular: string ile number karşılaştırılırken string sayıya, boolean ise 1 ya da 0'a çevrilir, nesne de `valueOf` ya da `toString` ile primitive bir değere indirgenir. `null` ve `undefined` yalnızca birbirine gevşek eşittir, 0'a ya da boş string'e eşit değildir; bu yüzden `x == null` ikisini birden yakalayan, yaygın kabul görmüş tek `==` kullanımıdır. Kurallar `'0' == false` ya da `'' == 0` gibi sezgiye aykırı true sonuçlar ürettiği için `===` çoğu ekipte varsayılandır.",
+      "keyConcepts": [
+        {
+          "id": "strict-no-coercion",
+          "label": "=== dönüşüm yapmaz, tip farklıysa false",
+          "aliases": [
+            "dönüşüm yapmadan",
+            "dönüştürmeden",
+            "tipleri farklıysa",
+            "hem tip",
+            "strict equality"
+          ],
+          "anchors": [
+            "=== iki değeri dönüşüm yapmadan karşılaştırır.",
+            "Tipleri farklıysa === doğrudan false döner."
+          ]
+        },
+        {
+          "id": "loose-coercion",
+          "label": "== örtük dönüşüm uygular",
+          "aliases": [
+            "örtük dönüşüm",
+            "coercion",
+            "tipleri dönüştür",
+            "loose equality",
+            "sayıya çevril"
+          ],
+          "anchors": [
+            "== tipler farklıysa önce örtük dönüşüm yapar.",
+            "String ile number karşılaştırılırken string sayıya çevrilir."
+          ]
+        },
+        {
+          "id": "object-to-primitive",
+          "label": "Nesne primitive değere indirgenir",
+          "aliases": [
+            "primitive'e",
+            "primitive bir değer",
+            "primitive değer",
+            "valueof",
+            "toprimitive"
+          ],
+          "anchors": [
+            "Nesne karşılaştırmadan önce valueOf ya da toString ile primitive bir değere çevrilir."
+          ]
+        },
+        {
+          "id": "null-loose",
+          "label": "null yalnızca undefined'a gevşek eşit",
+          "aliases": [
+            "== null",
+            "yalnızca birbirine",
+            "sadece undefined",
+            "undefined'a eşit",
+            "null kontrol"
+          ],
+          "anchors": [
+            "null ve undefined yalnızca birbirine gevşek eşittir.",
+            "x == null ikisini birden yakalar."
+          ]
+        },
+        {
+          "id": "prefer-strict",
+          "label": "Sezgiye aykırı sonuçlar, === varsayılan",
+          "aliases": [
+            "sezgiye aykırı",
+            "beklenmedik",
+            "sürpriz",
+            "=== kullan",
+            "varsayılan olarak ==="
+          ],
+          "anchors": [
+            "Örtük dönüşüm sezgiye aykırı sonuçlar ürettiği için === varsayılan tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`[] == ![]` neden true döner?",
+        "`Object.is` `===`'ten hangi iki durumda ayrılır?"
+      ],
+      "source": "Kendi derleme — ECMA-262: IsLooselyEqual, IsStrictlyEqual; MDN: Equality comparisons and sameness"
+    },
+    {
+      "id": "javascript-truthy-falsy",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Tipler ve eşitlik",
+      "difficulty": 1,
+      "prompt": "JavaScript'te truthy ve falsy ne demektir? Hangi değerler falsy sayılır?",
+      "modelAnswer": "Bir değer `if`, `while`, `!` ya da `&&` ve `||` gibi boolean bekleyen bir bağlamda kullanıldığında JavaScript onu ToBoolean ile true ya da false'a çevirir; false'a dönenlere falsy, geri kalan her şeye truthy denir. Falsy değerlerin listesi kısadır ve sabittir: `false`, `0`, `-0`, `0n`, boş string, `null`, `undefined` ve `NaN`. Bu listede olmayan her şey truthy'dir; boş dizi `[]`, boş nesne `{}` ve `\"0\"` ya da `\"false\"` string'leri de buna dahildir. Pratikteki tuzak, `if (count)` ya da `count || 10` gibi bir kontrolün geçerli bir 0'ı ya da boş string'i de değer yokmuş gibi ele almasıdır; varsayılan yalnızca null ve undefined için verilecekse `??` kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "boolean-context",
+          "label": "Boolean bağlamında true ya da false'a çevrilir",
+          "aliases": [
+            "boolean bağlam",
+            "boolean'a çevril",
+            "false'a çevir",
+            "false'a dönüş",
+            "toboolean"
+          ],
+          "anchors": [
+            "Boolean bekleyen bir bağlamda değer true ya da false'a çevrilir.",
+            "if koşulunda değer ToBoolean ile çevrilir."
+          ]
+        },
+        {
+          "id": "falsy-list",
+          "label": "Sabit falsy listesi",
+          "aliases": [
+            "boş string",
+            "boş metin",
+            "empty string"
+          ],
+          "anchors": [
+            "false, 0, -0, 0n, boş string, null, undefined ve NaN falsy'dir."
+          ]
+        },
+        {
+          "id": "empty-containers-truthy",
+          "label": "Boş dizi ve boş nesne truthy",
+          "aliases": [
+            "boş dizi",
+            "boş nesne",
+            "boş obje",
+            "boş array",
+            "[]"
+          ],
+          "anchors": [
+            "Boş dizi ve boş nesne truthy'dir.",
+            "\"0\" string'i de truthy sayılır."
+          ]
+        },
+        {
+          "id": "valid-zero-pitfall",
+          "label": "Geçerli 0 ve boş string yok sayılır",
+          "aliases": [
+            "0 iken",
+            "sıfır iken",
+            "yokmuş gibi",
+            "0 ezil",
+            "|| 10",
+            "?? kullan"
+          ],
+          "anchors": [
+            "if (count) kontrolü geçerli bir 0'ı da değer yokmuş gibi ele alır.",
+            "|| ile varsayılan vermek 0'ı ezer, bunun için ?? kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`!!` operatörü ne işe yarar?",
+        "`document.all` neden falsy bir nesnedir?"
+      ],
+      "source": "Kendi derleme — ECMA-262: ToBoolean; MDN: Falsy, Truthy"
+    },
+    {
+      "id": "javascript-nan-object-is",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Tipler ve eşitlik",
+      "difficulty": 2,
+      "prompt": "NaN neden kendisiyle karşılaştırıldığında eşit çıkmaz? Bir değerin NaN olup olmadığı nasıl güvenilir şekilde kontrol edilir?",
+      "modelAnswer": "`NaN` (Not-a-Number), `Number('abc')` ya da `0 / 0` gibi anlamlı bir sayı üretemeyen işlemlerin sonucudur ve tipi yine `number`'dır. Dil IEEE 754 kayan nokta standardını izleyerek NaN'ı her karşılaştırmada eşitsiz sayar; `NaN === NaN` false döner ve `x !== x` ifadesinin true olduğu tek değer NaN'dır. Güvenilir kontrol `Number.isNaN`'dır: global `isNaN` aldığı değeri önce sayıya çevirdiği için `isNaN('abc')` true döner, `Number.isNaN` ise yalnızca gerçekten NaN olan bir number için true verir. `Object.is` `===` gibi çalışır ama NaN'ı kendine eşit, `+0` ile `-0`'ı farklı sayar; `includes`, `Map` ve `Set` ise NaN'ı bulup sıfırları ayırmayan same-value-zero kuralını kullanır, bu yüzden `[NaN].indexOf(NaN)` -1 dönerken `[NaN].includes(NaN)` true döner.",
+      "keyConcepts": [
+        {
+          "id": "invalid-number",
+          "label": "Geçersiz sayısal işlemin sonucu, tipi number",
+          "aliases": [
+            "not-a-number",
+            "not a number",
+            "geçersiz bir sayı",
+            "geçersiz sayı",
+            "0 / 0"
+          ],
+          "anchors": [
+            "NaN anlamlı bir sayı üretemeyen işlemin sonucudur.",
+            "NaN'ın tipi yine number'dır."
+          ]
+        },
+        {
+          "id": "never-equal",
+          "label": "Kendine bile eşit değil",
+          "aliases": [
+            "kendine bile",
+            "kendine eşit değil",
+            "x !== x",
+            "ieee 754",
+            "her karşılaştırmada"
+          ],
+          "anchors": [
+            "NaN kendine bile eşit değildir.",
+            "x !== x yalnızca NaN için true olur."
+          ]
+        },
+        {
+          "id": "number-isnan",
+          "label": "Number.isNaN dönüştürmez, global isNaN dönüştürür",
+          "aliases": [
+            "number.isnan",
+            "global isnan",
+            "isnan('abc')",
+            "isnan önce"
+          ],
+          "anchors": [
+            "Number.isNaN argümanı sayıya çevirmez.",
+            "Global isNaN önce sayıya çevirdiği için 'abc' için de true döner."
+          ]
+        },
+        {
+          "id": "object-is",
+          "label": "Object.is NaN'ı eşit, +0 ve -0'ı farklı sayar",
+          "aliases": [
+            "object.is",
+            "+0",
+            "sıfırları ayır",
+            "samevalue"
+          ],
+          "anchors": [
+            "Object.is NaN'ı kendine eşit sayar.",
+            "Object.is +0 ile -0'ı ayırır."
+          ]
+        },
+        {
+          "id": "same-value-zero",
+          "label": "includes, Map ve Set NaN'ı bulur",
+          "aliases": [
+            "same-value-zero",
+            "same value zero",
+            "samevaluezero",
+            "includes(nan)",
+            "indexof",
+            "nan'ı bul"
+          ],
+          "anchors": [
+            "includes NaN'ı bulur, indexOf bulamaz.",
+            "Map ve Set anahtar eşitliğinde same-value-zero kuralını kullanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`0.1 + 0.2 === 0.3` neden false döner?",
+        "Bir dizide NaN aramak için `indexOf` yerine neden `includes` kullanılır?"
+      ],
+      "source": "Kendi derleme — MDN: NaN, Number.isNaN(), Object.is(), Equality comparisons and sameness"
+    },
+    {
+      "id": "javascript-var-let-const",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Kapsam ve hoisting",
+      "difficulty": 1,
+      "prompt": "var, let ve const arasındaki farklar nelerdir?",
+      "modelAnswer": "`var` fonksiyon kapsamındadır (function scope); bir `if` ya da `for` bloğunda tanımlansa da bütün fonksiyonda görünür, `let` ve `const` ise yalnızca tanımlandıkları süslü parantez bloğunda yaşar (block scope). `var` aynı kapsamda yeniden tanımlanabilir ve en üst düzeyde global nesneye özellik olarak eklenir; `let` ve `const` ikisini de yapmaz. `const` yalnızca bağlamanın yeniden atanmasını engeller, tuttuğu nesne ya da dizinin içeriği yine değiştirilebilir; içeriği dondurmak için `Object.freeze` gerekir. Fark döngülerde belirginleşir: `var` ile kurulan bir `for` döngüsündeki bütün callback'ler aynı sayacı paylaşırken `let` her tur için yeni bir bağlama açar.",
+      "keyConcepts": [
+        {
+          "id": "function-scope",
+          "label": "var fonksiyon kapsamlı",
+          "aliases": [
+            "fonksiyon kapsam",
+            "function scope",
+            "fonksiyon seviye",
+            "bütün fonksiyonda",
+            "fonksiyon boyunca"
+          ],
+          "anchors": [
+            "var fonksiyon kapsamındadır, blokta tanımlansa da bütün fonksiyonda görünür."
+          ]
+        },
+        {
+          "id": "block-scope",
+          "label": "let ve const blok kapsamlı",
+          "aliases": [
+            "blok kapsam",
+            "block scope",
+            "süslü parantez",
+            "blok seviye",
+            "blok içinde"
+          ],
+          "anchors": [
+            "let ve const yalnızca tanımlandıkları blokta yaşar."
+          ]
+        },
+        {
+          "id": "const-binding",
+          "label": "const yeniden atamayı engeller, içeriği değil",
+          "aliases": [
+            "yeniden atan",
+            "içi değiştiril",
+            "içeriği değiştiril",
+            "referans sabit",
+            "object.freeze"
+          ],
+          "anchors": [
+            "const yeniden atanamaz ama tuttuğu nesnenin içi değiştirilebilir.",
+            "İçeriği dondurmak için Object.freeze gerekir."
+          ]
+        },
+        {
+          "id": "redeclare-global",
+          "label": "var yeniden tanımlanır, global nesneye eklenir",
+          "aliases": [
+            "tekrar tanımlan",
+            "yeniden tanımlan",
+            "redeclare",
+            "global nesne",
+            "global obje",
+            "window"
+          ],
+          "anchors": [
+            "var aynı kapsamda yeniden tanımlanabilir.",
+            "En üst düzeydeki var global nesneye özellik olarak eklenir."
+          ]
+        },
+        {
+          "id": "loop-binding",
+          "label": "let her turda yeni bağlama açar",
+          "aliases": [
+            "her tur",
+            "her iterasyon",
+            "aynı sayacı",
+            "aynı değişkeni paylaş",
+            "her döngü adım"
+          ],
+          "anchors": [
+            "let döngüde her tur için yeni bir bağlama açar.",
+            "var ile bütün callback'ler aynı değişkeni paylaşır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`var` ile yazılmış bir `for` döngüsünde `setTimeout` içinde sayacı yazdırınca neden hep son değer görünür?",
+        "Bir nesneyi tamamen değiştirilemez yapmak için `Object.freeze` yeterli mi?"
+      ],
+      "source": "Kendi derleme — MDN: var, let, const"
+    },
+    {
+      "id": "javascript-hoisting",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Kapsam ve hoisting",
+      "difficulty": 1,
+      "prompt": "Hoisting nedir? Fonksiyon bildirimleri, var ve let/const bu açıdan nasıl farklı davranır?",
+      "modelAnswer": "Hoisting, bir kapsamdaki bildirimlerin kod satır satır çalışmadan önce işlenmesi ve bu yüzden tanımlandıkları satırdan önce de bilinmesidir. Function declaration en güçlü hâliyle taşınır; gövdesi de hazır olduğu için tanımından önce çağrılabilir. `var` ile tanımlanan değişkenin yalnızca adı taşınır; tanımdan önce okunursa hata vermez, undefined döner. `let`, `const` ve `class` da kapsamın başında bilinir ama ilk değerini alana kadar erişilemez, okunmaya çalışılırsa `ReferenceError` atılır. Bir değişkene atanmış function expression ya da arrow function o değişkenin kuralına uyar, bu yüzden tanımından önce çağrılamaz.",
+      "keyConcepts": [
+        {
+          "id": "processed-first",
+          "label": "Bildirimler çalışmadan önce işlenir",
+          "aliases": [
+            "çalışmadan önce",
+            "önceden işlen",
+            "kapsamın başına",
+            "yukarı taşın",
+            "en üste"
+          ],
+          "anchors": [
+            "Bildirimler kod çalışmadan önce işlenir.",
+            "Tanımlar kapsamın başına taşınmış gibi davranır."
+          ]
+        },
+        {
+          "id": "function-declaration",
+          "label": "Function declaration gövdesiyle taşınır",
+          "aliases": [
+            "function declaration",
+            "gövdesi de",
+            "tamamen yukarı",
+            "tanımından önce çağr",
+            "tanımlamadan önce çağır"
+          ],
+          "anchors": [
+            "Function declaration gövdesiyle birlikte taşınır, tanımından önce çağrılabilir."
+          ]
+        },
+        {
+          "id": "var-undefined",
+          "label": "var'ın adı taşınır, değeri undefined",
+          "aliases": [
+            "undefined döner",
+            "undefined olur",
+            "değeri undefined",
+            "yalnızca adı",
+            "undefined gelir"
+          ],
+          "anchors": [
+            "var değişken tanımdan önce okunursa undefined döner."
+          ]
+        },
+        {
+          "id": "lexical-referenceerror",
+          "label": "let/const tanımdan önce ReferenceError",
+          "aliases": [
+            "referenceerror",
+            "reference error",
+            "erişilemez",
+            "ilk değerini alana"
+          ],
+          "anchors": [
+            "let ve const tanımdan önce okunursa ReferenceError atılır."
+          ]
+        },
+        {
+          "id": "expression-follows-variable",
+          "label": "Function expression değişken kuralına uyar",
+          "aliases": [
+            "function expression",
+            "fonksiyon ifade",
+            "değişkenin kuralı",
+            "değişkene ata"
+          ],
+          "anchors": [
+            "Değişkene atanmış function expression değişkenin kuralına uyar, önceden çağrılamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "`class` bildirimi function declaration gibi taşınır mı?",
+        "Hoisting'e güvenen kod okunabilirlik açısından neden tartışmalıdır?"
+      ],
+      "source": "Kendi derleme — MDN: Hoisting (Glossary), var, let, function"
+    },
+    {
+      "id": "javascript-temporal-dead-zone",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Kapsam ve hoisting",
+      "difficulty": 2,
+      "prompt": "Temporal dead zone (TDZ) nedir? Neden \"temporal\" denir?",
+      "modelAnswer": "`let`, `const` ya da `class` ile tanımlanan bir bağlama, bloğun başından tanım satırı çalışana kadar vardır ama ilk değerini almamıştır; bu aralıkta okunması ya da yazılması `ReferenceError` fırlatır. `var` aynı durumda sessizce undefined verdiği için TDZ, tanımlanmadan kullanılan değişken hatalarını erken yakalar; normalde güvenli olan typeof bile TDZ'deki bir değişkende hata fırlatır. Adındaki zaman vurgusu, bölgenin kodun yazıldığı konuma değil çalışma sırasına bağlı olmasından gelir: tanımdan önce yazılmış bir fonksiyon değişkeni kullanabilir, yeter ki tanım satırı çalıştıktan sonra çağrılsın. Aynı sebeple bir blok içinde `let x = x + 1` yazmak da sağdaki `x` henüz başlatılmadığı için hata verir.",
+      "keyConcepts": [
+        {
+          "id": "uninitialized",
+          "label": "Bloğun başından tanım satırına kadar başlatılmamış",
+          "aliases": [
+            "bloğun başından",
+            "tanım satırı",
+            "tanımlandığı satır",
+            "initialize",
+            "başlatılmadı",
+            "ilk değerini"
+          ],
+          "anchors": [
+            "Değişken bloğun başından tanım satırına kadar başlatılmamış durumdadır."
+          ]
+        },
+        {
+          "id": "reference-error",
+          "label": "Erişim ReferenceError fırlatır",
+          "aliases": [
+            "referenceerror",
+            "reference error",
+            "hata fırlat",
+            "hata atar"
+          ],
+          "anchors": [
+            "TDZ'deki değişkene erişmek ReferenceError fırlatır."
+          ]
+        },
+        {
+          "id": "var-contrast",
+          "label": "var sessizce undefined verir",
+          "aliases": [
+            "var'da",
+            "sessizce undefined",
+            "undefined verir",
+            "undefined gelir"
+          ],
+          "anchors": [
+            "var aynı durumda sessizce undefined verir."
+          ]
+        },
+        {
+          "id": "time-not-position",
+          "label": "Konuma değil çalışma sırasına bağlı",
+          "aliases": [
+            "çalışma sırası",
+            "yürütme sırası",
+            "execution order",
+            "konuma değil",
+            "yazıldığı yer"
+          ],
+          "anchors": [
+            "TDZ kodun yazıldığı konuma değil çalışma sırasına bağlıdır.",
+            "Fonksiyon tanımdan sonra çağrılırsa değişkeni kullanabilir."
+          ]
+        },
+        {
+          "id": "typeof-throws",
+          "label": "typeof bile hata verir",
+          "aliases": [
+            "typeof bile",
+            "typeof da",
+            "typeof hata"
+          ],
+          "anchors": [
+            "TDZ'deki bir değişkende typeof bile hata verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`switch` içindeki `case`'lerde `let` kullanınca neden TDZ hatası alınabilir?",
+        "TDZ, `var`'a göre hangi tür hataları daha erken yakalar?"
+      ],
+      "source": "Kendi derleme — MDN: let (Temporal dead zone), const, class"
+    },
+    {
+      "id": "javascript-closure",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 1,
+      "prompt": "Closure nedir? JavaScript'te nerelerde işe yarar?",
+      "modelAnswer": "Closure, bir fonksiyonun tanımlandığı yerdeki sözcüksel kapsamı (lexical environment) yanında taşımasıdır; iç fonksiyon, dış fonksiyon çoktan dönmüş olsa bile oradaki değişkenlere erişmeye devam eder. Her fonksiyon oluşturulduğu anda bir closure oluşur ve dış değişkenleri kopyalamaz, bağlamalarıyla tutar; dış değişken sonradan değişirse iç fonksiyon güncel hâlini görür. Bu sayede dışarıdan erişilemeyen özel bir durum tutulabilir; `makeCounter()` içindeki `count` yalnızca döndürülen fonksiyonlar üzerinden değişir. Fabrika fonksiyonları, callback'ler, partial application ve modül deseni bu davranışa dayanır; bedeli, closure yaşadığı sürece tuttuğu değişkenlerin de bellekte kalmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "lexical-scope",
+          "label": "Tanımlandığı yerin kapsamını taşır",
+          "aliases": [
+            "sözcüksel",
+            "lexical",
+            "tanımlandığı yer",
+            "dış kapsam",
+            "dıştaki değişken"
+          ],
+          "anchors": [
+            "Fonksiyon tanımlandığı yerin kapsamını yanında taşır.",
+            "İç fonksiyon dış kapsamdaki değişkenlere erişir."
+          ]
+        },
+        {
+          "id": "outlives-outer",
+          "label": "Dış fonksiyon bittikten sonra da erişir",
+          "aliases": [
+            "bittikten sonra",
+            "döndükten sonra",
+            "çoktan dönmüş",
+            "dış fonksiyon bitse",
+            "sonlandıktan sonra"
+          ],
+          "anchors": [
+            "Dış fonksiyon döndükten sonra da değişkenlere erişim sürer."
+          ]
+        },
+        {
+          "id": "binding-not-copy",
+          "label": "Değeri kopyalamaz, bağlamayı tutar",
+          "aliases": [
+            "kopyalamaz",
+            "kopyalamıyor",
+            "referansla",
+            "güncel hâlini",
+            "güncel değeri"
+          ],
+          "anchors": [
+            "Closure değişkeni kopyalamaz, bağlamasını tutar.",
+            "Dış değişken değişirse iç fonksiyon güncel değeri görür."
+          ]
+        },
+        {
+          "id": "private-state",
+          "label": "Dışarıdan erişilemeyen özel durum",
+          "aliases": [
+            "private gibi",
+            "private değişken",
+            "özel bir durum",
+            "dışarıdan erişileme",
+            "kapsülle",
+            "encapsulation"
+          ],
+          "anchors": [
+            "Closure ile dışarıdan erişilemeyen özel bir durum tutulur."
+          ]
+        },
+        {
+          "id": "use-cases",
+          "label": "Fabrika fonksiyonu, sayaç, modül deseni",
+          "aliases": [
+            "fabrika",
+            "factory fonksiyon",
+            "modül deseni",
+            "counter",
+            "makecounter"
+          ],
+          "anchors": [
+            "Fabrika fonksiyonları ve modül deseni closure'a dayanır.",
+            "Sayaç örneğinde count yalnızca döndürülen fonksiyonlarla değişir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`var` ile kurulan bir döngüde oluşturulan closure'lar neden aynı değeri görür?",
+        "Closure'lar bellekte hangi durumda gereğinden uzun süre değişken tutar?"
+      ],
+      "source": "Kendi derleme — MDN: Closures"
+    },
+    {
+      "id": "javascript-this-binding",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 3,
+      "prompt": "JavaScript'te this'in değeri nasıl belirlenir? Birden fazla kural uyduğunda hangisi kazanır?",
+      "modelAnswer": "`this`, fonksiyonun nerede tanımlandığına değil nasıl çağrıldığına göre her çağrıda yeniden belirlenir; arrow function bunun istisnasıdır ve this'i tanımlandığı kapsamdan alır. Öncelik sırası yukarıdan aşağıya şöyledir: `new` ile çağrıda this yeni oluşturulan nesnedir ve bu, `bind` ile kalıcı olarak bağlanmış bir this'i bile geçersiz kılar; ardından `bind`, `call` ve `apply` ile açıkça verilen değer, sonra `obj.method()` biçimindeki çağrıda noktanın solundaki nesne, en son da varsayılan bağlama gelir. Varsayılan bağlamada strict mode'da this undefined olur, sloppy mode'da ise global nesneye (`globalThis`) döner. Bir metot `setTimeout(obj.method)` gibi callback olarak verildiğinde çağrı biçimi değiştiği için this bağlantısı kopar; çözüm `bind`, metodu bir arrow function içinden çağırmak ya da class alanını arrow function olarak tanımlamaktır.",
+      "keyConcepts": [
+        {
+          "id": "call-site",
+          "label": "Çağrılma biçimi belirler",
+          "aliases": [
+            "nasıl çağrıldığı",
+            "çağrılma şekli",
+            "çağrı biçimi",
+            "çağrıldığı yer",
+            "call site",
+            "çağrılış"
+          ],
+          "anchors": [
+            "this fonksiyonun nasıl çağrıldığına göre belirlenir.",
+            "Tanımlandığı yer değil çağrı biçimi önemlidir."
+          ]
+        },
+        {
+          "id": "new-wins",
+          "label": "new en yüksek öncelikte",
+          "aliases": [
+            "new ile",
+            "new en",
+            "yeni oluşan",
+            "yeni oluşturulan"
+          ],
+          "anchors": [
+            "new ile çağrıda this yeni oluşturulan nesnedir.",
+            "new, bind ile bağlanmış this'i bile geçersiz kılar."
+          ]
+        },
+        {
+          "id": "explicit",
+          "label": "bind, call ve apply ile açık bağlama",
+          "aliases": [
+            "call, apply",
+            "call/apply",
+            "bind ile",
+            "açıkça ver",
+            "elle ver",
+            "explicit"
+          ],
+          "anchors": [
+            "call, apply ve bind ile this açıkça verilir."
+          ]
+        },
+        {
+          "id": "implicit",
+          "label": "Noktanın solundaki nesne",
+          "aliases": [
+            "noktanın solu",
+            "obj.method",
+            "nesne üzerinden",
+            "obje üzerinden",
+            "metot olarak çağr"
+          ],
+          "anchors": [
+            "obj.method() çağrısında this noktanın solundaki nesnedir."
+          ]
+        },
+        {
+          "id": "default",
+          "label": "Varsayılan: strict'te undefined, değilse global nesne",
+          "aliases": [
+            "strict mode'da undefined",
+            "strict modda undefined",
+            "globalthis",
+            "global obje",
+            "global nesne",
+            "window"
+          ],
+          "anchors": [
+            "Düz çağrıda strict mode'da this undefined olur.",
+            "Sloppy mode'da this global nesneye döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir class metodunu event listener olarak verdiğinde this neden undefined olur, nasıl düzeltirsin?",
+        "Arrow function'ı nesne metodu olarak tanımlamak neden sorun çıkarır?"
+      ],
+      "source": "Kendi derleme — MDN: this, Function.prototype.bind()"
+    },
+    {
+      "id": "javascript-call-apply-bind",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 1,
+      "prompt": "call, apply ve bind arasındaki fark nedir?",
+      "modelAnswer": "Üçü de bir fonksiyonun hangi `this` ile çalışacağını açıkça belirlemeye yarar. `call` fonksiyonu hemen çalıştırır ve değerleri tek tek alır (`fn.call(obj, a, b)`), `apply` da hemen çalıştırır ama değerleri dizi olarak alır (`fn.apply(obj, [a, b])`). `bind` fonksiyonu çalıştırmaz; this'i ve istenirse ilk parametre değerleri önceden bağlanmış yeni bir fonksiyon döndürür, bu yüzden callback ya da event handler olarak verilecek metotlarda kullanılır. Bind edilmiş fonksiyonun this'i sonradan başka bir `bind`, `call` ya da `apply` ile ezilemez, yalnızca `new` ile çağrıldığında yok sayılır; arrow function'larda ise üçü de this'i etkilemez, yalnızca parametreleri iletir.",
+      "keyConcepts": [
+        {
+          "id": "immediate",
+          "label": "call ve apply hemen çalıştırır",
+          "aliases": [
+            "hemen çalıştır",
+            "hemen çağır",
+            "anında çağır",
+            "direkt çağır",
+            "hemen çalış"
+          ],
+          "anchors": [
+            "call ve apply fonksiyonu hemen çalıştırır."
+          ]
+        },
+        {
+          "id": "args-shape",
+          "label": "Argümanlar tek tek ya da dizi olarak",
+          "aliases": [
+            "tek tek al",
+            "teker teker",
+            "dizi olarak",
+            "array olarak",
+            "virgülle",
+            "liste olarak"
+          ],
+          "anchors": [
+            "call değerleri tek tek, apply dizi olarak alır."
+          ]
+        },
+        {
+          "id": "bind-new-function",
+          "label": "bind yeni bir fonksiyon döndürür",
+          "aliases": [
+            "yeni bir fonksiyon",
+            "yeni fonksiyon",
+            "sonra çağır",
+            "çalıştırmaz",
+            "çağırmaz"
+          ],
+          "anchors": [
+            "bind fonksiyonu çalıştırmaz, this'i bağlanmış yeni bir fonksiyon döndürür."
+          ]
+        },
+        {
+          "id": "partial",
+          "label": "bind ile ilk argümanları sabitleme",
+          "aliases": [
+            "partial application",
+            "ilk parametre",
+            "önceden ver",
+            "önceden bağla",
+            "currying"
+          ],
+          "anchors": [
+            "bind ile ilk parametre değerleri önceden verilebilir."
+          ]
+        },
+        {
+          "id": "no-rebind",
+          "label": "Bind edilmiş this değiştirilemez",
+          "aliases": [
+            "tekrar bind",
+            "yeniden bind",
+            "bind edilmiş fonksiyon",
+            "ezilemez",
+            "başka bir bind"
+          ],
+          "anchors": [
+            "Bind edilmiş fonksiyonun this'i tekrar bind ile ezilemez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spread sözdizimi geldikten sonra `apply`'a hâlâ ihtiyaç var mı?",
+        "Bind edilmiş bir fonksiyon `new` ile çağrılırsa this ne olur?"
+      ],
+      "source": "Kendi derleme — MDN: Function.prototype.call(), Function.prototype.apply(), Function.prototype.bind()"
+    },
+    {
+      "id": "javascript-arrow-function",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 2,
+      "prompt": "Arrow function ile normal fonksiyon arasındaki farklar nelerdir?",
+      "modelAnswer": "Arrow function'ın kendi `this`'i yoktur; this'i tanımlandığı kapsamdan sözcüksel olarak alır, bu yüzden bir metodun içindeki callback'te dıştaki this'i korumak için idealdir. Aynı sebeple `call`, `apply` ve `bind` arrow function'ın this'ini etkileyemez, yalnızca parametreleri iletebilir. Kendi `arguments` nesnesi ve `super`'i de yoktur; bütün parametre değerleri gerekiyorsa rest parametre (`...args`) kullanılır. new ile çağrılamaz, prototype özelliği yoktur ve generator olamaz; nesne literalinde metot olarak yazılırsa this nesneyi değil dış kapsamı gösterdiği için metotlarda normal fonksiyon ya da kısa metot yazımı tercih edilir.",
+      "keyConcepts": [
+        {
+          "id": "lexical-this",
+          "label": "this'i tanımlandığı kapsamdan alır",
+          "aliases": [
+            "kendi this",
+            "lexical this",
+            "dıştaki this",
+            "dışarıdaki this",
+            "tanımlandığı yerin this"
+          ],
+          "anchors": [
+            "Arrow function'ın kendi this'i yoktur, tanımlandığı kapsamın this'ini kullanır."
+          ]
+        },
+        {
+          "id": "no-rebind",
+          "label": "call/apply/bind this'i değiştiremez",
+          "aliases": [
+            "this'i değiştiremez",
+            "this'ini değiştiremez",
+            "etkileyemez",
+            "thisarg",
+            "bind işe yaramaz"
+          ],
+          "anchors": [
+            "call, apply ve bind arrow function'ın this'ini etkileyemez."
+          ]
+        },
+        {
+          "id": "no-arguments",
+          "label": "arguments yok, rest parametre",
+          "aliases": [
+            "arguments",
+            "rest parametre",
+            "rest parameter",
+            "...args"
+          ],
+          "anchors": [
+            "Arrow function'ın arguments nesnesi yoktur, rest parametre kullanılır."
+          ]
+        },
+        {
+          "id": "not-constructor",
+          "label": "new ile çağrılamaz, prototype yok",
+          "aliases": [
+            "new ile çağrılamaz",
+            "constructor olamaz",
+            "prototype özelliği",
+            "prototype property",
+            "yapıcı olarak"
+          ],
+          "anchors": [
+            "Arrow function new ile çağrılamaz.",
+            "Arrow function'ın prototype özelliği yoktur."
+          ]
+        },
+        {
+          "id": "not-method",
+          "label": "Nesne metodu olarak uygun değil",
+          "aliases": [
+            "metot olarak",
+            "method olarak",
+            "nesne metodu",
+            "obje metodu",
+            "metotlarda"
+          ],
+          "anchors": [
+            "Nesne metodu olarak yazılan arrow function'da this nesneyi göstermez."
+          ]
+        }
+      ],
+      "followUps": [
+        "React'te event handler'ları arrow function olarak tanımlamanın sebebi nedir?",
+        "Arrow function'ın gövdesi süslü parantezsiz yazıldığında ne döner?"
+      ],
+      "source": "Kendi derleme — MDN: Arrow function expressions, this"
     }
   ]
 }
