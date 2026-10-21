@@ -46,7 +46,7 @@
           "id": "typeof-null-object",
           "label": "typeof null → 'object'",
           "aliases": [
-            "typeof",
+            "typeof null",
             "object döner",
             "dil hatası",
             "tip kontrolü"
@@ -943,6 +943,714 @@
         "Arrow function'ın gövdesi süslü parantezsiz yazıldığında ne döner?"
       ],
       "source": "Kendi derleme — MDN: Arrow function expressions, this"
+    },
+    {
+      "id": "javascript-prototype-chain",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Nesne ve prototype",
+      "difficulty": 2,
+      "prompt": "JavaScript'te prototype zinciri nedir? Bir özellik okunurken nasıl çalışır?",
+      "modelAnswer": "Her nesnenin başka bir nesneyi ya da `null`'ı gösteren gizli bir `[[Prototype]]` bağlantısı vardır ve bu bağlantılar null'da biten bir zincir oluşturur. Bir özellik okunurken motor önce nesnenin kendisine bakar, bulamazsa prototype'ına, oradan da bir üstüne çıkar; aramayı ilk eşleşmede bitirir, zincirin sonuna kadar bulamazsa undefined döner. Metotlar bu sayede her örneğe kopyalanmaz, `Array.prototype` gibi ortak bir nesnede bir kez durur ve bütün örnekler tarafından paylaşılır; nesnede aynı adla bir özellik varsa prototype'takini gölgeler (shadowing). Bağlantı `Object.getPrototypeOf` ile okunur, `Object.create(proto)` ile istenen prototype'la nesne kurulur; eski `__proto__` erişicisi önerilmez, bir özelliğin nesnenin kendisinde olup olmadığı da `Object.hasOwn` ile anlaşılır.",
+      "keyConcepts": [
+        {
+          "id": "hidden-link",
+          "label": "Gizli [[Prototype]] bağlantısı",
+          "aliases": [
+            "[[prototype]]",
+            "prototype bağlantı",
+            "gizli bir bağlantı",
+            "gizli bağlantı",
+            "iç bağlantı"
+          ],
+          "anchors": [
+            "Her nesnenin başka bir nesneyi gösteren gizli bir [[Prototype]] bağlantısı vardır."
+          ]
+        },
+        {
+          "id": "lookup-walks",
+          "label": "Bulunamayan özellik zincirde yukarı aranır, null'da biter",
+          "aliases": [
+            "null'a kadar",
+            "null'da biten",
+            "bir üstüne",
+            "üst prototype",
+            "zincirde yukarı"
+          ],
+          "anchors": [
+            "Özellik nesnede yoksa prototype'ına, oradan bir üstüne bakılır.",
+            "Zincir null'da biter, bulunamazsa undefined döner."
+          ]
+        },
+        {
+          "id": "shared-methods",
+          "label": "Metotlar kopyalanmaz, paylaşılır",
+          "aliases": [
+            "kopyalanmaz",
+            "kopyalanmıyor",
+            "paylaşılır",
+            "paylaşılıyor",
+            "ortak bir nesne"
+          ],
+          "anchors": [
+            "Metotlar her örneğe kopyalanmaz, prototype üzerinden paylaşılır."
+          ]
+        },
+        {
+          "id": "shadowing",
+          "label": "Aynı adlı özellik prototype'takini gölgeler",
+          "aliases": [
+            "gölgeler",
+            "gölgele",
+            "shadowing",
+            "aynı adla",
+            "aynı isimde"
+          ],
+          "anchors": [
+            "Nesnede aynı adla bir özellik varsa prototype'takini gölgeler."
+          ]
+        },
+        {
+          "id": "api",
+          "label": "Object.create, getPrototypeOf, hasOwn",
+          "aliases": [
+            "object.create",
+            "getprototypeof",
+            "setprototypeof",
+            "object.hasown",
+            "hasownproperty"
+          ],
+          "anchors": [
+            "Object.create ile istenen prototype'la nesne oluşturulur.",
+            "Object.getPrototypeOf bağlantıyı okur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Prototype pollution nedir? Nesneleri derinlemesine birleştiren bir fonksiyon `__proto__` anahtarını kontrol etmezse ne olur?",
+        "`Object.create(null)` ile oluşturulan nesne neden sözlük olarak tercih edilir?"
+      ],
+      "source": "Kendi derleme — MDN: Inheritance and the prototype chain, Object.create(), Object.hasOwn()"
+    },
+    {
+      "id": "javascript-class-under-the-hood",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Nesne ve prototype",
+      "difficulty": 2,
+      "prompt": "JavaScript'teki class yapısının altında ne vardır? class, constructor fonksiyonundan nasıl ayrılır?",
+      "modelAnswer": "`class` yeni bir kalıtım modeli getirmez, prototype mekanizmasının üstüne kurulmuş daha düzenli bir yazımdır; `typeof` ile bakıldığında bir fonksiyondur, gövdedeki metotlar `Sinif.prototype` üzerine yazılır ve `extends` iki prototype'ı birbirine bağlayarak zinciri kurar. Bu yüzden sık sık syntactic sugar denir, ama birebir aynı şey değildir. Class new olmadan çağrılırsa `TypeError` fırlatır, gövdesi her zaman strict mode'da çalışır, metotları numaralandırılamaz (non-enumerable) olur ve class tanımı `let` gibi TDZ'ye tabidir. `#alan` biçimindeki private alanlara ise yalnızca class gövdesinden erişilebilir; constructor fonksiyonda bunun doğrudan karşılığı yoktur, closure ya da `WeakMap` ile taklit edilir.",
+      "keyConcepts": [
+        {
+          "id": "built-on-prototype",
+          "label": "Prototype mekanizması üzerine kurulu",
+          "aliases": [
+            "syntactic sugar",
+            "sözdizimsel şeker",
+            "prototype tabanlı",
+            "prototype mekanizma",
+            "prototype üzerine",
+            "prototype'a ekle"
+          ],
+          "anchors": [
+            "class prototype mekanizmasının üstüne kurulmuş bir yazımdır.",
+            "class metotları prototype üzerine yazılır."
+          ]
+        },
+        {
+          "id": "extends-chain",
+          "label": "extends prototype zincirini kurar",
+          "aliases": [
+            "extends",
+            "zinciri kur",
+            "iki prototype",
+            "prototype zincirini kur"
+          ],
+          "anchors": [
+            "extends iki prototype'ı birbirine bağlayarak zinciri kurar."
+          ]
+        },
+        {
+          "id": "requires-new",
+          "label": "new olmadan çağrılamaz",
+          "aliases": [
+            "new olmadan",
+            "new'siz",
+            "typeerror"
+          ],
+          "anchors": [
+            "Class new olmadan çağrılırsa TypeError fırlatır."
+          ]
+        },
+        {
+          "id": "strict-tdz",
+          "label": "Strict mode ve TDZ",
+          "aliases": [
+            "strict mode",
+            "strict modda",
+            "otomatik strict",
+            "let gibi",
+            "hoist edilmez"
+          ],
+          "anchors": [
+            "Class gövdesi her zaman strict mode'da çalışır.",
+            "Class tanımı let gibi TDZ'ye tabidir."
+          ]
+        },
+        {
+          "id": "private-fields",
+          "label": "# ile gerçek private alanlar",
+          "aliases": [
+            "private alan",
+            "private field",
+            "#alan",
+            "gerçek private",
+            "#private"
+          ],
+          "anchors": [
+            "#alan biçimindeki private alanlara yalnızca class gövdesinden erişilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Class metotlarının non-enumerable olması `for...in` döngüsünü nasıl etkiler?",
+        "`#` ile tanımlanan private alan ile TypeScript'in `private` anahtar kelimesi arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — MDN: Classes, Inheritance and the prototype chain, Private elements"
+    },
+    {
+      "id": "javascript-shallow-deep-copy",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Nesne ve prototype",
+      "difficulty": 1,
+      "prompt": "Shallow copy ile deep copy arasındaki fark nedir? JavaScript'te bir nesneyi derin kopyalamanın yolları nelerdir?",
+      "modelAnswer": "Shallow copy yalnızca en üst seviyedeki özellikleri yeni bir nesneye taşır; iç içe nesne ve diziler kopyalanmaz, kopya ile orijinal aynı iç nesneleri gösterir ve birinde yapılan iç değişiklik ötekinde de görünür. Spread (`{ ...obj }`, `[...arr]`), `Object.assign`, `Array.from` ve `slice` hep shallow copy üretir. Deep copy ise her seviyeyi yeniden oluşturur; eski `JSON.parse(JSON.stringify(obj))` yolu `Date`'i string'e çevirir, fonksiyonları, undefined alanları ve `Map`/`Set` içeriğini düşürür, döngüsel referansta da `TypeError` fırlatır. Dilin değil ortamın sağladığı, tarayıcılarda ve Node.js'te bulunan `structuredClone` ise `Date`, `Map`, `Set` ve döngüsel referansları doğru kopyalar; buna karşın fonksiyon ve DOM düğümünde `DataCloneError` fırlatır, prototype'ı taşımadığı için class örneklerini düz nesneye çevirir.",
+      "keyConcepts": [
+        {
+          "id": "shallow-shares-nested",
+          "label": "Shallow copy iç nesneleri paylaşır",
+          "aliases": [
+            "ilk seviye",
+            "üst seviye",
+            "aynı referans",
+            "iç içe",
+            "içteki obje",
+            "orijinal de değiş"
+          ],
+          "anchors": [
+            "Shallow copy yalnızca üst seviyeyi kopyalar, iç nesneler paylaşılır.",
+            "İç nesnede yapılan değişiklik orijinalde de görünür."
+          ]
+        },
+        {
+          "id": "shallow-operations",
+          "label": "Spread, Object.assign, slice",
+          "aliases": [
+            "spread",
+            "object.assign",
+            "array.from",
+            "...obj",
+            "slice"
+          ],
+          "anchors": [
+            "Spread ve Object.assign shallow copy üretir."
+          ]
+        },
+        {
+          "id": "json-limits",
+          "label": "JSON yolunun sınırları",
+          "aliases": [
+            "json.parse",
+            "json.stringify",
+            "date'i string",
+            "fonksiyonları sil",
+            "fonksiyonları düşür"
+          ],
+          "anchors": [
+            "JSON.parse(JSON.stringify()) Date'i string'e çevirir, fonksiyonları düşürür."
+          ]
+        },
+        {
+          "id": "structured-clone",
+          "label": "structuredClone",
+          "aliases": [
+            "structuredclone",
+            "structured clone"
+          ],
+          "anchors": [
+            "structuredClone Date, Map, Set ve döngüsel referansları kopyalar."
+          ]
+        },
+        {
+          "id": "clone-limits",
+          "label": "Fonksiyon, DOM düğümü ve prototype kopyalanmaz",
+          "aliases": [
+            "datacloneerror",
+            "dom düğüm",
+            "dom eleman",
+            "fonksiyon ve dom",
+            "düz nesneye",
+            "class örnekleri"
+          ],
+          "anchors": [
+            "structuredClone fonksiyon ve DOM düğümünde hata fırlatır.",
+            "Class örnekleri düz nesneye dönüşür."
+          ]
+        }
+      ],
+      "followUps": [
+        "React'te state güncellerken neden çoğu zaman shallow copy yeterlidir?",
+        "`structuredClone` ile kopyalanan bir class örneğinin metotlarına ne olur?"
+      ],
+      "source": "Kendi derleme — MDN: Shallow copy, Deep copy (Glossary), structuredClone(), The structured clone algorithm"
+    },
+    {
+      "id": "javascript-event-loop",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 2,
+      "prompt": "Event loop nedir? JavaScript aynı anda tek bir kod parçası çalıştırırken asenkron işleri nasıl yürütür?",
+      "modelAnswer": "JavaScript kodu tek bir thread'de, bir call stack üzerinde çalışır; başlayan bir fonksiyon araya başka JavaScript kodu girmeden sonuna kadar çalışır (run-to-completion). Zamanlayıcı, ağ isteği ya da dosya okuma gibi beklemeli işleri JavaScript motoru değil ortam (tarayıcı ya da Node.js) yürütür; iş bitince ilgili callback kuyruğa bir task olarak eklenir. Event loop, call stack boşaldığında kuyruktan sıradaki task'ı alıp çalıştırır, ardından birikmiş microtask'ları boşaltır ve tarayıcıda gerekiyorsa ekranı yeniden çizer. Bu yüzden `setTimeout(fn, 0)` bile mevcut kod bitmeden çalışmaz; verilen süre kesin bir zaman değil, alt sınırdır. Uzun süren senkron bir döngü stack'i meşgul ettiği için tıklamalar, zamanlayıcılar ve çizim bekler; ağır iş parçalara bölünür ya da bir Web Worker'a taşınır.",
+      "keyConcepts": [
+        {
+          "id": "single-thread",
+          "label": "Tek thread, run-to-completion",
+          "aliases": [
+            "tek thread",
+            "single thread",
+            "tek iş parçacığı",
+            "run-to-completion",
+            "sonuna kadar çalış"
+          ],
+          "anchors": [
+            "JavaScript tek bir thread'de çalışır.",
+            "Başlayan fonksiyon araya başka kod girmeden sonuna kadar çalışır."
+          ]
+        },
+        {
+          "id": "environment-runs-io",
+          "label": "Beklemeli işleri ortam yürütür",
+          "aliases": [
+            "tarayıcı ya da node",
+            "ortam yürüt",
+            "web api",
+            "arka planda",
+            "tarayıcı tarafından"
+          ],
+          "anchors": [
+            "Zamanlayıcı ve ağ isteği gibi işleri tarayıcı ya da Node.js yürütür."
+          ]
+        },
+        {
+          "id": "queue-when-empty",
+          "label": "Stack boşalınca kuyruktan sıradaki task",
+          "aliases": [
+            "stack boşal",
+            "stack boş",
+            "kuyruktan",
+            "callback kuyruğ",
+            "task queue",
+            "kuyruğa ekle"
+          ],
+          "anchors": [
+            "İş bitince callback kuyruğa eklenir.",
+            "Event loop call stack boşalınca kuyruktan sıradaki işi alır."
+          ]
+        },
+        {
+          "id": "timeout-zero",
+          "label": "setTimeout 0 hemen çalışmaz",
+          "aliases": [
+            "settimeout 0",
+            "settimeout(fn, 0)",
+            "hemen çalışmaz",
+            "alt sınır",
+            "minimum süre"
+          ],
+          "anchors": [
+            "setTimeout 0 bile mevcut kod bitmeden çalışmaz.",
+            "Verilen süre kesin değil, alt sınırdır."
+          ]
+        },
+        {
+          "id": "blocking",
+          "label": "Uzun senkron iş her şeyi bekletir",
+          "aliases": [
+            "bloklar",
+            "bloke",
+            "donar",
+            "meşgul",
+            "web worker",
+            "parçalara böl"
+          ],
+          "anchors": [
+            "Uzun bir senkron döngü ana thread'i bloklar, sayfa donar.",
+            "Ağır iş parçalara bölünür ya da Web Worker'a taşınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`setTimeout(fn, 0)` neden gerçekten 0 ms sonra çalışmaz?",
+        "Node.js'in event loop'u tarayıcınkinden nasıl ayrılır?"
+      ],
+      "source": "Kendi derleme — HTML standardı: 8.1.7 Event loops; MDN: In depth: Microtasks and the JavaScript runtime environment"
+    },
+    {
+      "id": "javascript-microtask-macrotask",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 3,
+      "prompt": "Microtask ile macrotask arasındaki fark nedir? Promise callback'i ile setTimeout callback'inden hangisi önce çalışır?",
+      "modelAnswer": "HTML standardında \"macrotask\" diye bir terim yoktur; `setTimeout`, olay işleme ya da bir script'in çalışması gibi işler task olarak task kuyruklarına, Promise tepkileri (`then`, `catch` ve `await` sonrası devam), `queueMicrotask` ve `MutationObserver` callback'leri ise ayrı bir microtask kuyruğuna girer. Event loop bir task'ı çalıştırıp call stack boşaldığında microtask checkpoint yapar: microtask kuyruğu tamamen boşalana kadar çalıştırılır ve bu sırada eklenen yeni microtask'lar da aynı turda işlenir. Sonra tarayıcı gerekiyorsa ekranı çizer ve ancak bundan sonra sıradaki task'a geçilir; bu yüzden aynı kodda kurulan `Promise.resolve().then(a)` her zaman `setTimeout(b, 0)`'dan önce çalışır. Kendini sürekli yeniden kuyruğa ekleyen bir microtask zinciri sıradaki task'ı ve çizimi süresiz erteler, sayfa donar; büyük işler bu yüzden `setTimeout` gibi bir task'la event loop'a nefes aldırarak bölünür.",
+      "keyConcepts": [
+        {
+          "id": "task-sources",
+          "label": "setTimeout, olaylar ve script task'tır",
+          "aliases": [
+            "task kuyruğ",
+            "task queue",
+            "olay işleme",
+            "settimeout gibi",
+            "setinterval"
+          ],
+          "anchors": [
+            "setTimeout ve olay işleme task kuyruğuna girer."
+          ]
+        },
+        {
+          "id": "microtask-sources",
+          "label": "Promise tepkileri, queueMicrotask, MutationObserver",
+          "aliases": [
+            "queuemicrotask",
+            "mutationobserver",
+            "promise tepki",
+            "then callback",
+            "await sonrası"
+          ],
+          "anchors": [
+            "Promise tepkileri ve queueMicrotask microtask kuyruğuna girer."
+          ]
+        },
+        {
+          "id": "drain-all",
+          "label": "Her task'tan sonra microtask kuyruğu tamamen boşaltılır",
+          "aliases": [
+            "tamamını boşalt",
+            "tamamen boşal",
+            "hepsini çalıştır",
+            "checkpoint",
+            "aynı turda",
+            "boşalana kadar"
+          ],
+          "anchors": [
+            "Bir task'tan sonra microtask kuyruğunun tamamı boşaltılır.",
+            "Bu sırada eklenen microtask'lar da aynı turda çalışır."
+          ]
+        },
+        {
+          "id": "promise-first",
+          "label": "Promise callback'i setTimeout 0'dan önce",
+          "aliases": [
+            "settimeout 0'dan önce",
+            "settimeout(b, 0)",
+            "hep önce",
+            "her zaman önce",
+            "promise önce"
+          ],
+          "anchors": [
+            "Promise.resolve().then her zaman setTimeout 0'dan önce çalışır."
+          ]
+        },
+        {
+          "id": "starvation",
+          "label": "Sonsuz microtask zinciri task'ları ve çizimi aç bırakır",
+          "aliases": [
+            "donar",
+            "starvation",
+            "aç bırak",
+            "hiç geçilmez",
+            "süresiz ertele",
+            "render edemez"
+          ],
+          "anchors": [
+            "Sürekli yeni microtask eklemek sıradaki task'ı ve çizimi süresiz erteler."
+          ]
+        }
+      ],
+      "followUps": [
+        "`await` ifadesinden sonraki kod hangi kuyrukta çalışır?",
+        "`requestAnimationFrame` callback'i bu sıralamada nereye düşer?"
+      ],
+      "source": "Kendi derleme — HTML standardı: 8.1.7.3 Processing model, perform a microtask checkpoint; MDN: In depth: Microtasks and the JavaScript runtime environment"
+    },
+    {
+      "id": "javascript-promise-states",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 1,
+      "prompt": "Promise nedir? Hangi durumlarda bulunabilir?",
+      "modelAnswer": "Promise, henüz tamamlanmamış asenkron bir işin ileride oluşacak sonucunu temsil eden nesnedir. Üç durumu vardır: başlangıçtaki pending, işin başarıyla bittiği fulfilled ve başarısız olduğu rejected; fulfilled ya da rejected olan promise'e settled denir ve bir kez settled olduktan sonra durumu ve değeri bir daha değişmez. `then` başarı ve hata için callback alır, `catch` yalnızca hatayı ele alır; ikisi de yeni bir promise ürettiği için art arda bağlanabilir (promise chaining). Promise zaten settled olsa bile `then`'e verilen callback senkron çalışmaz, mevcut kod bittikten sonra microtask olarak çalışır; \"resolved\" ise fulfilled ile aynı şey değildir, başka bir promise'e kilitlenmiş ve hâlâ bekleyen bir promise de resolved sayılır.",
+      "keyConcepts": [
+        {
+          "id": "future-value",
+          "label": "İleride oluşacak sonucu temsil eder",
+          "aliases": [
+            "ileride oluşacak",
+            "ileride gelecek",
+            "gelecekteki",
+            "sonucunu temsil",
+            "henüz bitmemiş"
+          ],
+          "anchors": [
+            "Promise asenkron bir işin ileride oluşacak sonucunu temsil eder."
+          ]
+        },
+        {
+          "id": "three-states",
+          "label": "pending, fulfilled, rejected",
+          "aliases": [
+            "fulfilled",
+            "rejected",
+            "başlangıçtaki pending",
+            "başta pending"
+          ],
+          "anchors": [
+            "Promise pending, fulfilled ya da rejected durumunda olur."
+          ]
+        },
+        {
+          "id": "settled-final",
+          "label": "Settled olunca bir daha değişmez",
+          "aliases": [
+            "settled ol",
+            "settled den",
+            "bir daha değişmez",
+            "tekrar değişmez",
+            "kesinleş"
+          ],
+          "anchors": [
+            "Settled olan promise'in durumu bir daha değişmez."
+          ]
+        },
+        {
+          "id": "chaining",
+          "label": "then yeni promise döndürür, zincirleme",
+          "aliases": [
+            "yeni bir promise",
+            "promise chaining",
+            "art arda bağla",
+            "then ile",
+            "then zinciri"
+          ],
+          "anchors": [
+            "then yeni bir promise ürettiği için art arda bağlanabilir."
+          ]
+        },
+        {
+          "id": "always-async",
+          "label": "Callback her zaman asenkron çalışır",
+          "aliases": [
+            "asenkron çalış",
+            "senkron çalışmaz",
+            "microtask olarak",
+            "mevcut kod bittikten",
+            "job queue"
+          ],
+          "anchors": [
+            "Promise settled olsa bile then callback'i asenkron çalışır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Promise constructor'ına verilen executor fonksiyonu ne zaman çalışır?",
+        "`finally` ne zaman çalışır, döndürdüğü değer zincirdeki sonucu etkiler mi?",
+        "`then`'in ikinci parametresi ile `catch` arasında fark var mıdır?"
+      ],
+      "source": "Kendi derleme — MDN: Promise, Using promises; ECMA-262: Promise Objects"
+    },
+    {
+      "id": "javascript-promise-combinators",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 2,
+      "prompt": "Promise.all, Promise.allSettled, Promise.race ve Promise.any arasındaki fark nedir?",
+      "modelAnswer": "Dördü de bir promise listesini alıp tek bir promise döndürür, fark ne zaman ve neyle sonuçlandıklarındadır. `Promise.all` hepsi fulfilled olunca değerleri giriş sırasıyla bir dizi olarak verir, biri bile rejected olursa diğerlerini beklemeden o hatayla reddedilir (fail-fast). `Promise.allSettled` hiç reddedilmez, hepsi sonuçlanana kadar bekler ve her biri için `{ status, value }` ya da `{ status, reason }` biçiminde bir nesne döndürür. `Promise.race` sonucu ne olursa olsun ilk sonuçlanan promise'i izler, `Promise.any` ise ilk fulfilled olanı alır ve yalnızca hepsi reddedilirse bütün hataları taşıyan bir `AggregateError` ile reddedilir. Hiçbiri diğer işleri iptal etmez; tipik kullanım birbirine bağlı sonuçlar için `all`, kısmi başarıya razı olunan toplu işler için `allSettled`, zaman aşımı için `race` ve yedek kaynaklardan en hızlı başarılı yanıt için `any`'dir.",
+      "keyConcepts": [
+        {
+          "id": "all-fail-fast",
+          "label": "all: biri reddedilirse hemen reddedilir",
+          "aliases": [
+            "fail-fast",
+            "fail fast",
+            "biri bile",
+            "hemen reject",
+            "beklemeden",
+            "ilk hatayla"
+          ],
+          "anchors": [
+            "Promise.all biri bile reddedilirse diğerlerini beklemeden reddedilir."
+          ]
+        },
+        {
+          "id": "allsettled-never-rejects",
+          "label": "allSettled hiç reddedilmez",
+          "aliases": [
+            "hiç reject",
+            "hiç reddedilmez",
+            "hepsinin bitmesini",
+            "sonuçlanana kadar",
+            "value ya da reason"
+          ],
+          "anchors": [
+            "allSettled hiç reddedilmez, hepsinin sonuçlanmasını bekler.",
+            "Her sonuç için status ve value ya da reason döner."
+          ]
+        },
+        {
+          "id": "race-first-settled",
+          "label": "race: ilk sonuçlanan",
+          "aliases": [
+            "ilk biten",
+            "ilk sonuçlanan",
+            "başarılı ya da hatalı",
+            "sonucu ne olursa"
+          ],
+          "anchors": [
+            "race başarılı ya da hatalı fark etmeden ilk sonuçlanan promise'i izler."
+          ]
+        },
+        {
+          "id": "any-aggregate",
+          "label": "any: ilk başarılı, hepsi reddedilirse AggregateError",
+          "aliases": [
+            "aggregateerror",
+            "aggregate error",
+            "ilk başarılı",
+            "ilk fulfilled",
+            "hepsi reject",
+            "hepsi reddedil"
+          ],
+          "anchors": [
+            "any ilk başarılı olanı alır.",
+            "Hepsi reddedilirse AggregateError ile reddedilir."
+          ]
+        },
+        {
+          "id": "use-cases",
+          "label": "Kullanım: zaman aşımı, kısmi başarı, yedek kaynak",
+          "aliases": [
+            "zaman aşımı",
+            "timeout için",
+            "yedek kaynak",
+            "kısmi başarı",
+            "bağımsız istek"
+          ],
+          "anchors": [
+            "Zaman aşımı için race, kısmi başarıya razı olunan işlerde allSettled kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Promise.race` ile bir fetch isteğine zaman aşımı koyduğunda istek gerçekten iptal olur mu?",
+        "Boş bir dizi verildiğinde `Promise.all` ve `Promise.any` nasıl davranır?"
+      ],
+      "source": "Kendi derleme — MDN: Promise.all(), Promise.allSettled(), Promise.race(), Promise.any(); ECMA-262: Promise.any"
+    },
+    {
+      "id": "javascript-async-await-errors",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 3,
+      "prompt": "async/await kullanırken hatalar nasıl yakalanır? await edilmeyen bir promise reddedilirse ne olur?",
+      "modelAnswer": "`async` fonksiyon her zaman bir promise döndürür; içinde fırlatılan hata o promise'in reddine dönüşür, `await` edilen bir promise reddedildiğinde de hata o satırda fırlatılır ve sıradan bir `try/catch` ile yakalanır. Bu yakalama yalnızca fonksiyon içinde gerçekten beklenen promise'ler için geçerlidir; `return` önünde `await` olmadan döndürülen ya da hiç beklenmeden başlatılan (fire-and-forget) bir promise'in hatası `catch` bloğuna düşmez. Hiçbir işleyiciye bağlanmamış bir red unhandled rejection olarak raporlanır: tarayıcıda `unhandledrejection` olayı tetiklenir ve konsola yazılır, Node.js ise v15'ten beri varsayılan olarak bunu yakalanmamış istisna sayar ve süreci sonlandırır. İnce bir tuzak, iki promise'i önce başlatıp sonra sırayla beklemektir: birincisi beklenirken ikincisi reddedilirse henüz hiçbir işleyiciye bağlanmadığı için yakalanmamış sayılır. Bu yüzden eşzamanlı işler `Promise.all` ya da `Promise.allSettled` ile birlikte beklenir; bu, bağımsız işleri tek tek await etmenin süreleri toplamasını da önler ve toplam süre en yavaşı kadar olur.",
+      "keyConcepts": [
+        {
+          "id": "throw-becomes-reject",
+          "label": "async her zaman promise döndürür, throw red olur",
+          "aliases": [
+            "her zaman bir promise",
+            "her zaman promise",
+            "reddine dönüş",
+            "reject'e dönüş",
+            "rejected promise"
+          ],
+          "anchors": [
+            "async fonksiyon her zaman bir promise döndürür.",
+            "İçinde fırlatılan hata promise'in reddine dönüşür."
+          ]
+        },
+        {
+          "id": "try-catch",
+          "label": "await edilen red try/catch ile yakalanır",
+          "aliases": [
+            "try/catch",
+            "try-catch",
+            "try catch",
+            "try bloğ"
+          ],
+          "anchors": [
+            "await edilen promise reddedilirse hata try/catch ile yakalanır."
+          ]
+        },
+        {
+          "id": "not-awaited-escapes",
+          "label": "Beklenmeyen promise'in hatası catch'e düşmez",
+          "aliases": [
+            "catch'e düşmez",
+            "catch bloğuna düşmez",
+            "fire-and-forget",
+            "fire and forget",
+            "await olmadan",
+            "beklenmeden"
+          ],
+          "anchors": [
+            "await edilmeyen promise'in hatası catch bloğuna düşmez."
+          ]
+        },
+        {
+          "id": "unhandled-rejection",
+          "label": "Unhandled rejection; Node.js süreci sonlandırır",
+          "aliases": [
+            "unhandled rejection",
+            "unhandledrejection",
+            "yakalanmamış",
+            "process'i çökert",
+            "süreci sonlandır",
+            "uncaught"
+          ],
+          "anchors": [
+            "Kimse yakalamazsa unhandled rejection raporlanır.",
+            "Node.js varsayılan olarak süreci sonlandırır."
+          ]
+        },
+        {
+          "id": "sequential-trap",
+          "label": "Önce başlatıp sırayla beklemek; Promise.all",
+          "aliases": [
+            "promise.all",
+            "sırayla await",
+            "sırayla bekle",
+            "birlikte beklen",
+            "allsettled",
+            "paralel başlat"
+          ],
+          "anchors": [
+            "Eşzamanlı işler Promise.all ile birlikte beklenir.",
+            "Sırayla await etmek ikinci promise'in hatasını yakalanmamış bırakabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`return await` ile `return` arasında try/catch açısından ne fark vardır?",
+        "Bir event listener içinden çağrılan async fonksiyonun hatası nereye gider?"
+      ],
+      "source": "Kendi derleme — MDN: async function, Window: unhandledrejection event; Node.js: CLI --unhandled-rejections"
     }
   ]
 }
