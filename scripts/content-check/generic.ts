@@ -31,9 +31,13 @@ const HTTP_WORDS: readonly string[] = [
 /**
  * Kategorinin hemen her cevabında geçen terimler; yalnızca o kategorinin
  * sorularında yasak. web ve siber güvenlik listeleri o sorular yazılırken
- * kullanılan denetimden geldi. javascript'in kendi listesi yok.
+ * kullanılan denetimden geldi. javascript'inki TypeScript soruları gelince
+ * eklendi: dil adları ve "tip" hemen her cevapta geçiyor.
  */
 export const CATEGORY_WORDS: Partial<Record<Category, readonly string[]>> = {
+  javascript: [
+    "javascript", "typescript", "tip", "tipi", "type", "tür", "türü", "motor", "engine", "node", "node.js",
+  ],
   docker: ["docker", "container", "konteyner", "image", "imaj", "dockerfile", "katman", "layer", "host"],
   react: ["react", "component", "bileşen", "state", "props", "prop", "render", "jsx", "hook", "dom"],
   sql: [

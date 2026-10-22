@@ -128,7 +128,7 @@
           "id": "pool",
           "label": "Literal'ler tek kopya paylaşılır",
           "aliases": [
-            "literal",
+            "literal string",
             "tek kopya",
             "havuzdaki",
             "aynı nesne kullanılır",
@@ -609,7 +609,7 @@
             "tek abstract",
             "tek bir abstract",
             "birden fazla interface",
-            "extends",
+            "extend edebil",
             "implements",
             "çoklu kalıtım"
           ],
@@ -680,7 +680,7 @@
           "aliases": [
             "inheritance",
             "kalıtım",
-            "extends",
+            "extends ile",
             "miras"
           ],
           "anchors": [
@@ -1515,7 +1515,7 @@
           "aliases": [
             "new t()",
             "t.class",
-            "instanceof",
+            "instanceof list",
             "overload",
             "primitive"
           ],
@@ -1981,7 +1981,7 @@
             "static bir koleksiyon",
             "static koleksiyon",
             "sınırsız cache",
-            "listener",
+            "listener'lar",
             "dinleyici",
             "threadlocal"
           ],
@@ -3270,7 +3270,7 @@
           "label": "finally'de elle unlock",
           "aliases": [
             "unlock",
-            "finally",
+            "finally bloğ",
             "elle bırak",
             "manuel"
           ],
@@ -4104,7 +4104,6 @@
           "aliases": [
             "isteğe bağlı",
             "opsiyonel",
-            "optional",
             "sonradan değiş"
           ],
           "anchors": [
@@ -4172,7 +4171,7 @@
           "id": "prototype",
           "label": "prototype: her istendiğinde yeni örnek",
           "aliases": [
-            "prototype",
+            "prototype scope",
             "her istendiğinde",
             "yeni örnek",
             "yeni instance"
@@ -4761,7 +4760,7 @@
             "self invocation",
             "kendi içinden",
             "iç çağrı",
-            "this"
+            "this üzerinden"
           ],
           "anchors": [
             "Hiçbir proxy türü nesnenin kendi içinden yaptığı çağrıları yakalamaz."
@@ -5117,7 +5116,6 @@
             "rollback'e yol aç",
             "yalnızca runtimeexception",
             "runtimeexception ve error",
-            "unchecked",
             "checked exception fırlarsa",
             "checked'larda yapmaz"
           ],
@@ -5198,7 +5196,7 @@
           "id": "ic-cagri",
           "label": "İç çağrı proxy'den geçmez",
           "aliases": [
-            "this",
+            "this.save",
             "self-invocation",
             "self invocation",
             "iç çağrı",
@@ -6371,10 +6369,11 @@
           "id": "unchecked",
           "label": "DataAccessException unchecked",
           "aliases": [
-            "unchecked",
+            "unchecked ol",
             "runtimeexception",
             "throws gerekmez",
-            "throws ile dol"
+            "throws ile dol",
+            "unchecked'tır"
           ],
           "anchors": [
             "DataAccessException hiyerarşisi unchecked'tir."

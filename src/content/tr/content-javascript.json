@@ -6,7 +6,7 @@
       "id": "javascript-null-vs-undefined",
       "category": "javascript",
       "kind": "definition",
-      "topic": "null ve undefined",
+      "topic": "Tipler ve eşitlik",
       "difficulty": 1,
       "prompt": "JavaScript'te null ile undefined arasındaki fark nedir?",
       "modelAnswer": "`undefined`, bir değişken tanımlanıp henüz değer atanmadığında, var olmayan bir özellik okunduğunda ya da fonksiyon bir şey döndürmediğinde motorun kendiliğinden verdiği değerdir; `null` ise geliştiricinin bir değerin bilinçli olarak boş olduğunu belirtmek için atadığı değerdir. İkisi gevşek eşitlikte birbirine eşittir ama türleri farklı olduğu için katı eşitlikte ayrışır (`null == undefined` true, `null === undefined` false döner); bu yüzden \"ikisinden biri mi\" kontrolü tek bir `== null` ile yapılabilir. `typeof null` sonucunun `\"object\"` olması dilin ilk uygulamasından kalma bir hatadır; düzeltmek için yapılan öneri reddedildiği için bugün de böyledir. Varsayılan parametre değerleri yalnızca parametreye hiçbir şey geçilmediğinde ya da `undefined` geçildiğinde devreye girer; `null` geçerli bir değer sayılır ve varsayılan uygulanmaz.",
@@ -46,7 +46,7 @@
           "id": "typeof-null-object",
           "label": "typeof null → 'object'",
           "aliases": [
-            "typeof",
+            "typeof null",
             "object döner",
             "dil hatası",
             "tip kontrolü"
@@ -77,6 +77,3755 @@
         "?? ile || operatörleri null ve undefined karşısında nasıl farklı davranır?"
       ],
       "source": "Kendi derleme — ECMA-262: undefined value, null value; MDN: typeof (typeof null), Equality (==), Default parameters"
+    },
+    {
+      "id": "javascript-equality-coercion",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Tipler ve eşitlik",
+      "difficulty": 1,
+      "prompt": "JavaScript'te == ile === arasındaki fark nedir?",
+      "modelAnswer": "`===` (strict equality) iki değeri hiçbir dönüşüm yapmadan karşılaştırır; tipleri farklıysa sonuç doğrudan false olur. `==` (loose equality) ise tipler farklıysa önce örtük dönüşüm (type coercion) uygular: string ile number karşılaştırılırken string sayıya, boolean ise 1 ya da 0'a çevrilir, nesne de `valueOf` ya da `toString` ile primitive bir değere indirgenir. `null` ve `undefined` yalnızca birbirine gevşek eşittir, 0'a ya da boş string'e eşit değildir; bu yüzden `x == null` ikisini birden yakalayan, yaygın kabul görmüş tek `==` kullanımıdır. Kurallar `'0' == false` ya da `'' == 0` gibi sezgiye aykırı true sonuçlar ürettiği için `===` çoğu ekipte varsayılandır.",
+      "keyConcepts": [
+        {
+          "id": "strict-no-coercion",
+          "label": "=== dönüşüm yapmaz, tip farklıysa false",
+          "aliases": [
+            "dönüşüm yapmadan",
+            "dönüştürmeden",
+            "tipleri farklıysa",
+            "hem tip",
+            "strict equality"
+          ],
+          "anchors": [
+            "=== iki değeri dönüşüm yapmadan karşılaştırır.",
+            "Tipleri farklıysa === doğrudan false döner."
+          ]
+        },
+        {
+          "id": "loose-coercion",
+          "label": "== örtük dönüşüm uygular",
+          "aliases": [
+            "örtük dönüşüm",
+            "coercion",
+            "tipleri dönüştür",
+            "loose equality",
+            "sayıya çevril"
+          ],
+          "anchors": [
+            "== tipler farklıysa önce örtük dönüşüm yapar.",
+            "String ile number karşılaştırılırken string sayıya çevrilir."
+          ]
+        },
+        {
+          "id": "object-to-primitive",
+          "label": "Nesne primitive değere indirgenir",
+          "aliases": [
+            "primitive'e",
+            "primitive bir değer",
+            "primitive değer",
+            "valueof",
+            "toprimitive"
+          ],
+          "anchors": [
+            "Nesne karşılaştırmadan önce valueOf ya da toString ile primitive bir değere çevrilir."
+          ]
+        },
+        {
+          "id": "null-loose",
+          "label": "null yalnızca undefined'a gevşek eşit",
+          "aliases": [
+            "== null",
+            "yalnızca birbirine",
+            "sadece undefined",
+            "undefined'a eşit",
+            "null kontrol"
+          ],
+          "anchors": [
+            "null ve undefined yalnızca birbirine gevşek eşittir.",
+            "x == null ikisini birden yakalar."
+          ]
+        },
+        {
+          "id": "prefer-strict",
+          "label": "Sezgiye aykırı sonuçlar, === varsayılan",
+          "aliases": [
+            "sezgiye aykırı",
+            "beklenmedik",
+            "sürpriz",
+            "=== kullan",
+            "varsayılan olarak ==="
+          ],
+          "anchors": [
+            "Örtük dönüşüm sezgiye aykırı sonuçlar ürettiği için === varsayılan tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`[] == ![]` neden true döner?",
+        "`Object.is` `===`'ten hangi iki durumda ayrılır?"
+      ],
+      "source": "Kendi derleme — ECMA-262: IsLooselyEqual, IsStrictlyEqual; MDN: Equality comparisons and sameness"
+    },
+    {
+      "id": "javascript-truthy-falsy",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Tipler ve eşitlik",
+      "difficulty": 1,
+      "prompt": "JavaScript'te truthy ve falsy ne demektir? Hangi değerler falsy sayılır?",
+      "modelAnswer": "Bir değer `if`, `while`, `!` ya da `&&` ve `||` gibi boolean bekleyen bir bağlamda kullanıldığında JavaScript onu ToBoolean ile true ya da false'a çevirir; false'a dönenlere falsy, geri kalan her şeye truthy denir. Falsy değerlerin listesi kısadır ve sabittir: `false`, `0`, `-0`, `0n`, boş string, `null`, `undefined` ve `NaN`. Bu listede olmayan her şey truthy'dir; boş dizi `[]`, boş nesne `{}` ve `\"0\"` ya da `\"false\"` string'leri de buna dahildir. Pratikteki tuzak, `if (count)` ya da `count || 10` gibi bir kontrolün geçerli bir 0'ı ya da boş string'i de değer yokmuş gibi ele almasıdır; varsayılan yalnızca null ve undefined için verilecekse `??` kullanılır.",
+      "keyConcepts": [
+        {
+          "id": "boolean-context",
+          "label": "Boolean bağlamında true ya da false'a çevrilir",
+          "aliases": [
+            "boolean bağlam",
+            "boolean'a çevril",
+            "false'a çevir",
+            "false'a dönüş",
+            "toboolean"
+          ],
+          "anchors": [
+            "Boolean bekleyen bir bağlamda değer true ya da false'a çevrilir.",
+            "if koşulunda değer ToBoolean ile çevrilir."
+          ]
+        },
+        {
+          "id": "falsy-list",
+          "label": "Sabit falsy listesi",
+          "aliases": [
+            "boş string",
+            "boş metin",
+            "empty string"
+          ],
+          "anchors": [
+            "false, 0, -0, 0n, boş string, null, undefined ve NaN falsy'dir."
+          ]
+        },
+        {
+          "id": "empty-containers-truthy",
+          "label": "Boş dizi ve boş nesne truthy",
+          "aliases": [
+            "boş dizi",
+            "boş nesne",
+            "boş obje",
+            "boş array"
+          ],
+          "anchors": [
+            "Boş dizi ve boş nesne truthy'dir.",
+            "\"0\" string'i de truthy sayılır."
+          ]
+        },
+        {
+          "id": "valid-zero-pitfall",
+          "label": "Geçerli 0 ve boş string yok sayılır",
+          "aliases": [
+            "0 iken",
+            "sıfır iken",
+            "yokmuş gibi",
+            "0 ezil",
+            "|| 10",
+            "?? kullan"
+          ],
+          "anchors": [
+            "if (count) kontrolü geçerli bir 0'ı da değer yokmuş gibi ele alır.",
+            "|| ile varsayılan vermek 0'ı ezer, bunun için ?? kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`!!` operatörü ne işe yarar?",
+        "`document.all` neden falsy bir nesnedir?"
+      ],
+      "source": "Kendi derleme — ECMA-262: ToBoolean; MDN: Falsy, Truthy"
+    },
+    {
+      "id": "javascript-nan-object-is",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Tipler ve eşitlik",
+      "difficulty": 2,
+      "prompt": "NaN neden kendisiyle karşılaştırıldığında eşit çıkmaz? Bir değerin NaN olup olmadığı nasıl güvenilir şekilde kontrol edilir?",
+      "modelAnswer": "`NaN` (Not-a-Number), `Number('abc')` ya da `0 / 0` gibi anlamlı bir sayı üretemeyen işlemlerin sonucudur ve tipi yine `number`'dır. Dil IEEE 754 kayan nokta standardını izleyerek NaN'ı her karşılaştırmada eşitsiz sayar; `NaN === NaN` false döner ve `x !== x` ifadesinin true olduğu tek değer NaN'dır. Güvenilir kontrol `Number.isNaN`'dır: global `isNaN` aldığı değeri önce sayıya çevirdiği için `isNaN('abc')` true döner, `Number.isNaN` ise yalnızca gerçekten NaN olan bir number için true verir. `Object.is` `===` gibi çalışır ama NaN'ı kendine eşit, `+0` ile `-0`'ı farklı sayar; `includes`, `Map` ve `Set` ise NaN'ı bulup sıfırları ayırmayan same-value-zero kuralını kullanır, bu yüzden `[NaN].indexOf(NaN)` -1 dönerken `[NaN].includes(NaN)` true döner.",
+      "keyConcepts": [
+        {
+          "id": "invalid-number",
+          "label": "Geçersiz sayısal işlemin sonucu, tipi number",
+          "aliases": [
+            "not-a-number",
+            "not a number",
+            "geçersiz bir sayı",
+            "geçersiz sayı",
+            "0 / 0"
+          ],
+          "anchors": [
+            "NaN anlamlı bir sayı üretemeyen işlemin sonucudur.",
+            "NaN'ın tipi yine number'dır."
+          ]
+        },
+        {
+          "id": "never-equal",
+          "label": "Kendine bile eşit değil",
+          "aliases": [
+            "kendine bile",
+            "kendine eşit değil",
+            "x !== x",
+            "ieee 754",
+            "her karşılaştırmada"
+          ],
+          "anchors": [
+            "NaN kendine bile eşit değildir.",
+            "x !== x yalnızca NaN için true olur."
+          ]
+        },
+        {
+          "id": "number-isnan",
+          "label": "Number.isNaN dönüştürmez, global isNaN dönüştürür",
+          "aliases": [
+            "number.isnan",
+            "global isnan",
+            "isnan('abc')",
+            "isnan önce"
+          ],
+          "anchors": [
+            "Number.isNaN argümanı sayıya çevirmez.",
+            "Global isNaN önce sayıya çevirdiği için 'abc' için de true döner."
+          ]
+        },
+        {
+          "id": "object-is",
+          "label": "Object.is NaN'ı eşit, +0 ve -0'ı farklı sayar",
+          "aliases": [
+            "object.is",
+            "+0",
+            "sıfırları ayır",
+            "samevalue"
+          ],
+          "anchors": [
+            "Object.is NaN'ı kendine eşit sayar.",
+            "Object.is +0 ile -0'ı ayırır."
+          ]
+        },
+        {
+          "id": "same-value-zero",
+          "label": "includes, Map ve Set NaN'ı bulur",
+          "aliases": [
+            "same-value-zero",
+            "same value zero",
+            "samevaluezero",
+            "includes(nan)",
+            "indexof",
+            "nan'ı bul"
+          ],
+          "anchors": [
+            "includes NaN'ı bulur, indexOf bulamaz.",
+            "Map ve Set anahtar eşitliğinde same-value-zero kuralını kullanır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`0.1 + 0.2 === 0.3` neden false döner?",
+        "Bir dizide NaN aramak için `indexOf` yerine neden `includes` kullanılır?"
+      ],
+      "source": "Kendi derleme — MDN: NaN, Number.isNaN(), Object.is(), Equality comparisons and sameness"
+    },
+    {
+      "id": "javascript-var-let-const",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Kapsam ve hoisting",
+      "difficulty": 1,
+      "prompt": "var, let ve const arasındaki farklar nelerdir?",
+      "modelAnswer": "`var` fonksiyon kapsamındadır (function scope); bir `if` ya da `for` bloğunda tanımlansa da bütün fonksiyonda görünür, `let` ve `const` ise yalnızca tanımlandıkları süslü parantez bloğunda yaşar (block scope). `var` aynı kapsamda yeniden tanımlanabilir ve en üst düzeyde global nesneye özellik olarak eklenir; `let` ve `const` ikisini de yapmaz. `const` yalnızca bağlamanın yeniden atanmasını engeller, tuttuğu nesne ya da dizinin içeriği yine değiştirilebilir; içeriği dondurmak için `Object.freeze` gerekir. Fark döngülerde belirginleşir: `var` ile kurulan bir `for` döngüsündeki bütün callback'ler aynı sayacı paylaşırken `let` her tur için yeni bir bağlama açar.",
+      "keyConcepts": [
+        {
+          "id": "function-scope",
+          "label": "var fonksiyon kapsamlı",
+          "aliases": [
+            "fonksiyon kapsam",
+            "function scope",
+            "fonksiyon seviye",
+            "bütün fonksiyonda",
+            "fonksiyon boyunca"
+          ],
+          "anchors": [
+            "var fonksiyon kapsamındadır, blokta tanımlansa da bütün fonksiyonda görünür."
+          ]
+        },
+        {
+          "id": "block-scope",
+          "label": "let ve const blok kapsamlı",
+          "aliases": [
+            "blok kapsam",
+            "block scope",
+            "süslü parantez",
+            "blok seviye",
+            "blok içinde"
+          ],
+          "anchors": [
+            "let ve const yalnızca tanımlandıkları blokta yaşar."
+          ]
+        },
+        {
+          "id": "const-binding",
+          "label": "const yeniden atamayı engeller, içeriği değil",
+          "aliases": [
+            "yeniden atan",
+            "içi değiştiril",
+            "içeriği değiştiril",
+            "referans sabit",
+            "object.freeze"
+          ],
+          "anchors": [
+            "const yeniden atanamaz ama tuttuğu nesnenin içi değiştirilebilir.",
+            "İçeriği dondurmak için Object.freeze gerekir."
+          ]
+        },
+        {
+          "id": "redeclare-global",
+          "label": "var yeniden tanımlanır, global nesneye eklenir",
+          "aliases": [
+            "tekrar tanımlan",
+            "yeniden tanımlan",
+            "redeclare",
+            "global nesne",
+            "global obje",
+            "window"
+          ],
+          "anchors": [
+            "var aynı kapsamda yeniden tanımlanabilir.",
+            "En üst düzeydeki var global nesneye özellik olarak eklenir."
+          ]
+        },
+        {
+          "id": "loop-binding",
+          "label": "let her turda yeni bağlama açar",
+          "aliases": [
+            "her tur",
+            "her iterasyon",
+            "aynı sayacı",
+            "aynı değişkeni paylaş",
+            "her döngü adım"
+          ],
+          "anchors": [
+            "let döngüde her tur için yeni bir bağlama açar.",
+            "var ile bütün callback'ler aynı değişkeni paylaşır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`var` ile yazılmış bir `for` döngüsünde `setTimeout` içinde sayacı yazdırınca neden hep son değer görünür?",
+        "Bir nesneyi tamamen değiştirilemez yapmak için `Object.freeze` yeterli mi?"
+      ],
+      "source": "Kendi derleme — MDN: var, let, const"
+    },
+    {
+      "id": "javascript-hoisting",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Kapsam ve hoisting",
+      "difficulty": 1,
+      "prompt": "Hoisting nedir? Fonksiyon bildirimleri, var ve let/const bu açıdan nasıl farklı davranır?",
+      "modelAnswer": "Hoisting, bir kapsamdaki bildirimlerin kod satır satır çalışmadan önce işlenmesi ve bu yüzden tanımlandıkları satırdan önce de bilinmesidir. Function declaration en güçlü hâliyle taşınır; gövdesi de hazır olduğu için tanımından önce çağrılabilir. `var` ile tanımlanan değişkenin yalnızca adı taşınır; tanımdan önce okunursa hata vermez, undefined döner. `let`, `const` ve `class` da kapsamın başında bilinir ama ilk değerini alana kadar erişilemez, okunmaya çalışılırsa `ReferenceError` atılır. Bir değişkene atanmış function expression ya da arrow function o değişkenin kuralına uyar, bu yüzden tanımından önce çağrılamaz.",
+      "keyConcepts": [
+        {
+          "id": "processed-first",
+          "label": "Bildirimler çalışmadan önce işlenir",
+          "aliases": [
+            "çalışmadan önce",
+            "önceden işlen",
+            "kapsamın başına",
+            "yukarı taşın",
+            "en üste"
+          ],
+          "anchors": [
+            "Bildirimler kod çalışmadan önce işlenir.",
+            "Tanımlar kapsamın başına taşınmış gibi davranır."
+          ]
+        },
+        {
+          "id": "function-declaration",
+          "label": "Function declaration gövdesiyle taşınır",
+          "aliases": [
+            "function declaration",
+            "gövdesi de",
+            "tamamen yukarı",
+            "tanımından önce çağr",
+            "tanımlamadan önce çağır"
+          ],
+          "anchors": [
+            "Function declaration gövdesiyle birlikte taşınır, tanımından önce çağrılabilir."
+          ]
+        },
+        {
+          "id": "var-undefined",
+          "label": "var'ın adı taşınır, değeri undefined",
+          "aliases": [
+            "undefined döner",
+            "undefined olur",
+            "değeri undefined",
+            "yalnızca adı",
+            "undefined gelir"
+          ],
+          "anchors": [
+            "var değişken tanımdan önce okunursa undefined döner."
+          ]
+        },
+        {
+          "id": "lexical-referenceerror",
+          "label": "let/const tanımdan önce ReferenceError",
+          "aliases": [
+            "referenceerror",
+            "reference error",
+            "erişilemez",
+            "ilk değerini alana"
+          ],
+          "anchors": [
+            "let ve const tanımdan önce okunursa ReferenceError atılır."
+          ]
+        },
+        {
+          "id": "expression-follows-variable",
+          "label": "Function expression değişken kuralına uyar",
+          "aliases": [
+            "function expression",
+            "fonksiyon ifade",
+            "değişkenin kuralı",
+            "değişkene ata"
+          ],
+          "anchors": [
+            "Değişkene atanmış function expression değişkenin kuralına uyar, önceden çağrılamaz."
+          ]
+        }
+      ],
+      "followUps": [
+        "`class` bildirimi function declaration gibi taşınır mı?",
+        "Hoisting'e güvenen kod okunabilirlik açısından neden tartışmalıdır?"
+      ],
+      "source": "Kendi derleme — MDN: Hoisting (Glossary), var, let, function"
+    },
+    {
+      "id": "javascript-temporal-dead-zone",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Kapsam ve hoisting",
+      "difficulty": 2,
+      "prompt": "Temporal dead zone (TDZ) nedir? Neden \"temporal\" denir?",
+      "modelAnswer": "`let`, `const` ya da `class` ile tanımlanan bir bağlama, bloğun başından tanım satırı çalışana kadar vardır ama ilk değerini almamıştır; bu aralıkta okunması ya da yazılması `ReferenceError` fırlatır. `var` aynı durumda sessizce undefined verdiği için TDZ, tanımlanmadan kullanılan değişken hatalarını erken yakalar; normalde güvenli olan typeof bile TDZ'deki bir değişkende hata fırlatır. Adındaki zaman vurgusu, bölgenin kodun yazıldığı konuma değil çalışma sırasına bağlı olmasından gelir: tanımdan önce yazılmış bir fonksiyon değişkeni kullanabilir, yeter ki tanım satırı çalıştıktan sonra çağrılsın. Aynı sebeple bir blok içinde `let x = x + 1` yazmak da sağdaki `x` henüz başlatılmadığı için hata verir.",
+      "keyConcepts": [
+        {
+          "id": "uninitialized",
+          "label": "Bloğun başından tanım satırına kadar başlatılmamış",
+          "aliases": [
+            "bloğun başından",
+            "tanım satırı",
+            "tanımlandığı satır",
+            "initialize",
+            "başlatılmadı",
+            "ilk değerini"
+          ],
+          "anchors": [
+            "Değişken bloğun başından tanım satırına kadar başlatılmamış durumdadır."
+          ]
+        },
+        {
+          "id": "reference-error",
+          "label": "Erişim ReferenceError fırlatır",
+          "aliases": [
+            "referenceerror",
+            "reference error",
+            "hata fırlat",
+            "hata atar"
+          ],
+          "anchors": [
+            "TDZ'deki değişkene erişmek ReferenceError fırlatır."
+          ]
+        },
+        {
+          "id": "var-contrast",
+          "label": "var sessizce undefined verir",
+          "aliases": [
+            "var'da",
+            "sessizce undefined",
+            "undefined verir",
+            "undefined gelir"
+          ],
+          "anchors": [
+            "var aynı durumda sessizce undefined verir."
+          ]
+        },
+        {
+          "id": "time-not-position",
+          "label": "Konuma değil çalışma sırasına bağlı",
+          "aliases": [
+            "çalışma sırası",
+            "yürütme sırası",
+            "execution order",
+            "konuma değil",
+            "yazıldığı yer"
+          ],
+          "anchors": [
+            "TDZ kodun yazıldığı konuma değil çalışma sırasına bağlıdır.",
+            "Fonksiyon tanımdan sonra çağrılırsa değişkeni kullanabilir."
+          ]
+        },
+        {
+          "id": "typeof-throws",
+          "label": "typeof bile hata verir",
+          "aliases": [
+            "typeof bile",
+            "typeof da",
+            "typeof hata"
+          ],
+          "anchors": [
+            "TDZ'deki bir değişkende typeof bile hata verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`switch` içindeki `case`'lerde `let` kullanınca neden TDZ hatası alınabilir?",
+        "TDZ, `var`'a göre hangi tür hataları daha erken yakalar?"
+      ],
+      "source": "Kendi derleme — MDN: let (Temporal dead zone), const, class"
+    },
+    {
+      "id": "javascript-closure",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 1,
+      "prompt": "Closure nedir? JavaScript'te nerelerde işe yarar?",
+      "modelAnswer": "Closure, bir fonksiyonun tanımlandığı yerdeki sözcüksel kapsamı (lexical environment) yanında taşımasıdır; iç fonksiyon, dış fonksiyon çoktan dönmüş olsa bile oradaki değişkenlere erişmeye devam eder. Her fonksiyon oluşturulduğu anda bir closure oluşur ve dış değişkenleri kopyalamaz, bağlamalarıyla tutar; dış değişken sonradan değişirse iç fonksiyon güncel hâlini görür. Bu sayede dışarıdan erişilemeyen özel bir durum tutulabilir; `makeCounter()` içindeki `count` yalnızca döndürülen fonksiyonlar üzerinden değişir. Fabrika fonksiyonları, callback'ler, partial application ve modül deseni bu davranışa dayanır; bedeli, closure yaşadığı sürece tuttuğu değişkenlerin de bellekte kalmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "lexical-scope",
+          "label": "Tanımlandığı yerin kapsamını taşır",
+          "aliases": [
+            "sözcüksel",
+            "lexical",
+            "tanımlandığı yer",
+            "dış kapsam",
+            "dıştaki değişken"
+          ],
+          "anchors": [
+            "Fonksiyon tanımlandığı yerin kapsamını yanında taşır.",
+            "İç fonksiyon dış kapsamdaki değişkenlere erişir."
+          ]
+        },
+        {
+          "id": "outlives-outer",
+          "label": "Dış fonksiyon bittikten sonra da erişir",
+          "aliases": [
+            "bittikten sonra",
+            "döndükten sonra",
+            "çoktan dönmüş",
+            "dış fonksiyon bitse",
+            "sonlandıktan sonra"
+          ],
+          "anchors": [
+            "Dış fonksiyon döndükten sonra da değişkenlere erişim sürer."
+          ]
+        },
+        {
+          "id": "binding-not-copy",
+          "label": "Değeri kopyalamaz, bağlamayı tutar",
+          "aliases": [
+            "kopyalamaz",
+            "kopyalamıyor",
+            "referansla hatırla",
+            "güncel hâlini",
+            "güncel değeri"
+          ],
+          "anchors": [
+            "Closure değişkeni kopyalamaz, bağlamasını tutar.",
+            "Dış değişken değişirse iç fonksiyon güncel değeri görür."
+          ]
+        },
+        {
+          "id": "private-state",
+          "label": "Dışarıdan erişilemeyen özel durum",
+          "aliases": [
+            "private gibi",
+            "private değişken",
+            "özel bir durum",
+            "dışarıdan erişileme",
+            "kapsülle",
+            "encapsulation"
+          ],
+          "anchors": [
+            "Closure ile dışarıdan erişilemeyen özel bir durum tutulur."
+          ]
+        },
+        {
+          "id": "use-cases",
+          "label": "Fabrika fonksiyonu, sayaç, modül deseni",
+          "aliases": [
+            "fabrika",
+            "factory fonksiyon",
+            "modül deseni",
+            "counter",
+            "makecounter"
+          ],
+          "anchors": [
+            "Fabrika fonksiyonları ve modül deseni closure'a dayanır.",
+            "Sayaç örneğinde count yalnızca döndürülen fonksiyonlarla değişir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`var` ile kurulan bir döngüde oluşturulan closure'lar neden aynı değeri görür?",
+        "Closure'lar bellekte hangi durumda gereğinden uzun süre değişken tutar?"
+      ],
+      "source": "Kendi derleme — MDN: Closures"
+    },
+    {
+      "id": "javascript-this-binding",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 3,
+      "prompt": "JavaScript'te this'in değeri nasıl belirlenir? Birden fazla kural uyduğunda hangisi kazanır?",
+      "modelAnswer": "`this`, fonksiyonun nerede tanımlandığına değil nasıl çağrıldığına göre her çağrıda yeniden belirlenir; arrow function bunun istisnasıdır ve this'i tanımlandığı kapsamdan alır. Öncelik sırası yukarıdan aşağıya şöyledir: `new` ile çağrıda this yeni oluşturulan nesnedir ve bu, `bind` ile kalıcı olarak bağlanmış bir this'i bile geçersiz kılar; ardından `bind`, `call` ve `apply` ile açıkça verilen değer, sonra `obj.method()` biçimindeki çağrıda noktanın solundaki nesne, en son da varsayılan bağlama gelir. Varsayılan bağlamada strict mode'da this undefined olur, sloppy mode'da ise global nesneye (`globalThis`) döner. Bir metot `setTimeout(obj.method)` gibi callback olarak verildiğinde çağrı biçimi değiştiği için this bağlantısı kopar; çözüm `bind`, metodu bir arrow function içinden çağırmak ya da class alanını arrow function olarak tanımlamaktır.",
+      "keyConcepts": [
+        {
+          "id": "call-site",
+          "label": "Çağrılma biçimi belirler",
+          "aliases": [
+            "nasıl çağrıldığı",
+            "çağrılma şekli",
+            "çağrı biçimi",
+            "çağrıldığı yer",
+            "call site",
+            "çağrılış"
+          ],
+          "anchors": [
+            "this fonksiyonun nasıl çağrıldığına göre belirlenir.",
+            "Tanımlandığı yer değil çağrı biçimi önemlidir."
+          ]
+        },
+        {
+          "id": "new-wins",
+          "label": "new en yüksek öncelikte",
+          "aliases": [
+            "new ile",
+            "new en",
+            "yeni oluşan",
+            "yeni oluşturulan"
+          ],
+          "anchors": [
+            "new ile çağrıda this yeni oluşturulan nesnedir.",
+            "new, bind ile bağlanmış this'i bile geçersiz kılar."
+          ]
+        },
+        {
+          "id": "explicit",
+          "label": "bind, call ve apply ile açık bağlama",
+          "aliases": [
+            "call, apply",
+            "call/apply",
+            "bind ile",
+            "açıkça ver",
+            "elle ver",
+            "explicit"
+          ],
+          "anchors": [
+            "call, apply ve bind ile this açıkça verilir."
+          ]
+        },
+        {
+          "id": "implicit",
+          "label": "Noktanın solundaki nesne",
+          "aliases": [
+            "noktanın solu",
+            "obj.method",
+            "nesne üzerinden",
+            "obje üzerinden",
+            "metot olarak çağr"
+          ],
+          "anchors": [
+            "obj.method() çağrısında this noktanın solundaki nesnedir."
+          ]
+        },
+        {
+          "id": "default",
+          "label": "Varsayılan: strict'te undefined, değilse global nesne",
+          "aliases": [
+            "strict mode'da undefined",
+            "strict modda undefined",
+            "globalthis",
+            "global obje",
+            "global nesne",
+            "window"
+          ],
+          "anchors": [
+            "Düz çağrıda strict mode'da this undefined olur.",
+            "Sloppy mode'da this global nesneye döner."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir class metodunu event listener olarak verdiğinde this neden undefined olur, nasıl düzeltirsin?",
+        "Arrow function'ı nesne metodu olarak tanımlamak neden sorun çıkarır?"
+      ],
+      "source": "Kendi derleme — MDN: this, Function.prototype.bind()"
+    },
+    {
+      "id": "javascript-call-apply-bind",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 1,
+      "prompt": "call, apply ve bind arasındaki fark nedir?",
+      "modelAnswer": "Üçü de bir fonksiyonun hangi `this` ile çalışacağını açıkça belirlemeye yarar. `call` fonksiyonu hemen çalıştırır ve değerleri tek tek alır (`fn.call(obj, a, b)`), `apply` da hemen çalıştırır ama değerleri dizi olarak alır (`fn.apply(obj, [a, b])`). `bind` fonksiyonu çalıştırmaz; this'i ve istenirse ilk parametre değerleri önceden bağlanmış yeni bir fonksiyon döndürür, bu yüzden callback ya da event handler olarak verilecek metotlarda kullanılır. Bind edilmiş fonksiyonun this'i sonradan başka bir `bind`, `call` ya da `apply` ile ezilemez, yalnızca `new` ile çağrıldığında yok sayılır; arrow function'larda ise üçü de this'i etkilemez, yalnızca parametreleri iletir.",
+      "keyConcepts": [
+        {
+          "id": "immediate",
+          "label": "call ve apply hemen çalıştırır",
+          "aliases": [
+            "hemen çalıştır",
+            "hemen çağır",
+            "anında çağır",
+            "direkt çağır",
+            "hemen çalış"
+          ],
+          "anchors": [
+            "call ve apply fonksiyonu hemen çalıştırır."
+          ]
+        },
+        {
+          "id": "args-shape",
+          "label": "Argümanlar tek tek ya da dizi olarak",
+          "aliases": [
+            "tek tek al",
+            "teker teker",
+            "dizi olarak",
+            "array olarak",
+            "virgülle",
+            "liste olarak"
+          ],
+          "anchors": [
+            "call değerleri tek tek, apply dizi olarak alır."
+          ]
+        },
+        {
+          "id": "bind-new-function",
+          "label": "bind yeni bir fonksiyon döndürür",
+          "aliases": [
+            "yeni bir fonksiyon",
+            "yeni fonksiyon",
+            "sonra çağır",
+            "çalıştırmaz",
+            "çağırmaz"
+          ],
+          "anchors": [
+            "bind fonksiyonu çalıştırmaz, this'i bağlanmış yeni bir fonksiyon döndürür."
+          ]
+        },
+        {
+          "id": "partial",
+          "label": "bind ile ilk argümanları sabitleme",
+          "aliases": [
+            "partial application",
+            "ilk parametre",
+            "önceden ver",
+            "önceden bağla",
+            "currying"
+          ],
+          "anchors": [
+            "bind ile ilk parametre değerleri önceden verilebilir."
+          ]
+        },
+        {
+          "id": "no-rebind",
+          "label": "Bind edilmiş this değiştirilemez",
+          "aliases": [
+            "tekrar bind",
+            "yeniden bind",
+            "bind edilmiş fonksiyon",
+            "ezilemez",
+            "başka bir bind"
+          ],
+          "anchors": [
+            "Bind edilmiş fonksiyonun this'i tekrar bind ile ezilemez."
+          ]
+        }
+      ],
+      "followUps": [
+        "Spread sözdizimi geldikten sonra `apply`'a hâlâ ihtiyaç var mı?",
+        "Bind edilmiş bir fonksiyon `new` ile çağrılırsa this ne olur?"
+      ],
+      "source": "Kendi derleme — MDN: Function.prototype.call(), Function.prototype.apply(), Function.prototype.bind()"
+    },
+    {
+      "id": "javascript-arrow-function",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Closure ve this",
+      "difficulty": 2,
+      "prompt": "Arrow function ile normal fonksiyon arasındaki farklar nelerdir?",
+      "modelAnswer": "Arrow function'ın kendi `this`'i yoktur; this'i tanımlandığı kapsamdan sözcüksel olarak alır, bu yüzden bir metodun içindeki callback'te dıştaki this'i korumak için idealdir. Aynı sebeple `call`, `apply` ve `bind` arrow function'ın this'ini etkileyemez, yalnızca parametreleri iletebilir. Kendi `arguments` nesnesi ve `super`'i de yoktur; bütün parametre değerleri gerekiyorsa rest parametre (`...args`) kullanılır. new ile çağrılamaz, prototype özelliği yoktur ve generator olamaz; nesne literalinde metot olarak yazılırsa this nesneyi değil dış kapsamı gösterdiği için metotlarda normal fonksiyon ya da kısa metot yazımı tercih edilir.",
+      "keyConcepts": [
+        {
+          "id": "lexical-this",
+          "label": "this'i tanımlandığı kapsamdan alır",
+          "aliases": [
+            "kendi this",
+            "lexical this",
+            "dıştaki this",
+            "dışarıdaki this",
+            "tanımlandığı yerin this"
+          ],
+          "anchors": [
+            "Arrow function'ın kendi this'i yoktur, tanımlandığı kapsamın this'ini kullanır."
+          ]
+        },
+        {
+          "id": "no-rebind",
+          "label": "call/apply/bind this'i değiştiremez",
+          "aliases": [
+            "this'i değiştiremez",
+            "this'ini değiştiremez",
+            "etkileyemez",
+            "thisarg",
+            "bind işe yaramaz"
+          ],
+          "anchors": [
+            "call, apply ve bind arrow function'ın this'ini etkileyemez."
+          ]
+        },
+        {
+          "id": "no-arguments",
+          "label": "arguments yok, rest parametre",
+          "aliases": [
+            "arguments",
+            "rest parametre",
+            "rest parameter",
+            "...args"
+          ],
+          "anchors": [
+            "Arrow function'ın arguments nesnesi yoktur, rest parametre kullanılır."
+          ]
+        },
+        {
+          "id": "not-constructor",
+          "label": "new ile çağrılamaz, prototype yok",
+          "aliases": [
+            "new ile çağrılamaz",
+            "constructor olamaz",
+            "prototype özelliği",
+            "prototype property",
+            "yapıcı olarak"
+          ],
+          "anchors": [
+            "Arrow function new ile çağrılamaz.",
+            "Arrow function'ın prototype özelliği yoktur."
+          ]
+        },
+        {
+          "id": "not-method",
+          "label": "Nesne metodu olarak uygun değil",
+          "aliases": [
+            "metot olarak",
+            "method olarak",
+            "nesne metodu",
+            "obje metodu",
+            "metotlarda"
+          ],
+          "anchors": [
+            "Nesne metodu olarak yazılan arrow function'da this nesneyi göstermez."
+          ]
+        }
+      ],
+      "followUps": [
+        "React'te event handler'ları arrow function olarak tanımlamanın sebebi nedir?",
+        "Arrow function'ın gövdesi süslü parantezsiz yazıldığında ne döner?"
+      ],
+      "source": "Kendi derleme — MDN: Arrow function expressions, this"
+    },
+    {
+      "id": "javascript-prototype-chain",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Nesne ve prototype",
+      "difficulty": 2,
+      "prompt": "JavaScript'te prototype zinciri nedir? Bir özellik okunurken nasıl çalışır?",
+      "modelAnswer": "Her nesnenin başka bir nesneyi ya da `null`'ı gösteren gizli bir `[[Prototype]]` bağlantısı vardır ve bu bağlantılar null'da biten bir zincir oluşturur. Bir özellik okunurken motor önce nesnenin kendisine bakar, bulamazsa prototype'ına, oradan da bir üstüne çıkar; aramayı ilk eşleşmede bitirir, zincirin sonuna kadar bulamazsa undefined döner. Metotlar bu sayede her örneğe kopyalanmaz, `Array.prototype` gibi ortak bir nesnede bir kez durur ve bütün örnekler tarafından paylaşılır; nesnede aynı adla bir özellik varsa prototype'takini gölgeler (shadowing). Bağlantı `Object.getPrototypeOf` ile okunur, `Object.create(proto)` ile istenen prototype'la nesne kurulur; eski `__proto__` erişicisi önerilmez, bir özelliğin nesnenin kendisinde olup olmadığı da `Object.hasOwn` ile anlaşılır.",
+      "keyConcepts": [
+        {
+          "id": "hidden-link",
+          "label": "Gizli [[Prototype]] bağlantısı",
+          "aliases": [
+            "[[prototype]]",
+            "prototype bağlantı",
+            "gizli bir bağlantı",
+            "gizli bağlantı",
+            "iç bağlantı"
+          ],
+          "anchors": [
+            "Her nesnenin başka bir nesneyi gösteren gizli bir [[Prototype]] bağlantısı vardır."
+          ]
+        },
+        {
+          "id": "lookup-walks",
+          "label": "Bulunamayan özellik zincirde yukarı aranır, null'da biter",
+          "aliases": [
+            "null'a kadar",
+            "null'da biten",
+            "bir üstüne",
+            "üst prototype",
+            "zincirde yukarı"
+          ],
+          "anchors": [
+            "Özellik nesnede yoksa prototype'ına, oradan bir üstüne bakılır.",
+            "Zincir null'da biter, bulunamazsa undefined döner."
+          ]
+        },
+        {
+          "id": "shared-methods",
+          "label": "Metotlar kopyalanmaz, paylaşılır",
+          "aliases": [
+            "kopyalanmaz",
+            "kopyalanmıyor",
+            "paylaşılır",
+            "paylaşılıyor",
+            "ortak bir nesne"
+          ],
+          "anchors": [
+            "Metotlar her örneğe kopyalanmaz, prototype üzerinden paylaşılır."
+          ]
+        },
+        {
+          "id": "shadowing",
+          "label": "Aynı adlı özellik prototype'takini gölgeler",
+          "aliases": [
+            "gölgeler",
+            "gölgele",
+            "shadowing",
+            "aynı adla",
+            "aynı isimde"
+          ],
+          "anchors": [
+            "Nesnede aynı adla bir özellik varsa prototype'takini gölgeler."
+          ]
+        },
+        {
+          "id": "api",
+          "label": "Object.create, getPrototypeOf, hasOwn",
+          "aliases": [
+            "object.create",
+            "getprototypeof",
+            "setprototypeof",
+            "object.hasown",
+            "hasownproperty"
+          ],
+          "anchors": [
+            "Object.create ile istenen prototype'la nesne oluşturulur.",
+            "Object.getPrototypeOf bağlantıyı okur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Prototype pollution nedir? Nesneleri derinlemesine birleştiren bir fonksiyon `__proto__` anahtarını kontrol etmezse ne olur?",
+        "`Object.create(null)` ile oluşturulan nesne neden sözlük olarak tercih edilir?"
+      ],
+      "source": "Kendi derleme — MDN: Inheritance and the prototype chain, Object.create(), Object.hasOwn()"
+    },
+    {
+      "id": "javascript-class-under-the-hood",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Nesne ve prototype",
+      "difficulty": 2,
+      "prompt": "JavaScript'teki class yapısının altında ne vardır? class, constructor fonksiyonundan nasıl ayrılır?",
+      "modelAnswer": "`class` yeni bir kalıtım modeli getirmez, prototype mekanizmasının üstüne kurulmuş daha düzenli bir yazımdır; `typeof` ile bakıldığında bir fonksiyondur, gövdedeki metotlar `Sinif.prototype` üzerine yazılır ve `extends` iki prototype'ı birbirine bağlayarak zinciri kurar. Bu yüzden sık sık syntactic sugar denir, ama birebir aynı şey değildir. Class new olmadan çağrılırsa `TypeError` fırlatır, gövdesi her zaman strict mode'da çalışır, metotları numaralandırılamaz (non-enumerable) olur ve class tanımı `let` gibi TDZ'ye tabidir. `#alan` biçimindeki private alanlara ise yalnızca class gövdesinden erişilebilir; constructor fonksiyonda bunun doğrudan karşılığı yoktur, closure ya da `WeakMap` ile taklit edilir.",
+      "keyConcepts": [
+        {
+          "id": "built-on-prototype",
+          "label": "Prototype mekanizması üzerine kurulu",
+          "aliases": [
+            "syntactic sugar",
+            "sözdizimsel şeker",
+            "prototype tabanlı",
+            "prototype mekanizma",
+            "prototype üzerine",
+            "prototype'a ekle"
+          ],
+          "anchors": [
+            "class prototype mekanizmasının üstüne kurulmuş bir yazımdır.",
+            "class metotları prototype üzerine yazılır."
+          ]
+        },
+        {
+          "id": "extends-chain",
+          "label": "extends prototype zincirini kurar",
+          "aliases": [
+            "extends de",
+            "zinciri kur",
+            "iki prototype",
+            "prototype zincirini kur"
+          ],
+          "anchors": [
+            "extends iki prototype'ı birbirine bağlayarak zinciri kurar."
+          ]
+        },
+        {
+          "id": "requires-new",
+          "label": "new olmadan çağrılamaz",
+          "aliases": [
+            "new olmadan",
+            "new'siz",
+            "typeerror"
+          ],
+          "anchors": [
+            "Class new olmadan çağrılırsa TypeError fırlatır."
+          ]
+        },
+        {
+          "id": "strict-tdz",
+          "label": "Strict mode ve TDZ",
+          "aliases": [
+            "strict mode",
+            "strict modda",
+            "otomatik strict",
+            "let gibi",
+            "hoist edilmez"
+          ],
+          "anchors": [
+            "Class gövdesi her zaman strict mode'da çalışır.",
+            "Class tanımı let gibi TDZ'ye tabidir."
+          ]
+        },
+        {
+          "id": "private-fields",
+          "label": "# ile gerçek private alanlar",
+          "aliases": [
+            "private alan",
+            "private field",
+            "#alan",
+            "gerçek private",
+            "#private"
+          ],
+          "anchors": [
+            "#alan biçimindeki private alanlara yalnızca class gövdesinden erişilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Class metotlarının non-enumerable olması `for...in` döngüsünü nasıl etkiler?",
+        "`#` ile tanımlanan private alan ile TypeScript'in `private` anahtar kelimesi arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — MDN: Classes, Inheritance and the prototype chain, Private elements"
+    },
+    {
+      "id": "javascript-shallow-deep-copy",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Nesne ve prototype",
+      "difficulty": 1,
+      "prompt": "Shallow copy ile deep copy arasındaki fark nedir? JavaScript'te bir nesneyi derin kopyalamanın yolları nelerdir?",
+      "modelAnswer": "Shallow copy yalnızca en üst seviyedeki özellikleri yeni bir nesneye taşır; iç içe nesne ve diziler kopyalanmaz, kopya ile orijinal aynı iç nesneleri gösterir ve birinde yapılan iç değişiklik ötekinde de görünür. Spread (`{ ...obj }`, `[...arr]`), `Object.assign`, `Array.from` ve `slice` hep shallow copy üretir. Deep copy ise her seviyeyi yeniden oluşturur; eski `JSON.parse(JSON.stringify(obj))` yolu `Date`'i string'e çevirir, fonksiyonları, undefined alanları ve `Map`/`Set` içeriğini düşürür, döngüsel referansta da `TypeError` fırlatır. Dilin değil ortamın sağladığı, tarayıcılarda ve Node.js'te bulunan `structuredClone` ise `Date`, `Map`, `Set` ve döngüsel referansları doğru kopyalar; buna karşın fonksiyon ve DOM düğümünde `DataCloneError` fırlatır, prototype'ı taşımadığı için class örneklerini düz nesneye çevirir.",
+      "keyConcepts": [
+        {
+          "id": "shallow-shares-nested",
+          "label": "Shallow copy iç nesneleri paylaşır",
+          "aliases": [
+            "ilk seviye",
+            "üst seviye",
+            "aynı referans",
+            "iç içe",
+            "içteki obje",
+            "orijinal de değiş"
+          ],
+          "anchors": [
+            "Shallow copy yalnızca üst seviyeyi kopyalar, iç nesneler paylaşılır.",
+            "İç nesnede yapılan değişiklik orijinalde de görünür."
+          ]
+        },
+        {
+          "id": "shallow-operations",
+          "label": "Spread, Object.assign, slice",
+          "aliases": [
+            "spread",
+            "object.assign",
+            "array.from",
+            "...obj",
+            "slice"
+          ],
+          "anchors": [
+            "Spread ve Object.assign shallow copy üretir."
+          ]
+        },
+        {
+          "id": "json-limits",
+          "label": "JSON yolunun sınırları",
+          "aliases": [
+            "json.parse",
+            "json.stringify",
+            "date'i string",
+            "fonksiyonları sil",
+            "fonksiyonları düşür"
+          ],
+          "anchors": [
+            "JSON.parse(JSON.stringify()) Date'i string'e çevirir, fonksiyonları düşürür."
+          ]
+        },
+        {
+          "id": "structured-clone",
+          "label": "structuredClone",
+          "aliases": [
+            "structuredclone",
+            "structured clone"
+          ],
+          "anchors": [
+            "structuredClone Date, Map, Set ve döngüsel referansları kopyalar."
+          ]
+        },
+        {
+          "id": "clone-limits",
+          "label": "Fonksiyon, DOM düğümü ve prototype kopyalanmaz",
+          "aliases": [
+            "datacloneerror",
+            "dom düğüm",
+            "dom eleman",
+            "fonksiyon ve dom",
+            "düz nesneye",
+            "class örnekleri"
+          ],
+          "anchors": [
+            "structuredClone fonksiyon ve DOM düğümünde hata fırlatır.",
+            "Class örnekleri düz nesneye dönüşür."
+          ]
+        }
+      ],
+      "followUps": [
+        "React'te state güncellerken neden çoğu zaman shallow copy yeterlidir?",
+        "`structuredClone` ile kopyalanan bir class örneğinin metotlarına ne olur?"
+      ],
+      "source": "Kendi derleme — MDN: Shallow copy, Deep copy (Glossary), structuredClone(), The structured clone algorithm"
+    },
+    {
+      "id": "javascript-event-loop",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 2,
+      "prompt": "Event loop nedir? JavaScript aynı anda tek bir kod parçası çalıştırırken asenkron işleri nasıl yürütür?",
+      "modelAnswer": "JavaScript kodu tek bir thread'de, bir call stack üzerinde çalışır; başlayan bir fonksiyon araya başka JavaScript kodu girmeden sonuna kadar çalışır (run-to-completion). Zamanlayıcı, ağ isteği ya da dosya okuma gibi beklemeli işleri JavaScript motoru değil ortam (tarayıcı ya da Node.js) yürütür; iş bitince ilgili callback kuyruğa bir task olarak eklenir. Event loop, call stack boşaldığında kuyruktan sıradaki task'ı alıp çalıştırır, ardından birikmiş microtask'ları boşaltır ve tarayıcıda gerekiyorsa ekranı yeniden çizer. Bu yüzden `setTimeout(fn, 0)` bile mevcut kod bitmeden çalışmaz; verilen süre kesin bir zaman değil, alt sınırdır. Uzun süren senkron bir döngü stack'i meşgul ettiği için tıklamalar, zamanlayıcılar ve çizim bekler; ağır iş parçalara bölünür ya da bir Web Worker'a taşınır.",
+      "keyConcepts": [
+        {
+          "id": "single-thread",
+          "label": "Tek thread, run-to-completion",
+          "aliases": [
+            "tek thread",
+            "single thread",
+            "tek iş parçacığı",
+            "run-to-completion",
+            "sonuna kadar çalış"
+          ],
+          "anchors": [
+            "JavaScript tek bir thread'de çalışır.",
+            "Başlayan fonksiyon araya başka kod girmeden sonuna kadar çalışır."
+          ]
+        },
+        {
+          "id": "environment-runs-io",
+          "label": "Beklemeli işleri ortam yürütür",
+          "aliases": [
+            "tarayıcı ya da node",
+            "ortam yürüt",
+            "web api",
+            "arka planda",
+            "tarayıcı tarafından"
+          ],
+          "anchors": [
+            "Zamanlayıcı ve ağ isteği gibi işleri tarayıcı ya da Node.js yürütür."
+          ]
+        },
+        {
+          "id": "queue-when-empty",
+          "label": "Stack boşalınca kuyruktan sıradaki task",
+          "aliases": [
+            "stack boşal",
+            "stack boş",
+            "kuyruktan",
+            "callback kuyruğ",
+            "task queue",
+            "kuyruğa ekle"
+          ],
+          "anchors": [
+            "İş bitince callback kuyruğa eklenir.",
+            "Event loop call stack boşalınca kuyruktan sıradaki işi alır."
+          ]
+        },
+        {
+          "id": "timeout-zero",
+          "label": "setTimeout 0 hemen çalışmaz",
+          "aliases": [
+            "settimeout 0",
+            "settimeout(fn, 0)",
+            "hemen çalışmaz",
+            "alt sınır",
+            "minimum süre"
+          ],
+          "anchors": [
+            "setTimeout 0 bile mevcut kod bitmeden çalışmaz.",
+            "Verilen süre kesin değil, alt sınırdır."
+          ]
+        },
+        {
+          "id": "blocking",
+          "label": "Uzun senkron iş her şeyi bekletir",
+          "aliases": [
+            "bloklar",
+            "bloke",
+            "donar",
+            "meşgul",
+            "web worker",
+            "parçalara böl"
+          ],
+          "anchors": [
+            "Uzun bir senkron döngü ana thread'i bloklar, sayfa donar.",
+            "Ağır iş parçalara bölünür ya da Web Worker'a taşınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`setTimeout(fn, 0)` neden gerçekten 0 ms sonra çalışmaz?",
+        "Node.js'in event loop'u tarayıcınkinden nasıl ayrılır?"
+      ],
+      "source": "Kendi derleme — HTML standardı: 8.1.7 Event loops; MDN: In depth: Microtasks and the JavaScript runtime environment"
+    },
+    {
+      "id": "javascript-microtask-macrotask",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 3,
+      "prompt": "Microtask ile macrotask arasındaki fark nedir? Promise callback'i ile setTimeout callback'inden hangisi önce çalışır?",
+      "modelAnswer": "HTML standardında \"macrotask\" diye bir terim yoktur; `setTimeout`, olay işleme ya da bir script'in çalışması gibi işler task olarak task kuyruklarına, Promise tepkileri (`then`, `catch` ve `await` sonrası devam), `queueMicrotask` ve `MutationObserver` callback'leri ise ayrı bir microtask kuyruğuna girer. Event loop bir task'ı çalıştırıp call stack boşaldığında microtask checkpoint yapar: microtask kuyruğu tamamen boşalana kadar çalıştırılır ve bu sırada eklenen yeni microtask'lar da aynı turda işlenir. Sonra tarayıcı gerekiyorsa ekranı çizer ve ancak bundan sonra sıradaki task'a geçilir; bu yüzden aynı kodda kurulan `Promise.resolve().then(a)` her zaman `setTimeout(b, 0)`'dan önce çalışır. Kendini sürekli yeniden kuyruğa ekleyen bir microtask zinciri sıradaki task'ı ve çizimi süresiz erteler, sayfa donar; büyük işler bu yüzden `setTimeout` gibi bir task'la event loop'a nefes aldırarak bölünür.",
+      "keyConcepts": [
+        {
+          "id": "task-sources",
+          "label": "setTimeout, olaylar ve script task'tır",
+          "aliases": [
+            "task kuyruğ",
+            "task queue",
+            "olay işleme",
+            "settimeout gibi",
+            "setinterval"
+          ],
+          "anchors": [
+            "setTimeout ve olay işleme task kuyruğuna girer."
+          ]
+        },
+        {
+          "id": "microtask-sources",
+          "label": "Promise tepkileri, queueMicrotask, MutationObserver",
+          "aliases": [
+            "queuemicrotask",
+            "mutationobserver",
+            "promise tepki",
+            "then callback",
+            "await sonrası"
+          ],
+          "anchors": [
+            "Promise tepkileri ve queueMicrotask microtask kuyruğuna girer."
+          ]
+        },
+        {
+          "id": "drain-all",
+          "label": "Her task'tan sonra microtask kuyruğu tamamen boşaltılır",
+          "aliases": [
+            "tamamını boşalt",
+            "tamamen boşal",
+            "hepsini çalıştır",
+            "checkpoint",
+            "aynı turda",
+            "boşalana kadar"
+          ],
+          "anchors": [
+            "Bir task'tan sonra microtask kuyruğunun tamamı boşaltılır.",
+            "Bu sırada eklenen microtask'lar da aynı turda çalışır."
+          ]
+        },
+        {
+          "id": "promise-first",
+          "label": "Promise callback'i setTimeout 0'dan önce",
+          "aliases": [
+            "settimeout 0'dan önce",
+            "settimeout(b, 0)",
+            "hep önce",
+            "her zaman önce",
+            "promise önce"
+          ],
+          "anchors": [
+            "Promise.resolve().then her zaman setTimeout 0'dan önce çalışır."
+          ]
+        },
+        {
+          "id": "starvation",
+          "label": "Sonsuz microtask zinciri task'ları ve çizimi aç bırakır",
+          "aliases": [
+            "donar",
+            "starvation",
+            "aç bırak",
+            "hiç geçilmez",
+            "süresiz ertele",
+            "render edemez"
+          ],
+          "anchors": [
+            "Sürekli yeni microtask eklemek sıradaki task'ı ve çizimi süresiz erteler."
+          ]
+        }
+      ],
+      "followUps": [
+        "`await` ifadesinden sonraki kod hangi kuyrukta çalışır?",
+        "`requestAnimationFrame` callback'i bu sıralamada nereye düşer?"
+      ],
+      "source": "Kendi derleme — HTML standardı: 8.1.7.3 Processing model, perform a microtask checkpoint; MDN: In depth: Microtasks and the JavaScript runtime environment"
+    },
+    {
+      "id": "javascript-promise-states",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 1,
+      "prompt": "Promise nedir? Hangi durumlarda bulunabilir?",
+      "modelAnswer": "Promise, henüz tamamlanmamış asenkron bir işin ileride oluşacak sonucunu temsil eden nesnedir. Üç durumu vardır: başlangıçtaki pending, işin başarıyla bittiği fulfilled ve başarısız olduğu rejected; fulfilled ya da rejected olan promise'e settled denir ve bir kez settled olduktan sonra durumu ve değeri bir daha değişmez. `then` başarı ve hata için callback alır, `catch` yalnızca hatayı ele alır; ikisi de yeni bir promise ürettiği için art arda bağlanabilir (promise chaining). Promise zaten settled olsa bile `then`'e verilen callback senkron çalışmaz, mevcut kod bittikten sonra microtask olarak çalışır; \"resolved\" ise fulfilled ile aynı şey değildir, başka bir promise'e kilitlenmiş ve hâlâ bekleyen bir promise de resolved sayılır.",
+      "keyConcepts": [
+        {
+          "id": "future-value",
+          "label": "İleride oluşacak sonucu temsil eder",
+          "aliases": [
+            "ileride oluşacak",
+            "ileride gelecek",
+            "gelecekteki",
+            "sonucunu temsil",
+            "henüz bitmemiş"
+          ],
+          "anchors": [
+            "Promise asenkron bir işin ileride oluşacak sonucunu temsil eder."
+          ]
+        },
+        {
+          "id": "three-states",
+          "label": "pending, fulfilled, rejected",
+          "aliases": [
+            "fulfilled",
+            "rejected",
+            "başlangıçtaki pending",
+            "başta pending"
+          ],
+          "anchors": [
+            "Promise pending, fulfilled ya da rejected durumunda olur."
+          ]
+        },
+        {
+          "id": "settled-final",
+          "label": "Settled olunca bir daha değişmez",
+          "aliases": [
+            "settled ol",
+            "settled den",
+            "bir daha değişmez",
+            "tekrar değişmez",
+            "kesinleş"
+          ],
+          "anchors": [
+            "Settled olan promise'in durumu bir daha değişmez."
+          ]
+        },
+        {
+          "id": "chaining",
+          "label": "then yeni promise döndürür, zincirleme",
+          "aliases": [
+            "yeni bir promise",
+            "promise chaining",
+            "art arda bağla",
+            "then ile",
+            "then zinciri"
+          ],
+          "anchors": [
+            "then yeni bir promise ürettiği için art arda bağlanabilir."
+          ]
+        },
+        {
+          "id": "always-async",
+          "label": "Callback her zaman asenkron çalışır",
+          "aliases": [
+            "asenkron çalış",
+            "senkron çalışmaz",
+            "microtask olarak",
+            "mevcut kod bittikten",
+            "job queue"
+          ],
+          "anchors": [
+            "Promise settled olsa bile then callback'i asenkron çalışır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Promise constructor'ına verilen executor fonksiyonu ne zaman çalışır?",
+        "`finally` ne zaman çalışır, döndürdüğü değer zincirdeki sonucu etkiler mi?",
+        "`then`'in ikinci parametresi ile `catch` arasında fark var mıdır?"
+      ],
+      "source": "Kendi derleme — MDN: Promise, Using promises; ECMA-262: Promise Objects"
+    },
+    {
+      "id": "javascript-promise-combinators",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 2,
+      "prompt": "Promise.all, Promise.allSettled, Promise.race ve Promise.any arasındaki fark nedir?",
+      "modelAnswer": "Dördü de bir promise listesini alıp tek bir promise döndürür, fark ne zaman ve neyle sonuçlandıklarındadır. `Promise.all` hepsi fulfilled olunca değerleri giriş sırasıyla bir dizi olarak verir, biri bile rejected olursa diğerlerini beklemeden o hatayla reddedilir (fail-fast). `Promise.allSettled` hiç reddedilmez, hepsi sonuçlanana kadar bekler ve her biri için `{ status, value }` ya da `{ status, reason }` biçiminde bir nesne döndürür. `Promise.race` sonucu ne olursa olsun ilk sonuçlanan promise'i izler, `Promise.any` ise ilk fulfilled olanı alır ve yalnızca hepsi reddedilirse bütün hataları taşıyan bir `AggregateError` ile reddedilir. Hiçbiri diğer işleri iptal etmez; tipik kullanım birbirine bağlı sonuçlar için `all`, kısmi başarıya razı olunan toplu işler için `allSettled`, zaman aşımı için `race` ve yedek kaynaklardan en hızlı başarılı yanıt için `any`'dir.",
+      "keyConcepts": [
+        {
+          "id": "all-fail-fast",
+          "label": "all: biri reddedilirse hemen reddedilir",
+          "aliases": [
+            "fail-fast",
+            "fail fast",
+            "biri bile",
+            "hemen reject",
+            "beklemeden",
+            "ilk hatayla"
+          ],
+          "anchors": [
+            "Promise.all biri bile reddedilirse diğerlerini beklemeden reddedilir."
+          ]
+        },
+        {
+          "id": "allsettled-never-rejects",
+          "label": "allSettled hiç reddedilmez",
+          "aliases": [
+            "hiç reject",
+            "hiç reddedilmez",
+            "hepsinin bitmesini",
+            "sonuçlanana kadar",
+            "value ya da reason"
+          ],
+          "anchors": [
+            "allSettled hiç reddedilmez, hepsinin sonuçlanmasını bekler.",
+            "Her sonuç için status ve value ya da reason döner."
+          ]
+        },
+        {
+          "id": "race-first-settled",
+          "label": "race: ilk sonuçlanan",
+          "aliases": [
+            "ilk biten",
+            "ilk sonuçlanan",
+            "başarılı ya da hatalı",
+            "sonucu ne olursa"
+          ],
+          "anchors": [
+            "race başarılı ya da hatalı fark etmeden ilk sonuçlanan promise'i izler."
+          ]
+        },
+        {
+          "id": "any-aggregate",
+          "label": "any: ilk başarılı, hepsi reddedilirse AggregateError",
+          "aliases": [
+            "aggregateerror",
+            "aggregate error",
+            "ilk başarılı",
+            "ilk fulfilled",
+            "hepsi reject",
+            "hepsi reddedil"
+          ],
+          "anchors": [
+            "any ilk başarılı olanı alır.",
+            "Hepsi reddedilirse AggregateError ile reddedilir."
+          ]
+        },
+        {
+          "id": "use-cases",
+          "label": "Kullanım: zaman aşımı, kısmi başarı, yedek kaynak",
+          "aliases": [
+            "zaman aşımı",
+            "timeout için",
+            "yedek kaynak",
+            "kısmi başarı",
+            "bağımsız istek"
+          ],
+          "anchors": [
+            "Zaman aşımı için race, kısmi başarıya razı olunan işlerde allSettled kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Promise.race` ile bir fetch isteğine zaman aşımı koyduğunda istek gerçekten iptal olur mu?",
+        "Boş bir dizi verildiğinde `Promise.all` ve `Promise.any` nasıl davranır?"
+      ],
+      "source": "Kendi derleme — MDN: Promise.all(), Promise.allSettled(), Promise.race(), Promise.any(); ECMA-262: Promise.any"
+    },
+    {
+      "id": "javascript-async-await-errors",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Asenkron",
+      "difficulty": 3,
+      "prompt": "async/await kullanırken hatalar nasıl yakalanır? await edilmeyen bir promise reddedilirse ne olur?",
+      "modelAnswer": "`async` fonksiyon her zaman bir promise döndürür; içinde fırlatılan hata o promise'in reddine dönüşür, `await` edilen bir promise reddedildiğinde de hata o satırda fırlatılır ve sıradan bir `try/catch` ile yakalanır. Bu yakalama yalnızca fonksiyon içinde gerçekten beklenen promise'ler için geçerlidir; `return` önünde `await` olmadan döndürülen ya da hiç beklenmeden başlatılan (fire-and-forget) bir promise'in hatası `catch` bloğuna düşmez. Hiçbir işleyiciye bağlanmamış bir red unhandled rejection olarak raporlanır: tarayıcıda `unhandledrejection` olayı tetiklenir ve konsola yazılır, Node.js ise v15'ten beri varsayılan olarak bunu yakalanmamış istisna sayar ve süreci sonlandırır. İnce bir tuzak, iki promise'i önce başlatıp sonra sırayla beklemektir: birincisi beklenirken ikincisi reddedilirse henüz hiçbir işleyiciye bağlanmadığı için yakalanmamış sayılır. Bu yüzden eşzamanlı işler `Promise.all` ya da `Promise.allSettled` ile birlikte beklenir; bu, bağımsız işleri tek tek await etmenin süreleri toplamasını da önler ve toplam süre en yavaşı kadar olur.",
+      "keyConcepts": [
+        {
+          "id": "throw-becomes-reject",
+          "label": "async her zaman promise döndürür, throw red olur",
+          "aliases": [
+            "her zaman bir promise",
+            "her zaman promise",
+            "reddine dönüş",
+            "reject'e dönüş",
+            "rejected promise"
+          ],
+          "anchors": [
+            "async fonksiyon her zaman bir promise döndürür.",
+            "İçinde fırlatılan hata promise'in reddine dönüşür."
+          ]
+        },
+        {
+          "id": "try-catch",
+          "label": "await edilen red try/catch ile yakalanır",
+          "aliases": [
+            "try/catch",
+            "try-catch",
+            "try catch",
+            "try bloğ"
+          ],
+          "anchors": [
+            "await edilen promise reddedilirse hata try/catch ile yakalanır."
+          ]
+        },
+        {
+          "id": "not-awaited-escapes",
+          "label": "Beklenmeyen promise'in hatası catch'e düşmez",
+          "aliases": [
+            "catch'e düşmez",
+            "catch bloğuna düşmez",
+            "fire-and-forget",
+            "fire and forget",
+            "await olmadan",
+            "beklenmeden"
+          ],
+          "anchors": [
+            "await edilmeyen promise'in hatası catch bloğuna düşmez."
+          ]
+        },
+        {
+          "id": "unhandled-rejection",
+          "label": "Unhandled rejection; Node.js süreci sonlandırır",
+          "aliases": [
+            "unhandled rejection",
+            "unhandledrejection",
+            "yakalanmamış",
+            "process'i çökert",
+            "süreci sonlandır",
+            "uncaught"
+          ],
+          "anchors": [
+            "Kimse yakalamazsa unhandled rejection raporlanır.",
+            "Node.js varsayılan olarak süreci sonlandırır."
+          ]
+        },
+        {
+          "id": "sequential-trap",
+          "label": "Önce başlatıp sırayla beklemek; Promise.all",
+          "aliases": [
+            "promise.all",
+            "sırayla await",
+            "sırayla bekle",
+            "birlikte beklen",
+            "allsettled",
+            "paralel başlat"
+          ],
+          "anchors": [
+            "Eşzamanlı işler Promise.all ile birlikte beklenir.",
+            "Sırayla await etmek ikinci promise'in hatasını yakalanmamış bırakabilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`return await` ile `return` arasında try/catch açısından ne fark vardır?",
+        "Bir event listener içinden çağrılan async fonksiyonun hatası nereye gider?"
+      ],
+      "source": "Kendi derleme — MDN: async function, Window: unhandledrejection event; Node.js: CLI --unhandled-rejections"
+    },
+    {
+      "id": "javascript-esm-vs-commonjs",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Modüller",
+      "difficulty": 3,
+      "prompt": "ES modülleri (ESM) ile CommonJS arasındaki farklar nelerdir? İkisi birlikte nasıl kullanılır?",
+      "modelAnswer": "CommonJS, Node.js'in tarihsel modül sistemidir; `require` çalışma anında senkron olarak çağrılan sıradan bir fonksiyondur ve modülün `module.exports` nesnesini döndürür, bu nesneden destructuring ile alınan bir değer de o anki hâliyle kalır. ESM ise dilin standart modül sistemidir; `import` ve `export` statiktir, bağımlılık grafiği kod çalışmadan önce çözülüp bağlanır, bu da tree shaking'e ve top-level `await`'e imkân verir, modüller de her zaman strict mode'dadır. ESM'de içe aktarılan isimler live binding'dir: dışa aktaran modül değişkeni güncellerse içe aktaran yeni değeri görür, ama kendisi o isme atama yapamaz. Birlikte kullanımda ESM bir CommonJS modülünü `import` edebilir ve `module.exports` default export olarak gelir; isimli export'lar statik analizle en iyi çabayla çıkarılır, sonradan eklenenler görünmez. Ters yönde CommonJS uzun süre ESM'i yalnızca dinamik `import()` ile yükleyebiliyordu; güncel Node.js sürümlerinde top-level await içermeyen bir ES modülü `require` ile de yüklenebilir ve modülün namespace nesnesi döner.",
+      "keyConcepts": [
+        {
+          "id": "cjs-runtime",
+          "label": "CommonJS: require çalışma anında ve senkron",
+          "aliases": [
+            "module.exports",
+            "require(",
+            "require ile",
+            "senkron yükle",
+            "çalışma anında",
+            "senkron olarak"
+          ],
+          "anchors": [
+            "CommonJS'te require çalışma anında senkron çağrılan bir fonksiyondur.",
+            "require modülün module.exports nesnesini döndürür."
+          ]
+        },
+        {
+          "id": "esm-static",
+          "label": "ESM statik: önceden bağlanır, tree shaking, top-level await",
+          "aliases": [
+            "statiktir",
+            "statik olduğu",
+            "statik yapı",
+            "tree shaking",
+            "tree-shaking",
+            "kod çalışmadan önce"
+          ],
+          "anchors": [
+            "ESM'de import ve export statiktir, kod çalışmadan önce bağlanır.",
+            "Statik yapı tree shaking'e imkân verir."
+          ]
+        },
+        {
+          "id": "live-binding",
+          "label": "İçe aktarılan isimler live binding",
+          "aliases": [
+            "live binding",
+            "canlı bağ",
+            "yeni değeri gör",
+            "atama yapamaz"
+          ],
+          "anchors": [
+            "İçe aktarılan isim live binding'dir, dışa aktaran güncellerse yeni değer görülür."
+          ]
+        },
+        {
+          "id": "esm-imports-cjs",
+          "label": "ESM'den CommonJS: module.exports default olarak gelir",
+          "aliases": [
+            "default export",
+            "default olarak",
+            "isimli export",
+            "named export",
+            "en iyi çaba"
+          ],
+          "anchors": [
+            "ESM'den import edilen CommonJS modülünde module.exports default export olur."
+          ]
+        },
+        {
+          "id": "cjs-loads-esm",
+          "label": "CommonJS'ten ESM: import() ya da yeni sürümlerde require",
+          "aliases": [
+            "dinamik import",
+            "dynamic import",
+            "import()",
+            "require(esm)",
+            "require ile yüklen",
+            "namespace"
+          ],
+          "anchors": [
+            "CommonJS ESM'i dinamik import() ile yükler.",
+            "Güncel Node.js'te top-level await içermeyen ES modülü require ile yüklenebilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Node.js bir `.js` dosyasının ESM mi CommonJS mi olduğuna nasıl karar verir?",
+        "Bir paketi hem ESM hem CommonJS kullanıcılarına sunmanın riski nedir (dual package hazard)?"
+      ],
+      "source": "Kendi derleme — MDN: import, JavaScript modules; Node.js: Modules (Loading ECMAScript modules using require()), ECMAScript modules (Interoperability with CommonJS)"
+    },
+    {
+      "id": "javascript-event-propagation",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "DOM olayları",
+      "difficulty": 1,
+      "prompt": "DOM'da bir olay hangi aşamalardan geçer? Event bubbling ve capturing nedir?",
+      "modelAnswer": "Bir olay tetiklendiğinde önce `window`'dan hedef elemana doğru iner (capture), sonra hedefin kendisinde çalışır (target) ve ardından aynı yolu tersine izleyerek üst elemanlara çıkar (bubble). `addEventListener` dinleyiciyi varsayılan olarak bubble aşamasına kaydeder; üçüncü parametreye `{ capture: true }` verilirse dinleyici iniş sırasında çalışır, yani üst eleman hedeften önce tetiklenir. `event.target` olayın asıl başladığı eleman, `event.currentTarget` ise o anda çalışan dinleyicinin bağlı olduğu elemandır. `stopPropagation` olayın sonraki elemanlara yayılmasını keser ama tarayıcının varsayılan davranışına dokunmaz, onun için `preventDefault` gerekir; `focus` gibi bazı olaylar ise hiç yukarı çıkmaz.",
+      "keyConcepts": [
+        {
+          "id": "capture-down",
+          "label": "Önce dıştan hedefe iniş (capture)",
+          "aliases": [
+            "hedefe doğru",
+            "hedef elemana doğru",
+            "dıştan içe",
+            "en dıştan",
+            "üç aşama",
+            "hedefte çalış"
+          ],
+          "anchors": [
+            "Olay önce window'dan hedef elemana doğru iner.",
+            "Sonra hedefin kendisinde çalışır."
+          ]
+        },
+        {
+          "id": "bubble-up",
+          "label": "Sonra üst elemanlara çıkış (bubble)",
+          "aliases": [
+            "yukarı doğru",
+            "üst eleman",
+            "parent'lara",
+            "yukarı çık",
+            "tersine"
+          ],
+          "anchors": [
+            "Olay hedeften sonra üst elemanlara doğru çıkar."
+          ]
+        },
+        {
+          "id": "listener-phase",
+          "label": "addEventListener varsayılanı bubble, capture: true ile iniş",
+          "aliases": [
+            "capture: true",
+            "{ capture",
+            "üçüncü parametre",
+            "varsayılan olarak bubble",
+            "bubbling aşamasında"
+          ],
+          "anchors": [
+            "addEventListener varsayılan olarak bubble aşamasında dinler.",
+            "capture: true verilirse dinleyici iniş sırasında çalışır."
+          ]
+        },
+        {
+          "id": "target-current",
+          "label": "target ve currentTarget",
+          "aliases": [
+            "currenttarget",
+            "event.target",
+            "current target"
+          ],
+          "anchors": [
+            "event.target olayın başladığı eleman, currentTarget dinleyicinin bağlı olduğu elemandır."
+          ]
+        },
+        {
+          "id": "stop-prevent",
+          "label": "stopPropagation yayılmayı keser, preventDefault varsayılanı",
+          "aliases": [
+            "stoppropagation",
+            "preventdefault",
+            "yayılmayı durdur",
+            "yayılmasını kes"
+          ],
+          "anchors": [
+            "stopPropagation olayın yayılmasını keser.",
+            "Varsayılan davranışı engellemek için preventDefault gerekir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`stopPropagation` ile `stopImmediatePropagation` arasındaki fark nedir?",
+        "Hangi olaylar yukarı çıkmaz, delegation için yerine ne kullanılır?"
+      ],
+      "source": "Kendi derleme — DOM standardı: 2.9 Dispatching events; MDN: Event bubbling, EventTarget.addEventListener()"
+    },
+    {
+      "id": "javascript-event-delegation",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "DOM olayları",
+      "difficulty": 2,
+      "prompt": "Event delegation nedir? Hangi durumlarda tercih edilir?",
+      "modelAnswer": "Event delegation, çok sayıda alt elemanın her birine ayrı dinleyici eklemek yerine ortak bir üst elemana tek bir dinleyici ekleyip olayları bubbling sayesinde orada yakalamaktır. Dinleyici içinde `event.target` olayın başladığı elemanı verir; tıklanan şey bir ikon ya da metin gibi alt düğüm olabileceği için genellikle `event.target.closest('li')` gibi bir seçiciyle asıl ilgilenilen eleman bulunur ve dinleyicinin kendi kapsayıcısı içinde olup olmadığı kontrol edilir. Kazanç, daha az dinleyici ve bellek ile sonradan DOM'a eklenen elemanların ek kod gerekmeden kendiliğinden kapsanmasıdır; uzun listelerde, tablolarda ve dinamik içerikte bu yüzden tercih edilir. `focus` ve `blur` gibi kabarmayan olaylar için `focusin` ve `focusout` kullanılır; alt elemanlardan birinde yayılma kesilirse olay dinleyiciye hiç ulaşmaz.",
+      "keyConcepts": [
+        {
+          "id": "single-parent-listener",
+          "label": "Üst elemana tek dinleyici",
+          "aliases": [
+            "üst elemana",
+            "parent'a",
+            "tek bir dinleyici",
+            "tek bir listener",
+            "tek listener",
+            "kapsayıcı"
+          ],
+          "anchors": [
+            "Her çocuğa ayrı dinleyici yerine üst elemana tek bir dinleyici eklenir."
+          ]
+        },
+        {
+          "id": "relies-on-bubbling",
+          "label": "Bubbling'e dayanır",
+          "aliases": [
+            "bubbling",
+            "bubble ed",
+            "yukarı çık",
+            "kabarcık"
+          ],
+          "anchors": [
+            "Alt elemandaki olay bubbling ile üst elemana ulaşır."
+          ]
+        },
+        {
+          "id": "target-closest",
+          "label": "event.target ve closest ile asıl eleman",
+          "aliases": [
+            "event.target",
+            "closest",
+            "hangi elemana",
+            "hangi eleman"
+          ],
+          "anchors": [
+            "event.target ile olayın başladığı eleman bulunur.",
+            "closest ile asıl ilgilenilen eleman seçilir."
+          ]
+        },
+        {
+          "id": "benefits",
+          "label": "Az dinleyici, dinamik elemanlar kendiliğinden kapsanır",
+          "aliases": [
+            "sonradan eklenen",
+            "dinamik eleman",
+            "dinamik içerik",
+            "daha az listener",
+            "daha az dinleyici"
+          ],
+          "anchors": [
+            "Sonradan eklenen elemanlar ek kod gerekmeden kapsanır.",
+            "Daha az dinleyici ve bellek kullanılır."
+          ]
+        },
+        {
+          "id": "non-bubbling",
+          "label": "Kabarmayan olaylar, focusin/focusout",
+          "aliases": [
+            "focusin",
+            "focusout",
+            "bubble etmeyen",
+            "kabarmayan",
+            "bubbling yapmayan",
+            "focus gibi"
+          ],
+          "anchors": [
+            "focus gibi kabarmayan olaylarda focusin ve focusout kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "React kendi olay sisteminde delegation'ı nasıl kullanır?",
+        "Delegation'da `event.target` ile `event.currentTarget` neden farklı sonuç verir?"
+      ],
+      "source": "Kendi derleme — MDN: Event bubbling (Event delegation), Element.closest(), Element: focusin event"
+    },
+    {
+      "id": "javascript-debounce-throttle",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "DOM olayları",
+      "difficulty": 1,
+      "prompt": "Debounce ile throttle arasındaki fark nedir? Hangisi nerede kullanılır?",
+      "modelAnswer": "İkisi de çok sık tetiklenen bir olayın (yazma, kaydırma, pencere boyutu değişimi) pahalı bir işi gereğinden fazla çalıştırmasını önleyen tekniklerdir. Debounce, çağrılar sürdükçe zamanlayıcıyı yeniden başlatır ve iş ancak çağrılar belirli bir süre kesildiğinde bir kez çalışır; arama kutusunda kullanıcı yazmayı bırakınca istek göndermek tipik örneğidir. Throttle ise olay sürdüğü sürece işi belirli bir aralıkta en fazla bir kez çalıştırır; kaydırma konumuna göre arayüzü güncellemek ya da sonsuz kaydırmada sayfa sonunu kontrol etmek gibi sürekli ama seyreltilmiş tepki gereken yerlerde kullanılır. İkisinde de işin aralığın başında (leading) ya da sonunda (trailing) çalışması seçilebilir ve genellikle `setTimeout` ile tutulan bir zamanlayıcıyı saklayan bir closure üzerine kurulur.",
+      "keyConcepts": [
+        {
+          "id": "debounce-quiet",
+          "label": "Debounce: çağrılar kesilince bir kez",
+          "aliases": [
+            "yazmayı bırak",
+            "kesildiğinde",
+            "son tetiklemeden",
+            "yeniden başlat",
+            "durduktan sonra",
+            "sustuğunda"
+          ],
+          "anchors": [
+            "Debounce çağrılar belirli bir süre kesildiğinde işi bir kez çalıştırır.",
+            "Her yeni çağrı zamanlayıcıyı yeniden başlatır."
+          ]
+        },
+        {
+          "id": "throttle-rate",
+          "label": "Throttle: aralık başına en fazla bir kez",
+          "aliases": [
+            "en fazla bir kez",
+            "belirli aralık",
+            "belli aralık",
+            "sabit aralık",
+            "düzenli çalış"
+          ],
+          "anchors": [
+            "Throttle işi belirli bir aralıkta en fazla bir kez çalıştırır."
+          ]
+        },
+        {
+          "id": "search-use",
+          "label": "Debounce: arama kutusu",
+          "aliases": [
+            "arama kutu",
+            "otomatik tamamla",
+            "autocomplete",
+            "kullanıcı yazarken"
+          ],
+          "anchors": [
+            "Arama kutusunda kullanıcı yazmayı bırakınca istek gönderilir."
+          ]
+        },
+        {
+          "id": "scroll-use",
+          "label": "Throttle: kaydırma ve boyut değişimi",
+          "aliases": [
+            "scroll",
+            "kaydırma",
+            "resize",
+            "boyut değiş"
+          ],
+          "anchors": [
+            "Throttle kaydırma ve boyut değişimi gibi sürekli olaylarda kullanılır."
+          ]
+        },
+        {
+          "id": "edges-impl",
+          "label": "leading/trailing, setTimeout ile kurulur",
+          "aliases": [
+            "leading edge",
+            "trailing edge",
+            "(leading)",
+            "settimeout ile",
+            "cleartimeout"
+          ],
+          "anchors": [
+            "İşin aralığın başında ya da sonunda çalışması seçilebilir.",
+            "Genellikle setTimeout ile kurulur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Debounce edilmiş bir fonksiyon React bileşeninde neden her render'da yeniden oluşturulmamalıdır?",
+        "`requestAnimationFrame` throttle yerine ne zaman kullanılır?"
+      ],
+      "source": "Kendi derleme — MDN: Debounce (Glossary), Throttle (Glossary)"
+    },
+    {
+      "id": "javascript-gc-and-leaks",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Bellek",
+      "difficulty": 2,
+      "prompt": "JavaScript'te garbage collection nasıl çalışır? Otomatik bellek yönetimine rağmen bellek sızıntısı nasıl oluşur?",
+      "modelAnswer": "Modern motorlar belleği erişilebilirliğe (reachability) göre yönetir; global nesne ve o an çalışan kodun eriştiği değişkenler gibi köklerden başlayıp bağlantılar üzerinden ulaşılabilen her nesneyi işaretler, erişilemeyenleri toplar (mark-and-sweep). Bu yüzden birbirini gösteren ama köklerden kopmuş nesneler de toplanır, eski reference counting yaklaşımının döngüsel referans sorunu burada yoktur; toplamanın ne zaman yapılacağı ise koddan kontrol edilemez. Sızıntı, artık kullanılmayan bir nesneye hâlâ erişilebilir bir referans kalmasıyla oluşur; kaldırılmayan event listener'lar, `clearInterval` ile kapatılmayan `setInterval`'lar, sınırsız büyüyen global ya da modül düzeyi önbellekler ve sayfadan çıkarıldığı hâlde koddan referans verilen DOM düğümleri (detached DOM) tipik örneklerdir. Closure'lar da sızıntı kaynağı olabilir; uzun yaşayan bir callback, ihtiyaç duymadığı büyük bir nesneyi yakaladığı değişkenler arasında tutuyorsa o nesne de callback yaşadıkça serbest kalmaz. Tespit için Chrome DevTools'un Memory panelinde alınan heap snapshot'lar karşılaştırılır ve nesneyi tutan referans yolu (retainers) incelenir.",
+      "keyConcepts": [
+        {
+          "id": "reachability",
+          "label": "Erişilebilirlik: köklerden ulaşılamayan toplanır",
+          "aliases": [
+            "reachability",
+            "ulaşılabil",
+            "erişilemiyor",
+            "erişilemeyen",
+            "köklerden",
+            "kök obje"
+          ],
+          "anchors": [
+            "Köklerden ulaşılamayan nesneler toplanır.",
+            "Bellek erişilebilirliğe göre yönetilir."
+          ]
+        },
+        {
+          "id": "mark-and-sweep",
+          "label": "Mark-and-sweep, döngüsel referans sorun değil",
+          "aliases": [
+            "mark-and-sweep",
+            "mark and sweep",
+            "döngüsel referans",
+            "işaretliyor",
+            "işaretleyip"
+          ],
+          "anchors": [
+            "Motor ulaşılabilen nesneleri işaretler, kalanları süpürür.",
+            "Döngüsel referanslar da toplanabilir."
+          ]
+        },
+        {
+          "id": "leak-causes",
+          "label": "Kaldırılmayan listener, setInterval, büyüyen önbellek",
+          "aliases": [
+            "kaldırılmayan",
+            "removeeventlistener",
+            "setinterval",
+            "clearinterval",
+            "sınırsız büyü",
+            "sürekli büyü"
+          ],
+          "anchors": [
+            "Kaldırılmayan event listener ve durdurulmayan setInterval sızıntıya yol açar.",
+            "Sınırsız büyüyen önbellek bellek tutar."
+          ]
+        },
+        {
+          "id": "closure-leak",
+          "label": "Gereksiz büyük nesneyi tutan closure",
+          "aliases": [
+            "closure kaynaklı",
+            "closure'lar da",
+            "büyük bir objeyi",
+            "büyük bir nesneyi",
+            "tutan closure"
+          ],
+          "anchors": [
+            "Uzun yaşayan bir closure ihtiyaç duymadığı büyük bir nesneyi tutabilir."
+          ]
+        },
+        {
+          "id": "detached-tools",
+          "label": "Detached DOM ve heap snapshot",
+          "aliases": [
+            "heap snapshot",
+            "detached",
+            "dom'dan silinen",
+            "sayfadan çıkarıl",
+            "memory panel"
+          ],
+          "anchors": [
+            "Sayfadan çıkarılmış ama referans verilen DOM düğümü bellekte kalır.",
+            "Heap snapshot karşılaştırılarak sızıntı bulunur."
+          ]
+        }
+      ],
+      "followUps": [
+        "`removeEventListener` neden eklenirken verilen fonksiyon referansının aynısını ister?",
+        "İki heap snapshot karşılaştırılırken nelere bakılır?"
+      ],
+      "source": "Kendi derleme — MDN: Memory management (Garbage collection, Mark-and-sweep algorithm)"
+    },
+    {
+      "id": "javascript-weakmap-weakref",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Bellek",
+      "difficulty": 3,
+      "prompt": "WeakMap ve WeakRef nedir? Map'ten ve normal referanstan farkları nelerdir?",
+      "modelAnswer": "`WeakMap` anahtarlarını zayıf tutar; anahtar olan nesneye başka hiçbir yerden güçlü referans kalmadığında garbage collector onu toplayabilir, kayıttaki değer de toplanmaya aday olur. Bu yüzden anahtar yalnızca nesne ya da kayda geçmemiş bir symbol olabilir ve hangi anahtarların yaşadığı GC zamanlamasına bağlı olacağı için `WeakMap` üzerinde dolaşılamaz, `size` ya da `keys()` sunmaz. Tipik kullanımı bir nesneye, örneğin bir DOM düğümüne, onun ömrünü uzatmadan ek veri bağlamaktır; aynı işi `Map` yapsaydı düğüm sayfadan kalksa bile map onu bellekte tutardı. `WeakRef` ise tek bir nesneye zayıf referans tutar; `deref()` nesne hâlâ yaşıyorsa onu, toplanmışsa undefined döndürür, ama nesnenin ne zaman toplanacağı, hatta toplanıp toplanmayacağı garanti edilmez. Bu belirsizlik yüzünden MDN `WeakRef` ve `FinalizationRegistry`'yi mümkünse kaçınılması gereken, yalnızca uzun yaşayan programlarda bellek optimizasyonu için düşünülmüş araçlar olarak tanımlar; programın doğruluğu GC davranışına bağlanmamalıdır.",
+      "keyConcepts": [
+        {
+          "id": "weak-keys",
+          "label": "Anahtarlar zayıf tutulur",
+          "aliases": [
+            "zayıf tut",
+            "zayıf referans",
+            "weakly held",
+            "güçlü referans",
+            "toplanmaya aday"
+          ],
+          "anchors": [
+            "WeakMap anahtarları zayıf tutar, başka referans yoksa anahtar toplanabilir."
+          ]
+        },
+        {
+          "id": "object-keys",
+          "label": "Anahtar yalnızca nesne",
+          "aliases": [
+            "anahtar obje",
+            "anahtar nesne",
+            "anahtar yalnızca",
+            "obje olmak zorunda",
+            "primitive anahtar"
+          ],
+          "anchors": [
+            "WeakMap'te anahtar yalnızca nesne ya da kayda geçmemiş symbol olabilir."
+          ]
+        },
+        {
+          "id": "not-iterable",
+          "label": "Gezilemez, size yok",
+          "aliases": [
+            "dolaşılamaz",
+            "iterate edilemez",
+            "iterable değil",
+            "size'ı yok",
+            "size yok",
+            "keys()"
+          ],
+          "anchors": [
+            "WeakMap üzerinde dolaşılamaz, size ya da keys sunmaz."
+          ]
+        },
+        {
+          "id": "metadata-use",
+          "label": "Nesneye ömrünü uzatmadan ek veri",
+          "aliases": [
+            "ek bilgi",
+            "ek veri bağla",
+            "dom düğümüne",
+            "dom elemanlarına",
+            "private veri",
+            "ömrünü uzatmadan"
+          ],
+          "anchors": [
+            "WeakMap DOM düğümüne ömrünü uzatmadan ek veri bağlamak için kullanılır."
+          ]
+        },
+        {
+          "id": "weakref-deref",
+          "label": "deref undefined dönebilir, GC garanti edilmez",
+          "aliases": [
+            "deref",
+            "garanti edilmez",
+            "güvenme",
+            "finalizationregistry",
+            "toplanmışsa undefined"
+          ],
+          "anchors": [
+            "WeakRef'in deref metodu nesne toplanmışsa undefined döner.",
+            "Toplamanın zamanı garanti edilmez, WeakRef'e güvenilmez."
+          ]
+        }
+      ],
+      "followUps": [
+        "WeakMap ile önbellek kurmak neden her zaman iyi bir fikir değildir?",
+        "`FinalizationRegistry` callback'ine kaynak kapatma gibi kritik bir iş bırakmak neden yanlıştır?"
+      ],
+      "source": "Kendi derleme — MDN: WeakMap, WeakRef, Memory management (WeakMaps and WeakSets, WeakRefs and FinalizationRegistry)"
+    },
+    {
+      "id": "javascript-generator-iterator",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 2,
+      "prompt": "Iterator ve generator nedir? Generator fonksiyonları nasıl çalışır?",
+      "modelAnswer": "Iterator, her çağrıda `{ value, done }` biçiminde bir nesne döndüren `next()` metoduna sahip nesnedir; iterable ise `Symbol.iterator` metodu bir iterator veren nesnedir ve `for...of`, spread ile destructuring bu protokolü kullanır, `Array`, `String`, `Map` ve `Set` hazır iterable'dır. Generator fonksiyonu `function*` ile tanımlanır ve çağrıldığında gövdesini çalıştırmaz, bir generator nesnesi döndürür. Her `next()` çağrısında gövde bir sonraki `yield`'e kadar çalışır, değeri dışarı verir ve durumunu koruyarak duraklar; `next(x)` ile verilen değer duraklanan `yield` ifadesinin sonucu olur. Değerler istendikçe üretildiği için (lazy) sonsuz diziler ya da büyük veri akışları belleğe yüklenmeden işlenebilir; generator nesnesi hem iterator hem iterable olduğu için doğrudan `for...of` ile gezilebilir ama yalnızca bir kez tüketilir.",
+      "keyConcepts": [
+        {
+          "id": "iterator-protocol",
+          "label": "next() ve { value, done }",
+          "aliases": [
+            "next()",
+            "next metodu",
+            "value ve done",
+            "{ value, done }"
+          ],
+          "anchors": [
+            "Iterator, value ve done döndüren next metoduna sahip nesnedir."
+          ]
+        },
+        {
+          "id": "iterable-protocol",
+          "label": "Symbol.iterator, for...of, spread",
+          "aliases": [
+            "symbol.iterator",
+            "for...of",
+            "for of",
+            "spread"
+          ],
+          "anchors": [
+            "Iterable, Symbol.iterator metodu olan ve for...of ile gezilebilen nesnedir."
+          ]
+        },
+        {
+          "id": "yield-pause",
+          "label": "yield'de durur, kaldığı yerden devam eder",
+          "aliases": [
+            "yield",
+            "duraklar",
+            "kaldığı yerden",
+            "durup devam",
+            "askıya"
+          ],
+          "anchors": [
+            "Generator yield'de duraklar, next çağrılınca kaldığı yerden devam eder."
+          ]
+        },
+        {
+          "id": "lazy",
+          "label": "Değerler istendikçe üretilir",
+          "aliases": [
+            "lazy olarak",
+            "(lazy)",
+            "istendikçe",
+            "ihtiyaç olunca",
+            "sonsuz dizi",
+            "talep edildikçe"
+          ],
+          "anchors": [
+            "Generator değerleri istendikçe üretir, sonsuz diziler yazılabilir."
+          ]
+        },
+        {
+          "id": "generator-object",
+          "label": "function* generator nesnesi döndürür",
+          "aliases": [
+            "function*",
+            "generator nesnesi",
+            "gövdesini çalıştırmaz",
+            "hem iterator hem iterable"
+          ],
+          "anchors": [
+            "function* çağrıldığında gövdesini çalıştırmaz, generator nesnesi döndürür.",
+            "Generator nesnesi hem iterator hem iterable'dır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Async generator (`async function*`) ve `for await...of` ne işe yarar?",
+        "Bir generator'ı `return()` ile erken bitirmek ne sağlar?"
+      ],
+      "source": "Kendi derleme — MDN: Iterators and generators, Iteration protocols, function*"
+    },
+    {
+      "id": "javascript-symbol",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 2,
+      "prompt": "JavaScript'te Symbol nedir? Ne için kullanılır?",
+      "modelAnswer": "`Symbol()` her çağrıldığında başka hiçbir şeye eşit olmayan, tekil bir ilkel değer üretir; verilen açıklama yalnızca hata ayıklama içindir, aynı açıklamayla oluşturulan iki symbol bile birbirine eşit değildir. Başlıca kullanımı, başka kodun eklediği özelliklerle ad çakışmasına yol açmadan nesneye özellik eklemektir; symbol anahtarlı özellikler `for...in`, `Object.keys` ve `JSON.stringify` tarafından görülmez. Ancak gerçek anlamda gizli değildir, `Object.getOwnPropertySymbols` ve `Reflect.ownKeys` ile bulunabilir; gerçek gizlilik için class'ın `#` alanları kullanılır. `Symbol.for('key')` global kayıttan aynı anahtar için hep aynı symbol'ü verir; `Symbol.iterator`, `Symbol.hasInstance` ve `Symbol.asyncIterator` gibi well-known symbol'ler ise nesnenin `for...of` ya da `instanceof` gibi dil işlemlerindeki davranışını özelleştirmeye yarar.",
+      "keyConcepts": [
+        {
+          "id": "unique",
+          "label": "Her çağrıda tekil bir değer",
+          "aliases": [
+            "benzersiz olan",
+            "her oluşturulduğunda",
+            "eşit olmayan",
+            "tekil bir",
+            "birbirine eşit değil"
+          ],
+          "anchors": [
+            "Her Symbol çağrısı tekil bir değer üretir, ikisi asla eşit olmaz."
+          ]
+        },
+        {
+          "id": "collision-free",
+          "label": "Ad çakışması olmadan özellik anahtarı",
+          "aliases": [
+            "isim çakış",
+            "ad çakış",
+            "property anahtarı",
+            "özellik anahtarı",
+            "anahtar olarak"
+          ],
+          "anchors": [
+            "Symbol, ad çakışması olmadan özellik anahtarı olarak kullanılır."
+          ]
+        },
+        {
+          "id": "hidden-not-private",
+          "label": "Numaralandırmada görünmez ama gizli değil",
+          "aliases": [
+            "object.keys",
+            "json.stringify",
+            "getownpropertysymbols",
+            "reflect.ownkeys",
+            "tamamen private değil",
+            "gerçek anlamda gizli"
+          ],
+          "anchors": [
+            "Symbol anahtarlı özellikler Object.keys ve JSON.stringify'da görünmez.",
+            "getOwnPropertySymbols ile bulunabildiği için gerçek anlamda gizli değildir."
+          ]
+        },
+        {
+          "id": "global-registry",
+          "label": "Symbol.for ile global kayıt",
+          "aliases": [
+            "symbol.for",
+            "global kayıt",
+            "global registry",
+            "ortak kayıt"
+          ],
+          "anchors": [
+            "Symbol.for global kayıttan aynı anahtar için aynı symbol'ü verir."
+          ]
+        },
+        {
+          "id": "well-known",
+          "label": "Well-known symbol'ler dil davranışını özelleştirir",
+          "aliases": [
+            "symbol.iterator",
+            "symbol.hasinstance",
+            "well-known",
+            "asynciterator",
+            "hazır symbol"
+          ],
+          "anchors": [
+            "Symbol.iterator gibi well-known symbol'ler dil davranışını özelleştirir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Symbol.toPrimitive` bir nesnenin `+` operatöründeki davranışını nasıl değiştirir?",
+        "Symbol neden `new` ile oluşturulamaz?"
+      ],
+      "source": "Kendi derleme — MDN: Symbol, Symbol.for(), Symbol.iterator"
+    },
+    {
+      "id": "javascript-optional-chaining-nullish",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 1,
+      "prompt": "Optional chaining (?.) ve nullish coalescing (??) operatörleri ne işe yarar?",
+      "modelAnswer": "`?.` solundaki değer null ya da undefined ise özelliğe erişmeye çalışıp `TypeError` fırlatmak yerine undefined döndürür ve zincirin geri kalanını hiç değerlendirmez (short-circuit); `user?.address?.city` gibi iç içe okumalarda her adımı ayrı ayrı kontrol etme ihtiyacını kaldırır. Aynı operatör metot çağrısında `obj.method?.()`, köşeli parantezle erişimde `arr?.[0]` biçiminde de kullanılır; ancak atamanın sol tarafında kullanılamaz ve hiç tanımlanmamış bir değişkeni korumaz. `??` ise yalnızca sol taraf null ya da undefined olduğunda sağdaki değeri döndürür; `||` ile farkı `0`, boş string ve `false` gibi geçerli ama falsy değerleri olduğu gibi bırakmasıdır. İkisi sık sık birlikte kullanılır (`user?.name ?? 'Misafir'`); `??` parantez olmadan `&&` ya da `||` ile aynı ifadede yazılırsa `SyntaxError` alınır.",
+      "keyConcepts": [
+        {
+          "id": "returns-undefined",
+          "label": "Hata yerine undefined döner",
+          "aliases": [
+            "undefined döndür",
+            "undefined döner",
+            "hata atmak yerine",
+            "typeerror fırlatmak yerine",
+            "hata vermeden"
+          ],
+          "anchors": [
+            "Soldaki değer null ya da undefined ise hata yerine undefined döner."
+          ]
+        },
+        {
+          "id": "short-circuit",
+          "label": "Zincirin geri kalanı değerlendirilmez",
+          "aliases": [
+            "short-circuit",
+            "short circuit",
+            "kısa devre",
+            "zincirin devamı",
+            "geri kalanı"
+          ],
+          "anchors": [
+            "Zincirin geri kalanı hiç değerlendirilmez."
+          ]
+        },
+        {
+          "id": "call-and-index",
+          "label": "?.() ve ?.[] biçimleri",
+          "aliases": [
+            "?.()",
+            "?.[",
+            "method?.",
+            "köşeli parantez"
+          ],
+          "anchors": [
+            "Metot çağrısında obj.method?.() biçiminde kullanılır."
+          ]
+        },
+        {
+          "id": "nullish-vs-or",
+          "label": "?? yalnızca null/undefined'da devreye girer, || falsy'de",
+          "aliases": [
+            "|| ile farkı",
+            "||'den farkı",
+            "0, boş string",
+            "geçerli ama falsy",
+            "false'ı değer",
+            "0'ı korur"
+          ],
+          "anchors": [
+            "?? yalnızca null ve undefined'da sağdaki değeri verir.",
+            "|| ise 0 ve boş string gibi falsy değerleri de ezer."
+          ]
+        },
+        {
+          "id": "combine",
+          "label": "Birlikte kullanım, parantez kuralı",
+          "aliases": [
+            "birlikte kullan",
+            "syntaxerror",
+            "parantez olmadan",
+            "?? 'misafir'"
+          ],
+          "anchors": [
+            "?. ve ?? birlikte kullanılır.",
+            "?? parantezsiz || ile yazılırsa SyntaxError alınır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`??=` ile `||=` atama operatörleri arasındaki fark nedir?",
+        "`a?.b.c` ifadesinde `a` null ise neden hata alınmaz?"
+      ],
+      "source": "Kendi derleme — MDN: Optional chaining (?.), Nullish coalescing operator (??)"
+    },
+    {
+      "id": "javascript-strict-mode",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "Dil özellikleri",
+      "difficulty": 1,
+      "prompt": "Strict mode nedir? Neleri değiştirir?",
+      "modelAnswer": "Strict mode, dosyanın ya da fonksiyonun başına yazılan `\"use strict\"` yönergesiyle açılan ve dilin bazı eski, hataya açık davranışlarını kapatan daha katı bir çalışma biçimidir; ES modülleri ve class gövdeleri yönerge olmadan da her zaman strict çalışır. En önemli fark, sessizce geçiştirilen hataların gerçek hataya dönüşmesidir; tanımlanmamış bir isme değer yazmak global bir değişken yaratmak yerine `ReferenceError`, yazılamaz bir özelliğe atama yapmak `TypeError` fırlatır. Düz çağrılan bir fonksiyonda this, global nesne yerine undefined kalır, bu da yanlışlıkla global nesneyi değiştirmeyi önler. Ayrıca `with` kullanılamaz, aynı adlı iki parametre tanımlanamaz, `eval` içinde tanımlanan değişkenler çevreleyen kapsama sızmaz ve `private`, `interface` gibi kelimeler ileride kullanılmak üzere ayrılır.",
+      "keyConcepts": [
+        {
+          "id": "use-strict",
+          "label": "\"use strict\" yönergesiyle açılır",
+          "aliases": [
+            "use strict",
+            "yönerge",
+            "directive"
+          ],
+          "anchors": [
+            "Strict mode \"use strict\" yönergesiyle açılır."
+          ]
+        },
+        {
+          "id": "silent-to-errors",
+          "label": "Sessiz hatalar gerçek hataya dönüşür",
+          "aliases": [
+            "sessizce geç",
+            "sessiz hata",
+            "gerçek hataya",
+            "silent"
+          ],
+          "anchors": [
+            "Sessizce geçiştirilen hatalar gerçek hataya dönüşür."
+          ]
+        },
+        {
+          "id": "undeclared-assignment",
+          "label": "Tanımlanmamış değişkene atama hata verir",
+          "aliases": [
+            "tanımlanmamış bir değişken",
+            "global değişken oluşturmak yerine",
+            "global bir değişken yaratmak",
+            "yanlışlıkla global",
+            "referenceerror"
+          ],
+          "anchors": [
+            "Tanımlanmamış bir değişkene atama ReferenceError fırlatır, global değişken oluşmaz."
+          ]
+        },
+        {
+          "id": "this-undefined",
+          "label": "Düz çağrıda this undefined",
+          "aliases": [
+            "this varsayılan olarak undefined",
+            "this undefined",
+            "global nesne yerine",
+            "global obje değil",
+            "global nesneyi değiştir"
+          ],
+          "anchors": [
+            "Düz çağrılan fonksiyonda this global nesne yerine undefined olur."
+          ]
+        },
+        {
+          "id": "modules-classes",
+          "label": "Modüller ve class'lar otomatik strict",
+          "aliases": [
+            "modüller ve class",
+            "class gövde",
+            "otomatik olarak strict",
+            "her zaman strict",
+            "es modül"
+          ],
+          "anchors": [
+            "ES modülleri ve class gövdeleri her zaman strict çalışır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Rest ya da varsayılan parametre kullanan bir fonksiyonun içine `\"use strict\"` yazılırsa ne olur?",
+        "Strict mode'da `arguments` nesnesi ile parametreler neden artık birbirini izlemez?"
+      ],
+      "source": "Kendi derleme — MDN: Strict mode; ECMA-262: Strict Mode Code"
+    },
+    {
+      "id": "javascript-ts-type-vs-interface",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 1,
+      "prompt": "TypeScript'te type alias ile interface arasındaki fark nedir? Hangisini ne zaman kullanırsın?",
+      "modelAnswer": "İkisi de bir nesnenin şeklini adlandırabilir ve çoğu durumda biri ötekinin yerine kullanılabilir. Asıl fark, interface'in aynı adla ikinci kez tanımlandığında öncekiyle birleşmesidir (declaration merging); bir kütüphanenin ya da tarayıcının global tiplerine alan eklemek bu yüzden interface ile yapılır, type alias ise bir kez tanımlanır ve yeniden açılamaz. Type alias ise yalnızca nesneye değil her tipe ad verebilir; union (`'a' | 'b'`), tuple, ilkel tipler ve bir fonksiyon imzası adlandırılabilir, conditional ve mapped type'lar da ancak type ile yazılır. Genişletmede interface `extends`, type ise kesişim (`&`) kullanır; Handbook'un önerisi, type'ın özelliklerine ihtiyaç duyulana kadar interface kullanmaktır.",
+      "keyConcepts": [
+        {
+          "id": "declaration-merging",
+          "label": "interface aynı adla birleşir, type yeniden açılamaz",
+          "aliases": [
+            "declaration merging",
+            "birleşiyor",
+            "aynı adla",
+            "yeniden açılamaz",
+            "tekrar açılamaz"
+          ],
+          "anchors": [
+            "interface aynı adla tekrar tanımlanınca birleşir.",
+            "type alias bir kez tanımlanır, yeniden açılamaz."
+          ]
+        },
+        {
+          "id": "type-anything",
+          "label": "type her tipe ad verebilir",
+          "aliases": [
+            "union, tuple",
+            "union ve tuple",
+            "her tipe ad",
+            "her şeyi tanımla",
+            "fonksiyon imza"
+          ],
+          "anchors": [
+            "type alias union, tuple ve fonksiyon imzası gibi her tipe ad verebilir."
+          ]
+        },
+        {
+          "id": "interface-object",
+          "label": "interface yalnızca nesne şekli",
+          "aliases": [
+            "sadece obje",
+            "yalnızca nesne",
+            "obje şekli",
+            "nesne şekli",
+            "nesnenin şekli"
+          ],
+          "anchors": [
+            "interface yalnızca nesne şeklini tanımlar."
+          ]
+        },
+        {
+          "id": "extends-vs-intersection",
+          "label": "extends ve kesişim (&)",
+          "aliases": [
+            "interface extends",
+            "extends ile",
+            "kesişim",
+            "intersection",
+            "& ile"
+          ],
+          "anchors": [
+            "interface extends ile, type kesişim (&) ile genişletilir."
+          ]
+        },
+        {
+          "id": "recommendation",
+          "label": "Varsayılan interface, gerekince type",
+          "aliases": [
+            "interface kullan",
+            "obje için interface",
+            "union için type",
+            "type kullan",
+            "ihtiyaç duyulana kadar"
+          ],
+          "anchors": [
+            "Nesne şekilleri için interface, union ve karmaşık tipler için type kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Declaration merging ile bir kütüphanenin tipine nasıl alan eklenir?",
+        "Hata mesajlarında interface ve type adları nasıl farklı görünür?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Everyday Types (Differences Between Type Aliases and Interfaces), Declaration Merging"
+    },
+    {
+      "id": "javascript-ts-structural-typing",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 2,
+      "prompt": "TypeScript'in tip sistemi neden \"structural\" olarak tanımlanır? Nominal tiplemeden farkı nedir?",
+      "modelAnswer": "TypeScript iki tipin uyumlu olup olmadığına adlarına ya da açıkça hangi tipten türetildiklerine bakarak değil, üyelerine bakarak karar verir; bir değer beklenen tipin bütün üyelerini doğru tiplerle taşıyorsa o tipe atanabilir, bu da duck typing'in derleme anındaki karşılığıdır. Java ve C#'taki nominal tiplemede ise aynı alanlara sahip iki sınıf, aralarında açık bir kalıtım ya da `implements` ilişkisi yoksa birbirinin yerine kullanılamaz. Fazla alan taşımak da uyumu bozmaz; bunun dışında kalan tek durum, bir nesne literalinin doğrudan beklenen tipe yazılmasıdır, orada bilinmeyen alanlar excess property check ile hata verir. Bunun bedeli, yapısı aynı olan `UserId` ve `OrderId` gibi iki string tipinin karıştırılabilmesidir; ayırmak için `string & { __brand: 'UserId' }` gibi branded type'lar kullanılır, `private` alanı olan class'lar ise nominal gibi davranır.",
+      "keyConcepts": [
+        {
+          "id": "members-not-names",
+          "label": "Adlara değil üyelere bakılır",
+          "aliases": [
+            "üyelerine bak",
+            "yapısına göre",
+            "yapılarına göre",
+            "isimlerine göre değil",
+            "adlarına göre değil",
+            "şekline göre"
+          ],
+          "anchors": [
+            "TypeScript tipleri adlarına göre değil üyelerine göre karşılaştırır."
+          ]
+        },
+        {
+          "id": "duck-typing",
+          "label": "Açık türetme gerekmez, duck typing",
+          "aliases": [
+            "duck typing",
+            "ördek",
+            "türetilmemiş olsa",
+            "açıkça türetil",
+            "implements etmese"
+          ],
+          "anchors": [
+            "Gereken üyeleri taşıyan değer, açıkça türetilmemiş olsa da uyumludur."
+          ]
+        },
+        {
+          "id": "excess-property",
+          "label": "Fazla alan serbest, literal'de excess property check",
+          "aliases": [
+            "excess property",
+            "fazla alan",
+            "fazla property",
+            "nesne literal",
+            "obje literal"
+          ],
+          "anchors": [
+            "Fazla alan uyumu bozmaz.",
+            "Doğrudan yazılan nesne literalinde bilinmeyen alan hata verir."
+          ]
+        },
+        {
+          "id": "branded",
+          "label": "Aynı yapılı tipler karışabilir, branded type",
+          "aliases": [
+            "branded",
+            "__brand",
+            "karıştırılabil",
+            "karışabilir",
+            "brand alan"
+          ],
+          "anchors": [
+            "Aynı yapıdaki iki string tipi karışabilir, ayırmak için branded type kullanılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "Branded type nasıl tanımlanır, değeri o tipe nasıl sokarsın?",
+        "Fonksiyon parametreleri karşılaştırılırken `strictFunctionTypes` neyi değiştirir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Type Compatibility, Object Types"
+    },
+    {
+      "id": "javascript-ts-any-unknown-never",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 2,
+      "prompt": "any, unknown ve never tipleri arasındaki fark nedir?",
+      "modelAnswer": "`any` tip denetimini o değer için tamamen kapatır; her özelliğe erişilebilir, her yere atanabilir ve bu gevşeklik etkileşilen başka değerlere de bulaşır. `unknown` da her değeri kabul eder ama üzerinde hiçbir işlem yapılmasına izin vermez; önce `typeof`, `instanceof` ya da bir şema doğrulamasıyla daraltılması gerekir, bu yüzden `JSON.parse` sonucu ya da `catch` değişkeni gibi kaynağı belirsiz değerler için güvenli seçimdir. `never` ise hiçbir değerin sahip olamayacağı tiptir; her zaman hata fırlatan ya da hiç dönmeyen bir fonksiyonun dönüş tipi olur ve daraltmada bütün ihtimaller elendiğinde kalan tip de odur. Bu son özellik eksiksizlik kontrolünde kullanılır; `switch`'in `default` kolunda değeri `never` tipli bir değişkene atamak, union'a yeni bir üye eklenip ele alınmadığında derleme hatası verir.",
+      "keyConcepts": [
+        {
+          "id": "any-off",
+          "label": "any denetimi tamamen kapatır",
+          "aliases": [
+            "denetimini tamamen",
+            "kontrolünü tamamen",
+            "her şeyi yapabil",
+            "hata yakalanmaz",
+            "her yere atanabil"
+          ],
+          "anchors": [
+            "any tip denetimini tamamen kapatır.",
+            "any ile her şey yapılabilir, hata yakalanmaz."
+          ]
+        },
+        {
+          "id": "unknown-narrow",
+          "label": "unknown kullanmadan önce daraltılır",
+          "aliases": [
+            "daraltıl",
+            "daraltman",
+            "daraltmadan",
+            "önce kontrol",
+            "tipini kontrol"
+          ],
+          "anchors": [
+            "unknown bir değer kullanılmadan önce daraltılmalıdır."
+          ]
+        },
+        {
+          "id": "unknown-input",
+          "label": "Kaynağı belirsiz değer için unknown",
+          "aliases": [
+            "json.parse",
+            "catch değişken",
+            "kaynağı belirsiz",
+            "dışarıdan gelen veri",
+            "güvenli seçim"
+          ],
+          "anchors": [
+            "JSON.parse sonucu gibi kaynağı belirsiz değerler için unknown güvenlidir."
+          ]
+        },
+        {
+          "id": "never-no-value",
+          "label": "never: hiç oluşmayan değer",
+          "aliases": [
+            "hiç dönmeyen",
+            "hata fırlatan",
+            "hiçbir değer",
+            "oluşmayacak",
+            "throw eden"
+          ],
+          "anchors": [
+            "never hiçbir değerin sahip olamayacağı tiptir.",
+            "Her zaman hata fırlatan fonksiyonun dönüş tipi never'dır."
+          ]
+        },
+        {
+          "id": "exhaustive",
+          "label": "default'ta never ile eksiksizlik kontrolü",
+          "aliases": [
+            "exhaustive",
+            "eksiksizlik",
+            "default'ta never",
+            "tüm durumları",
+            "bütün ihtimaller"
+          ],
+          "anchors": [
+            "default kolunda değeri never'a atamak eksik durumu derleme hatasına çevirir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`catch (e)` içindeki `e` neden `unknown` olarak ele alınmalıdır?",
+        "`void` ile `never` dönüş tipi arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Everyday Types (any), More on Functions (unknown, never), Narrowing (Exhaustiveness checking)"
+    },
+    {
+      "id": "javascript-ts-type-erasure",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS temelleri",
+      "difficulty": 2,
+      "prompt": "TypeScript tipleri çalışma anında neden yoktur? Bu, dışarıdan gelen verinin doğrulanması açısından ne anlama gelir?",
+      "modelAnswer": "TypeScript derleyicisi tip denetimini yaptıktan sonra tip açıklamalarını, `interface` ve `type` tanımlarını tamamen atar ve geriye düz JavaScript kalır; Java'da yalnızca generic parametreleri silinirken burada bütün tip katmanı yok olur, bu yüzden bir değerin bir interface'e uyup uymadığını sonradan sorgulamanın yolu yoktur. Node.js'in type stripping desteği bunu en sade hâliyle gösterir: tipleri boşlukla değiştirir ve hiçbir tip denetimi yapmaz. Sonuç olarak `as User` ya da `fetch` sonucuna verilen bir tip bir iddiadan ibarettir; ağdan, dosyadan ya da `localStorage`'dan gelen veri beklenen şekilde değilse derleme yine geçer, hata ancak çalışırken ve çoğu zaman uzak bir yerde ortaya çıkar. Bu yüzden sistem sınırına gelen veri Zod gibi bir kütüphaneyle çalışırken şemaya karşı doğrulanır; tip de `z.infer` ile şemadan türetilirse tip ve doğrulama tek kaynaktan gelir, ikisi birbirinden kopamaz.",
+      "keyConcepts": [
+        {
+          "id": "erased",
+          "label": "Derlemede tipler tamamen atılır",
+          "aliases": [
+            "tamamen sil",
+            "tamamen atar",
+            "siliniyor",
+            "tip açıklamaları",
+            "düz javascript",
+            "boşlukla değiştir"
+          ],
+          "anchors": [
+            "Derleyici tip açıklamalarını tamamen atar, geriye düz JavaScript kalır."
+          ]
+        },
+        {
+          "id": "no-runtime-info",
+          "label": "Çalışırken tip bilgisi sorgulanamaz",
+          "aliases": [
+            "hiç tip bilgisi",
+            "sonradan sorgula",
+            "interface'e uyup",
+            "tip katmanı",
+            "tip bilgisi kalmaz"
+          ],
+          "anchors": [
+            "Çalışırken bir değerin bir interface'e uyup uymadığı sorgulanamaz."
+          ]
+        },
+        {
+          "id": "assertion-is-claim",
+          "label": "as bir iddiadır, veriyi doğrulamaz",
+          "aliases": [
+            "iddia",
+            "as user",
+            "doğrulamaz",
+            "derleme yine geçer",
+            "patlar"
+          ],
+          "anchors": [
+            "as User veriyi doğrulamaz, yalnızca bir iddiadır.",
+            "Yanlış veri gelirse hata çalışırken çıkar."
+          ]
+        },
+        {
+          "id": "zod-validate",
+          "label": "Sınırda Zod gibi şema doğrulaması",
+          "aliases": [
+            "zod gibi",
+            "zod ile",
+            "şemaya karşı",
+            "şema doğrula",
+            "sistem sınır"
+          ],
+          "anchors": [
+            "Dış kaynaktan gelen veri Zod gibi bir kütüphaneyle şemaya karşı doğrulanır."
+          ]
+        },
+        {
+          "id": "single-source",
+          "label": "z.infer ile tip şemadan türetilir",
+          "aliases": [
+            "z.infer",
+            "tek kaynak",
+            "tek yerden",
+            "şemadan türet"
+          ],
+          "anchors": [
+            "Tip z.infer ile şemadan türetilirse tip ve doğrulama tek kaynaktan gelir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Zod'un `parse` ile `safeParse` metotları arasındaki fark nedir?",
+        "Java'daki type erasure ile TypeScript'teki tip silme nasıl ayrılır?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: The Basics (Erased Types); Node.js: Modules: TypeScript (Type stripping)"
+    },
+    {
+      "id": "javascript-ts-generics-constraints",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS generics",
+      "difficulty": 2,
+      "prompt": "TypeScript'te generic nedir? Generic constraint (extends) ne işe yarar?",
+      "modelAnswer": "Generic, bir fonksiyonun, class'ın ya da tipin bir tip parametresi (`<T>`) alarak farklı tiplerle aynı kodu çalıştırmasını ve girdiyle çıktı arasındaki tip ilişkisini korumasını sağlar; `function first<T>(arr: T[]): T` sayı dizisiyle çağrılınca number, string dizisiyle çağrılınca string döner, `any` kullanılsaydı bu bilgi ortadan kalkardı. Tip parametresi çoğu zaman çağrıdaki değerden kendiliğinden çıkarılır (inference), gerektiğinde `first<string>(list)` diye açıkça verilir. Constraint, tip parametresinin kabul edeceği tipleri sınırlar ve bu sayede fonksiyon içinde o tipin üyelerine erişmeye izin verir; `T extends { length: number }` yalnızca `length`'i olan değerleri kabul eder ve fonksiyon içinde `x.length` güvenle okunur. `K extends keyof T` kalıbı bir anahtarın gerçekten o nesnede bulunmasını zorunlu kılar, `get(user, 'nme')` gibi bir yazım hatası derlemede yakalanır; Handbook'un önerisi de tip parametresini az kullanmak, iki yerde geçmiyorsa hiç tanımlamamaktır.",
+      "keyConcepts": [
+        {
+          "id": "type-parameter",
+          "label": "Tip parametresiyle farklı tiplerde aynı kod",
+          "aliases": [
+            "tip parametre",
+            "type parameter",
+            "parametre olarak alan",
+            "farklı tiplerle",
+            "aynı kod"
+          ],
+          "anchors": [
+            "Generic, tip parametresi alarak farklı tiplerle aynı kodu çalıştırır."
+          ]
+        },
+        {
+          "id": "vs-any",
+          "label": "any'den farkı: tip ilişkisi korunur",
+          "aliases": [
+            "any kullanmaya gerek",
+            "any kullanılsaydı",
+            "any yerine",
+            "ilişkisini koru",
+            "girdiyle çıktı"
+          ],
+          "anchors": [
+            "Generic girdiyle çıktı arasındaki tip ilişkisini korur, any bu bilgiyi siler."
+          ]
+        },
+        {
+          "id": "inference",
+          "label": "Tip parametresi çıkarılır",
+          "aliases": [
+            "inference",
+            "kendiliğinden çıkar",
+            "kendisi çıkar",
+            "tipi çıkar",
+            "otomatik çıkar"
+          ],
+          "anchors": [
+            "Tip parametresi çoğu zaman çağrıdaki değerden kendiliğinden çıkarılır."
+          ]
+        },
+        {
+          "id": "constraint",
+          "label": "Constraint kabul edilen tipleri sınırlar, üyelere erişim verir",
+          "aliases": [
+            "kabul edebileceği",
+            "kabul edeceği",
+            "t extends {",
+            "length'i olan",
+            "üyelerine eriş"
+          ],
+          "anchors": [
+            "Constraint tip parametresinin kabul edeceği tipleri sınırlar.",
+            "T extends { length: number } ile gövdede length okunabilir."
+          ]
+        },
+        {
+          "id": "keyof-constraint",
+          "label": "K extends keyof T",
+          "aliases": [
+            "extends keyof",
+            "keyof t"
+          ],
+          "anchors": [
+            "K extends keyof T bir anahtarın nesnede bulunmasını zorunlu kılar."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir generic fonksiyonda tip parametresi yalnızca bir yerde geçiyorsa neden gereksizdir?",
+        "Generic bir tip parametresine varsayılan değer (`<T = string>`) vermek ne sağlar?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Generics, More on Functions (Constraints, Guidelines for Writing Good Generic Functions)"
+    },
+    {
+      "id": "javascript-ts-keyof-typeof",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS generics",
+      "difficulty": 2,
+      "prompt": "TypeScript'te keyof ve tip bağlamındaki typeof operatörleri ne yapar?",
+      "modelAnswer": "`keyof`, bir nesne tipinin anahtarlarını string ya da sayı literal'lerinden oluşan bir union olarak verir; `keyof { x: number; y: number }` ifadesi `'x' | 'y'` demektir, string index signature'lı bir tipte ise sonuç `string | number` olur. Tip tarafında kullanılan `typeof` ise JavaScript'teki çalışma anı operatöründen farklıdır; bir değişkenin ya da özelliğinin derleyicinin çıkardığı tipini alır ve yalnızca isimler üzerinde kullanılabilir. İkisi birlikte değerden tip türetmenin temelidir; `keyof typeof config` bir nesnenin anahtarlarını, `ReturnType<typeof createUser>` bir fonksiyonun dönüş tipini elle tekrar yazmadan üretir. Bu sayede tip, kaynağı olan değer değiştiğinde kendiliğinden güncellenir; `as const` ile birleştirildiğinde `(typeof ROLES)[number]` bir dizideki değerlerden literal union çıkarır.",
+      "keyConcepts": [
+        {
+          "id": "keyof-union",
+          "label": "keyof anahtarları union olarak verir",
+          "aliases": [
+            "anahtarlarını union",
+            "anahtarların union",
+            "'x' | 'y'",
+            "anahtar union",
+            "anahtarlarını verir"
+          ],
+          "anchors": [
+            "keyof bir nesne tipinin anahtarlarını union olarak verir."
+          ]
+        },
+        {
+          "id": "typeof-type",
+          "label": "Tip tarafında typeof değişkenin tipini alır",
+          "aliases": [
+            "tip tarafında",
+            "değişkenin tipini",
+            "çalışma anı operatör",
+            "çıkardığı tipini",
+            "type context"
+          ],
+          "anchors": [
+            "Tip tarafında typeof bir değişkenin tipini alır."
+          ]
+        },
+        {
+          "id": "keyof-typeof",
+          "label": "keyof typeof ile değerin anahtarları",
+          "aliases": [
+            "keyof typeof",
+            "anahtarlarını tip olarak"
+          ],
+          "anchors": [
+            "keyof typeof config bir nesnenin anahtarlarını tip olarak verir."
+          ]
+        },
+        {
+          "id": "returntype-typeof",
+          "label": "ReturnType<typeof fn>",
+          "aliases": [
+            "returntype<typeof",
+            "typeof fn",
+            "typeof createuser",
+            "fonksiyonun tipini"
+          ],
+          "anchors": [
+            "ReturnType<typeof fn> bir fonksiyonun dönüş tipini üretir."
+          ]
+        },
+        {
+          "id": "derive-from-value",
+          "label": "Tip değerden türetilir, kendiliğinden güncellenir",
+          "aliases": [
+            "değerden tip",
+            "elle tekrar yazmadan",
+            "kendiliğinden güncellen",
+            "config objesinden tip",
+            "tip üretmek"
+          ],
+          "anchors": [
+            "Tip değerden türetildiği için değer değişince kendiliğinden güncellenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`T[K]` (indexed access type) nedir, keyof ile nasıl birlikte kullanılır?",
+        "Tip bağlamındaki `typeof` neden bir fonksiyon çağrısı üzerinde kullanılamaz?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Keyof Type Operator, Typeof Type Operator"
+    },
+    {
+      "id": "javascript-ts-utility-types",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS tip türetme",
+      "difficulty": 1,
+      "prompt": "TypeScript'teki Partial, Pick, Omit, Record ve ReturnType gibi utility type'lar ne işe yarar?",
+      "modelAnswer": "Utility type'lar mevcut bir tipten yenisini türeten, import gerekmeden her yerde kullanılabilen hazır generic tiplerdir; aynı alanları ikinci kez elle yazmayı ve iki tanımın zamanla birbirinden ayrılmasını önlerler. `Partial<T>` bütün alanları isteğe bağlı yapar ve bir güncelleme isteğinin gövdesini tiplemek için kullanılır, `Required<T>` bunun tersini yapar, `Readonly<T>` ise alanları yalnızca ilk seviyede readonly yapar. `Pick<T, 'id' | 'name'>` yalnızca seçilen alanları alır, `Omit<T, 'password'>` verilen alanları çıkarır; `Record<K, V>` anahtar ve değer tipinden bir nesne tipi kurar, `Record<Role, string[]>` her rol için bir liste tutar. `ReturnType<typeof fn>` ve `Parameters<typeof fn>` bir fonksiyonun dönüş ve parametre tiplerini, `Awaited<T>` ise bir promise'in çözüldüğü değerin tipini verir; çoğu mapped ve conditional type'larla yazılmıştır.",
+      "keyConcepts": [
+        {
+          "id": "derive",
+          "label": "Mevcut tipten yeni tip türetir",
+          "aliases": [
+            "mevcut bir tipten",
+            "var olan bir tipten",
+            "yeni tip üret",
+            "türeten",
+            "elle yazma"
+          ],
+          "anchors": [
+            "Utility type'lar mevcut bir tipten yeni tip türetir."
+          ]
+        },
+        {
+          "id": "partial",
+          "label": "Alanları isteğe bağlı yapar",
+          "aliases": [
+            "opsiyonel",
+            "isteğe bağlı",
+            "güncelleme isteği",
+            "update fonksiyon"
+          ],
+          "anchors": [
+            "Partial bütün alanları isteğe bağlı yapar."
+          ]
+        },
+        {
+          "id": "pick-omit",
+          "label": "Seçilen alanları al ya da çıkar",
+          "aliases": [
+            "seçilen alan",
+            "seçtiğin alan",
+            "alanları çıkar",
+            "verilen alanları",
+            "istenmeyen alan"
+          ],
+          "anchors": [
+            "Pick seçilen alanları alır, Omit verilen alanları çıkarır."
+          ]
+        },
+        {
+          "id": "record",
+          "label": "Anahtar ve değer tipinden nesne tipi",
+          "aliases": [
+            "anahtar ve değer",
+            "anahtar tipi",
+            "record<"
+          ],
+          "anchors": [
+            "Record anahtar ve değer tipinden bir nesne tipi kurar."
+          ]
+        },
+        {
+          "id": "function-types",
+          "label": "Fonksiyonun dönüş ve parametre tipleri",
+          "aliases": [
+            "dönüş tipi",
+            "parameters<",
+            "awaited",
+            "fonksiyonun dönüş"
+          ],
+          "anchors": [
+            "ReturnType bir fonksiyonun dönüş tipini verir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Omit` neden anahtar olarak tipte bulunmayan bir değeri de kabul eder?",
+        "`Readonly<T>` iç içe nesneleri neden korumaz, derin readonly nasıl yazılır?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Utility Types"
+    },
+    {
+      "id": "javascript-ts-conditional-types",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS tip türetme",
+      "difficulty": 3,
+      "prompt": "TypeScript'te conditional type nedir? infer anahtar kelimesi ne işe yarar?",
+      "modelAnswer": "Tip düzeyinde bir if-else olan conditional type `T extends U ? X : Y` biçiminde yazılır; `T`, `U`'ya atanabiliyorsa sonuç `X`, değilse `Y` olur ve çoğunlukla generic bir tip parametresiyle kullanılır. `infer` yalnızca `extends` koşulunun içinde kullanılabilir ve eşleşen yapının bir parçasını yeni bir adla yakalar; `T extends (infer U)[] ? U : T` bir dizinin eleman tipini, standart kütüphanedeki `ReturnType` de aynı yolla bir fonksiyonun dönüş tipini çıkarır. Koşul çıplak bir tip parametresine uygulanıp parametreye bir union geldiğinde dağılır (distributive); `ToArray<string | number>` sonucu `string[] | number[]` olur, bu istenmiyorsa iki taraf köşeli paranteze alınır (`[T] extends [U]`). `Exclude`, `Extract` ve `NonNullable` bu dağılmaya dayanır; koşulda `never`'a düşen üyeler union'dan kendiliğinden çıkar.",
+      "keyConcepts": [
+        {
+          "id": "if-else",
+          "label": "Tip düzeyinde if-else",
+          "aliases": [
+            "if-else",
+            "t extends u",
+            "atanabiliyorsa",
+            "ternary",
+            "üçlü operatör"
+          ],
+          "anchors": [
+            "Conditional type tip düzeyinde bir if-else'tir.",
+            "T, U'ya atanabiliyorsa X, değilse Y olur."
+          ]
+        },
+        {
+          "id": "infer-capture",
+          "label": "infer bir parçayı tip değişkeni olarak yakalar",
+          "aliases": [
+            "yeni bir adla",
+            "eleman tipini",
+            "parçasını yakala",
+            "içinde bir tipi yakala",
+            "infer u"
+          ],
+          "anchors": [
+            "infer koşulun içinde eşleşen parçayı yeni bir adla yakalar."
+          ]
+        },
+        {
+          "id": "distributive",
+          "label": "Union'a dağılır",
+          "aliases": [
+            "distributive",
+            "dağılır",
+            "dağıtıl",
+            "her elemana ayrı",
+            "her üyesine"
+          ],
+          "anchors": [
+            "Union verildiğinde koşul her üyeye ayrı ayrı uygulanır."
+          ]
+        },
+        {
+          "id": "builtins",
+          "label": "Exclude, Extract, NonNullable, ReturnType",
+          "aliases": [
+            "exclude",
+            "extract",
+            "nonnullable",
+            "returntype"
+          ],
+          "anchors": [
+            "Exclude ve Extract conditional type ile yazılmıştır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`[T] extends [U]` yazmak dağılmayı neden durdurur?",
+        "`ReturnType` aşırı yüklenmiş (overload) bir fonksiyonda hangi imzanın dönüş tipini verir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Conditional Types"
+    },
+    {
+      "id": "javascript-ts-mapped-types",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS tip türetme",
+      "difficulty": 3,
+      "prompt": "TypeScript'te mapped type nedir? Hangi durumlarda kullanılır?",
+      "modelAnswer": "Mapped type, bir anahtar kümesi üzerinde dolaşarak her anahtar için bir alan üreten tiptir; çoğunlukla `{ [K in keyof T]: T[K] }` biçiminde, mevcut bir tipin bütün alanlarını aynı kurala göre dönüştürmek için kullanılır. `Partial`, `Required` ve `Readonly` aslında birer mapped type'tır; `readonly` ve `?` belirleyicileri `+` ile eklenir, `-readonly` ve `-?` ile kaldırılır, örneğin `{ -readonly [K in keyof T]: T[K] }` bir tipi yeniden yazılabilir yapar. `as` ile anahtar yeniden adlandırılabilir; template literal tiplerle `getName`, `getEmail` gibi yeni adlar üretilebilir, bir anahtar `never`'a eşlenirse tipten düşer, bu da belirli alanları süzmenin yoludur. Tipik kullanımlar bir form tipinden her alan için hata mesajı tipi üretmek, bir nesnenin bütün metotlarını async sürümlere çevirmek ya da bir olay haritasından dinleyici adları türetmektir; amaç aynı yapıyı ikinci kez yazmamak ve kaynak tip güncellendiğinde türetilenin de güncel kalmasıdır.",
+      "keyConcepts": [
+        {
+          "id": "iterate-keys",
+          "label": "Anahtarlar üzerinde dolaşır",
+          "aliases": [
+            "[k in keyof",
+            "in keyof",
+            "anahtarları üzerinde",
+            "anahtar kümesi",
+            "her anahtar için"
+          ],
+          "anchors": [
+            "Mapped type anahtarlar üzerinde dolaşarak her anahtar için bir alan üretir."
+          ]
+        },
+        {
+          "id": "modifiers",
+          "label": "readonly ve ? eklenip kaldırılır",
+          "aliases": [
+            "-readonly",
+            "-?",
+            "belirleyici",
+            "modifier",
+            "koyarak kaldır"
+          ],
+          "anchors": [
+            "readonly ve ? belirleyicileri - ile kaldırılır."
+          ]
+        },
+        {
+          "id": "built-on",
+          "label": "Partial ve Readonly mapped type'tır",
+          "aliases": [
+            "partial ve readonly",
+            "partial, required",
+            "aslında birer",
+            "mapped type ile yazılmış"
+          ],
+          "anchors": [
+            "Partial, Required ve Readonly aslında birer mapped type'tır."
+          ]
+        },
+        {
+          "id": "key-remap",
+          "label": "as ile yeniden adlandırma, never ile süzme",
+          "aliases": [
+            "yeniden adlandır",
+            "template literal",
+            "getname",
+            "never'a eşle",
+            "never'a map"
+          ],
+          "anchors": [
+            "as ile anahtar yeniden adlandırılır.",
+            "never'a eşlenen anahtar tipten düşer."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir nesnenin yalnızca fonksiyon olan alanlarını seçen mapped type nasıl yazılır?",
+        "Homomorphic mapped type, kaynak tipteki `readonly` ve `?` belirleyicilerini neden korur?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Mapped Types, Template Literal Types"
+    },
+    {
+      "id": "javascript-ts-narrowing-type-guards",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS narrowing",
+      "difficulty": 2,
+      "prompt": "TypeScript'te narrowing nedir? Type guard nasıl yazılır?",
+      "modelAnswer": "Narrowing, geniş bir tipin, çoğunlukla bir union'ın, kod içindeki kontrollerle daha dar bir tipe indirilmesidir; TypeScript `if`, `return` ve `switch` gibi yapıların kontrol akışını izler ve her kolda değerin olabileceği tipleri yeniden hesaplar. typeof kontrolü ilkel tipleri, instanceof class örneklerini, in operatörü bir alanın varlığını, null ya da belirli bir literal'le karşılaştırma da eşitliği kullanarak dar tipe indirir; erken bir `return`'den sonraki kodda elenen tipler artık yoktur. Bu yerleşik kontroller yetmediğinde dönüş tipi `value is Fish` olan bir fonksiyon yazılır (type predicate); fonksiyon true döndüğünde çağıran tarafta değer o tipe indirilir, `asserts value is Fish` biçimindeki assertion function ise koşul sağlanmazsa hata fırlatarak sonraki satırlarda aynı etkiyi verir. Type guard'ın gövdesini derleyici doğrulamaz, yanlış yazılmış bir predicate tip sistemini sessizce yanıltır; ayrıca `typeof null` sonucu `'object'` olduğu için `typeof` ile `'object'` arayan bir kontrol null'ı da içeri alır.",
+      "keyConcepts": [
+        {
+          "id": "control-flow",
+          "label": "Kontrol akışı izlenir",
+          "aliases": [
+            "kontrol akışı",
+            "control flow",
+            "her kolda",
+            "erken bir return",
+            "return'den sonra"
+          ],
+          "anchors": [
+            "TypeScript kontrol akışını izler, her kolda tipi yeniden hesaplar.",
+            "Erken return'den sonraki kodda elenen tipler yoktur."
+          ]
+        },
+        {
+          "id": "builtin-guards",
+          "label": "typeof, instanceof, in ve eşitlik",
+          "aliases": [
+            "in operatörü",
+            "typeof kontrol",
+            "typeof x",
+            "instanceof, in",
+            "eşitlik"
+          ],
+          "anchors": [
+            "typeof, instanceof, in operatörü ve eşitlik kontrolleri tipi daraltır."
+          ]
+        },
+        {
+          "id": "type-predicate",
+          "label": "value is T dönüş tipli fonksiyon",
+          "aliases": [
+            "is fish",
+            "value is fish",
+            "type predicate",
+            "asserts",
+            "kendi type guard"
+          ],
+          "anchors": [
+            "Dönüş tipi value is Fish olan fonksiyon kendi type guard'ını tanımlar."
+          ]
+        },
+        {
+          "id": "not-verified",
+          "label": "Predicate'in gövdesi doğrulanmaz",
+          "aliases": [
+            "doğrulamaz",
+            "sessizce yanılt",
+            "yanlış yazılmış",
+            "güvenmek zorunda"
+          ],
+          "anchors": [
+            "Derleyici type guard'ın gövdesini doğrulamaz, yanlış predicate tip sistemini yanıltır."
+          ]
+        },
+        {
+          "id": "typeof-null",
+          "label": "typeof null 'object' döner",
+          "aliases": [
+            "typeof null",
+            "null'ı da",
+            "null da object"
+          ],
+          "anchors": [
+            "typeof null 'object' döndüğü için object kontrolü null'ı da içeri alır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`Array.prototype.filter` ile bir union dizisinden yalnızca bir tipi süzerken neden type predicate gerekir?",
+        "Assertion function (`asserts value is T`) ne zaman type predicate yerine tercih edilir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Narrowing (typeof, Truthiness, Equality, in, instanceof, Control flow analysis, Using type predicates, Assertion functions)"
+    },
+    {
+      "id": "javascript-ts-discriminated-union",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS narrowing",
+      "difficulty": 2,
+      "prompt": "Discriminated union nedir? TypeScript'te neden bu kadar sık kullanılır?",
+      "modelAnswer": "Discriminated union, her üyesinin aynı adlı ve literal tipli ortak bir alan (discriminant) taşıdığı bir union'dır, örneğin `{ kind: 'circle'; radius: number } | { kind: 'square'; size: number }`. Bu alan `switch` ya da `if` ile kontrol edildiğinde TypeScript union'ı o kola ait tek üyeye indirir; `radius` yalnızca daire kolunda erişilebilir olur ve olmayan bir alana yanlışlıkla erişmek derlemede yakalanır. `default` kolunda değeri `never` tipli bir değişkene atamak eksiksizlik kontrolü (exhaustiveness check) sağlar; union'a yeni bir üye eklenip ele alınmazsa derleme tam o satırda durur. Opsiyonel alanlarla dolu tek bir tip yerine her durumu ayrı tanımladığı için geçersiz durumları ifade edilemez kılar; yükleniyor, başarılı ve hatalı gibi istek durumları, reducer action'ları ve API yanıtları bu yüzden çoğunlukla bu kalıpla modellenir.",
+      "keyConcepts": [
+        {
+          "id": "common-literal",
+          "label": "Ortak literal alan (discriminant)",
+          "aliases": [
+            "ortak bir alan",
+            "ortak bir literal",
+            "literal alan",
+            "literal tipli",
+            "discriminant",
+            "kind:"
+          ],
+          "anchors": [
+            "Her üye aynı adlı, literal tipli ortak bir alan taşır."
+          ]
+        },
+        {
+          "id": "switch-narrows",
+          "label": "switch ile tek üyeye iner",
+          "aliases": [
+            "otomatik daralt",
+            "switch ile kontrol",
+            "her case'de",
+            "o kola ait",
+            "tek üyeye"
+          ],
+          "anchors": [
+            "Ortak alan switch ile kontrol edilince union o kola ait tek üyeye iner."
+          ]
+        },
+        {
+          "id": "exhaustive",
+          "label": "never ile eksiksizlik kontrolü",
+          "aliases": [
+            "exhaustive",
+            "eksiksizlik",
+            "never tipine",
+            "never tipli",
+            "yeni bir üye",
+            "yeni bir tip eklendiğinde"
+          ],
+          "anchors": [
+            "default kolunda never'a atama, ele alınmayan yeni üyeyi derleme hatasına çevirir."
+          ]
+        },
+        {
+          "id": "invalid-states",
+          "label": "Geçersiz durumlar ifade edilemez",
+          "aliases": [
+            "geçersiz durum",
+            "ifade edilemez",
+            "opsiyonel alanlarla dolu",
+            "her durumu ayrı"
+          ],
+          "anchors": [
+            "Her durumu ayrı tanımlamak geçersiz durumları ifade edilemez kılar."
+          ]
+        },
+        {
+          "id": "use-cases",
+          "label": "İstek durumları, reducer action'ları, API yanıtları",
+          "aliases": [
+            "reducer action",
+            "redux action",
+            "api sonuçlarını",
+            "api yanıtları",
+            "success/error",
+            "istek durumları"
+          ],
+          "anchors": [
+            "İstek durumları ve reducer action'ları bu kalıpla modellenir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Discriminant alan bir `boolean` olabilir mi, `success: true | false` ile nasıl kullanılır?",
+        "Zod'da discriminated union şeması nasıl tanımlanır?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Narrowing (Discriminated unions, The never type, Exhaustiveness checking)"
+    },
+    {
+      "id": "javascript-ts-as-vs-satisfies",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS as ve literal",
+      "difficulty": 2,
+      "prompt": "TypeScript'te as (type assertion) ile satisfies arasındaki fark nedir?",
+      "modelAnswer": "`as`, derleyiciye \"bu değerin tipini ben senden iyi biliyorum\" demektir ve ifadenin tipini doğrudan verilen tiple değiştirir. Çalışma anında hiçbir kontrol üretmez, yalnızca birbiriyle hiç örtüşmeyen tiplere (`'abc' as number`) itiraz eder; yanlış bir iddia derlemeden geçer ve hata ancak çalışırken çıkar, `as unknown as T` ile bu son engel de aşılabilir. TypeScript 4.9'la gelen `satisfies` ise ifadenin bir tipe uyduğunu denetler ama ifadenin çıkarılan tipine dokunmaz; `const routes = { home: '/' } satisfies Record<string, string>` hem eksik ya da hatalı alanı yakalar hem de `routes.home` alanının varlığını ve literal ayrıntıları korur. Kısaca `as` denetimi gevşetip derleyiciyi susturur, `satisfies` denetimi korurken çıkarımı da korur; `const x: T = value` biçimindeki tip açıklaması da denetler ama değişkenin tipini `T`'ye genişletir.",
+      "keyConcepts": [
+        {
+          "id": "as-overrides",
+          "label": "as tipi zorla değiştirir",
+          "aliases": [
+            "ben biliyorum",
+            "senden iyi",
+            "tipini değiştir",
+            "derleyiciyi sustur",
+            "derleyiciye"
+          ],
+          "anchors": [
+            "as derleyiciye değerin tipini bildiğini söyler ve tipi değiştirir."
+          ]
+        },
+        {
+          "id": "as-no-check",
+          "label": "as çalışma anında kontrol üretmez",
+          "aliases": [
+            "kontrol etmez",
+            "kontrol üretmez",
+            "çalışırken çık",
+            "çalışma anında hata",
+            "as unknown as"
+          ],
+          "anchors": [
+            "as çalışma anında hiçbir kontrol üretmez, yanlış iddia çalışırken patlar."
+          ]
+        },
+        {
+          "id": "satisfies-checks",
+          "label": "satisfies tipe uyduğunu denetler",
+          "aliases": [
+            "tipe uyduğunu",
+            "uyduğunu kontrol",
+            "uyduğunu denetle",
+            "hatalı alanı",
+            "eksik alan"
+          ],
+          "anchors": [
+            "satisfies ifadenin bir tipe uyduğunu denetler."
+          ]
+        },
+        {
+          "id": "keeps-inferred",
+          "label": "Çıkarılan tip korunur",
+          "aliases": [
+            "çıkarılan tipi",
+            "çıkarılan tipine",
+            "spesifik tip",
+            "literal ayrıntı",
+            "tipine dokunmaz",
+            "çıkarımı da korur"
+          ],
+          "anchors": [
+            "satisfies ifadenin çıkarılan tipini değiştirmez, daha dar tip korunur."
+          ]
+        }
+      ],
+      "followUps": [
+        "Non-null assertion (`value!`) hangi durumda kullanılabilir, riski nedir?",
+        "`satisfies` ile `as const` birlikte kullanıldığında ne elde edilir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Everyday Types (Type Assertions); TypeScript 4.9 sürüm notları: The satisfies Operator"
+    },
+    {
+      "id": "javascript-ts-as-const-readonly",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS as ve literal",
+      "difficulty": 2,
+      "prompt": "TypeScript'te as const ve readonly ne işe yarar? Değeri gerçekten değiştirilemez yapar mı?",
+      "modelAnswer": "`as const` bir ifadenin tipini mümkün olan en dar hâliyle çıkarır: string'ler literal tipe dönüşür, diziler readonly tuple olur ve nesnenin iç içe bütün alanları readonly işaretlenir; `['a', 'b'] as const` ifadesinin tipi `string[]` değil `readonly ['a', 'b']`'dir. Bu sayede `(typeof ROLES)[number]` gibi bir ifadeyle bir değer listesinden literal union türetilebilir ve aynı değerleri tip olarak ikinci kez yazmak gerekmez. `readonly` ise bir alanın ya da dizinin tip denetimi sırasında yeniden atanmasını engeller; `readonly string[]` üzerinde `push` yoktur. İkisi de yalnızca derleme anında vardır ve çıktıda hiçbir iz bırakmaz, değeri çalışma anında dondurmaz; bunun için `Object.freeze` gerekir, o da yalnızca ilk seviyeyi dondurur. `readonly` ayrıca sığdır, iç nesnenin alanları yine yazılabilir, ve uyumluluk karşılaştırmasında dikkate alınmadığı için aynı nesneyi gösteren yazılabilir başka bir referans üzerinden değer yine değişebilir.",
+      "keyConcepts": [
+        {
+          "id": "narrowest",
+          "label": "En dar literal tip",
+          "aliases": [
+            "en dar hâl",
+            "en dar literal",
+            "literal tipe",
+            "dar literal"
+          ],
+          "anchors": [
+            "as const ifadenin tipini en dar literal hâliyle çıkarır."
+          ]
+        },
+        {
+          "id": "readonly-tuple",
+          "label": "Diziler readonly tuple olur",
+          "aliases": [
+            "readonly tuple",
+            "readonly ['a'",
+            "string[] değil",
+            "tuple olur",
+            "bütün alanları readonly"
+          ],
+          "anchors": [
+            "as const ile dizi string[] değil readonly tuple olur."
+          ]
+        },
+        {
+          "id": "compile-only",
+          "label": "Yalnızca derleme anında, çalışma anında dondurmaz",
+          "aliases": [
+            "derleme anında",
+            "hiçbir iz",
+            "çalışma anında dondurmaz",
+            "object.freeze",
+            "freeze değil",
+            "çalışma anında hiçbir"
+          ],
+          "anchors": [
+            "readonly ve as const çalışma anında değeri dondurmaz.",
+            "Değeri dondurmak için Object.freeze gerekir."
+          ]
+        },
+        {
+          "id": "shallow",
+          "label": "readonly sığdır, takma ad üzerinden değişebilir",
+          "aliases": [
+            "sığdır",
+            "ilk seviye",
+            "sadece o seviye",
+            "iç nesne",
+            "içteki obje",
+            "başka bir referans"
+          ],
+          "anchors": [
+            "readonly sığdır, iç nesnenin alanları yazılabilir kalır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`readonly` bir dizi parametresi almak fonksiyonun çağıranlarına ne güvence verir?",
+        "`Object.freeze` ile `as const` arasındaki fark nedir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Object Types (readonly Properties, The ReadonlyArray Type, readonly Tuple Types), Everyday Types (Literal Inference)"
+    },
+    {
+      "id": "javascript-ts-enum-vs-literal-union",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS as ve literal",
+      "difficulty": 2,
+      "prompt": "TypeScript'te enum ile string literal union arasındaki fark nedir? Hangisini tercih edersin?",
+      "modelAnswer": "`enum`, TypeScript'in tip silmeyle tamamen ortadan kalkmayan birkaç yapısından biridir; derlendiğinde JavaScript'te gerçek bir nesne üretir ve sayısal enum'larda değerden ada ters eşleme de bu nesnede tutulur. `'admin' | 'user'` gibi bir string literal union ise yalnızca tip düzeyinde vardır, derlemede tamamen silinir ve ek kod üretmez; değerler düz string olduğu için JSON'da, API'de ve loglarda olduğu gibi okunur. Enum'un çalışma anı kodu üretmesi, Node.js'in TypeScript dosyalarını doğrudan çalıştırırken kullandığı type stripping'de desteklenmemesine de yol açar; TypeScript 5.8'le gelen `erasableSyntaxOnly` ayarı bu yüzden enum'u, çalışma anı kodu olan namespace'leri ve parameter property'leri hata sayar. `const enum` kullanım yerlerine değeri gömerek nesneyi ortadan kaldırır ama her dosyayı ayrı derleyen araçlarla (`isolatedModules`) uyumsuzdur. Bu yüzden yeni kodda çoğunlukla literal union ya da `as const` ile tanımlanmış bir nesne ve ondan türetilen tip tercih edilir; enum, mevcut kodla uyum gerektiğinde ya da sabit grubunun gerçekten bir nesne olarak dolaşması gerektiğinde mantıklıdır.",
+      "keyConcepts": [
+        {
+          "id": "enum-runtime",
+          "label": "enum çalışma anında gerçek nesne üretir",
+          "aliases": [
+            "gerçek bir nesne",
+            "gerçek bir obje",
+            "nesne üretir",
+            "obje oluştur",
+            "runtime kod",
+            "çalışma anı kodu"
+          ],
+          "anchors": [
+            "enum derlenince JavaScript'te gerçek bir nesne üretir."
+          ]
+        },
+        {
+          "id": "reverse-mapping",
+          "label": "Sayısal enum'da ters eşleme",
+          "aliases": [
+            "ters eşleme",
+            "reverse mapping",
+            "değerden ada"
+          ],
+          "anchors": [
+            "Sayısal enum'larda değerden ada ters eşleme vardır."
+          ]
+        },
+        {
+          "id": "union-erased",
+          "label": "Literal union tamamen silinir, kod üretmez",
+          "aliases": [
+            "tamamen silin",
+            "ek kod üretme",
+            "hiç kod",
+            "yalnızca tip düzeyinde",
+            "sadece tip düzeyinde"
+          ],
+          "anchors": [
+            "Literal union derlemede tamamen silinir, ek kod üretmez."
+          ]
+        },
+        {
+          "id": "erasable",
+          "label": "Type stripping ve erasableSyntaxOnly enum'u kabul etmez",
+          "aliases": [
+            "type stripping",
+            "erasablesyntaxonly",
+            "strip-types",
+            "strip types"
+          ],
+          "anchors": [
+            "Node.js'in type stripping desteği enum'u çalıştıramaz.",
+            "erasableSyntaxOnly enum'u hata sayar."
+          ]
+        },
+        {
+          "id": "prefer",
+          "label": "Literal union ya da as const nesne tercih edilir",
+          "aliases": [
+            "as const",
+            "const enum",
+            "isolatedmodules",
+            "literal union tercih",
+            "as const obje"
+          ],
+          "anchors": [
+            "Yeni kodda literal union ya da as const nesne tercih edilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "`as const` bir nesneden enum benzeri bir tip nasıl türetilir?",
+        "Sayısal enum'a enum'da olmayan bir sayı atanabilir mi?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Enums (Objects vs Enums, const enums); TypeScript 5.8 sürüm notları: The --erasableSyntaxOnly Option; Node.js: Modules: TypeScript (Type stripping)"
+    },
+    {
+      "id": "javascript-ts-tsconfig-strict",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS yapılandırma",
+      "difficulty": 2,
+      "prompt": "tsconfig'teki strict ayarı neleri açar? En önemli strict seçenekleri nelerdir?",
+      "modelAnswer": "Tek bir `strict` ayarı, ayrı ayrı da açılabilen bir grup katı denetimi birlikte açar; aralarında `strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, `strictBindCallApply`, `strictPropertyInitialization`, `noImplicitThis`, `useUnknownInCatchVariables` ve `alwaysStrict` vardır, yeni TypeScript sürümleri bu gruba yeni denetimler ekleyebilir ve 6.0'dan beri ayar varsayılan olarak açıktır. En etkilisi `strictNullChecks`'tir; null ve undefined'ı her tipe atanabilir olmaktan çıkarıp ayrı tipler yapar, bu yüzden `string | null` bir değer kontrol edilmeden kullanılamaz ve \"undefined'ın özelliği okunamıyor\" hatalarının çoğu derlemede yakalanır. `noImplicitAny` tipi çıkarılamayan parametrelerin sessizce any'ye düşmesini hata yapar, `strictFunctionTypes` fonksiyon parametrelerini daha sağlam (contravariant) karşılaştırır, `strictPropertyInitialization` de constructor'da atanmayan class alanlarını yakalar. `noUncheckedIndexedAccess` ve `exactOptionalPropertyTypes` gibi bazı faydalı ayarlar `strict`'e dahil değildir ve ayrıca açılır; mevcut bir projeye strict kademeli eklenirken bayraklar teker teker açılıp hatalar parça parça giderilir.",
+      "keyConcepts": [
+        {
+          "id": "umbrella",
+          "label": "Bir grup katı denetimi birlikte açar",
+          "aliases": [
+            "bir grup",
+            "birlikte açar",
+            "birlikte açıl",
+            "katı denetim",
+            "katı kontrol"
+          ],
+          "anchors": [
+            "strict bir grup katı denetimi birlikte açar."
+          ]
+        },
+        {
+          "id": "strict-null",
+          "label": "strictNullChecks null ve undefined'ı ayırır",
+          "aliases": [
+            "strictnullchecks",
+            "null ve undefined'ı ayrı",
+            "kontrol etmeden kullan",
+            "kontrol edilmeden kullan"
+          ],
+          "anchors": [
+            "strictNullChecks null ve undefined'ı ayrı tipler yapar.",
+            "string | null bir değer kontrol edilmeden kullanılamaz."
+          ]
+        },
+        {
+          "id": "no-implicit-any",
+          "label": "noImplicitAny gizli any'yi hata yapar",
+          "aliases": [
+            "noimplicitany",
+            "gizli any",
+            "sessizce any",
+            "örtük any"
+          ],
+          "anchors": [
+            "noImplicitAny tipi çıkarılamayan yerde gizli any'yi hata yapar."
+          ]
+        },
+        {
+          "id": "others",
+          "label": "strictFunctionTypes, strictPropertyInitialization",
+          "aliases": [
+            "strictfunctiontypes",
+            "strictpropertyinitialization",
+            "useunknownincatchvariables",
+            "strictbindcallapply",
+            "noimplicitthis"
+          ],
+          "anchors": [
+            "strictFunctionTypes ve strictPropertyInitialization da strict grubundadır."
+          ]
+        },
+        {
+          "id": "outside-strict",
+          "label": "noUncheckedIndexedAccess strict'e dahil değil",
+          "aliases": [
+            "nouncheckedindexedaccess",
+            "exactoptionalpropertytypes",
+            "dahil değil",
+            "kademeli"
+          ],
+          "anchors": [
+            "noUncheckedIndexedAccess strict'e dahil değildir, ayrıca açılır."
+          ]
+        }
+      ],
+      "followUps": [
+        "`noUncheckedIndexedAccess` açıldığında `array[0]` ifadesinin tipi nasıl değişir?",
+        "Büyük bir JavaScript projesini TypeScript'e geçirirken strict'i nasıl kademeli açarsın?"
+      ],
+      "source": "Kendi derleme — TSConfig Reference: strict, noUncheckedIndexedAccess, exactOptionalPropertyTypes; TypeScript 6.0 duyurusu"
+    },
+    {
+      "id": "javascript-ts-declaration-files",
+      "category": "javascript",
+      "kind": "definition",
+      "topic": "TS yapılandırma",
+      "difficulty": 2,
+      "prompt": "TypeScript'te declaration dosyaları (.d.ts) nedir? Ne zaman gerekir?",
+      "modelAnswer": "Declaration dosyası yalnızca tip bilgisi taşıyan, hiçbir çalışan kod içermeyen bir dosyadır; JavaScript ile yazılmış ya da önceden derlenmiş bir kodun dışa açtığı fonksiyon, class ve değişkenlerin tiplerini derleyiciye anlatır. Bir kütüphane kendi tiplerini paketinde taşıyorsa (`package.json`'daki `types` alanı) ek bir şey gerekmez; taşımıyorsa topluluğun DefinitelyTyped deposunda yazdığı tipler `@types/lodash` gibi bir paketle geliştirme bağımlılığı olarak kurulur. Kendi kütüphanesini yayımlayan biri `tsconfig`'te `declaration: true` açarak derleyicinin her `.js` çıktısının yanına bir `.d.ts` üretmesini sağlar, böylece kullanıcılar kaynak koda ihtiyaç duymadan tipleri alır. Elle yazılan declaration'larda `declare` anahtar kelimesi kod üretmeden bir değerin var olduğunu bildirir (`declare const APP_VERSION: string`), `declare module` ile var olan bir modülün tipleri genişletilir, `declare global` ile de global tiplere alan eklenir.",
+      "keyConcepts": [
+        {
+          "id": "types-only",
+          "label": "Yalnızca tip bilgisi, çalışan kod yok",
+          "aliases": [
+            "yalnızca tip bilgisi",
+            "sadece tip bilgisi",
+            "çalışan kod içermeyen",
+            "kod içermeyen",
+            "implementasyon yok"
+          ],
+          "anchors": [
+            "Declaration dosyası yalnızca tip bilgisi taşır, çalışan kod içermez."
+          ]
+        },
+        {
+          "id": "js-libraries",
+          "label": "JavaScript kütüphanelerini tiplemek",
+          "aliases": [
+            "javascript ile yazılmış",
+            "javascript kütüphane",
+            "js kütüphane",
+            "önceden derlenmiş"
+          ],
+          "anchors": [
+            "JavaScript ile yazılmış bir kütüphanenin tiplerini derleyiciye anlatır."
+          ]
+        },
+        {
+          "id": "definitely-typed",
+          "label": "Paketteki types alanı ya da DefinitelyTyped",
+          "aliases": [
+            "definitelytyped",
+            "types/",
+            "types alanı",
+            "kendi tiplerini"
+          ],
+          "anchors": [
+            "Kütüphane kendi tiplerini taşımıyorsa DefinitelyTyped'dan types paketi kurulur."
+          ]
+        },
+        {
+          "id": "declaration-option",
+          "label": "declaration: true ile üretim",
+          "aliases": [
+            "declaration: true",
+            "declaration true",
+            "--declaration",
+            "yanına bir .d.ts"
+          ],
+          "anchors": [
+            "declaration: true ile derleyici .d.ts dosyalarını üretir."
+          ]
+        },
+        {
+          "id": "declare",
+          "label": "declare, declare module, declare global",
+          "aliases": [
+            "declare module",
+            "declare global",
+            "declare const",
+            "declare ile",
+            "augmentation"
+          ],
+          "anchors": [
+            "declare kod üretmeden bir değerin var olduğunu bildirir.",
+            "declare module ile var olan bir modülün tipleri genişletilir."
+          ]
+        }
+      ],
+      "followUps": [
+        "Bir paketin `@types` paketi ile kendi tipleri farklı sürümde olursa ne olur?",
+        "`declare global` neden bir modül dosyasında `export {}` gerektirir?"
+      ],
+      "source": "Kendi derleme — TypeScript Handbook: Declaration Files (Introduction, Consumption, Publishing)"
     }
   ]
 }

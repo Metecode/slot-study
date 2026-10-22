@@ -1244,7 +1244,6 @@
           "label": "Yeni reconciliation motoru",
           "aliases": [
             "reconciliation motor",
-            "motor",
             "engine",
             "yeniden yazım",
             "stack tabanlı",
@@ -1717,7 +1716,7 @@
             "error boundary",
             "hata sınırı",
             "promise reddedil",
-            "reject",
+            "reject edil",
             "yüklenemezse"
           ],
           "anchors": [
@@ -1924,7 +1923,7 @@
           "aliases": [
             "event handler'lardaki",
             "asenkron kod",
-            "settimeout",
+            "settimeout callback",
             "yakalamaz",
             "ssr'daki",
             "sunucu tarafındaki"
@@ -2214,7 +2213,6 @@
             "dependency array",
             "bağımlılık dizi",
             "boş dizi",
-            "[]",
             "deps dizi",
             "bağımlılık listesi"
           ],
@@ -2645,8 +2643,8 @@
             "automatic batching",
             "otomatik batching",
             "react 18",
-            "settimeout",
-            "promise"
+            "asenkron kod",
+            "promise gibi"
           ],
           "anchors": [
             "React 18 ile promise ve setTimeout içindekiler de gruplanır."

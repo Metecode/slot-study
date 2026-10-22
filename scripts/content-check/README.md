@@ -26,7 +26,7 @@ npm run check:content -- --base main                    # PR öncesi
 Önerilen akış:
 
 1. Değişikliği merge-questions biçiminde bir dosyaya yaz.
-2. `--edits <dosya> --base HEAD` ile farkı gör. Yeni çift, uyarı ya da tuzak çıkarsa çoğu zaman yeni cevaptaki bir kelimeyi değiştirmek yeter; başka sorunun alias'ına dokunma.
+2. `--edits <dosya> --base HEAD` ile farkı gör. Yeni çift, uyarı ya da tuzak çıkarsa çoğu zaman yeni cevaptaki bir kelimeyi değiştirmek yeter; başka sorunun alias'ına dokunma. Tek istisna, başka kategorideki **tek kelimelik genel alias**: yeni içerik o kelimeyi kaçınılmaz olarak kullanıyorsa ("this", "promise", `addEventListener`'ın içindeki "listener") alias ifadeye daraltılabilir ya da çıkarılabilir. Şartlar: o sorunun model cevabı aynı kalır ve kendi kavramlarının hepsini yine tutar, kategorinin doğal cevap skoru değişmez, her değişiklik ("soru-id: eski → yeni") commit mesajında ve raporda listelenir.
 3. `npm run merge-questions -- <dosya> --replace`
 4. PR'dan önce `--base main`.
 
@@ -91,7 +91,7 @@ Tek kaynak `generic.ts`. Listeyi değiştirirsen bu bölümü de güncelle.
 | java | java, spring |
 | web | başlık, header, bağlantı, connection, adres, durum kodu, status, java |
 | cybersecurity | web listesi + security, secure, saldırı, attack, saldırgan, attacker, şifre, parola, password, zafiyet, vulnerability, risk, koruma, korur, önlem, token, cookie, çerez, erişim, access, kimlik, anahtar, key, doğrulama, validation, sorgu, query, script, javascript, html, tehlikeli, zararlı, kötü niyetli, malicious |
-| javascript | yok, yalnızca ortak liste |
+| javascript | javascript, typescript, tip, tipi, type, tür, türü, motor, engine, node, node.js |
 
 ## Dosyalar
 

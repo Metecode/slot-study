@@ -542,7 +542,6 @@
           "label": "400: istek bozuk, ayrıştırılamıyor",
           "aliases": [
             "sözdizimi",
-            "syntax",
             "bozuk json",
             "malformed",
             "ayrıştırıla",
@@ -2023,8 +2022,7 @@
             "time-to-live",
             "ttl süre",
             "ttl dol",
-            "yayılma",
-            "propagation"
+            "yayılma"
           ],
           "anchors": [
             "Kayıtlar TTL boyunca önbellekte kalır, bu yüzden DNS değişiklikleri hemen yayılmaz."
@@ -2867,7 +2865,7 @@
             "ele geçiril",
             "takeover",
             "cookie tossing",
-            "kapsam"
+            "kapsamını genişlet"
           ],
           "anchors": [
             "Domain kapsamı genişlettiği için başka ya da ele geçirilmiş bir alt alan cookie'yi okuyup üzerine yazabilir."
@@ -3363,7 +3361,6 @@
             "aralıklarla",
             "periyodik",
             "her saniye",
-            "interval",
             "düzenli aralık",
             "belirli aralık"
           ],
@@ -3583,7 +3580,7 @@
           "aliases": [
             "yeniden bağlan",
             "reconnect",
-            "ping",
+            "ping mesaj",
             "heartbeat",
             "hangi sunucu",
             "sticky"
