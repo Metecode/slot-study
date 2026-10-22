@@ -30,6 +30,9 @@ biri derlenemezse hiçbiri kurulmaz: compose ikisini aynı `IMAGE_TAG` ile
 çeker, yalnızca backend'i kurmanın yolu yok. Yalnızca `docs/` ya da `.md`
 değişen push'lar deploy tetiklemez.
 
+Canlıdaki soru içeriğinin bir commit'le aynı olup olmadığını
+`npm run check:live -- [revizyon]` gösterir (varsayılan `HEAD`, fark varsa çıkış kodu 1).
+
 `ci.yml` yalnızca ilgili yollar değişince çalışır. Branch protection'da
 bu job'lar zorunlu kontrol yapılırsa, yalnızca doküman değiştiren bir PR
 kontrolün gelmesini sonsuza kadar bekler; zorunlu yapmadan önce bunu

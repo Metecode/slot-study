@@ -26,7 +26,8 @@
     "store:screenshots": "node scripts/store-screenshots.mjs",
     "feature-graphic": "node scripts/generate-feature-graphic.mjs",
     "merge-questions": "node scripts/merge-questions.ts",
-    "check:content": "node scripts/content-check.ts"
+    "check:content": "node scripts/content-check.ts",
+    "check:live": "node scripts/check-live.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",
