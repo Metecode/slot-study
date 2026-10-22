@@ -84,6 +84,32 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - `prefers-reduced-motion` her animasyonda kontrol edilir.
 - Animasyon atlanabilir olmalı; kullanıcı 40. soruda beklemek istemez.
 
+## Tambur etiketleri
+
+- **Etiket en fazla iki satır, yüz yüksekliği sabit.** Şerit satır
+  cinsinden kayıyor (`drumStrip.ts`), bütün satırlar aynı boyda olmalı;
+  iki satır 56 px'lik satıra sığıyor. Satır aralığı 1.3'ün altına inmez:
+  1.2'de kırpılan üçüncü satırdaki "İ"nin noktası görünüyordu. Sığmayan ad
+  ikinci satırın sonunda "…" ile biter.
+- **"/" sonrasında kırılabilir** (`components/reelLabel.ts`). Tarayıcı "/"
+  işaretinde satır kırmıyor, "IQueryable/IEnumerable" tek kelime
+  sayılıyordu. Etiket metni tamburlara yalnızca bu fonksiyondan geçer.
+- **Dar ekranda alan tamburlara gider** (`Machine.module.css`, 560 px
+  kuralı). 360'ta 7rem'lik kol paneli ve arası makinenin iç genişliğinin
+  %45'ini alıyordu, tambur başına yazıya 45 px kalıyordu. Kol paneli
+  96 px, 400 px'in altında 72 px; yan iç boşluğu olmadığı için kol 400 ve
+  üstünde masaüstündeki boyutunda (94 px), altında 70 px. Genişlik px ile
+  yazılır: rem, Android'in yazı boyutu ayarında büyüyüp tamburların yerini
+  yiyordu. 380 px ve altında tambur yazısı 12 px (`--fs-mono`).
+- **Yeni konu adı 360'ta sığmalı.** Pay ince: en uzun kelimeler 12
+  karakter ("Clickjacking", "yapılandırma"); 360'ta 12 px'te 86.4 px, alan
+  89.5 px. İçerik eklenince `npm run scan:layout -- --reels` çalıştırılır;
+  %100 yapılandırmalarda kesilme hata, %130 ve 277'de uyarı. 13 karakterlik
+  bir kelime kontrolü kırmızıya düşürür; önce içerikte kısaltma denenir.
+- **Tam ad soru kartında da görünür.** Makara ekran okuyucudan gizli ve
+  büyük yazıda etiket hâlâ kesilebiliyor; soru kartı kategori ve konuyu
+  sonuç paneliyle aynı sırada gösterir.
+
 ## Bu repo'da yapılmayacaklar
 
 - Three.js veya WebGL. Makine CSS 3D ve SVG ile çizilir.
