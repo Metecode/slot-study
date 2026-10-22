@@ -45,9 +45,12 @@ const CONFIGS = [
   Yalnızca tambur kontrolünde: iPhone (390), Galaxy A52 (412) ve tablet.
   Bu genişlikler değerlendirme ekranını yeni bir duruma sokmuyor, makarayı
   sokuyor; soru taramasına girselerdi her biri ~2.5 dakika eklerdi.
+  400: kol panelinin büyüdüğü sınır (Machine.module.css), tamburdaki payın
+  en ince olduğu yerlerden biri.
 */
 const REEL_ONLY_CONFIGS = [
   { id: "390@100", width: 390, height: 844, fontScale: 1, mobile: true },
+  { id: "400@100", width: 400, height: 860, fontScale: 1, mobile: true },
   { id: "412@100", width: 412, height: 915, fontScale: 1, mobile: true },
   { id: "768@100", width: 768, height: 1024, fontScale: 1, mobile: true },
 ];

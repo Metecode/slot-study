@@ -1,7 +1,7 @@
 /*
-  Hoparlör düğmesinin soluna açılan kısa not. Kol sütunu dar (7rem);
-  not tamburların üstüne taşar ama yalnızca 4 saniye durur ve
-  dokunmayı engellemez (pointer-events: none).
+  Hoparlör düğmesinin soluna açılan kısa not. Kol sütunu dar (7rem, dar
+  ekranda 72 ya da 96 px); not tamburların üstüne taşar ama yalnızca
+  4 saniye durur ve dokunmayı engellemez (pointer-events: none).
 */
 
 .root {

@@ -115,6 +115,21 @@
   .label {
     font-size: var(--fs-label);
   }
+
+  /* İç kenar (iki tamburun arası) dar ekranda yarıya iner; dış kenarı makine açıyor. */
+  .face {
+    padding: 0 var(--face-pad-end, var(--space-1)) 0 var(--face-pad-start, var(--space-1));
+  }
+}
+
+/*
+  380 px ve altında 13 px'te 12 karakterlik kelime ("Clickjacking")
+  tambura sığmıyor. --fs-mono token'larda tambur için tanımlı ölçü.
+*/
+@media (max-width: 380px) {
+  .label {
+    font-size: var(--fs-mono);
+  }
 }
 
 /*

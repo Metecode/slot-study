@@ -286,18 +286,59 @@
   line-height: 0;
 }
 
+/*
+  Dar ekranda yatay alan tamburlara açılır. 360'ta kol paneli ve arası
+  makinenin iç genişliğinin %45'ini alıyor, tambur başına yazıya 45 px
+  kalıyordu; kategori ve konu adlarının çoğu kesiliyordu. Sahnenin yan
+  boşluğu kalkar, kasa boşluğu ve kol arası yarıya iner, ok payındaki ek
+  boşluk kalkar (ok yazının ucuna kadar gelir, üstüne binmez).
+*/
 @media (max-width: 560px) {
   .stage {
     perspective: 1100px;
     -webkit-perspective: 1100px;
+    padding-inline: 0;
   }
 
   .machine {
     transform: rotateX(5deg);
+    padding: var(--space-2);
+    gap: var(--space-2);
   }
 
   .machine::before {
     height: 20px;
+  }
+
+  /*
+    Panel daralır ama yan iç boşluğu kalktığı için kol küçülmez: 96 px'lik
+    panelde kol bugünkü boyutunda. SVG'nin kendi kenar payı var, kol panel
+    çizgisine yapışmıyor. Genişlik px ile: rem, Android'in yazı boyutu
+    ayarında büyüyüp tamburların yerini yiyordu.
+  */
+  .leverColumn {
+    width: 96px;
+    padding-inline: 0;
+  }
+
+  .drumSlotLeft {
+    --face-pad-start: var(--payline-arrow-w);
+  }
+
+  .drumSlotRight {
+    --face-pad-end: var(--payline-arrow-w);
+  }
+}
+
+/*
+  400 px'in altında 96 px'lik panel en uzun kelimelere (12 karakter:
+  "Clickjacking", "yapılandırma") yer bırakmıyor. 72 px'lik panelde kol
+  70 px; 360'ta tambur başına yazıya 89.5 px kalıyor, 12 px yazıyla
+  (Drum.module.css) 12 karakter 86.4 px.
+*/
+@media (max-width: 399px) {
+  .leverColumn {
+    width: 72px;
   }
 }
 
