@@ -12,6 +12,15 @@ coverage
 backend/target
 backend/.mvn/wrapper/maven-wrapper.jar
 
+# Geliştirme araçları, belgeler ve native projeler. İki Dockerfile da
+# bunları kullanmıyor: frontend dosyaları tek tek sayıyor, backend yalnızca
+# backend/ ve src/content/tr'yi kopyalıyor. Dışlanmaları, ileride yazılacak
+# geniş bir COPY'nin (ör. `COPY . .`) bunları imaja taşımasını engeller.
+android
+ios
+docs
+scripts
+
 .env
 .env.local
 .idea
