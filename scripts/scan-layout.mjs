@@ -53,7 +53,7 @@ const REEL_ONLY_CONFIGS = [
 ];
 
 /** Tambur etiketinin kaplayabileceği satır sayısı; Drum.module.css'teki .label ile aynı. */
-const REEL_MAX_LINES = 1;
+const REEL_MAX_LINES = 2;
 
 const OUTPUT_DIR = "scan-layout-output";
 const ANSWER = "Kısa bir deneme cevabı.";
