@@ -211,12 +211,14 @@ async function main() {
   // Sorular uygulamanın kendi yükleyicisinden: aynı sıra, aynı şema doğrulaması.
   const { QUESTIONS, AVAILABLE_CATEGORIES } = await server.ssrLoadModule("/src/content/index.ts");
   const { CATEGORY_LABELS } = await server.ssrLoadModule("/src/content/labels.ts");
+  const { reelLabel } = await server.ssrLoadModule("/src/components/reelLabel.ts");
   const questions = QUESTIONS.map((q, index) => ({ ...q, index })).filter(
     (q) => !args.only || new RegExp(args.only).test(q.id),
   );
+  // Adlar tamburda uygulamanın yazdığı hâliyle denenir (reelLabel).
   const reelLabels = {
-    categories: AVAILABLE_CATEGORIES.map((category) => CATEGORY_LABELS[category]),
-    topics: [...new Set(QUESTIONS.map((q) => q.topic))],
+    categories: AVAILABLE_CATEGORIES.map((category) => reelLabel(CATEGORY_LABELS[category])),
+    topics: [...new Set(QUESTIONS.map((q) => q.topic))].map(reelLabel),
   };
 
   const browser = await launchChrome();
