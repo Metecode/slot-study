@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 
+import { CATEGORY_LABELS } from "../content/labels";
 import { evaluateLexical } from "../domain/evaluate";
 import { MAX_ANSWER_LENGTH } from "../domain/progress";
 import type { QuestionProgress } from "../domain/progress";
@@ -75,10 +76,14 @@ export function QuestionCard({ question, progress, onSubmit, onPass }: QuestionC
   return (
     <section ref={cardRef} className={styles.card} tabIndex={-1}>
       {/* Aşama rozeti kutuyu, tekrar sıklığını ve "ilk kez"i tek başına
-          anlatıyor; ayrı rozetleri kalktı. */}
+          anlatıyor; ayrı rozetleri kalktı. Kategori ve konunun tam adı da
+          burada: makara ekran okuyucudan gizli ve büyük yazıda tambur
+          etiketi kesilebiliyor. Sıra sonuç paneliyle aynı. */}
       <div className={styles.meta}>
         <StageBadge box={box} attemptCount={attempts} />
+        <span className={styles.metaBadge}>{CATEGORY_LABELS[question.category]}</span>
         <span className={styles.metaBadge}>{DIFFICULTY_LABELS[question.difficulty]}</span>
+        <span className={styles.metaBadge}>{question.topic}</span>
       </div>
 
       <h2 className={styles.question}>{question.prompt}</h2>

@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------ */
-/* Yerleşim taraması — tambur etiketleri ve değerlendirme ekranı        */
+/* Yerleşim taraması — tambur etiketleri, soru ve değerlendirme ekranı  */
 /*                                                                     */
 /*   npm run scan:layout                                               */
 /*   npm run scan:layout -- --reels                                    */
@@ -9,11 +9,11 @@
 /* İki kontrol var. Tambur kontrolü: her kategori adı ve her konu,      */
 /* makaranın tamburuna yazılıp kutusuna sığıyor mu diye bakılır; birkaç */
 /* saniye sürer, --reels yalnızca onu çalıştırır. Soru taraması: her    */
-/* soru, gerçek arayüzle değerlendirme ekranına götürülür ve sayfa      */
-/* genişliği ölçülür. Yeni soru eklendiğinde çalıştırılır: uzun bir     */
-/* konu adı tamburda kesiliyor, uzun bir kod satırı ya da kırılamayan   */
-/* bir kelime sayfayı telefonda yana taşırabiliyor. Sorun varsa çıkış   */
-/* kodu 1.                                                             */
+/* soru, gerçek arayüzle önce soru, sonra değerlendirme ekranına        */
+/* götürülür ve ikisinde de sayfa genişliği ölçülür. Yeni soru          */
+/* eklendiğinde çalıştırılır: uzun bir konu adı tamburda kesiliyor,     */
+/* uzun bir kod satırı ya da kırılamayan bir kelime sayfayı telefonda   */
+/* yana taşırabiliyor. Sorun varsa çıkış kodu 1.                        */
 /*                                                                     */
 /* Tarayıcı indirmez: sistemdeki Google Chrome'u kullanır.              */
 /* ------------------------------------------------------------------ */
@@ -25,7 +25,7 @@ import { parseArgs } from "node:util";
 import { chromium } from "playwright-core";
 import { createServer } from "vite";
 
-import { measureOverflow, measureReelLabels, scaleFonts } from "./scan-layout-page.mjs";
+import { measureOverflow, measureReelLabels, restoreFonts, scaleFonts } from "./scan-layout-page.mjs";
 
 /*
   %130: Android'in yazı boyutu ayarı; yazılar büyür, düzen ölçüleri aynı
@@ -113,7 +113,7 @@ async function newContext(browser, config) {
   Math.random'dan tek sayı alıyor; (i + 0.5) / N i. soruyu seçer. Bu
   varsayım bozulursa ekrandaki soru beklenenle tutmaz ve tarama durur.
 */
-async function openResult(page, url, index, total) {
+async function openQuestion(page, url, index, total) {
   await page.goto(url);
   const lever = page.getByRole("button", { name: "Kolu çek" });
   await lever.waitFor();
@@ -131,21 +131,42 @@ async function openResult(page, url, index, total) {
     await textarea.waitFor();
   }
   await page.evaluate(() => delete window.__scanRandom);
+  await settle(page);
+  return page.locator('[data-state="enter"] h2').first().textContent();
+}
 
-  await textarea.fill(ANSWER);
+async function openResult(page) {
+  await page.getByRole("textbox", { name: "Cevabın" }).fill(ANSWER);
   await page.getByRole("button", { name: "Gönder" }).click();
   await page.getByRole("heading", { name: "Model cevap" }).waitFor();
-  // Çıkan katman sökülsün ve kart girişleri bitsin (hareket azaltmada ~1ms).
-  await page.waitForFunction(
+  await settle(page);
+}
+
+/** Çıkan katman sökülsün ve kart girişleri bitsin (hareket azaltmada ~1ms). */
+function settle(page) {
+  return page.waitForFunction(
     () =>
       !document.querySelector('[data-state="exit"]') &&
       document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getTiming().iterations === Infinity),
   );
-  return page.locator('[data-state="enter"] h2').first().textContent();
 }
 
-function printFailure(config, question, result, shot) {
-  console.log(`  ✗ ${config.id.padEnd(9)} ${question.id}  +${result.overflow}px`);
+/**
+ * Ekrandaki taşmayı ölçer; yazı büyütmesi varsa ölçümden sonra geri alınır,
+ * aynı sayfadaki sonraki ekran yeniden büyütülebilsin. Taşma varsa ya da
+ * istenmişse ekran görüntüsü alınır.
+ */
+async function measureScreen(page, config, shotName) {
+  if (config.fontScale !== 1) await page.evaluate(scaleFonts, config.fontScale);
+  const result = await page.evaluate(measureOverflow);
+  const shot = join(OUTPUT_DIR, `${shotName}.png`);
+  if (result.overflow > 0 || args.screenshots) await page.screenshot({ path: shot, fullPage: true });
+  if (config.fontScale !== 1) await page.evaluate(restoreFonts);
+  return { result, shot };
+}
+
+function printFailure(config, question, screen, result, shot) {
+  console.log(`  ✗ ${config.id.padEnd(9)} ${question.id} (${screen})  +${result.overflow}px`);
   for (const culprit of result.culprits) console.log(`      taşan en dış öğe: ${culprit}`);
   const { relaxed } = result;
   console.log(`      min-width: 0 verilince taşma ${relaxed.overflow}px`);
@@ -231,28 +252,27 @@ async function main() {
 
   try {
     reels = await checkReels(browser, url, reelConfigs, reelLabels);
-    if (configs.length > 0) console.log("\nDeğerlendirme ekranı");
+    if (configs.length > 0) console.log("\nSoru ve değerlendirme ekranları");
 
     for (const config of configs) {
       const context = await newContext(browser, config);
 
       for (const question of questions) {
         const page = await context.newPage();
-        const shown = await openResult(page, url, question.index, QUESTIONS.length);
+        const shown = await openQuestion(page, url, question.index, QUESTIONS.length);
         if (shown?.trim() !== question.prompt.trim()) {
-          throw new Error(`${question.id} beklenirken başka bir soru açıldı; çekiliş varsayımı bozulmuş (bkz. openResult).`);
+          throw new Error(`${question.id} beklenirken başka bir soru açıldı; çekiliş varsayımı bozulmuş (bkz. openQuestion).`);
         }
-        if (config.fontScale !== 1) await page.evaluate(scaleFonts, config.fontScale);
+        const screens = [["soru ekranı", await measureScreen(page, config, `${config.id}-${question.id}-soru`)]];
+        await openResult(page);
+        screens.push(["değerlendirme", await measureScreen(page, config, `${config.id}-${question.id}`)]);
 
-        const result = await page.evaluate(measureOverflow);
-        const shot = join(OUTPUT_DIR, `${config.id}-${question.id}.png`);
-        if (result.overflow > 0 || args.screenshots) await page.screenshot({ path: shot, fullPage: true });
-        if (result.overflow > 0) {
+        const overflowing = screens.filter(([, { result }]) => result.overflow > 0);
+        for (const [screen, { result, shot }] of overflowing) {
           failures += 1;
-          printFailure(config, question, result, shot);
-        } else {
-          console.log(`  ✓ ${config.id.padEnd(9)} ${question.id}`);
+          printFailure(config, question, screen, result, shot);
         }
+        if (overflowing.length === 0) console.log(`  ✓ ${config.id.padEnd(9)} ${question.id}`);
         await page.close();
       }
       await context.close();
@@ -266,8 +286,8 @@ async function main() {
     `\nTambur: ${reelConfigs.length} yapılandırma, ${reels.failures} kesilme, ${reels.warnings} uyarı.`,
   );
   if (configs.length > 0) {
-    const total = configs.length * questions.length;
-    console.log(`Değerlendirme ekranı: ${total} ölçüm, ${total - failures} temiz, ${failures} taşma.`);
+    const total = configs.length * questions.length * 2;
+    console.log(`Soru ve değerlendirme ekranları: ${total} ölçüm, ${total - failures} temiz, ${failures} taşma.`);
   }
   process.exitCode = failures > 0 || reels.failures > 0 ? 1 : 0;
 }

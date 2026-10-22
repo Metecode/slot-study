@@ -15,7 +15,26 @@
 export function scaleFonts(factor) {
   const elements = [document.documentElement, document.body, ...document.body.querySelectorAll("*")];
   const sizes = elements.map((el) => parseFloat(getComputedStyle(el).fontSize));
+  // Önceki satır içi değerler saklanır: restoreFonts aynı sayfada geri alır.
+  window.__scanFonts = elements.map((el) => [
+    el,
+    el.style.getPropertyValue("font-size"),
+    el.style.getPropertyPriority("font-size"),
+  ]);
   elements.forEach((el, i) => el.style.setProperty("font-size", `${sizes[i] * factor}px`, "important"));
+}
+
+/**
+ * scaleFonts'u geri alır. Aynı sayfada bir sonraki ekran yeniden
+ * ölçeklenmeden önce gerekli: büyütülmüş bir atadan boyut miras alan yeni
+ * öğe çarpanı ikinci kez alırdı.
+ */
+export function restoreFonts() {
+  for (const [el, value, priority] of window.__scanFonts ?? []) {
+    if (value) el.style.setProperty("font-size", value, priority);
+    else el.style.removeProperty("font-size");
+  }
+  delete window.__scanFonts;
 }
 
 /**
