@@ -11,7 +11,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # Derleme için gereken dosyalar tek tek sayılıyor; backend/ gibi ilgisiz
-# dizinler bağlama girse de imaja kopyalanmıyor.
+# dizinler bağlama girse de imaja kopyalanmıyor. tsconfig.json'ın
+# references'ındaki her proje ve kapsadığı dosyalar burada olmalı;
+# geliştirme araçlarının tsconfig'leri bilerek orada değil.
 COPY index.html vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json ./
 COPY public public
 COPY src src

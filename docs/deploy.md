@@ -22,7 +22,7 @@ internet ──443──> host nginx (TLS)
 
 | Tetik | Workflow | Ne yapar |
 |---|---|---|
-| PR (kod değişikliği) | `ci.yml` | Frontend: lint, test, build. Backend: `./mvnw verify` (Testcontainers ile gerçek Postgres). |
+| PR (kod değişikliği) | `ci.yml` | Frontend: lint, typecheck, test, build. Backend: `./mvnw verify` (Testcontainers ile gerçek Postgres). |
 | `main`'e push | `deploy.yml` | Testler → iki image'ı derle, ghcr.io'ya it → compose dosyasını scp ile kopyala → SSH ile `pull` + `up -d` → `/api/health` 200 dönene kadar 3 dk bekle. |
 
 Testler geçmezse `build` ve `deploy` job'ları hiç çalışmaz. Yalnızca

@@ -14,6 +14,8 @@ on:
       - "package.json"
       - "package-lock.json"
       - "vite.config.ts"
+      - "capacitor.config.ts"
+      - "scripts/**"
       - "tsconfig*.json"
       - "eslint.config.js"
       - "backend/**"
@@ -40,6 +42,9 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+      # Betiklerin ve içerik denetiminin tipleri; build'in tsc -b'si
+      # yalnızca production projelerini kontrol ediyor.
+      - run: npm run typecheck
       - run: npm test
       # tsc -b tip hatalarını da yakalar; derlenemeyen kod image'a gitmesin.
       - run: npm run build

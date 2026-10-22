@@ -19,7 +19,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts", "capacitor.config.ts", "scripts/**/*.ts"],
-  /* src/domain'i import ediyor; kendi ayarıyla tsconfig.content-check.json'da */
-  "exclude": ["scripts/content-check.ts", "scripts/content-check/**"]
+  /* Yalnızca derlemenin kendisi; betikler ve capacitor.config.ts tsconfig.scripts.json'da */
+  "include": ["vite.config.ts"]
 }
