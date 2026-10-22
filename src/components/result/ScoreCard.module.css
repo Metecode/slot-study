@@ -112,6 +112,14 @@
   font-family: var(--mono);
   font-size: var(--fs-mono);
   border-radius: 999px;
+  /*
+    Uzun kavram adı ("Fail-fast: ConcurrentModificationException") satıra
+    sığmıyorsa çipin içinde kırılır. Panelden gelen break-word yetmiyor:
+    çip esnek kutu öğesi ve en küçük genişliği en uzun kelime kadar
+    kalıyordu, dar ekranda sayfayı yana taşırıyordu. anywhere bu en küçük
+    genişliği de küçültüyor.
+  */
+  overflow-wrap: anywhere;
   cursor: default;
   animation: chip-in var(--dur-base) var(--ease-out) backwards;
   animation-delay: calc(var(--enter-offset, 0ms) + var(--i, 0) * var(--stagger-chip));
