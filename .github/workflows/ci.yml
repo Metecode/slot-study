@@ -14,10 +14,14 @@ on:
       - "package.json"
       - "package-lock.json"
       - "vite.config.ts"
+      - "capacitor.config.ts"
+      - "scripts/**"
       - "tsconfig*.json"
       - "eslint.config.js"
+      - "privacy/**"
       - "backend/**"
       - "Dockerfile.frontend"
+      - ".dockerignore"
       - "deploy/**"
       - "docker-compose.prod.yml"
       - ".github/workflows/**"
@@ -40,6 +44,9 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+      # Betiklerin ve içerik denetiminin tipleri; build'in tsc -b'si
+      # yalnızca production projelerini kontrol ediyor.
+      - run: npm run typecheck
       - run: npm test
       # tsc -b tip hatalarını da yakalar; derlenemeyen kod image'a gitmesin.
       - run: npm run build
@@ -63,3 +70,36 @@ jobs:
       # mvnw Windows'ta commit'lendiği için git'te çalıştırma izni yok.
       # Testcontainers runner'daki Docker'ı kullanır, ek kurulum gerekmez.
       - run: chmod +x mvnw && ./mvnw -B verify
+
+  # Testler tam checkout'ta çalışıyor, Dockerfile'lar ise dosyaları tek tek
+  # kopyalıyor: kopyalanmayan bir dosyaya bağımlılık testlerde görünmez,
+  # yalnızca imajda düşer (PR #58'den sonra dört deploy böyle kaldı). Bu yüzden
+  # PR'da iki image da push edilmeden derlenir. deploy.yml bu workflow'u
+  # çağırdığında atlanır; orada build job'u aynı image'ları zaten derliyor.
+  images:
+    name: Image derlemesi (${{ matrix.image }})
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    strategy:
+      # Biri düşse de diğeri sonuna kadar derlensin, ikisinin durumu da görünsün.
+      fail-fast: false
+      matrix:
+        include:
+          - image: slot-frontend
+            dockerfile: Dockerfile.frontend
+          - image: slot-backend
+            dockerfile: backend/Dockerfile
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Bağlam ve cache kapsamı deploy.yml'deki ile aynı, böylece main'in
+      # deploy cache'inden okur. Cache'e yazmaz: PR'ların cache'i depo
+      # kotasında main'inkini itmesin.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: false
+          cache-from: type=gha,scope=${{ matrix.image }}

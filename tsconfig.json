@@ -1,8 +1,14 @@
 {
+  /*
+    Yalnızca production derlemesinin (npm run build → tsc -b) projeleri.
+    Dockerfile.frontend bunları ve kapsadıkları dosyaları tek tek kopyalıyor;
+    buraya eklenen her proje orada da kopyalanmalı. Geliştirme araçlarının
+    projeleri (tsconfig.scripts.json, tsconfig.content-check.json) bilerek
+    burada değil, tipleri npm run typecheck'te kontrol ediliyor.
+  */
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" },
-    { "path": "./tsconfig.content-check.json" }
+    { "path": "./tsconfig.node.json" }
   ]
 }

@@ -91,6 +91,24 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - Soru içeriğini başka sitelerden kopyalama. İçerik özgün yazılır,
   `source` alanında türetildiği konu belirtilir.
 
+## Derleme ve CI
+
+- **`tsc -b` yalnızca production projelerini derler.** Kök `tsconfig.json`'ın
+  references'ı `Dockerfile.frontend`'in kopyaladığı dosyalarla sınırlı:
+  app ve node (yalnızca `vite.config.ts`). Betikler ve `capacitor.config.ts`
+  `tsconfig.scripts.json`'da, içerik denetimi `tsconfig.content-check.json`'da;
+  tiplerini `npm run typecheck` kontrol eder, CI'da çalışır. Kök references'a
+  araç eklenirse imajda dosya bulunamaz: PR #58'de böyle oldu, dört deploy
+  kurulmadı, CI tam checkout'ta derlediği için yeşil kaldı.
+- **PR'da iki image push edilmeden derlenir** (`ci.yml`, `images` job'u).
+  Testler tam checkout'ta, Dockerfile'lar tek tek sayılan dosyalarla
+  çalışıyor; aradaki fark yalnızca image derlemesinde görünür. Job
+  `deploy.yml`'den çağrıldığında atlanır, orada build job'u aynı işi yapıyor.
+- **Bir image düşerse hiçbiri kurulmaz.** Compose ikisini tek `IMAGE_TAG`
+  ile çeker; frontend derlenemezse backend ve soru seeder'ı da eski sürümde
+  kalır. Canlı içeriğin bir commit'le aynı olup olmadığını
+  `npm run check:live -- [revizyon]` gösterir.
+
 ## Backend (`backend/`)
 
 - **Sadece senkron için.** Uygulama backend'siz tam çalışır

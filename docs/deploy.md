@@ -22,11 +22,16 @@ internet ──443──> host nginx (TLS)
 
 | Tetik | Workflow | Ne yapar |
 |---|---|---|
-| PR (kod değişikliği) | `ci.yml` | Frontend: lint, test, build. Backend: `./mvnw verify` (Testcontainers ile gerçek Postgres). |
+| PR (kod değişikliği) | `ci.yml` | Frontend: lint, typecheck, test, build. Backend: `./mvnw verify` (Testcontainers ile gerçek Postgres). İki image push edilmeden derlenir. |
 | `main`'e push | `deploy.yml` | Testler → iki image'ı derle, ghcr.io'ya it → compose dosyasını scp ile kopyala → SSH ile `pull` + `up -d` → `/api/health` 200 dönene kadar 3 dk bekle. |
 
-Testler geçmezse `build` ve `deploy` job'ları hiç çalışmaz. Yalnızca
-`docs/` ya da `.md` değişen push'lar deploy tetiklemez.
+Testler geçmezse `build` ve `deploy` job'ları hiç çalışmaz. İki image'dan
+biri derlenemezse hiçbiri kurulmaz: compose ikisini aynı `IMAGE_TAG` ile
+çeker, yalnızca backend'i kurmanın yolu yok. Yalnızca `docs/` ya da `.md`
+değişen push'lar deploy tetiklemez.
+
+Canlıdaki soru içeriğinin bir commit'le aynı olup olmadığını
+`npm run check:live -- [revizyon]` gösterir (varsayılan `HEAD`, fark varsa çıkış kodu 1).
 
 `ci.yml` yalnızca ilgili yollar değişince çalışır. Branch protection'da
 bu job'lar zorunlu kontrol yapılırsa, yalnızca doküman değiştiren bir PR
