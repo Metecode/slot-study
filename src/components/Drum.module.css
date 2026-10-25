@@ -80,12 +80,28 @@
   box-shadow: inset 0 -1px 0 var(--line);
 }
 
+/*
+  Etiket iki satıra kadar kırılır; tek satırda dar ekranda adların çoğu
+  "…" ile kesiliyordu. Yüzün yüksekliği bilerek değişmiyor: şerit satır
+  cinsinden kayıyor (drumStrip.ts) ve bütün satırlar aynı boyda olmalı.
+  İki satır 56 px'lik satıra rahat sığıyor (13 px × 1.3 × 2 ≈ 34 px).
+  Satır aralığı 1.2'de kırpılan üçüncü satırdaki "İ"nin noktası ikinci
+  satırın altında görünüyordu; 1.3'te görünmüyor. Yine sığmayan ad
+  ikinci satırın sonunda "…" ile biter. balance: destekleyen motorda
+  satırlar dengeli bölünür, eski Safari'de açgözlü; satır sayısı aynı.
+*/
 .label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   max-width: 100%;
-  font-size: var(--fs-body-sm);
   overflow: hidden;
-  white-space: nowrap;
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-tight);
+  text-align: center;
   text-overflow: ellipsis;
+  text-wrap: balance;
 }
 
 /* Ortaya oturan yüz: gradyan yerine düz zemin ve tam kontrastlı metin. */
@@ -98,6 +114,21 @@
 @media (max-width: 560px) {
   .label {
     font-size: var(--fs-label);
+  }
+
+  /* İç kenar (iki tamburun arası) dar ekranda yarıya iner; dış kenarı makine açıyor. */
+  .face {
+    padding: 0 var(--face-pad-end, var(--space-1)) 0 var(--face-pad-start, var(--space-1));
+  }
+}
+
+/*
+  380 px ve altında 13 px'te 12 karakterlik kelime ("Clickjacking")
+  tambura sığmıyor. --fs-mono token'larda tambur için tanımlı ölçü.
+*/
+@media (max-width: 380px) {
+  .label {
+    font-size: var(--fs-mono);
   }
 }
 

@@ -6,6 +6,7 @@ import type { DrumHandle } from "./Drum";
 import { Lever } from "./Lever";
 import { ARROW, SYMBOL_EDGE } from "./logoGeometry";
 import { PaylineArrow } from "./PaylineArrow";
+import { reelLabel } from "./reelLabel";
 import { SoundHint } from "./SoundHint";
 import { SoundToggle } from "./SoundToggle";
 import { useMachineSound } from "../hooks/useMachineSound";
@@ -120,8 +121,9 @@ function buildLayout(
     spinKey,
     filterKey,
     layout,
-    left: drumLabels(layout.category, (category) => CATEGORY_LABELS[category]),
-    right: drumLabels(layout.topic, (topic) => topic),
+    // Etiket metni tek yerden: "/" sonrasında satır kırılabilsin (reelLabel.ts).
+    left: drumLabels(layout.category, (category) => reelLabel(CATEGORY_LABELS[category])),
+    right: drumLabels(layout.topic, reelLabel),
   };
 }
 

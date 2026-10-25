@@ -72,6 +72,13 @@
   /* Okuma satırı uzayınca göz satır başını kaybediyor. */
   max-width: 32ch;
   color: var(--text);
+  /*
+    Soruda geçen uzun bir ad ("ConcurrentHashMap,", "@Transactional(readOnly")
+    satıra sığmıyorsa kırılır; yoksa dar ekranda ve büyük yazıda sayfayı
+    yana taşırıyordu. Sonuç panelindeki soruyla aynı kural
+    (ResultPanel.module.css).
+  */
+  overflow-wrap: break-word;
 }
 
 .answerWrap {

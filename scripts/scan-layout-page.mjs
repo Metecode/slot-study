@@ -15,7 +15,26 @@
 export function scaleFonts(factor) {
   const elements = [document.documentElement, document.body, ...document.body.querySelectorAll("*")];
   const sizes = elements.map((el) => parseFloat(getComputedStyle(el).fontSize));
+  // Önceki satır içi değerler saklanır: restoreFonts aynı sayfada geri alır.
+  window.__scanFonts = elements.map((el) => [
+    el,
+    el.style.getPropertyValue("font-size"),
+    el.style.getPropertyPriority("font-size"),
+  ]);
   elements.forEach((el, i) => el.style.setProperty("font-size", `${sizes[i] * factor}px`, "important"));
+}
+
+/**
+ * scaleFonts'u geri alır. Aynı sayfada bir sonraki ekran yeniden
+ * ölçeklenmeden önce gerekli: büyütülmüş bir atadan boyut miras alan yeni
+ * öğe çarpanı ikinci kez alırdı.
+ */
+export function restoreFonts() {
+  for (const [el, value, priority] of window.__scanFonts ?? []) {
+    if (value) el.style.setProperty("font-size", value, priority);
+    else el.style.removeProperty("font-size");
+  }
+  delete window.__scanFonts;
 }
 
 /**
@@ -129,4 +148,43 @@ export function measureOverflow() {
     else el.style.removeProperty("min-width");
   }
   return result;
+}
+
+/**
+ * Tambur etiketleri kutusuna sığıyor mu? Etiket kendi kutusunda "…" ile
+ * kırpıldığı için sayfa taşmaz, measureOverflow bunu görmez. Her ad sırayla
+ * tamburun ortadaki yüzüne yazılır: kategoriler soldakine, konular
+ * sağdakine. Yatayda taşan (kırılamayan kelime) ya da maxLines'tan fazla
+ * satır tutan ad kesik sayılır. Ölçümden sonra yüzün metni geri yazılır.
+ */
+export async function measureReelLabels({ categories, topics, maxLines }) {
+  const windows = [...document.querySelectorAll('[data-rows] [class*="window"]')];
+
+  async function check(win, texts) {
+    const label = win.querySelector('[class*="mid"] [class*="label"]');
+    const face = label.parentElement;
+    const original = label.textContent;
+
+    // Türkçe harfler ayrı bir font dosyasında; ölçmeden önce yüklensin.
+    label.textContent = texts.join(" ");
+    await document.fonts.ready;
+
+    const cut = [];
+    for (const text of texts) {
+      label.textContent = text;
+      const style = getComputedStyle(label);
+      const lineHeight = parseFloat(style.lineHeight);
+      const lines =
+        style.whiteSpace === "nowrap" || !(lineHeight > 0) ? 1 : Math.round(label.scrollHeight / lineHeight);
+      const overflow = label.scrollWidth - label.clientWidth;
+      if (overflow > 0.5 || lines > maxLines) cut.push({ text, lines, overflow: Math.round(overflow) });
+    }
+    label.textContent = original;
+
+    const faceStyle = getComputedStyle(face);
+    const space = face.clientWidth - parseFloat(faceStyle.paddingLeft) - parseFloat(faceStyle.paddingRight);
+    return { space: Math.round(space * 10) / 10, fontSize: parseFloat(getComputedStyle(label).fontSize), cut };
+  }
+
+  return { categories: await check(windows[0], categories), topics: await check(windows[1], topics) };
 }
