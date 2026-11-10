@@ -14,3 +14,6 @@ ios/**/*.storyboard text eol=lf
 ios/**/*.xcconfig text eol=lf
 ios/**/*.swift text eol=lf
 ios/**/Contents.json text eol=lf
+# Yedek imajı: script'ler ve crontab konteynerde (Linux) çalışıyor. CRLF ile
+# çıkarılırsa yerel docker derlemesinde shebang "sh\r" olur ve script açılmaz.
+backup/** text eol=lf
