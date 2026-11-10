@@ -599,3 +599,7 @@ Kurulum ve yükleme adımları `docs/ios-release.md`'de; burada kararlar.
 Mimari ve yeni modüller sohbette yazılır. Claude Code mekanik işleri
 yapar: kurulum, test düzeltme, tip hataları, lint, dosya taşıma,
 içerik dosyalarını şemaya uydurma.
+Backend işleri docs/roadmap-backend.md’deki fazlara göre yürür.
+Kod yazmadan önce plan sun ve onay bekle; her adım ayrı commit olsun.
+Sırlar asla repoya girmesin; yalnızca .env.example güncellensin.
+VPS’e doğrudan bağlanma; sunucu değişiklikleri script ve CI üzerinden yapılsın.
