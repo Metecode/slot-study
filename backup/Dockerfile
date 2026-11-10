@@ -46,6 +46,8 @@ ENV TZ=Europe/Istanbul
 ENV RESTIC_CACHE_DIR=/var/cache/restic
 RUN install -d -o postgres -g postgres -m 700 /var/cache/restic
 
+COPY --chmod=755 backup.sh /usr/local/bin/backup.sh
+
 # Postgres sunucusu bu imajda çalışmıyor; tabanın giriş noktası sunucuyu
 # başlatırdı. Yedek root yetkisi istemiyor.
 USER postgres
