@@ -1,0 +1,46 @@
+# Yedek servisini yerelde denemek için: geçici bir Postgres ve R2 yerine
+# yerel dosya repo'su. Sırlar sahte ve yalnızca bu dosyada.
+# Kullanım ve beklenen çıktılar: docs/backup.md, "Yerelde deneme".
+#
+#   docker compose -f backup/docker-compose.test.yml run --rm backup backup.sh
+#   docker compose -f backup/docker-compose.test.yml down -v
+name: slot-backup-test
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mulakat_slot
+      POSTGRES_USER: mulakat_slot
+      POSTGRES_PASSWORD: local-test-only
+    volumes:
+      - ./test/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mulakat_slot -d mulakat_slot"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  backup:
+    build: .
+    hostname: slot-backup
+    environment:
+      PGHOST: postgres
+      PGDATABASE: mulakat_slot
+      PGUSER: mulakat_slot
+      PGPASSWORD: local-test-only
+      # Repo, imajda postgres kullanıcısına ait olan klasörde: yeni named
+      # volume o klasörün sahipliğiyle oluşur, root'a ait bir yerde restic
+      # yazamazdı.
+      RESTIC_REPOSITORY: /var/lib/postgresql/data/repo
+      RESTIC_PASSWORD: local-test-only
+    volumes:
+      - repo:/var/lib/postgresql/data
+      - restic_cache:/var/cache/restic
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  repo:
+  restic_cache:
