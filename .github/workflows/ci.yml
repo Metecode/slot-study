@@ -24,6 +24,7 @@ on:
       - ".dockerignore"
       - "deploy/**"
       - "docker-compose.prod.yml"
+      - "backup/**"
       - ".github/workflows/**"
   workflow_call:
 
@@ -74,21 +75,27 @@ jobs:
   # Testler tam checkout'ta çalışıyor, Dockerfile'lar ise dosyaları tek tek
   # kopyalıyor: kopyalanmayan bir dosyaya bağımlılık testlerde görünmez,
   # yalnızca imajda düşer (PR #58'den sonra dört deploy böyle kaldı). Bu yüzden
-  # PR'da iki image da push edilmeden derlenir. deploy.yml bu workflow'u
+  # PR'da üç image da push edilmeden derlenir. deploy.yml bu workflow'u
   # çağırdığında atlanır; orada build job'u aynı image'ları zaten derliyor.
+  # Matris deploy.yml'dekiyle aynı kalmalı.
   images:
     name: Image derlemesi (${{ matrix.image }})
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     strategy:
-      # Biri düşse de diğeri sonuna kadar derlensin, ikisinin durumu da görünsün.
+      # Biri düşse de diğerleri sonuna kadar derlensin, hepsinin durumu görünsün.
       fail-fast: false
       matrix:
         include:
           - image: slot-frontend
+            context: .
             dockerfile: Dockerfile.frontend
           - image: slot-backend
+            context: .
             dockerfile: backend/Dockerfile
+          - image: slot-backup
+            context: backup
+            dockerfile: backup/Dockerfile
     steps:
       - uses: actions/checkout@v4
 
@@ -99,7 +106,7 @@ jobs:
       # kotasında main'inkini itmesin.
       - uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: false
           cache-from: type=gha,scope=${{ matrix.image }}

@@ -35,9 +35,14 @@ jobs:
       matrix:
         include:
           - image: slot-frontend
+            context: .
             dockerfile: Dockerfile.frontend
           - image: slot-backend
+            context: .
             dockerfile: backend/Dockerfile
+          - image: slot-backup
+            context: backup
+            dockerfile: backup/Dockerfile
     steps:
       - uses: actions/checkout@v4
 
@@ -54,16 +59,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # İki Dockerfile de bağlam olarak repo kökünü bekliyor (backend imajı
-      # src/content/tr'yi de kopyalıyor).
+      # Frontend ve backend bağlam olarak repo kökünü bekliyor (backend imajı
+      # src/content/tr'yi de kopyalıyor); yedek imajı yalnızca backup/'ı.
       - uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.name }}:${{ github.sha }}
-          # Frontend alt bilgideki commit kısaltması için okuyor; backend
-          # Dockerfile'ı bu arg'ı tanımlamıyor, orada etkisiz.
+          # Frontend alt bilgideki commit kısaltması için okuyor; backend ve
+          # yedek Dockerfile'ları bu arg'ı tanımlamıyor, orada etkisiz.
           build-args: GITHUB_SHA=${{ github.sha }}
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,mode=max,scope=${{ matrix.image }}
