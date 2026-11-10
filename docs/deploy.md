@@ -9,8 +9,9 @@ internet ──443──> host nginx (TLS)
                                                      backend ──> postgres (port açmaz)
 ```
 
-- Image'lar GitHub Actions'ta derlenir, `ghcr.io/metecode/slot-frontend` ve
-  `ghcr.io/metecode/slot-backend` olarak itilir. Etiket her zaman commit
+- Image'lar GitHub Actions'ta derlenir, `ghcr.io/metecode/slot-frontend`,
+  `ghcr.io/metecode/slot-backend` ve `ghcr.io/metecode/slot-backup`
+  (günlük yedek, bkz. [backup.md](backup.md)) olarak itilir. Etiket her zaman commit
   SHA'sıdır; `latest` kullanılmaz.
 - Sunucuda build yapılmaz. `/opt/mulakat` altında yalnızca
   `docker-compose.prod.yml`, `.env` ve `deploy-history.txt` durur.
@@ -22,12 +23,13 @@ internet ──443──> host nginx (TLS)
 
 | Tetik | Workflow | Ne yapar |
 |---|---|---|
-| PR (kod değişikliği) | `ci.yml` | Frontend: lint, typecheck, test, build. Backend: `./mvnw verify` (Testcontainers ile gerçek Postgres). İki image push edilmeden derlenir. |
-| `main`'e push | `deploy.yml` | Testler → iki image'ı derle, ghcr.io'ya it → compose dosyasını scp ile kopyala → SSH ile `pull` + `up -d` → `/api/health` 200 dönene kadar 3 dk bekle. |
+| PR (kod değişikliği) | `ci.yml` | Frontend: lint, typecheck, test, build. Backend: `./mvnw verify` (Testcontainers ile gerçek Postgres). Üç image push edilmeden derlenir. |
+| `main`'e push | `deploy.yml` | Testler → üç image'ı derle, ghcr.io'ya it → compose dosyasını scp ile kopyala → SSH ile `pull` + `up -d` → `/api/health` 200 dönene kadar 3 dk bekle. |
 
-Testler geçmezse `build` ve `deploy` job'ları hiç çalışmaz. İki image'dan
-biri derlenemezse hiçbiri kurulmaz: compose ikisini aynı `IMAGE_TAG` ile
-çeker, yalnızca backend'i kurmanın yolu yok. Yalnızca `docs/` ya da `.md`
+Testler geçmezse `build` ve `deploy` job'ları hiç çalışmaz. Image'lardan
+biri derlenemezse hiçbiri kurulmaz: compose hepsini aynı `IMAGE_TAG` ile
+çeker, yalnızca backend'i kurmanın yolu yok. Sunucudaki `.env`'de yedek
+değişkenleri (`RESTIC_*`, `AWS_*`) yoksa `up -d` da durur. Yalnızca `docs/` ya da `.md`
 değişen push'lar deploy tetiklemez.
 
 Canlıdaki soru içeriğinin bir commit'le aynı olup olmadığını
@@ -99,6 +101,11 @@ kullanıcısı, `/opt/mulakat`. Kalan adımlar:
    JWT_SECRET=<openssl rand -base64 48>
    APP_BASE_URL=https://slot.meteucar.com
    COOKIE_SECURE=true
+   # Yedek; kurulum ve değerler: docs/backup.md
+   RESTIC_REPOSITORY=s3:https://<account_id>.r2.cloudflarestorage.com/slot-backups
+   RESTIC_PASSWORD=<parola yöneticisinde de dursun>
+   AWS_ACCESS_KEY_ID=<R2 API token'ı>
+   AWS_SECRET_ACCESS_KEY=<R2 API token'ı>
    ```
    `DB_URL` yazılmaz; compose onu `postgres` servis adından üretir.
    Dosya yalnızca deploy kullanıcısı okuyabilsin: `chmod 600 .env`.
@@ -122,7 +129,9 @@ kullanıcısı, `/opt/mulakat`. Kalan adımlar:
    curl -i https://slot.meteucar.com/api/health
    ssh <VPS_USER>@<VPS_HOST> 'cd /opt/mulakat && docker compose -f docker-compose.prod.yml ps'
    ```
-   `docker compose ps` çıktısında üç servis de `healthy` olmalı. Dışarıdan
+   `docker compose ps` çıktısında postgres, backend ve frontend `healthy`,
+   backup `running` olmalı (healthcheck'i yok; sonucu logundaki JSON
+   satırında, bkz. [backup.md](backup.md)). Dışarıdan
    8081/8082'ye erişilemediğini de kontrol et:
    `curl -m 5 http://<VPS_HOST>:8082/api/health` zaman aşımına uğramalı.
 

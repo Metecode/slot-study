@@ -126,14 +126,48 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   tiplerini `npm run typecheck` kontrol eder, CI'da çalışır. Kök references'a
   araç eklenirse imajda dosya bulunamaz: PR #58'de böyle oldu, dört deploy
   kurulmadı, CI tam checkout'ta derlediği için yeşil kaldı.
-- **PR'da iki image push edilmeden derlenir** (`ci.yml`, `images` job'u).
+- **PR'da üç image push edilmeden derlenir** (`ci.yml`, `images` job'u).
   Testler tam checkout'ta, Dockerfile'lar tek tek sayılan dosyalarla
   çalışıyor; aradaki fark yalnızca image derlemesinde görünür. Job
   `deploy.yml`'den çağrıldığında atlanır, orada build job'u aynı işi yapıyor.
-- **Bir image düşerse hiçbiri kurulmaz.** Compose ikisini tek `IMAGE_TAG`
+  İki workflow'daki image matrisi aynı kalır.
+- **Bir image düşerse hiçbiri kurulmaz.** Compose hepsini tek `IMAGE_TAG`
   ile çeker; frontend derlenemezse backend ve soru seeder'ı da eski sürümde
   kalır. Canlı içeriğin bir commit'le aynı olup olmadığını
   `npm run check:live -- [revizyon]` gösterir.
+
+## Yedek (`backup/`)
+
+Kurulum, komutlar ve yerel deneme `docs/backup.md`'de; burada kararlar.
+
+- **Tek yol: restic → Cloudflare R2.** Yerel dump tutulmaz. Compose'daki
+  `backup` servisi (supercronic, her gün 03:30 Europe/Istanbul) pg_dump'ı
+  `--stdin-from-command` ile restic'e akıtır: dump hata dönerse snapshot
+  oluşmaz. Düz SQL, çünkü restic sıkıştırıyor ve tekilleştiriyor.
+- **En fazla 14 gün.** Gizlilik politikası yedekleri en fazla 15 gün tutacağımızı
+  ve silinen hesabın bu sürede yedeklerden de çıkacağını söylüyor.
+  `forget --keep-within 14d --prune --max-unused 0`: varsayılan `--max-unused`
+  (%5) kullanılmayan veriyi paketlerde bırakır, silinmiş hesabın satırları
+  süreyi aşabilirdi. Saklamayı uzatmak önce politikayı değiştirmeyi gerektirir.
+- **R2 bucket lock açılmaz.** Prune yakın tarihli paketleri de yeniden yazıp
+  siliyor, kilitle çakışır. Fidye yazılımına karşı koruma ayrı bir konu.
+- **Repo yalnızca restic çıkış kodu 10 ("repo yok") ile init edilir.**
+  Yanlış parola (12) ya da ağ hatası init'e götürmez.
+- **pg_dump sürümü sunucunun ana sürümüyle aynı.** `backup/Dockerfile`
+  tabanı `postgres:16-alpine`; canlı Postgres yükseltilirse taban aynı
+  commit'te yükselir, eski pg_dump yeni sunucudan dump almaz.
+- **Sonuç tek JSON satırı.** Script stdout'a yalnızca `event=backup`
+  satırını yazar, restic ve pg_dump stderr'e; supercronic `-passthrough-logs`
+  ile çalışır, satır konteyner loguna sarılmadan düşer. "Yedek 26 saattir
+  yok" alarmı (0.5) bu satıra bağlanacak; o güne kadar bildirim yok.
+- **`env_file` yok, restic değişkenleri zorunlu.** JWT/GitHub sırları yedek
+  konteynerine girmez. `RESTIC_*`/`AWS_*` `.env`'de yoksa compose durur:
+  boş geçselerdi yedek her gece sessizce düşerdi.
+- **Sabit `hostname: slot-backup`.** Restic kilitlerinin sahibi host adı;
+  konteyner her yaratılışta yeni ad alsaydı yarıda kalmış kilit başka
+  makineye ait sayılır, kendiliğinden temizlenmezdi.
+- **`backup/**` LF** (`.gitattributes`). `autocrlf` CRLF çıkarsaydı Windows'taki
+  yerel derlemede script `bash\r` ile açılmazdı.
 
 ## Backend (`backend/`)
 
