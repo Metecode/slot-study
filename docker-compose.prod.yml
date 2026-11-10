@@ -71,5 +71,32 @@ services:
       timeout: 5s
       retries: 3
 
+  # Günlük yedek: pg_dump → restic → Cloudflare R2 (bkz. docs/backup.md).
+  # Konteyner yalnızca supercronic'i çalıştırır, port açmaz.
+  backup:
+    image: ghcr.io/metecode/slot-backup:${IMAGE_TAG:?IMAGE_TAG verilmeli}
+    restart: unless-stopped
+    logging: *default-logging
+    # Sabit host adı: restic kilitlerinin sahibi buna bakar. Konteyner
+    # yeniden yaratılınca ad değişseydi, yarıda kalmış bir çalışmanın kilidi
+    # başka makineye ait sayılır ve kendiliğinden temizlenmezdi.
+    hostname: slot-backup
+    # env_file bilinçli olarak yok: JWT ve GitHub sırlarının burada işi yok.
+    # Restic değişkenleri eksikse deploy durur; boş geçseydi yedek her gece
+    # sessizce düşerdi.
+    environment:
+      PGHOST: postgres
+      PGDATABASE: ${DB_NAME}
+      PGUSER: ${DB_USERNAME}
+      PGPASSWORD: ${DB_PASSWORD}
+      RESTIC_REPOSITORY: ${RESTIC_REPOSITORY:?RESTIC_REPOSITORY .env'de olmalı}
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD:?RESTIC_PASSWORD .env'de olmalı}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?AWS_ACCESS_KEY_ID .env'de olmalı}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?AWS_SECRET_ACCESS_KEY .env'de olmalı}
+    volumes:
+      # Restic önbelleği; her gece R2'den indeks indirilmesin.
+      - restic_cache:/var/cache/restic
+
 volumes:
   postgres_data:
+  restic_cache:
