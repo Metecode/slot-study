@@ -47,9 +47,16 @@ ENV RESTIC_CACHE_DIR=/var/cache/restic
 RUN install -d -o postgres -g postgres -m 700 /var/cache/restic
 
 COPY --chmod=755 backup.sh /usr/local/bin/backup.sh
+COPY --chmod=644 crontab /etc/backup.crontab
+# Saat ya da satır bozuksa imaj derlenmesin, canlıda sessizce hiç çalışmasın.
+RUN supercronic -test /etc/backup.crontab
 
 # Postgres sunucusu bu imajda çalışmıyor; tabanın giriş noktası sunucuyu
 # başlatırdı. Yedek root yetkisi istemiyor.
 USER postgres
 ENTRYPOINT []
-CMD ["restic", "version"]
+# -passthrough-logs: backup.sh'ın JSON satırı supercronic'in log satırına
+# sarılmadan konteyner loguna olduğu gibi düşer (0.5'te Alloy bunu okuyacak).
+# -json: supercronic'in kendi satırları da JSON olsun.
+# ENTRYPOINT değil CMD: `docker run ... backup.sh` ile elle çalıştırılabilsin.
+CMD ["supercronic", "-passthrough-logs", "-json", "/etc/backup.crontab"]

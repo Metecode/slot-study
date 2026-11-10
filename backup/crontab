@@ -1,0 +1,4 @@
+# supercronic biçimi (standart cron satırı). Saat dilimi imajdaki TZ'den:
+# Europe/Istanbul. 03:30 gece trafiğin en düşük olduğu saat ve yaz saati
+# geçişlerinin (02:00-03:00) dışında; TZ değişse de gün atlanmaz.
+30 3 * * * backup.sh
