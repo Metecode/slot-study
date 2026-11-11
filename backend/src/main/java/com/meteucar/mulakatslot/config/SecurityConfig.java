@@ -48,6 +48,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Uygulama hesapsız da çalışır: sağlık ve soru uçları herkese açık.
                         .requestMatchers(HttpMethod.GET, "/api/health", "/api/questions").permitAll()
+                        // Uptime izleyicileri (UptimeRobot) sağlık ucunu HEAD ile yokluyor.
+                        .requestMatchers(HttpMethod.HEAD, "/api/health").permitAll()
                         // Bu iki uç kimliğini cookie'den alır, Bearer token'ı yoktur.
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh", "/api/auth/logout").permitAll()
                         // Bir uç hata verdiğinde konteyner isteği /error'a ERROR
