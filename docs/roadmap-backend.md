@@ -94,6 +94,7 @@ Sonraki fazlarda güvenle değişiklik yapabilmek için güvenlik ağı. Takım 
 - [ ] Hata modeli: RFC 9457 Problem Details, tutarlı hata kodları.
 - [ ] CI: test + coverage raporu + imaj build; PR'da kırmızıysa merge yok.
 - [ ] Güvenlik taraması: Dependabot + OWASP dependency-check veya Trivy (imaj).
+- [ ] Test yapılandırmasını `src/test/resources/config/application.yml`'e taşı: Spring önce ana `application.yml`'i, üstüne `config/` altındakini yükler, böylece her test ana yapılandırmayı da görür. Bugün test dosyası ana dosyayı gölgeliyor; ana dosyayı yalnızca `MainConfigurationTest` yüklüyor (Hikari `connection-timeout: 2s` bu yüzden canlıya kadar fark edilmedi).
 
 **Bitti tanımı:** `./mvnw verify` temiz makinede Docker dışında hiçbir şey gerektirmeden geçiyor; README'de CI ve coverage rozetleri var.
 
