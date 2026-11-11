@@ -55,19 +55,18 @@ restic → R2 yedek imajı, supercronic ile günlük yedek, canlı compose'daki
 `docs/backup.md`. Geri yükleme provası, Actuator, izleme, alarmlar ve JSON
 log başlamadı. Faza dönülünce branch güncel main'e rebase edilir.
 
-**Tetik listesi** — aşağıdakilerden biri olursa Faz 0'a dönülür:
+**Tetik listesi** — ilki gerçekleşince Faz 0'a dönülür:
 
-- Mobil v1.1 senkronu yayına hazırlanıyor: hesaplı mobil kullanıcıların
-  verisi sunucuya girmeden önce sunucu dışı yedek ve geri yükleme provası
-  hazır olmalı.
-- Faz 2'ye (olay toplama) başlanıyor: bitti tanımı Grafana panellerine,
-  dolayısıyla izlemeye dayanıyor.
-- Canlıda veri kaybı, yedekten dönme ihtiyacı ya da kullanıcıdan önce fark
-  edilmeyen bir kesinti yaşanıyor.
-- Sunucu taşınıyor ya da Postgres ana sürümü yükseltiliyor: geri yükleme
-  yolu o işten önce denenmiş olmalı.
-- Gizlilik politikasındaki yedek ve saklama cümleleri, canlıdaki yedek
-  düzeniyle artık örtüşmüyor.
+1. Mobil v1.1'de giriş ve senkron yayına hazırlanırken (mobil kullanıcı
+   verisi sunucuya gelmeden).
+2. Giriş yapmış (sunucuda verisi olan) kullanıcı sayısı 50'yi geçtiğinde.
+3. Faz 2 (kullanıcı metrikleri) ya da Faz 4 (topluluk soruları) başlamadan
+   önce.
+4. Canlıda veri kaybı, disk sorunu ya da fark edilmeyen/uzun bir kesinti
+   yaşandığında.
+5. Sunucu taşınırken ya da Postgres ana sürümü yükseltilirken.
+6. Gizlilik politikasındaki yedek cümleleri canlıdaki yedek düzeniyle
+   uyuşmadığında.
 
 **Kapsam**
 
