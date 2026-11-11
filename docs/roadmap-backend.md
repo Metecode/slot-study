@@ -22,7 +22,7 @@ Slot'u, mevcut backend'in üzerine inşa ederek gerçek kullanıcılı, ölçül
 
 &#91;embedded content: yol haritası · 7 faz\]
 
-Faz 0 diğer her şeyin ön şartı; sonraki fazlar sırayla, her biri ayrı branch ve PR ile ilerler.
+Faz 0 diğer her şeyin ön şartı; sonraki fazlar sırayla, her biri ayrı branch ve PR ile ilerler. Faz 0 şu an ertelendi; hangi durumda geri dönüleceği aşağıda, Faz 0'ın tetik listesinde.
 
 ## Mevcut durum
 
@@ -47,6 +47,27 @@ Backend tamamlanmış ve canlıda; eksik olan derinlik ve kanıt.
 ## Faz 0 — Operasyon temeli
 
 Sistem çökerse veri kaybetmeden ve fark ederek geri dönebilmek. Mobil yayın öncesi zaten bekleyen işler; diğer fazların ön şartı.
+
+**Durum: ertelendi (2026-11-11).** R2 ve Grafana işi şimdilik yapılmıyor.
+Yarım kalan iş `feat/backend-faz-0` branch'inde, main'e birleşmeden saklanıyor:
+restic → R2 yedek imajı, supercronic ile günlük yedek, canlı compose'daki
+`backup` servisi, CI'da imaj derleme, `.env.example` değişkenleri ve
+`docs/backup.md`. Geri yükleme provası, Actuator, izleme, alarmlar ve JSON
+log başlamadı. Faza dönülünce branch güncel main'e rebase edilir.
+
+**Tetik listesi** — aşağıdakilerden biri olursa Faz 0'a dönülür:
+
+- Mobil v1.1 senkronu yayına hazırlanıyor: hesaplı mobil kullanıcıların
+  verisi sunucuya girmeden önce sunucu dışı yedek ve geri yükleme provası
+  hazır olmalı.
+- Faz 2'ye (olay toplama) başlanıyor: bitti tanımı Grafana panellerine,
+  dolayısıyla izlemeye dayanıyor.
+- Canlıda veri kaybı, yedekten dönme ihtiyacı ya da kullanıcıdan önce fark
+  edilmeyen bir kesinti yaşanıyor.
+- Sunucu taşınıyor ya da Postgres ana sürümü yükseltiliyor: geri yükleme
+  yolu o işten önce denenmiş olmalı.
+- Gizlilik politikasındaki yedek ve saklama cümleleri, canlıdaki yedek
+  düzeniyle artık örtüşmüyor.
 
 **Kapsam**
 
