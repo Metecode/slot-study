@@ -186,6 +186,14 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   `@Import(TestcontainersConfiguration.class)` ile ona bağlanır — Spring
   Boot bu konteyneri test sınıfları arasında context cache üzerinden
   paylaşır, her sınıf ayrı konteyner açmaz.
+- **Test `application.yml`'i ana dosyayı gölgeler.** İkisi classpath'te
+  aynı adı taşıyor; testlerde yalnızca `src/test/resources/application.yml`
+  yüklenir. Ana dosyayı yalnızca `MainConfigurationTest` yükler
+  (`spring.config.location`, Testcontainers ile context açılışı); ana
+  dosyaya eklenen ayar orada doğrulanır. Hikari `connection-timeout: 2s`
+  (long bekliyor) bu yüzden testlerden geçip canlıda açılışı durdurmuştu.
+  Test göreli yol kullanır, `backend/`'den çalıştırılır. Test dosyasını
+  `config/` altına taşıyıp her testte ana dosyayı yüklemek Faz 1'de.
 - **DB bilgileri ortam değişkeninden gelir**, `application.yml`'e
   hardcode edilmez. Yerelde `docker-compose.yml` için `.env` kullan
   (`.env.example`'dan kopyala); `.env` ve `.idea/` git'e girmez.

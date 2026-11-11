@@ -160,18 +160,43 @@ Yöntem 2'yi kullan.
 ### Yöntem 2 — sunucuda elle (image 7 gün içinde sunucudaysa)
 
 Sunucudaki image'lar 7 günden eskiyse `docker image prune` ile silinir.
-Hâlâ duruyorsa çekmeye gerek yok, doğrudan başlatılır:
+Hâlâ duruyorsa çekmeye gerek yok, doğrudan başlatılır.
+
+**1. Dönülecek SHA'yı bul.** Deploy SHA'yı `up -d`'den hemen sonra,
+sağlık kontrolünden önce yazar. Sağlık kontrolünde düşen bir deploy'dan
+sonra son satır o başarısız sürümdür; dönülecek sürüm son satırdan bir
+öncekidir.
 
 ```sh
 cd /opt/mulakat
-docker image ls 'ghcr.io/metecode/slot-*'    # eski SHA'nın etiketi listede mi?
+tail -n 5 deploy-history.txt                 # en alttaki en yeni
+PREV=$(tail -n 2 deploy-history.txt | head -n 1)
+echo "$PREV"                                 # doğru SHA mı, gözle kontrol et
+docker image ls 'ghcr.io/metecode/slot-*'    # bu SHA'nın etiketi listede mi?
+```
 
-PREV=<eski-sha>
+Geri alma da dosyaya satır yazar. Arka arkaya ikinci bir geri almada
+"sondan bir önceki" artık doğru sürüm değildir; SHA'yı listeye bakarak
+elle seç (`PREV=<sha>`).
+
+**2. Başlat ve geçmişe yaz.**
+
+```sh
 IMAGE_TAG=$PREV docker compose -f docker-compose.prod.yml up -d
 echo "$PREV" >> deploy-history.txt           # geri alma da geçmişe yazılır
-
-curl -i https://slot.meteucar.com/api/health
 ```
+
+**3. Sağlık kontrolü.** Backend'in açılması (Flyway dahil) bir dakika
+kadar sürebilir; 200 gelene kadar birkaç kez dene.
+
+```sh
+curl -i https://slot.meteucar.com/api/health  # 200 ve {"status":"up"}
+docker compose -f docker-compose.prod.yml ps  # backend "healthy"
+```
+
+503 `{"status":"down","db":"down"}` uygulamanın açıldığını ama
+veritabanına erişemediğini gösterir; ayrıntı
+`docker compose -f docker-compose.prod.yml logs backend`'de.
 
 **Image sunucuda yoksa elle pull token gerekir.** ghcr.io paketleri
 private; deploy job'unun token'ı job bitince geçersiz olur ve sunucuda
