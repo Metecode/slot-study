@@ -122,6 +122,9 @@ kullanıcısı, `/opt/mulakat`. Kalan adımlar:
    curl -i https://slot.meteucar.com/api/health
    ssh <VPS_USER>@<VPS_HOST> 'cd /opt/mulakat && docker compose -f docker-compose.prod.yml ps'
    ```
+   `/api/health` veritabanına da `SELECT 1` atar: 200 uygulamanın ve
+   DB bağlantısının ayakta olduğunu, 503 `{"status":"down","db":"down"}`
+   DB'ye erişilemediğini gösterir (ayrıntı backend logunda).
    `docker compose ps` çıktısında üç servis de `healthy` olmalı. Dışarıdan
    8081/8082'ye erişilemediğini de kontrol et:
    `curl -m 5 http://<VPS_HOST>:8082/api/health` zaman aşımına uğramalı.

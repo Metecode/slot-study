@@ -154,6 +154,17 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   Spring Security adım 3'te geldi (bkz. Kimlik doğrulama); eklenirken
   açık uçlar tek tek `permitAll` ile sayıldı, varsayılan "hepsi kilitli"
   bırakılmadı.
+- **`/api/health` veritabanını da yoklar.** `DatabaseProbe` `SELECT 1`
+  atar (sorgu zaman aşımı 2 sn): erişilebilirse 200 `{"status":"up"}`,
+  değilse 503 `{"status":"down","db":"down"}`. Hata ayrıntısı yanıtta değil
+  logda, stack trace'siz (compose 15 sn'de bir yokluyor). GET ve HEAD açık:
+  UptimeRobot HEAD atıyor. Hikari `connection-timeout` 2 sn: DB erişilemezken
+  health ve API istekleri 30 sn yerine ~2 sn'de hata verir. Deploy'daki
+  200 beklemesi böylece DB bağlantısını da doğrular; DB düşükken compose
+  backend'i `unhealthy` gösterir, ona bağlı servis olmadığı için zincirleme
+  etkisi yok. Testler: `HealthControllerTest` (gerçek port, çünkü MockMvc
+  HEAD'de gövdeyi atmıyor), `HealthDatabaseDownTest` (kendi konteynerini
+  durdurur).
 - **`question.payload` ve `question_progress.attempts` JSONB kalır.**
   `keyConcepts`, `anchors`, `followUps` gibi iç içe alanlara SQL sorgusu
   atmayacağız; bu yüzden ilişkisel olarak parçalanmadılar. `category` ve

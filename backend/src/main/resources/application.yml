@@ -6,6 +6,10 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      # Varsayılan 30 sn. DB erişilemezken /api/health ve API istekleri
+      # 30 sn takılı kalmasın, ~2 sn'de hata versin.
+      connection-timeout: 2s
 
   jpa:
     # true olursa view render edilene kadar connection pool'u meşgul eder,
