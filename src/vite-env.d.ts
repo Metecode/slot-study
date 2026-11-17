@@ -12,4 +12,10 @@ interface ImportMetaEnv {
    * bildirim her kurulumda N saniye sonraya kurulur (bkz. useReviewReminder).
    */
   readonly VITE_REMINDER_TEST_SECONDS?: string;
+  /**
+   * Native'in API kökü (ör. https://slot.meteucar.com). Web okumaz, göreli
+   * yol kullanır. Tanımsızsa native'de kullanım ölçümü kapalıdır
+   * (bkz. platform/index.ts analyticsTarget).
+   */
+  readonly VITE_API_BASE_URL?: string;
 }

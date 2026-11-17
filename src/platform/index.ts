@@ -59,6 +59,29 @@ export const platformFeatures = {
   sameOriginPages: !native,
 } as const;
 
+/**
+ * Kullanım ölçümünün hedefi.
+ *
+ * Web her zaman göreli /api/events'e gider: aynı origin, CORS gerekmez,
+ * geliştirmede Vite proxy'si backend'e iletir. VITE_API_BASE_URL'i bilerek
+ * okumaz; başka bir origin'e gitseydi backend'in CORS'u (yalnızca mobil
+ * origin'ler) isteği reddederdi.
+ *
+ * Native'de göreli yol paketlenmiş varlıklara düşer (bkz. auth bayrağı);
+ * adres VITE_API_BASE_URL'den gelir (.env.production). Tanımsızsa endpoint
+ * null ve ölçüm native'de tamamen kapalıdır: hiçbir şey kuyruğa yazılmaz.
+ */
+function analyticsEndpoint(): string | null {
+  if (!native) return "/api/events";
+  const base = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/+$/, "");
+  return base ? `${base}/api/events` : null;
+}
+
+export const analyticsTarget = {
+  platform: native ? (android ? "android" : "ios") : "web",
+  endpoint: analyticsEndpoint(),
+} as const satisfies { platform: "web" | "android" | "ios"; endpoint: string | null };
+
 /* ------------------------------------------------------------------ */
 /* Platform seçimi — tek karar noktası                                 */
 /* ------------------------------------------------------------------ */
