@@ -8,11 +8,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * İki ayrı filtre zinciri var, çünkü iki farklı oturum modeli gerekiyor.
+ * Üç filtre zinciri var: iki farklı oturum modeli (OAuth el sıkışması ve
+ * API) ve hiç kimlik okumayan kullanım ölçümü ucu.
  */
 @Configuration
 @EnableWebSecurity
@@ -38,11 +40,32 @@ public class SecurityConfig {
     }
 
     /**
+     * Kullanım ölçümü. Olaylar hesaba bağlanmamalı; bu yüzden bu zincirde
+     * resource server YOK: Authorization başlığı gelse bile JWT okunmaz,
+     * principal oluşmaz. Yan faydası: süresi dolmuş Bearer başlığı taşıyan
+     * girişli bir web istemcisinin olayları API zincirindeki gibi 401 almaz.
+     *
+     * <p>Kimlik doğrulama olmadığı için CSRF'in koruyacağı bir şey yok.
+     */
+    @Bean
+    @Order(2)
+    SecurityFilterChain eventsFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/api/events")
+                // Yalnızca POST eşlenmiş; diğer metotlara Spring MVC 405 döner.
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
+
+    /**
      * API. Kimlik yalnızca Authorization başlığındaki Bearer JWT ile
      * doğrulanır, sunucuda oturum tutulmaz.
      */
     @Bean
-    @Order(2)
+    @Order(3)
     SecurityFilterChain apiFilterChain(HttpSecurity http, JsonAuthenticationEntryPoint entryPoint) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
