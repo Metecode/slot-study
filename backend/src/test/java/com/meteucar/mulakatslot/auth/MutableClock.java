@@ -11,17 +11,17 @@ import java.time.ZoneId;
  *
  * <p>instant volatile: eşzamanlılık testinde iki iş parçacığı aynı saati okuyor.
  */
-class MutableClock extends Clock {
+public class MutableClock extends Clock {
 
     private final ZoneId zone;
     private volatile Instant instant;
 
-    MutableClock(Instant instant, ZoneId zone) {
+    public MutableClock(Instant instant, ZoneId zone) {
         this.instant = instant;
         this.zone = zone;
     }
 
-    void advance(Duration amount) {
+    public void advance(Duration amount) {
         this.instant = this.instant.plus(amount);
     }
 
