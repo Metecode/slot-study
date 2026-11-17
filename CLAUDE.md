@@ -462,11 +462,21 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 
 ## Kullanım ölçümü (`analytics/`)
 
-- **YAYIN ENGELİ.** Gizlilik politikası (TR ve EN, `docs/gizlilik-politikasi.md`
-  ve `privacy/`) ile Play veri güvenliği formu güncellenmeden istemci
-  tarafı yayına çıkmaz. Politika bugün "analitik kullanmıyoruz" diyor.
+- **YAYIN ENGELLERİ.** İstemci tarafı ancak hepsi tamamlanınca yayına çıkar:
+  - Gizlilik politikası (TR ve EN, `docs/gizlilik-politikasi.md` ve
+    `privacy/`): güncellendi, 2a bölümü.
+  - Play veri güvenliği formu: "Uygulama etkinliği → Uygulama
+    etkileşimleri" ve "Cihaz veya diğer kimlikler" toplanıyor; paylaşılmıyor,
+    aktarımda şifreli, kullanıcı kapatabiliyor.
+  - Host nginx'teki `/api/events` bloğu (`access_log off`) uygulanmadan
+    politika yayına alınmamalı; aksi halde "erişim kaydı tutulmaz" cümlesi
+    yanlış olur. Politika sayfası frontend imajıyla birlikte kurulduğu için
+    bu, dalın main'e birleşmesinden ÖNCE yapılır (`docs/deploy.md`).
   Metinlerde "anonim" değil, "hesabınla ilişkilendirilmeyen, rastgele
   kurulum kimliği" yazılır: kalıcı bir kimlik anonim değildir.
+- **Hukuki dayanak: kapatma hakkı + meşru menfaat.** Bilinçli tercih:
+  varsayılan açık, Ayarlar'dan kapatılır. AB'den anlamlı kullanıcı gelirse
+  ilk açılış kartı açık rızaya çevrilecek.
 - **Hesapla hiçbir bağ yok.** `analytics_event`'te `user_id`, IP ve
   user-agent kolonu yok, `app_user`'a yabancı anahtar yok. Girişli web
   kullanıcısının olayları da bağlanmaz: `/api/events` kendi güvenlik
@@ -515,6 +525,55 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   döner (Europe/Istanbul). Leitner tamamlanma: o günkü `wasDue=true`
   `self_eval` ÷ günün ilk `app_open.dueCount`'u, tavan 1, `dueCount = 0`
   günleri hariç.
+
+### İstemci (`src/analytics/`)
+
+- **Şema tek yerde, backend'le birebir:** `domain/usageEvents.ts` (Zod).
+  Backend'deki `EventPropsSchema` değişirse burası da değişir;
+  `usageEvents.test.ts` backend testleriyle aynı sınır değerlerini dener.
+- **Alanların kaynağı saf fonksiyonlar** (`domain/usageMetrics.ts`):
+  - `dueCount`: çekilişin `isDue`'su ile; yalnızca içerikte bulunan ve seçili
+    kategorideki sorular. Kapalı kategorinin kartı çekilişe girmiyor,
+    sayılsaydı tamamlanma oranı yapay düşerdi.
+  - `wasDue`: değerlendirmeden ÖNCEKİ kayıtla `isDue`; ilk kez görülen soru
+    false (tekrar değil, tanıtım).
+  - `box`: `nextBox` ile, reducer'ın RATE'iyle aynı (test karşılaştırıyor).
+  - `aliasResult`: kullanıcının sonuç ekranında gördüğü seviye
+    (`domain/conceptMatch.ts`, ScoreCard'ın alt yazısıyla ortak). Pas ya da
+    boş cevap `skipped`. Metrik kullanıcının gördüğüyle kendi kararını
+    karşılaştırıyor; iki yer ayrı hesaplarsa anlamını kaybeder.
+- **Track çağrıları App'te:** `spin` spinKey efektinde (reducer çekilişi
+  reddederse gitmez), `answer_submitted` `handleSubmit`'te, `self_eval`
+  `handleRate`'te reducer'dan ÖNCE (önceki kutu ancak o an elde).
+  `app_open` ve gönderim `useAnalytics`'te: açılışta bir kez (modül
+  seviyesinde güvence, StrictMode), 30 dk'dan uzun arka plandan dönüşte;
+  gönderim açılış, 60 sn aralık ve arka plana geçişte (`keepalive`).
+- **Yerel kayıt ayrı namespace'te** (`slot-analytics`: `consent`, `install`,
+  `queue`). Store bozulup kurtarma ayarları varsayılana döndürse kapatma
+  tercihi kaybolurdu. Kayıt yoksa açık; kayıt var ama okunamıyorsa KAPALI.
+  Hesap silmede "bu cihazdaki verileri de sil" kimliği ve kuyruğu siler,
+  tercihi bırakır.
+- **Kuyruğun tek kaynağı depo.** Her adım kilit içinde oku-değiştir-yaz
+  (`platform/locks.ts`, Web Locks): web'de sekmeler aynı kuyruğu paylaşıyor,
+  kilitsiz art arda olaylar birbirini eziyordu (test bunu yakaladı). Ağ
+  isteği kilidin dışında. Kuyruktan yalnızca 202 ya da 400/413'te silinir;
+  ağ hatasında aynı `eventId`'ler yeniden gider, backend ayıklar.
+- **Kenar durumlar.** 7 günden eski olaylar gönderilmeden atılır (backend
+  reddediyor, 1 saat pay). Gönderim başına en fazla 2 batch (backend sınırı
+  dakikada 120). Cihaz saati 5 dk'dan fazla ileriyse backend olayları
+  sessizce atlar; istemci bunu göremez, bilinen sınır.
+- **Kapatma** kuyruğu ve kimliği siler, `generation` sayacıyla kapatmadan
+  önce başlamış bir yazma da kuyruğu yeniden oluşturmaz. Yeniden açınca
+  bir sonraki olayda yeni kimlik üretilir.
+- **Hedef.** Web her zaman göreli `/api/events` (aynı origin, CORS yok).
+  Native `VITE_API_BASE_URL`'den (`.env.production`). Native release
+  build'inde olayların sunucuya ulaştığı elle doğrulanmalı. Değişken
+  tanımsızsa analitik sessizce kapalıdır: anahtar ve kart da çizilmez.
+- **Kimlik `platform/randomId.ts`'ten.** iOS'ta `capacitor://` güvenli bağlam
+  sayılmayabilir ve `crypto.randomUUID` yalnızca orada var; yedek
+  `getRandomValues` ile v4. Cihaz/reklam/hesap kimliği kullanılmaz.
+- **Ölçüm uygulamayı bozmaz.** `track` senkron döner, hiçbir şey beklemez;
+  dışa açık her fonksiyon hatayı yutar, geliştirmede yalnızca `console.warn`.
 
 ## Yapay zekâ değerlendirmesi — denendi, kaldırıldı
 
