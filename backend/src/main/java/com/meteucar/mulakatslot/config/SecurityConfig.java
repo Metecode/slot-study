@@ -1,6 +1,8 @@
 package com.meteucar.mulakatslot.config;
 
 import com.meteucar.mulakatslot.auth.GithubAuthenticationSuccessHandler;
+import java.time.Duration;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -8,15 +10,22 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * İki ayrı filtre zinciri var, çünkü iki farklı oturum modeli gerekiyor.
+ * Üç filtre zinciri var: iki farklı oturum modeli (OAuth el sıkışması ve
+ * API) ve hiç kimlik okumayan kullanım ölçümü ucu.
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final String EVENTS_PATH = "/api/events";
 
     /**
      * GitHub el sıkışması. Yetkilendirme isteğinin durumu (state parametresi,
@@ -38,11 +47,59 @@ public class SecurityConfig {
     }
 
     /**
+     * Kullanım ölçümü. Olaylar hesaba bağlanmamalı; bu yüzden bu zincirde
+     * resource server YOK: Authorization başlığı gelse bile JWT okunmaz,
+     * principal oluşmaz. Yan faydası: süresi dolmuş Bearer başlığı taşıyan
+     * girişli bir web istemcisinin olayları API zincirindeki gibi 401 almaz.
+     *
+     * <p>Kimlik doğrulama olmadığı için CSRF'in koruyacağı bir şey yok.
+     */
+    @Bean
+    @Order(2)
+    SecurityFilterChain eventsFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher(EVENTS_PATH)
+                // Yalnızca POST eşlenmiş; diğer metotlara Spring MVC 405 döner.
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .cors(cors -> cors.configurationSource(eventsCorsSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
+
+    /**
+     * Mobil uygulamanın WebView origin'leri: iOS'ta capacitor://localhost,
+     * Android'de https://localhost. Web aynı origin'den geliyor, CORS'a
+     * ihtiyacı yok.
+     *
+     * <p>Bilerek bean değil: CorsConfigurationSource bean'i diğer zincirler
+     * ve Spring MVC tarafından da bulunup kullanılabilirdi. Diğer uçların
+     * CORS davranışı (hiç izin yok) değişmesin.
+     *
+     * <p>Cookie ve kimlik taşınmadığı için credentials kapalı. Retry-After
+     * açıkça izinli: cross-origin yanıtta istemci onu başka türlü okuyamaz.
+     */
+    private static CorsConfigurationSource eventsCorsSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("capacitor://localhost", "https://localhost"));
+        config.setAllowedMethods(List.of("POST"));
+        config.setAllowedHeaders(List.of("Content-Type"));
+        config.setExposedHeaders(List.of("Retry-After"));
+        config.setAllowCredentials(false);
+        config.setMaxAge(Duration.ofDays(1));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration(EVENTS_PATH, config);
+        return source;
+    }
+
+    /**
      * API. Kimlik yalnızca Authorization başlığındaki Bearer JWT ile
      * doğrulanır, sunucuda oturum tutulmaz.
      */
     @Bean
-    @Order(2)
+    @Order(3)
     SecurityFilterChain apiFilterChain(HttpSecurity http, JsonAuthenticationEntryPoint entryPoint) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth

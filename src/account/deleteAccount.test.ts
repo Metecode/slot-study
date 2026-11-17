@@ -3,7 +3,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createMemoryAdapter } from "../platform/storage/memoryAdapter";
 import type { StorageAdapter } from "../platform";
 import type { QuestionProgress } from "../domain/progress";
-import { CORRUPT_BACKUP_PREFIX, STORE_KEY, STORE_NS } from "../storage/storeKeys";
+import {
+  ANALYTICS_CONSENT_KEY,
+  ANALYTICS_INSTALL_KEY,
+  ANALYTICS_NS,
+  ANALYTICS_QUEUE_KEY,
+  CORRUPT_BACKUP_PREFIX,
+  STORE_KEY,
+  STORE_NS,
+} from "../storage/storeKeys";
 
 /* ------------------------------------------------------------------ */
 /* Hesap silme akışı — gerçek senkron ve oturum modülleri, sahte fetch */
@@ -167,6 +175,33 @@ describe("deleteAccount", () => {
     expect(await storage.getAll(STORE_NS)).toEqual([]);
     expect(await storage.get("baska-uygulama", "k")).toBe(1);
     expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it("kutu işaretliyken ölçüm kimliği ve kuyruğu silinir, kapatma tercihi kalır", async () => {
+    const { auth, account } = await loadModules();
+    await signIn(auth);
+    const storage = createMemoryAdapter();
+    const consent = { enabled: false, noticeShown: true };
+    await storage.set(ANALYTICS_NS, ANALYTICS_CONSENT_KEY, consent);
+    await storage.set(ANALYTICS_NS, ANALYTICS_INSTALL_KEY, "6f1c2a3b-4d5e-4f60-8a7b-9c0d1e2f3a4b");
+    await storage.set(ANALYTICS_NS, ANALYTICS_QUEUE_KEY, []);
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+    await account.deleteAccount({ clearLocal: true, storage, reload: vi.fn() });
+
+    expect(await storage.getAll(ANALYTICS_NS)).toEqual([{ key: ANALYTICS_CONSENT_KEY, value: consent }]);
+  });
+
+  it("kutu işaretsizken ölçüm verisine dokunulmaz", async () => {
+    const { auth, account } = await loadModules();
+    await signIn(auth);
+    const storage = createMemoryAdapter();
+    await storage.set(ANALYTICS_NS, ANALYTICS_INSTALL_KEY, "6f1c2a3b-4d5e-4f60-8a7b-9c0d1e2f3a4b");
+    fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }));
+
+    await account.deleteAccount({ clearLocal: false, storage, reload: vi.fn() });
+
+    expect(await storage.get(ANALYTICS_NS, ANALYTICS_INSTALL_KEY)).toBeDefined();
   });
 
   it("yenileme, silme bitmeden çağrılmaz", async () => {

@@ -1,3 +1,4 @@
+import { createAnalyticsStorage } from "../analytics/analyticsStorage";
 import { deleteAccount as deleteAccountOnServer } from "../auth/authClient";
 import type { StorageAdapter } from "../platform";
 import { STORE_NS } from "../storage/storeKeys";
@@ -50,9 +51,12 @@ export async function deleteAccount({ clearLocal, storage, reload }: DeleteAccou
   }
 
   // Namespace'in tamamı: store kaydı ve bozuk kayıt yedekleri birlikte.
+  // Kullanım ölçümünden yalnızca kurulum kimliği ve kuyruk: kapatma tercihi
+  // veri değil, kalır; silinseydi kapatmış kullanıcı sessizce yeniden açılırdı.
   // Silme bitmeden yenilenirse yarım kalabilir; bu yüzden await.
   try {
     await storage.clear(STORE_NS);
+    await createAnalyticsStorage(storage).clearCollected();
   } catch (error) {
     // Yenileme YAPILMAZ: yenilenseydi veri sessizce geri gelir, kullanıcı
     // silindiğini sanırdı. Askı da kalkmıyor; oturum anonim, fark etmez.

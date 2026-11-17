@@ -10,7 +10,7 @@
 
 # Slot — Gizlilik Politikası
 
-Son güncelleme: 30 Eylül 2026
+Son güncelleme: 17 Kasım 2026
 
 Bu politika, Slot'un (slot.meteucar.com ve Slot mobil uygulaması) hangi verileri işlediğini, neden işlediğini ve bu verilerle ilgili haklarını açıklar.
 
@@ -22,26 +22,36 @@ Mete Uçar (bireysel geliştirici)
 ## Kısaca
 
 - Slot hesap açmadan, tam olarak çalışır. Hesapsız kullanımda ilerlemen ve ayarların cihazında saklanır ve bize gönderilmez.
-- Reklam, analitik ya da takip aracı kullanmıyoruz. Verini satmıyor, pazarlama amacıyla kimseyle paylaşmıyoruz.
+- Reklam ya da üçüncü taraf analitik/takip aracı kullanmıyoruz. Uygulamayı iyileştirmek için, hesabınla ilişkilendirilmeyen rastgele bir kurulum kimliğiyle kendi sunucumuzda kullanım istatistiği tutuyoruz; Ayarlar'dan kapatabilirsin. Verini satmıyor, pazarlama amacıyla kimseyle paylaşmıyoruz.
 - İsteğe bağlı olarak GitHub ile giriş yaparsan, ilerlemen cihazların arasında senkronlanabilmesi için sunucumuzda saklanır. Giriş yalnızca web sürümünde var.
 - Hesabını uygulamanın içinden istediğin zaman silebilirsin.
 
 ## 1. Hesapsız kullanım
 
-Cevapların, puanların, ilerlemen ve ayarların cihazındaki uygulama deposunda (web sürümünde tarayıcının IndexedDB deposunda) tutulur ve bize gönderilmez. Web sürümü çevrimdışı da çalışabilmek için uygulama dosyalarını tarayıcı önbelleğinde saklar. Bu verileri tarayıcı verilerini temizleyerek ya da uygulamayı silerek kaldırabilirsin.
+Cevapların, puanların, ilerlemen ve ayarların cihazındaki uygulama deposunda (web sürümünde tarayıcının IndexedDB deposunda) tutulur ve bize gönderilmez. Web sürümü çevrimdışı da çalışabilmek için uygulama dosyalarını tarayıcı önbelleğinde saklar. Bu verileri tarayıcı verilerini temizleyerek ya da uygulamayı silerek kaldırabilirsin. Kullanım istatistikleri açıksa bazı kullanım olayları sunucumuza gönderilir (bkz. 2a).
 
 Web sürümünü açtığında tarayıcın sayfayı sunucumuzdan yükler. Bu isteklere ait teknik kayıtlar 5. bölümde anlatılıyor.
 
 ## 2. Mobil uygulama
 
-Mobil uygulamada hesap ya da giriş yok; uygulama sunucumuza hiçbir istek göndermez.
+Mobil uygulamada hesap ya da giriş yok. Uygulama sunucumuza yalnızca kullanım istatistiklerini gönderir (bkz. 2a); ilerlemen ve cevapların gönderilmez.
 
 - **İlerleme ve ayarlar:** Cihazında, uygulamanın kendi klasöründeki JSON dosyalarında saklanır ve sunucumuza gönderilmez. Uygulamayı sildiğinde bu dosyalar da silinir. Android yedeklemen açıksa bu dosyalar Google hesabındaki cihaz yedeğine dahil edilebilir; bu yedeğe biz erişemeyiz.
 - **Hatırlatıcı:** Tekrar hatırlatıcısını açarsan bildirim cihazında yerel olarak kurulur; bildirim sunucusu kullanılmaz. Hatırlatıcıyı Ayarlar'dan kapatabilirsin.
-- **Analitik ve reklam yok:** Uygulama analitik, reklam ya da çökme raporlama aracı (SDK) içermez.
+- **Reklam ve üçüncü taraf araç yok:** Uygulama reklam, üçüncü taraf analitik ya da çökme raporlama aracı (SDK) içermez.
 - **Kendi yapay zekâna sor:** Yalnızca sen başlattığında, promptu seçtiğin üçüncü taraf servise iletir; Slot bu veriyi sunucusuna göndermez. ChatGPT, Claude ve Perplexity'ye prompt adresin içinde (`?q=`) gider ve o servisin geçmişine kendi hesabında düşebilir. Ayrıntılar 6. bölümde.
 
-GitHub ile giriş, çerezler ve sunucu kayıtları (3–5. bölümler) yalnızca web sürümü için geçerlidir.
+GitHub ile giriş, çerezler ve sunucu kayıtları (3–5. bölümler) yalnızca web sürümü için geçerlidir; kullanım istatistikleriyle ilgili kısımlar (2a, 4. ve 5. bölümlerdeki notlar) iki sürüm için de geçerlidir.
+
+## 2a. Kullanım istatistikleri
+
+Slot'un nasıl kullanıldığını anlamak için (kaç kişinin uygulamaya geri döndüğü, tekrarların tamamlanıp tamamlanmadığı, cevap kontrolünün senin değerlendirmenle ne kadar uyuştuğu) web ve mobil sürümde kullanım olaylarını kendi sunucumuzda topluyoruz. Bu ayar varsayılan olarak açıktır.
+
+- **Kimlik:** Uygulama ilk açılışta cihazında rastgele bir kurulum kimliği üretir. Bu kimlik hesabınla ilişkilendirilmez; giriş yapmış olsan bile olaylar GitHub hesabına ya da Slot hesabına bağlanmaz. Cihaz kimliği ya da reklam kimliği kullanılmaz.
+- **Toplanan olaylar:** uygulamanın açılması (o an tekrar zamanı gelmiş soru sayısıyla), makaranın çevrilmesi (seçili kategori sayısıyla), cevap gönderilmesi (soru kimliği ve cevabın karakter sayısıyla), öz-değerlendirme (soru kimliği, cevap kontrolünün sonucu, senin değerlendirmen, sorunun yeni seviyesi ve tekrar zamanının gelmiş olup olmadığıyla). Her olayla birlikte olayın zamanı, platform (web, Android, iOS) ve uygulama sürümü gönderilir.
+- **Toplanmayanlar:** Cevap metnin hiçbir zaman gönderilmez, yalnızca uzunluğu gönderilir. Ad, e-posta, IP adresi ya da tarayıcı/cihaz bilgisi (User-Agent) saklanmaz; bu istekler için sunucu erişim kaydı da tutulmaz.
+- **Saklama:** Olaylar 13 ay sonra otomatik olarak silinir.
+- **Kapatma:** Ayarlar → "Kullanım istatistiklerini paylaş". Kapattığında henüz gönderilmemiş olaylar ve kurulum kimliği cihazından silinir, yeni olay toplanmaz. Daha önce gönderilmiş olaylar artık seninle eşleştirilemez ve 13 ay sonra silinir. Yeniden açarsan yeni bir kurulum kimliği üretilir. Kurulum kimliğini bilmediğimiz için gönderilmiş olayları kişi bazında silemeyiz; bu olaylar 13 ay sonra otomatik olarak silinir.
 
 ## 3. GitHub ile giriş (isteğe bağlı)
 
@@ -67,9 +77,11 @@ Takip ya da analitik çerezi kullanmıyoruz. Yalnızca giriş için gereken iki 
 
 Hesapsız kullanımda hiçbir çerez yazılmaz.
 
+- **Kurulum kimliği ve gönderilmeyi bekleyen olaylar:** Kullanım istatistikleri açıksa cihazındaki uygulama deposunda tutulur; çerez değildir.
+
 ## 5. Sunucu kayıtları
 
-Web sürümünü kullanırken sunucumuz her istekte şu teknik bilgileri kaydeder: IP adresi, zaman, istenen adres, yanıt kodu, yönlendiren sayfa ve tarayıcı bilgisi (User-Agent). Bu kayıtlar güvenlik ve hata ayıklama amacıyla tutulur ve en fazla 15 gün sonra otomatik olarak silinir.
+Web sürümünü kullanırken sunucumuz her istekte şu teknik bilgileri kaydeder: IP adresi, zaman, istenen adres, yanıt kodu, yönlendiren sayfa ve tarayıcı bilgisi (User-Agent). Bu kayıtlar güvenlik ve hata ayıklama amacıyla tutulur ve en fazla 15 gün sonra otomatik olarak silinir. Kullanım istatistiği isteklerinde (`/api/events`) erişim kaydı tutulmaz.
 
 Uygulamanın kendi kayıtları hesap kimliğini içerebilir; cevap metinlerini içermez. Bu kayıtların boyutu sınırlıdır ve yeni kayıtlar geldikçe eskileri silinir.
 
@@ -88,7 +100,7 @@ Uygulamayı App Store ya da Google Play'den indirirsen, bu mağazalar kendi poli
 
 ## 7. Yurt dışına aktarım (KVKK md. 9)
 
-Web sürümünü kullandığında sunucu kayıtların (5. bölüm), GitHub ile giriş yaptığında hesap ve senkron verilerin, barındırma hizmeti aldığımız Netcup GmbH'nin Nürnberg'deki (Almanya) sunucularında saklanır. Türkiye'den kullanıyorsan bu, kişisel verilerinin yurt dışına aktarılması anlamına gelir.
+Web sürümünü kullandığında sunucu kayıtların (5. bölüm), GitHub ile giriş yaptığında hesap ve senkron verilerin, kullanım istatistikleri açıksa kullanım olayların, barındırma hizmeti aldığımız Netcup GmbH'nin Nürnberg'deki (Almanya) sunucularında saklanır. Türkiye'den kullanıyorsan bu, kişisel verilerinin yurt dışına aktarılması anlamına gelir.
 
 GitHub ile giriş yaptığında giriş işlemi GitHub, Inc.'in (ABD) sunucularında gerçekleşir: tarayıcın doğrudan GitHub'a bağlanır, GitHub kimliğini doğrular ve kullanıcı kimliğini ve kullanıcı adını bize iletir.
 
@@ -96,6 +108,7 @@ GitHub ile giriş yaptığında giriş işlemi GitHub, Inc.'in (ABD) sunucuları
 
 - Hesap ve senkron verileri: sözleşmenin kurulması ve ifası (KVKK md. 5/2-c; GDPR md. 6/1-b).
 - Sunucu kayıtları: hizmetin güvenliğini sağlamaya yönelik meşru menfaat (KVKK md. 5/2-f; GDPR md. 6/1-f).
+- Kullanım istatistikleri: uygulamayı iyileştirmeye yönelik meşru menfaatimiz (KVKK md. 5/2-f; GDPR md. 6/1-f). İstediğin zaman Ayarlar'dan kapatarak itiraz edebilirsin.
 
 ## 9. Saklama süreleri
 
@@ -103,6 +116,7 @@ GitHub ile giriş yaptığında giriş işlemi GitHub, Inc.'in (ABD) sunucuları
 - Sunucu erişim kayıtları: en fazla 15 gün.
 - Veritabanı yedekleri: en fazla 15 gün. Silinen hesaplar en geç bu sürenin sonunda yedeklerden de çıkar.
 - Oturum çerezi: kullanılmazsa 30 gün.
+- Kullanım olayları: 13 ay.
 
 ## 10. Hesabını silme
 
@@ -128,7 +142,7 @@ Bu politikayı güncellersek sayfanın başındaki tarihi değiştiririz. Öneml
 
 # Slot — Privacy Policy
 
-Last updated: 30 September 2026
+Last updated: 17 November 2026
 
 This policy explains what data Slot (slot.meteucar.com and the Slot mobile app) processes, why, and what your rights are.
 
@@ -140,26 +154,36 @@ Contact: i.meteucar@gmail.com · meteucar.com
 ## Summary
 
 - Slot works fully without an account. Without an account, your progress and settings are stored on your device and are not sent to us.
-- We use no advertising, analytics or tracking tools. We do not sell your data or share it for marketing.
+- We use no advertising or third-party analytics/tracking tools. To improve the app, we keep usage statistics on our own server with a random installation ID that is not linked to your account; you can turn this off in Settings. We do not sell your data or share it for marketing.
 - If you choose to sign in with GitHub, your progress is stored on our server so it can sync across your devices. Sign-in is available only in the web version.
 - You can delete your account from within the app at any time.
 
 ## 1. Using Slot without an account
 
-Your answers, ratings, progress and settings are kept in the app's storage on your device (in the web version, the browser's IndexedDB) and are not sent to us. To work offline, the web version stores the app's files in the browser cache. You can remove this data by clearing your browser data or uninstalling the app.
+Your answers, ratings, progress and settings are kept in the app's storage on your device (in the web version, the browser's IndexedDB) and are not sent to us. To work offline, the web version stores the app's files in the browser cache. You can remove this data by clearing your browser data or uninstalling the app. If usage statistics are on, some usage events are sent to our server (see 2a).
 
 When you open the web version, your browser loads the page from our server. The technical logs of these requests are described in section 5.
 
 ## 2. Mobile app
 
-The mobile app has no accounts or sign-in, and it sends no requests to our server.
+The mobile app has no accounts or sign-in. It sends our server only usage statistics (see 2a); your progress and answers are not sent.
 
 - **Progress and settings:** Stored on your device, in JSON files in the app's own folder, and not sent to our server. Uninstalling the app deletes these files. If Android backup is turned on, these files may be included in the device backup in your Google account; we have no access to that backup.
 - **Reminders:** If you turn on review reminders, the notification is scheduled locally on your device; no notification server is used. You can turn reminders off in Settings.
-- **No analytics or ads:** The app contains no analytics, advertising or crash-reporting SDK.
+- **No ads or third-party tools:** The app contains no advertising, third-party analytics or crash-reporting SDK.
 - **Ask your own AI:** Only when you start it, the prompt is passed to the third-party service you choose; Slot does not send this data to its server. For ChatGPT, Claude and Perplexity the prompt travels in the address (`?q=`) and may appear in that service's history in your own account. Details in section 6.
 
-Signing in with GitHub, cookies and server logs (sections 3–5) apply only to the web version.
+Signing in with GitHub, cookies and server logs (sections 3–5) apply only to the web version; the parts about usage statistics (2a and the notes in sections 4 and 5) apply to both versions.
+
+## 2a. Usage statistics
+
+To understand how Slot is used (how many people come back, whether reviews get completed, how often the answer check agrees with your own rating), we collect usage events on our own server in the web and mobile versions. This setting is on by default.
+
+- **Identifier:** On first launch the app generates a random installation ID on your device. It is not linked to your account; even when you are signed in, events are not tied to your GitHub or Slot account. No device ID or advertising ID is used.
+- **Events collected:** opening the app (with the number of questions due for review at that moment), spinning the reels (with the number of selected categories), submitting an answer (question ID and the answer's character count), self-rating (question ID, the answer check's result, your rating, the question's new level and whether it was due). Each event carries its time, the platform (web, Android, iOS) and the app version.
+- **Not collected:** Your answer text is never sent, only its length. No name, email, IP address or browser/device information (User-Agent) is stored, and no server access log is kept for these requests.
+- **Retention:** Events are deleted automatically after 13 months.
+- **Turning it off:** Settings → "Share usage statistics". When you turn it off, events not yet sent and the installation ID are deleted from your device and no new events are collected. Events already sent can no longer be matched to you and are deleted after 13 months. If you turn it back on, a new installation ID is generated. Since we do not know your installation ID, we cannot delete sent events individually; they are deleted automatically after 13 months.
 
 ## 3. Signing in with GitHub (optional)
 
@@ -185,9 +209,11 @@ We use no tracking or analytics cookies. Only two cookies are needed for sign-in
 
 No cookies are set when you use Slot without an account.
 
+- **Installation ID and events waiting to be sent:** kept in the app's storage on your device while usage statistics are on; not a cookie.
+
 ## 5. Server logs
 
-When you use the web version, our server records the following for each request: IP address, time, requested URL, response code, referring page and browser information (User-Agent). These logs are kept for security and troubleshooting and are deleted automatically after at most 15 days.
+When you use the web version, our server records the following for each request: IP address, time, requested URL, response code, referring page and browser information (User-Agent). These logs are kept for security and troubleshooting and are deleted automatically after at most 15 days. No access log is kept for usage statistics requests (`/api/events`).
 
 The application's own logs may contain your account ID; they never contain your answer texts. These logs are size-limited, and older entries are deleted as new ones arrive.
 
@@ -206,7 +232,7 @@ If you download the app from the App Store or Google Play, those stores process 
 
 ## 7. Transfers abroad (KVKK Art. 9)
 
-When you use the web version, your server logs (section 5), and when you sign in with GitHub, your account and sync data, are stored on the servers of our hosting provider Netcup GmbH in Nuremberg, Germany. If you use Slot from Turkey, this means your personal data is transferred abroad.
+When you use the web version, your server logs (section 5), when you sign in with GitHub, your account and sync data, and, if usage statistics are on, your usage events, are stored on the servers of our hosting provider Netcup GmbH in Nuremberg, Germany. If you use Slot from Turkey, this means your personal data is transferred abroad.
 
 When you sign in with GitHub, sign-in takes place on the servers of GitHub, Inc. (USA): your browser connects directly to GitHub, which authenticates you and passes your user ID and username to us.
 
@@ -214,6 +240,7 @@ When you sign in with GitHub, sign-in takes place on the servers of GitHub, Inc.
 
 - Account and sync data: performance of a contract (KVKK Art. 5/2-c; GDPR Art. 6(1)(b)).
 - Server logs: legitimate interest in keeping the service secure (KVKK Art. 5/2-f; GDPR Art. 6(1)(f)).
+- Usage statistics: our legitimate interest in improving the app (KVKK Art. 5/2-f; GDPR Art. 6(1)(f)). You can object at any time by turning it off in Settings.
 
 ## 9. Retention
 
@@ -221,6 +248,7 @@ When you sign in with GitHub, sign-in takes place on the servers of GitHub, Inc.
 - Server access logs: at most 15 days.
 - Database backups: at most 15 days. Deleted accounts are removed from backups at the latest when this period ends.
 - Session cookie: 30 days if unused.
+- Usage events: 13 months.
 
 ## 10. Deleting your account
 

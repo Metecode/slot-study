@@ -35,7 +35,7 @@
 
     <main class="page">
       <h1>Slot — Gizlilik Politikası</h1>
-      <p class="updated">Son güncelleme: 30 Eylül 2026</p>
+      <p class="updated">Son güncelleme: 17 Kasım 2026</p>
 
       <p>
         Bu politika, Slot'un (slot.meteucar.com ve Slot mobil uygulaması) hangi verileri işlediğini, neden
@@ -59,8 +59,9 @@
             ve bize gönderilmez.
           </li>
           <li>
-            Reklam, analitik ya da takip aracı kullanmıyoruz. Verini satmıyor, pazarlama amacıyla kimseyle
-            paylaşmıyoruz.
+            Reklam ya da üçüncü taraf analitik/takip aracı kullanmıyoruz. Uygulamayı iyileştirmek için, hesabınla
+            ilişkilendirilmeyen rastgele bir kurulum kimliğiyle kendi sunucumuzda kullanım istatistiği tutuyoruz;
+            Ayarlar'dan kapatabilirsin. Verini satmıyor, pazarlama amacıyla kimseyle paylaşmıyoruz.
           </li>
           <li>
             İsteğe bağlı olarak GitHub ile giriş yaparsan, ilerlemen cihazların arasında senkronlanabilmesi için
@@ -76,7 +77,8 @@
           Cevapların, puanların, ilerlemen ve ayarların cihazındaki uygulama deposunda (web sürümünde tarayıcının
           IndexedDB deposunda) tutulur ve bize gönderilmez. Web sürümü çevrimdışı da çalışabilmek için uygulama
           dosyalarını tarayıcı önbelleğinde saklar. Bu verileri tarayıcı verilerini temizleyerek ya da uygulamayı
-          silerek kaldırabilirsin.
+          silerek kaldırabilirsin. Kullanım istatistikleri açıksa bazı kullanım olayları sunucumuza gönderilir
+          (bkz. <a href="#kullanim-istatistikleri">2a</a>).
         </p>
         <p>
           Web sürümünü açtığında tarayıcın sayfayı sunucumuzdan yükler. Bu isteklere ait teknik kayıtlar
@@ -86,7 +88,10 @@
 
       <section id="mobil-uygulama">
         <h2>2. Mobil uygulama</h2>
-        <p>Mobil uygulamada hesap ya da giriş yok; uygulama sunucumuza hiçbir istek göndermez.</p>
+        <p>
+          Mobil uygulamada hesap ya da giriş yok. Uygulama sunucumuza yalnızca kullanım istatistiklerini gönderir
+          (bkz. <a href="#kullanim-istatistikleri">2a</a>); ilerlemen ve cevapların gönderilmez.
+        </p>
         <ul>
           <li>
             <strong>İlerleme ve ayarlar:</strong> Cihazında, uygulamanın kendi klasöründeki JSON dosyalarında saklanır
@@ -98,8 +103,8 @@
             bildirim sunucusu kullanılmaz. Hatırlatıcıyı Ayarlar'dan kapatabilirsin.
           </li>
           <li>
-            <strong>Analitik ve reklam yok:</strong> Uygulama analitik, reklam ya da çökme raporlama aracı (SDK)
-            içermez.
+            <strong>Reklam ve üçüncü taraf araç yok:</strong> Uygulama reklam, üçüncü taraf analitik ya da çökme
+            raporlama aracı (SDK) içermez.
           </li>
           <li>
             <strong>Kendi yapay zekâna sor:</strong> Yalnızca sen başlattığında, promptu seçtiğin üçüncü taraf
@@ -108,7 +113,47 @@
             <a href="#saklama-yeri-ve-paylasim">6. bölümde</a>.
           </li>
         </ul>
-        <p>GitHub ile giriş, çerezler ve sunucu kayıtları (3–5. bölümler) yalnızca web sürümü için geçerlidir.</p>
+        <p>
+          GitHub ile giriş, çerezler ve sunucu kayıtları (3–5. bölümler) yalnızca web sürümü için geçerlidir;
+          kullanım istatistikleriyle ilgili kısımlar (2a, 4. ve 5. bölümlerdeki notlar) iki sürüm için de
+          geçerlidir.
+        </p>
+      </section>
+
+      <section id="kullanim-istatistikleri">
+        <h2>2a. Kullanım istatistikleri</h2>
+        <p>
+          Slot'un nasıl kullanıldığını anlamak için (kaç kişinin uygulamaya geri döndüğü, tekrarların tamamlanıp
+          tamamlanmadığı, cevap kontrolünün senin değerlendirmenle ne kadar uyuştuğu) web ve mobil sürümde kullanım
+          olaylarını kendi sunucumuzda topluyoruz. Bu ayar varsayılan olarak açıktır.
+        </p>
+        <ul>
+          <li>
+            <strong>Kimlik:</strong> Uygulama ilk açılışta cihazında rastgele bir kurulum kimliği üretir. Bu kimlik
+            hesabınla ilişkilendirilmez; giriş yapmış olsan bile olaylar GitHub hesabına ya da Slot hesabına
+            bağlanmaz. Cihaz kimliği ya da reklam kimliği kullanılmaz.
+          </li>
+          <li>
+            <strong>Toplanan olaylar:</strong> uygulamanın açılması (o an tekrar zamanı gelmiş soru sayısıyla),
+            makaranın çevrilmesi (seçili kategori sayısıyla), cevap gönderilmesi (soru kimliği ve cevabın karakter
+            sayısıyla), öz-değerlendirme (soru kimliği, cevap kontrolünün sonucu, senin değerlendirmen, sorunun yeni
+            seviyesi ve tekrar zamanının gelmiş olup olmadığıyla). Her olayla birlikte olayın zamanı, platform (web,
+            Android, iOS) ve uygulama sürümü gönderilir.
+          </li>
+          <li>
+            <strong>Toplanmayanlar:</strong> Cevap metnin hiçbir zaman gönderilmez, yalnızca uzunluğu gönderilir.
+            Ad, e-posta, IP adresi ya da tarayıcı/cihaz bilgisi (User-Agent) saklanmaz; bu istekler için sunucu
+            erişim kaydı da tutulmaz.
+          </li>
+          <li><strong>Saklama:</strong> Olaylar 13 ay sonra otomatik olarak silinir.</li>
+          <li>
+            <strong>Kapatma:</strong> Ayarlar → "Kullanım istatistiklerini paylaş". Kapattığında henüz
+            gönderilmemiş olaylar ve kurulum kimliği cihazından silinir, yeni olay toplanmaz. Daha önce gönderilmiş
+            olaylar artık seninle eşleştirilemez ve 13 ay sonra silinir. Yeniden açarsan yeni bir kurulum kimliği
+            üretilir. Kurulum kimliğini bilmediğimiz için gönderilmiş olayları kişi bazında silemeyiz; bu olaylar
+            13 ay sonra otomatik olarak silinir.
+          </li>
+        </ul>
       </section>
 
       <section id="github-ile-giris">
@@ -148,6 +193,12 @@
           </li>
         </ul>
         <p>Hesapsız kullanımda hiçbir çerez yazılmaz.</p>
+        <ul>
+          <li>
+            <strong>Kurulum kimliği ve gönderilmeyi bekleyen olaylar:</strong> Kullanım istatistikleri açıksa
+            cihazındaki uygulama deposunda tutulur; çerez değildir.
+          </li>
+        </ul>
       </section>
 
       <section id="sunucu-kayitlari">
@@ -155,7 +206,8 @@
         <p>
           Web sürümünü kullanırken sunucumuz her istekte şu teknik bilgileri kaydeder: IP adresi, zaman, istenen
           adres, yanıt kodu, yönlendiren sayfa ve tarayıcı bilgisi (User-Agent). Bu kayıtlar güvenlik ve hata
-          ayıklama amacıyla tutulur ve en fazla 15 gün sonra otomatik olarak silinir.
+          ayıklama amacıyla tutulur ve en fazla 15 gün sonra otomatik olarak silinir. Kullanım istatistiği
+          isteklerinde (<code>/api/events</code>) erişim kaydı tutulmaz.
         </p>
         <p>
           Uygulamanın kendi kayıtları hesap kimliğini içerebilir; cevap metinlerini içermez. Bu kayıtların boyutu
@@ -195,7 +247,8 @@
         <h2>7. Yurt dışına aktarım (KVKK md. 9)</h2>
         <p>
           Web sürümünü kullandığında sunucu kayıtların (<a href="#sunucu-kayitlari">5. bölüm</a>), GitHub ile
-          giriş yaptığında hesap ve senkron verilerin, barındırma hizmeti aldığımız Netcup GmbH'nin Nürnberg'deki
+          giriş yaptığında hesap ve senkron verilerin, kullanım istatistikleri açıksa kullanım olayların, barındırma
+          hizmeti aldığımız Netcup GmbH'nin Nürnberg'deki
           (Almanya) sunucularında saklanır. Türkiye'den kullanıyorsan bu, kişisel verilerinin yurt dışına
           aktarılması anlamına gelir.
         </p>
@@ -214,6 +267,10 @@
             Sunucu kayıtları: hizmetin güvenliğini sağlamaya yönelik meşru menfaat (KVKK md. 5/2-f; GDPR md.
             6/1-f).
           </li>
+          <li>
+            Kullanım istatistikleri: uygulamayı iyileştirmeye yönelik meşru menfaatimiz (KVKK md. 5/2-f; GDPR md.
+            6/1-f). İstediğin zaman Ayarlar'dan kapatarak itiraz edebilirsin.
+          </li>
         </ul>
       </section>
 
@@ -226,6 +283,7 @@
             Veritabanı yedekleri: en fazla 15 gün. Silinen hesaplar en geç bu sürenin sonunda yedeklerden de çıkar.
           </li>
           <li>Oturum çerezi: kullanılmazsa 30 gün.</li>
+          <li>Kullanım olayları: 13 ay.</li>
         </ul>
       </section>
 

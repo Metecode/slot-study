@@ -55,13 +55,18 @@ restic → R2 yedek imajı, supercronic ile günlük yedek, canlı compose'daki
 `docs/backup.md`. Geri yükleme provası, Actuator, izleme, alarmlar ve JSON
 log başlamadı. Faza dönülünce branch güncel main'e rebase edilir.
 
+**Faz 2 tetiği bilerek atlandı (2026-11-17).** Faz 2 analitiği, Faz 0
+tamamlanmadan başlatıldı. Gerekçe: analitik verisi kritik değil, kullanıcı
+ilerlemesi günlük pg_dump ile korunuyor. Faz 0 (sunucu dışı yedek, geri
+yükleme testi, izleme), kullanıcı sayısı anlamlı hale geldiğinde yapılacak.
+
 **Tetik listesi** — ilki gerçekleşince Faz 0'a dönülür:
 
 1. Mobil v1.1'de giriş ve senkron yayına hazırlanırken (mobil kullanıcı
    verisi sunucuya gelmeden).
 2. Giriş yapmış (sunucuda verisi olan) kullanıcı sayısı 50'yi geçtiğinde.
 3. Faz 2 (kullanıcı metrikleri) ya da Faz 4 (topluluk soruları) başlamadan
-   önce.
+   önce. Faz 2 için bilerek atlandı (yukarıda); Faz 4 için geçerli.
 4. Canlıda veri kaybı, disk sorunu ya da fark edilmeyen/uzun bir kesinti
    yaşandığında.
 5. Sunucu taşınırken ya da Postgres ana sürümü yükseltilirken.
@@ -100,19 +105,26 @@ Sonraki fazlarda güvenle değişiklik yapabilmek için güvenlik ağı. Takım 
 
 **Mülakat konusu:** Neden H2 değil Testcontainers; migration geri alma stratejisi; token yenilemenin test edilmesi.
 
-## Faz 2 — Anonim metrik ve olay toplama
+## Faz 2 — Kullanım ölçümü ve olay toplama
 
-Kurulun ilk koşulu: aktif kullanıcı, 7/30 gün geri dönüş ve Leitner tamamlanma oranını ölçmek. Hesapsız mobil kullanıcılar dahil, kişisel veri tutmadan.
+Kurulun ilk koşulu: aktif kullanıcı, 7/30 gün geri dönüş ve Leitner tamamlanma oranını ölçmek. Hesapsız mobil kullanıcılar dahil, hesapla ilişkilendirilmeyen, rastgele kurulum kimliğiyle; ad, e-posta, IP, user-agent tutulmadan.
+
+**Durum (2026-11-17):** backend ve istemci `feat/analytics` dalında (V4, `POST /api/events`, saklama işi, `docs/analytics/queries.sql`; web ve mobil istemci, Ayarlar anahtarı, ilk açılış kartı). Gizlilik politikası güncellendi.
+
+**Yayın engelleri:** (1) Play veri güvenliği formu güncellenmeden istemci yayına çıkmaz. (2) Host nginx'teki `/api/events` bloğu (`access_log off`) uygulanmadan politika yayına alınmaz, yoksa "erişim kaydı tutulmaz" cümlesi yanlış olur; politika frontend imajıyla kurulduğu için bu, dalın main'e birleşmesinden önce yapılır. Gizlilik politikası (TR ve EN) güncellendi. Metinlerde "anonim" değil "hesabınla ilişkilendirilmeyen, rastgele kurulum kimliği" ifadesi kullanılır.
 
 **Kapsam**
 
-- [ ] Olay şeması: `app_open`, `spin`, `answer_submitted`, `self_assessed`, `review_completed`; her olayda istemcide üretilen rastgele cihaz kimliği (ad/e-posta yok).
-- [ ] `POST /events` toplu uç: istemci olayları biriktirip toplu gönderir; çevrimdışıyken kuyrukta bekler.
-- [ ] Idempotency: olay başına `eventId`, tekrar gönderimde çift kayıt yok.
-- [ ] Yazma yolu: tek tabloya toplu insert, zaman bazlı partitioning (aylık) ve saklama süresi.
-- [ ] Rollup: gecelik job ile günlük aktif cihaz ve cohort tabloları; dashboard bunları okur.
-- [ ] Cevap kontrolü ölçümü: alias eşleşmesi ile kullanıcının öz-değerlendirmesi ne sıklıkla uyuşuyor.
-- [ ] Uygulamada açık "anonim kullanım istatistiği" ayarı ve gizlilik politikasına ekleme.
+- [x] Olay şeması: `app_open {dueCount}`, `spin {categoryCount}`, `answer_submitted {questionId, answerLength}`, `self_eval {questionId, aliasResult, result, box, wasDue}`; kurulum kimliği, platform ve sürüm batch zarfında. Cevap metni gönderilmez. (İlk taslaktaki `self_assessed`/`review_completed` adları kullanılmadı; `leitner_review_done` da çıkarıldı, tamamlanma `self_eval.wasDue` ve `app_open.dueCount`'tan hesaplanıyor.)
+- [x] `POST /api/events` toplu uç: en fazla 50 olay, geçersiz olay batch'i düşürmez, kurulum başına ve genel rate limit, mobil WebView origin'leri için CORS.
+- [x] İstemci: olayları yerel kuyrukta biriktirip toplu gönderir (açılış, arka plana geçiş, 60 sn), çevrimdışıyken kuyrukta bekler; 429'da Retry-After, diğer hatalarda artan bekleme.
+- [x] Idempotency: olay başına `eventId`, tekrar gönderimde çift kayıt yok.
+- [x] Yazma yolu: tek tabloya toplu insert, 13 ay saklama. Aylık partitioning henüz yok; hacim gerektirince.
+- [ ] Rollup: gecelik job ile günlük aktif cihaz ve cohort tabloları; dashboard bunları okur. Şimdilik `docs/analytics/queries.sql` elle çalıştırılıyor.
+- [x] Cevap kontrolü ölçümü: alias eşleşmesi × öz-değerlendirme matrisi, uyuşma oranı ve Cohen's kappa (`queries.sql`).
+- [x] Uygulamada açık kullanım ölçümü ayarı (varsayılan açık; kapatma hakkı + meşru menfaat) ve gizlilik politikasına ekleme.
+- [ ] Play veri güvenliği formu — **yayın engeli**.
+- [ ] Host nginx'te `/api/events` için `access_log off` (`docs/deploy.md`, "Kullanım ölçümü ucu") — **main'e birleşmeden önce**.
 
 **Bitti tanımı:** Grafana'da DAU, 7/30 gün retention ve Leitner tamamlanma oranı panelleri canlı veriyle çalışıyor.
 

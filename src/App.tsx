@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 import styles from "./App.module.css";
+import { trackAnswerSubmitted, trackSelfEval, trackSpin } from "./analytics/trackers";
+import { useAnalytics } from "./analytics/useAnalytics";
 import { useAuth } from "./auth/useAuth";
 import { CategoryPicker } from "./components/CategoryPicker";
 import { Footer } from "./components/Footer";
@@ -11,6 +13,7 @@ import { SettingsPanel } from "./components/SettingsPanel";
 import { Stage } from "./components/Stage";
 import { StepIndicator } from "./components/StepIndicator";
 import { TopBar } from "./components/TopBar";
+import { UsageNotice } from "./components/UsageNotice";
 import { useReminderSettings } from "./hooks/useReminderSettings";
 import { useReviewReminder } from "./hooks/useReviewReminder";
 import { useSession } from "./hooks/useSession";
@@ -54,7 +57,7 @@ type SessionProps = {
 /*
   Oturum, ayarlar ve hatırlatıcı kendi hook'larında; burası onları
   birbirine bağlıyor. Efektli hook'ların çağrı sırası bilinçli: diske
-  yazma → senkron → hatırlatıcı → spinKey. Bölmeden önceki sıra buydu;
+  yazma → senkron → hatırlatıcı → kullanım ölçümü → spinKey. Bölmeden önceki sıra buydu;
   üstteki üç hook (useSession, useSettings, useReminderSettings) pasif
   efekt içermediği için öne alınmaları bu sırayı değiştirmiyor.
 */
@@ -97,18 +100,43 @@ function Session({ store, warning, save }: SessionProps) {
     onPermissionLost: reminder.permissionLost,
   });
 
+  // Kullanım ölçümü: app_open, periyodik ve arka plana geçişte gönderim.
+  // Sıra: hatırlatıcıdan sonra, spinKey'den önce; diske yazmayla ilişkisi yok,
+  // kendi namespace'ine yazıyor.
+  const usage = useAnalytics({ progress, questions: QUESTIONS, activeCategories });
+  const [settingsOpenRequest, setSettingsOpenRequest] = useState(0);
+
   // spinKey yalnızca gerçek bir dönüş başladığında artar — çekiliş havuzu
   // boşsa reducer state'i değiştirmez, Machine'e anlamsız bir dönüş gitmez.
+  // spin olayı da burada: reducer çekilişi reddederse olay da gitmez.
   useEffect(() => {
     if (state.phase === "spinning" && prevPhaseRef.current !== "spinning") {
       setSpinKey((key) => key + 1);
+      trackSpin(state.activeCategories);
     }
     prevPhaseRef.current = state.phase;
   }, [state]);
 
+  function handleSubmit(answer: string) {
+    if (state.current) trackAnswerSubmitted(state.current, answer);
+    session.submit(answer);
+  }
+
   function handleRate(rating: SelfRating) {
     // Soru id'si dispatch'ten önce alınır: RATE turu kapatınca current null olur.
     if (state.current) pushQuestion(state.current.id);
+    // Ölçüm de önce: değerlendirmeden önceki kutu ve kayıt yalnızca şimdi elde.
+    if (state.phase === "evaluated" && state.current) {
+      trackSelfEval({
+        question: state.current,
+        previous: progress[state.current.id],
+        evaluation: state.evaluation,
+        passed: state.passed,
+        answer: session.lastAnswer,
+        rating,
+        now: new Date(),
+      });
+    }
     session.rate(rating);
     // Bu değerlendirme henüz state'e yansımadı.
     reminder.offerAfterRating(countRatings(progress) + 1);
@@ -157,6 +185,16 @@ function Session({ store, warning, save }: SessionProps) {
             <ReminderOffer onAccept={reminder.enable} onClose={reminder.closeOffer} />
           )}
 
+          {usage.noticeOpen && (
+            <UsageNotice
+              onOpenSettings={() => {
+                usage.closeNotice();
+                setSettingsOpenRequest((n) => n + 1);
+              }}
+              onClose={usage.closeNotice}
+            />
+          )}
+
           <SettingsPanel
             fastMode={settings.fastMode}
             onFastModeChange={settings.setFastMode}
@@ -167,6 +205,10 @@ function Session({ store, warning, save }: SessionProps) {
             reminderEnabled={reminder.enabled}
             onReminderChange={reminder.change}
             reminderDenied={reminder.denied}
+            usageAvailable={usage.available}
+            usageEnabled={usage.enabled}
+            onUsageChange={usage.setEnabled}
+            openRequest={settingsOpenRequest}
           />
 
           <LoadWarningBanner warning={warning} />
@@ -175,7 +217,7 @@ function Session({ store, warning, save }: SessionProps) {
         {/* Soru kartı ve sonuç ekranı burada; geçişi Stage yönetiyor. */}
         <Stage
           state={state}
-          onSubmit={session.submit}
+          onSubmit={handleSubmit}
           onPass={session.pass}
           onRate={handleRate}
           lastAnswer={session.lastAnswer}

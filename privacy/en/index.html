@@ -31,7 +31,7 @@
 
     <main class="page">
       <h1>Slot — Privacy Policy</h1>
-      <p class="updated">Last updated: 30 September 2026</p>
+      <p class="updated">Last updated: 17 November 2026</p>
 
       <p>
         This policy explains what data Slot (slot.meteucar.com and the Slot mobile app) processes, why, and what
@@ -54,7 +54,11 @@
             Slot works fully without an account. Without an account, your progress and settings are stored on your
             device and are not sent to us.
           </li>
-          <li>We use no advertising, analytics or tracking tools. We do not sell your data or share it for marketing.</li>
+          <li>
+            We use no advertising or third-party analytics/tracking tools. To improve the app, we keep usage
+            statistics on our own server with a random installation ID that is not linked to your account; you can
+            turn this off in Settings. We do not sell your data or share it for marketing.
+          </li>
           <li>
             If you choose to sign in with GitHub, your progress is stored on our server so it can sync across your
             devices. Sign-in is available only in the web version.
@@ -69,7 +73,8 @@
           Your answers, ratings, progress and settings are kept in the app's storage on your device (in the web
           version, the browser's IndexedDB) and are not sent to us. To work offline, the web version stores the
           app's files in the browser cache. You can remove this data by clearing your browser data or uninstalling
-          the app.
+          the app. If usage statistics are on, some usage events are sent to our server (see
+          <a href="#usage-statistics">2a</a>).
         </p>
         <p>
           When you open the web version, your browser loads the page from our server. The technical logs of these
@@ -79,7 +84,10 @@
 
       <section id="mobile-app">
         <h2>2. Mobile app</h2>
-        <p>The mobile app has no accounts or sign-in, and it sends no requests to our server.</p>
+        <p>
+          The mobile app has no accounts or sign-in. It sends our server only usage statistics (see
+          <a href="#usage-statistics">2a</a>); your progress and answers are not sent.
+        </p>
         <ul>
           <li>
             <strong>Progress and settings:</strong> Stored on your device, in JSON files in the app's own folder, and
@@ -91,7 +99,8 @@
             your device; no notification server is used. You can turn reminders off in Settings.
           </li>
           <li>
-            <strong>No analytics or ads:</strong> The app contains no analytics, advertising or crash-reporting SDK.
+            <strong>No ads or third-party tools:</strong> The app contains no advertising, third-party analytics or
+            crash-reporting SDK.
           </li>
           <li>
             <strong>Ask your own AI:</strong> Only when you start it, the prompt is passed to the third-party service
@@ -100,7 +109,46 @@
             Details in <a href="#storage-and-sharing">section 6</a>.
           </li>
         </ul>
-        <p>Signing in with GitHub, cookies and server logs (sections 3–5) apply only to the web version.</p>
+        <p>
+          Signing in with GitHub, cookies and server logs (sections 3–5) apply only to the web version; the parts
+          about usage statistics (2a and the notes in sections 4 and 5) apply to both versions.
+        </p>
+      </section>
+
+      <section id="usage-statistics">
+        <h2>2a. Usage statistics</h2>
+        <p>
+          To understand how Slot is used (how many people come back, whether reviews get completed, how often the
+          answer check agrees with your own rating), we collect usage events on our own server in the web and mobile
+          versions. This setting is on by default.
+        </p>
+        <ul>
+          <li>
+            <strong>Identifier:</strong> On first launch the app generates a random installation ID on your device.
+            It is not linked to your account; even when you are signed in, events are not tied to your GitHub or
+            Slot account. No device ID or advertising ID is used.
+          </li>
+          <li>
+            <strong>Events collected:</strong> opening the app (with the number of questions due for review at that
+            moment), spinning the reels (with the number of selected categories), submitting an answer (question ID
+            and the answer's character count), self-rating (question ID, the answer check's result, your rating, the
+            question's new level and whether it was due). Each event carries its time, the platform (web, Android,
+            iOS) and the app version.
+          </li>
+          <li>
+            <strong>Not collected:</strong> Your answer text is never sent, only its length. No name, email, IP
+            address or browser/device information (User-Agent) is stored, and no server access log is kept for these
+            requests.
+          </li>
+          <li><strong>Retention:</strong> Events are deleted automatically after 13 months.</li>
+          <li>
+            <strong>Turning it off:</strong> Settings → "Share usage statistics". When you turn it off, events not
+            yet sent and the installation ID are deleted from your device and no new events are collected. Events
+            already sent can no longer be matched to you and are deleted after 13 months. If you turn it back on, a
+            new installation ID is generated. Since we do not know your installation ID, we cannot delete sent events
+            individually; they are deleted automatically after 13 months.
+          </li>
+        </ul>
       </section>
 
       <section id="github-sign-in">
@@ -137,6 +185,12 @@
           <li><strong>JSESSIONID:</strong> used only during the GitHub sign-in flow and deleted once sign-in completes.</li>
         </ul>
         <p>No cookies are set when you use Slot without an account.</p>
+        <ul>
+          <li>
+            <strong>Installation ID and events waiting to be sent:</strong> kept in the app's storage on your device
+            while usage statistics are on; not a cookie.
+          </li>
+        </ul>
       </section>
 
       <section id="server-logs">
@@ -144,7 +198,8 @@
         <p>
           When you use the web version, our server records the following for each request: IP address, time,
           requested URL, response code, referring page and browser information (User-Agent). These logs are kept
-          for security and troubleshooting and are deleted automatically after at most 15 days.
+          for security and troubleshooting and are deleted automatically after at most 15 days. No access log is
+          kept for usage statistics requests (<code>/api/events</code>).
         </p>
         <p>
           The application's own logs may contain your account ID; they never contain your answer texts. These logs
@@ -180,8 +235,9 @@
       <section id="transfers-abroad">
         <h2>7. Transfers abroad (KVKK Art. 9)</h2>
         <p>
-          When you use the web version, your server logs (<a href="#server-logs">section 5</a>), and when you sign
-          in with GitHub, your account and sync data, are stored on the servers of our hosting provider Netcup GmbH
+          When you use the web version, your server logs (<a href="#server-logs">section 5</a>), when you sign in
+          with GitHub, your account and sync data, and, if usage statistics are on, your usage events, are stored on
+          the servers of our hosting provider Netcup GmbH
           in Nuremberg, Germany. If you use Slot from Turkey, this means your personal data is transferred abroad.
         </p>
         <p>
@@ -195,6 +251,10 @@
         <ul>
           <li>Account and sync data: performance of a contract (KVKK Art. 5/2-c; GDPR Art. 6(1)(b)).</li>
           <li>Server logs: legitimate interest in keeping the service secure (KVKK Art. 5/2-f; GDPR Art. 6(1)(f)).</li>
+          <li>
+            Usage statistics: our legitimate interest in improving the app (KVKK Art. 5/2-f; GDPR Art. 6(1)(f)). You
+            can object at any time by turning it off in Settings.
+          </li>
         </ul>
       </section>
 
@@ -208,6 +268,7 @@
             period ends.
           </li>
           <li>Session cookie: 30 days if unused.</li>
+          <li>Usage events: 13 months.</li>
         </ul>
       </section>
 

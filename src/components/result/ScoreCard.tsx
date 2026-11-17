@@ -2,6 +2,7 @@ import { useId } from "react";
 import type { CSSProperties, ReactNode } from "react";
 
 import { useCountUp } from "../../hooks/useCountUp";
+import { conceptMatchLevel } from "../../domain/conceptMatch";
 import type { Evaluation, Question } from "../../domain/question";
 import { CheckIcon, DashIcon } from "./icons";
 import styles from "./ScoreCard.module.css";
@@ -41,8 +42,10 @@ function scoreCaption(
   total: number,
   answerEmpty: boolean,
 ): string {
-  if (hitCount === total) return "Tüm kavramlar cevabında geçiyor.";
-  if (hitCount > 0) {
+  // Seviye kullanım ölçümüyle ortak (aliasResult): bkz. domain/conceptMatch.ts.
+  const level = conceptMatchLevel(hitCount, total);
+  if (level === "all") return "Tüm kavramlar cevabında geçiyor.";
+  if (level === "some") {
     return `${total} kavramdan ${hitCount}'${possessiveSuffix(hitCount)} cevabında geçiyor.`;
   }
   if (answerEmpty) return `${total} kavramdan hiçbiri cevabında geçmedi.`;

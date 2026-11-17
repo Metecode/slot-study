@@ -129,6 +129,43 @@ kullanıcısı, `/opt/mulakat`. Kalan adımlar:
    8081/8082'ye erişilemediğini de kontrol et:
    `curl -m 5 http://<VPS_HOST>:8082/api/health` zaman aşımına uğramalı.
 
+## Kullanım ölçümü ucu (`/api/events`)
+
+Olaylar hesapla ilişkilendirilmeyen, rastgele kurulum kimliğiyle gelir; IP
+hiçbir yerde tutulmamalı. Uygulama IP saklamıyor (Tomcat erişim günlüğü
+kapalı, tabloda IP kolonu yok), ama host nginx'in erişim günlüğü her isteğin
+IP'sini yazar ve olay isteği o IP'yi kurulum kimliğinin gönderildiği anla
+eşleştirmeye yeter. Bu uç için host nginx'e ayrı bir blok eklenir; `= `
+tam eşleşmesi `/api/` önek bloğundan önce gelir:
+
+```nginx
+location = /api/events {
+    # IP + zaman + kurulum kimliği eşleşmesi olmasın.
+    access_log off;
+    # 50 olaylık batch ~15 KB; varsayılan 1 MB'ın gereği yok.
+    client_max_body_size 64k;
+
+    proxy_pass http://127.0.0.1:8082;
+    proxy_set_header Host              $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Host  $host;
+    # X-Forwarded-For bilerek iletilmiyor: IP backend'e de ulaşmasın.
+}
+```
+
+Sonra `sudo nginx -t && sudo systemctl reload nginx`. Doğrulama:
+
+```sh
+curl -i -X POST https://slot.meteucar.com/api/events \
+  -H 'Content-Type: application/json' -d '{}'
+# 400 {"error":"invalid_batch"} beklenir; erişim günlüğünde satır olmamalı:
+sudo tail -n 5 /var/log/nginx/access.log
+```
+
+`error_log` açık kalır ve bir hata olursa (ör. backend düşükken 502) istemci
+IP'sini yazabilir; bu yalnızca hata anında ve sunucu kayıtlarının genel
+saklama süresine tabi.
+
 ## Geri alma
 
 Her `up -d` sonrası SHA `deploy-history.txt`'nin sonuna eklenir. Son satır

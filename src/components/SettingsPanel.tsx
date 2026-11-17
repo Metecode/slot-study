@@ -6,6 +6,7 @@ import { ChevronIcon } from "./ChevronIcon";
 import { Collapse } from "./Collapse";
 import { ReminderSetting } from "./ReminderSetting";
 import { Switch } from "./Switch";
+import { UsageStatsSetting } from "./UsageStatsSetting";
 import styles from "./SettingsPanel.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -29,6 +30,15 @@ export type SettingsPanelProps = {
   onReminderChange: (enabled: boolean) => void;
   /** İzin verilmedi ya da sistemden kaldırıldı. */
   reminderDenied: boolean;
+  /** Ölçüm bu derlemede mümkün değilse anahtar çizilmez. */
+  usageAvailable: boolean;
+  usageEnabled: boolean;
+  onUsageChange: (enabled: boolean) => void;
+  /**
+   * Değiştikçe panel açılır ve odak kullanım anahtarına gelir (bilgilendirme
+   * kartındaki "Ayarlar"). 0: istek yok.
+   */
+  openRequest: number;
 };
 
 export function SettingsPanel({
@@ -41,9 +51,23 @@ export function SettingsPanel({
   reminderEnabled,
   onReminderChange,
   reminderDenied,
+  usageAvailable,
+  usageEnabled,
+  onUsageChange,
+  openRequest,
 }: SettingsPanelProps) {
   // Varsayılan kapalı — kimse ayar aramak zorunda kalmasın.
   const [open, setOpen] = useState(false);
+  /*
+    Yeni istek render sırasında işlenir (efektte değil): panelin açılması
+    ve odak isteği aynı commit'e düşer, anahtar odağı panel açık çizildikten
+    sonra alır. Odak önce inseydi içerik hâlâ inert olurdu (Collapse).
+  */
+  const [focusRequest, setFocusRequest] = useState(openRequest);
+  if (openRequest !== focusRequest) {
+    setFocusRequest(openRequest);
+    setOpen(true);
+  }
 
   return (
     <div className={styles.settings}>
@@ -84,6 +108,9 @@ export function SettingsPanel({
               onChange={onReminderChange}
               denied={reminderDenied}
             />
+          )}
+          {usageAvailable && (
+            <UsageStatsSetting checked={usageEnabled} onChange={onUsageChange} focusRequest={focusRequest} />
           )}
         </div>
       </Collapse>
