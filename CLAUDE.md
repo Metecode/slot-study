@@ -272,7 +272,8 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - **İki filtre zinciri, iki oturum modeli.** `/oauth2/**` ve `/login/**`
   zincirinde session var, çünkü OAuth state/PKCE iki istek arasında
   saklanmak zorunda. Başarı anında success handler session'ı kapatır.
-  Diğer her şey STATELESS.
+  Diğer her şey STATELESS. Üçüncü zincir `/api/events`'in; JWT hiç
+  okumuyor (bkz. Kullanım ölçümü).
 - **Geliştirmede tek origin.** Vite `/api`, `/oauth2`, `/login` yollarını
   8080'e proxy'ler ve `changeOrigin: false` bırakır: Host başlığı
   `localhost:5173` kalsın ki Spring GitHub'a gönderdiği `redirect_uri`'yi
@@ -458,6 +459,62 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   durum anonime döner ve kullanıcı menüsü DOM'dan kalkar; diyalog onun
   içinde olsaydı sonucu gösteremeden kaybolurdu. Kapanınca odak
   "Giriş yap"a taşınır.
+
+## Kullanım ölçümü (`analytics/`)
+
+- **YAYIN ENGELİ.** Gizlilik politikası (TR ve EN, `docs/gizlilik-politikasi.md`
+  ve `privacy/`) ile Play veri güvenliği formu güncellenmeden istemci
+  tarafı yayına çıkmaz. Politika bugün "analitik kullanmıyoruz" diyor.
+  Metinlerde "anonim" değil, "hesabınla ilişkilendirilmeyen, rastgele
+  kurulum kimliği" yazılır: kalıcı bir kimlik anonim değildir.
+- **Hesapla hiçbir bağ yok.** `analytics_event`'te `user_id`, IP ve
+  user-agent kolonu yok, `app_user`'a yabancı anahtar yok. Girişli web
+  kullanıcısının olayları da bağlanmaz: `/api/events` kendi güvenlik
+  zincirinde (`SecurityConfig.eventsFilterChain`) ve orada resource server
+  yok, Bearer başlığı okunmaz. Controller'a principal parametresi
+  eklenmez. Host nginx'te bu uçta `access_log off` ve X-Forwarded-For
+  iletilmez (`docs/deploy.md`); IP backend'e de ulaşmaz.
+- **Sözleşme.** Zarfta `installId`, `platform` (web/android/ios),
+  `appVersion` (X.Y.Z); `events` 1–50 olay, her biri `eventId` (UUID),
+  `name`, `occurredAt`, `props`. 202 `{accepted, skipped}`; zarf bozuksa
+  400 `{"error":"invalid_batch"}`; sınır aşılırsa 429 + `Retry-After`,
+  hiçbir şey yazılmaz.
+- **Olaylar ve props tek yerde:** `EventPropsSchema`. Ad listesi V4'teki
+  CHECK kısıtıyla aynı; olay eklenince yeni migration CHECK'i günceller.
+  İstemci aynı şemayı kullanıyor. Cevap METNİ hiçbir olayda yok, yalnızca
+  `answerLength`. `questionId` dar bir karakter kümesiyle sınırlı
+  (`[A-Za-z0-9._-]{1,128}`): serbest metin bu tabloya girmesin.
+- **Bilinmeyen props alanı sessizce atılır,** olay kabul edilir. İlerleme
+  senkronundaki "denemede bilinmeyen alan → 400" kuralından bilerek farklı:
+  orada sözleşme ihlali kullanıcı verisini bozabilir, burada yeni sürüm
+  istemcinin eski sunucuya eklediği alan yüzünden ölçüm kaybolmasın.
+  Eksik zorunlu alan, yanlış tip (ondalık ya da metin olarak sayı dahil),
+  aralık dışı değer ise olayı atlatır.
+- **Geçersiz olay batch'i düşürmez.** Atlanan olayların sayısı ve sabit
+  metinli nedenleri `info` ile loglanır; installId, soru kimliği ya da
+  başka bir istemci değeri loga yazılmaz (`AnalyticsEventEndpointTest`
+  doğruluyor).
+- **Zaman penceresi:** `occurredAt` en fazla 7 gün geçmişte (çevrimdışı
+  kuyruk), en fazla 5 dakika ileride.
+- **Idempotent.** `event_id` UNIQUE, `ON CONFLICT DO NOTHING`. Tekrar gelen
+  olay `accepted`'a dahildir; istemci için başarılı sayılır.
+- **Rate limit bellek içi** (`InstallRateLimiter`): kurulum başına 120,
+  genel 6000 olay/dakika, sabit dakika penceresi. installId istemciden
+  geldiği için kimlik döndüren biri kurulum sınırını atlar; IP tutmadığımız
+  için tek önlem genel tavan. Yeniden başlatmada sıfırlanır; birden fazla
+  instance olursa yeniden düşünülür.
+- **CORS yalnızca bu uçta,** yalnızca `capacitor://localhost` ve
+  `https://localhost`. Kaynak bean değil, zincire doğrudan veriliyor:
+  bean olsaydı diğer zincirler ve MVC de bulabilirdi. Diğer uçlarda CORS
+  izni yok (`AnalyticsCorsTest`). `Retry-After` expose edilir.
+- **JPA değil JdbcClient.** IDENTITY id Hibernate'in toplu insert'ini
+  kapatıyor ve uygulama bu tabloyu okumuyor; batch tek çok satırlı INSERT.
+- **13 ay saklama** (`AnalyticsRetentionJob`, her gün 03:30, `occurred_at`).
+  Politikaya yazılacak süre bununla aynı olmalı.
+- **Analiz `docs/analytics/queries.sql`'de.** Gün uygulamadaki gibi 04:00'da
+  döner (Europe/Istanbul). Leitner tamamlanma: o günkü `wasDue=true`
+  `self_eval` ÷ günün ilk `app_open.dueCount`'u, tavan 1, `dueCount = 0`
+  günleri hariç.
 
 ## Yapay zekâ değerlendirmesi — denendi, kaldırıldı
 
