@@ -13,6 +13,7 @@ import { SettingsPanel } from "./components/SettingsPanel";
 import { Stage } from "./components/Stage";
 import { StepIndicator } from "./components/StepIndicator";
 import { TopBar } from "./components/TopBar";
+import { UsageNotice } from "./components/UsageNotice";
 import { useReminderSettings } from "./hooks/useReminderSettings";
 import { useReviewReminder } from "./hooks/useReviewReminder";
 import { useSession } from "./hooks/useSession";
@@ -102,7 +103,8 @@ function Session({ store, warning, save }: SessionProps) {
   // Kullanım ölçümü: app_open, periyodik ve arka plana geçişte gönderim.
   // Sıra: hatırlatıcıdan sonra, spinKey'den önce; diske yazmayla ilişkisi yok,
   // kendi namespace'ine yazıyor.
-  useAnalytics({ progress, questions: QUESTIONS, activeCategories });
+  const usage = useAnalytics({ progress, questions: QUESTIONS, activeCategories });
+  const [settingsOpenRequest, setSettingsOpenRequest] = useState(0);
 
   // spinKey yalnızca gerçek bir dönüş başladığında artar — çekiliş havuzu
   // boşsa reducer state'i değiştirmez, Machine'e anlamsız bir dönüş gitmez.
@@ -183,6 +185,16 @@ function Session({ store, warning, save }: SessionProps) {
             <ReminderOffer onAccept={reminder.enable} onClose={reminder.closeOffer} />
           )}
 
+          {usage.noticeOpen && (
+            <UsageNotice
+              onOpenSettings={() => {
+                usage.closeNotice();
+                setSettingsOpenRequest((n) => n + 1);
+              }}
+              onClose={usage.closeNotice}
+            />
+          )}
+
           <SettingsPanel
             fastMode={settings.fastMode}
             onFastModeChange={settings.setFastMode}
@@ -193,6 +205,10 @@ function Session({ store, warning, save }: SessionProps) {
             reminderEnabled={reminder.enabled}
             onReminderChange={reminder.change}
             reminderDenied={reminder.denied}
+            usageAvailable={usage.available}
+            usageEnabled={usage.enabled}
+            onUsageChange={usage.setEnabled}
+            openRequest={settingsOpenRequest}
           />
 
           <LoadWarningBanner warning={warning} />

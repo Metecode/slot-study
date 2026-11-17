@@ -71,12 +71,21 @@ export function createAnalyticsClient(deps: AnalyticsDeps) {
     return created;
   }
 
-  /** Tercihi depodan okur; okunamazsa kapalı kalır. */
-  async function load(): Promise<Consent> {
-    await safely("tercih okuma", async () => {
-      consent = await storage.readConsent();
-    });
-    return consent;
+  let loading: Promise<Consent> | null = null;
+
+  /**
+   * Tercihi depodan bir kez okur; okunamazsa kapalı kalır. Tekrar çağrı aynı
+   * sonucu döner: StrictMode'un ikinci efekti, ilkinin sonradan yaptığı
+   * değişikliği (bilgilendirme gösterildi) depodaki eski değerle ezmesin.
+   */
+  function load(): Promise<Consent> {
+    loading ??= (async () => {
+      await safely("tercih okuma", async () => {
+        consent = await storage.readConsent();
+      });
+      return consent;
+    })();
+    return loading;
   }
 
   /**
@@ -197,6 +206,8 @@ export function createAnalyticsClient(deps: AnalyticsDeps) {
     track,
     flush,
     consent: (): Consent => consent,
+    /** Bu derlemede ölçüm mümkün mü (native'de adres tanımlı mı). */
+    available: deps.endpoint !== null,
   };
 }
 

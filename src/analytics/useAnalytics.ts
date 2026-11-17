@@ -5,6 +5,7 @@ import type { Category, Question } from "../domain/question";
 import { dueCountOf } from "../domain/usageMetrics";
 import { analytics } from "./analytics";
 import type { Consent } from "./analyticsStorage";
+import { shouldShowUsageNotice } from "./usageNotice";
 
 /* ------------------------------------------------------------------ */
 /* Kullanım ölçümünün React tarafı                                     */
@@ -44,14 +45,19 @@ function trackAppOpen({ progress, questions, activeCategories }: DueSource): voi
 }
 
 export type AnalyticsSettings = {
-  /** Tercih okunana kadar null. */
-  consent: Consent | null;
+  /** Bu derlemede ölçüm mümkün mü; değilse anahtar da kart da çizilmez. */
+  available: boolean;
+  /** Ayarlar'daki anahtar; tercih okunana kadar false. */
+  enabled: boolean;
   setEnabled: (enabled: boolean) => void;
-  markNoticeShown: () => void;
+  /** İlk açılış bilgilendirmesi bu oturumda açık mı. */
+  noticeOpen: boolean;
+  closeNotice: () => void;
 };
 
 export function useAnalytics(source: DueSource): AnalyticsSettings {
   const [consent, setConsent] = useState<Consent | null>(null);
+  const [noticeOpen, setNoticeOpen] = useState(false);
   // Arka plandan dönüşte o anki ilerleme ve seçim gerekiyor; efekt yeniden kurulmasın.
   const sourceRef = useRef(source);
   useEffect(() => {
@@ -61,7 +67,14 @@ export function useAnalytics(source: DueSource): AnalyticsSettings {
   useEffect(() => {
     let cancelled = false;
     void analytics.load().then((loaded) => {
-      if (!cancelled) setConsent(loaded);
+      if (!cancelled) {
+        setConsent(loaded);
+        // Gösterildiği an kaydedilir: kapatılmasa da bir daha çıkmaz.
+        if (shouldShowUsageNotice(loaded, analytics.available)) {
+          setNoticeOpen(true);
+          void analytics.markNoticeShown();
+        }
+      }
       if (launchStarted) return;
       launchStarted = true;
       trackAppOpen(sourceRef.current);
@@ -96,10 +109,13 @@ export function useAnalytics(source: DueSource): AnalyticsSettings {
     setConsent(analytics.consent());
   }, []);
 
-  const markNoticeShown = useCallback(() => {
-    void analytics.markNoticeShown();
-    setConsent(analytics.consent());
-  }, []);
+  const closeNotice = useCallback(() => setNoticeOpen(false), []);
 
-  return { consent, setEnabled, markNoticeShown };
+  return {
+    available: analytics.available,
+    enabled: consent?.enabled ?? false,
+    setEnabled,
+    noticeOpen,
+    closeNotice,
+  };
 }
