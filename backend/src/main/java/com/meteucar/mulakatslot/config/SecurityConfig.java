@@ -1,6 +1,8 @@
 package com.meteucar.mulakatslot.config;
 
 import com.meteucar.mulakatslot.auth.GithubAuthenticationSuccessHandler;
+import java.time.Duration;
+import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -11,6 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Üç filtre zinciri var: iki farklı oturum modeli (OAuth el sıkışması ve
@@ -19,6 +24,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private static final String EVENTS_PATH = "/api/events";
 
     /**
      * GitHub el sıkışması. Yetkilendirme isteğinin durumu (state parametresi,
@@ -51,13 +58,40 @@ public class SecurityConfig {
     @Order(2)
     SecurityFilterChain eventsFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/api/events")
+                .securityMatcher(EVENTS_PATH)
                 // Yalnızca POST eşlenmiş; diğer metotlara Spring MVC 405 döner.
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .cors(cors -> cors.configurationSource(eventsCorsSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
+    }
+
+    /**
+     * Mobil uygulamanın WebView origin'leri: iOS'ta capacitor://localhost,
+     * Android'de https://localhost. Web aynı origin'den geliyor, CORS'a
+     * ihtiyacı yok.
+     *
+     * <p>Bilerek bean değil: CorsConfigurationSource bean'i diğer zincirler
+     * ve Spring MVC tarafından da bulunup kullanılabilirdi. Diğer uçların
+     * CORS davranışı (hiç izin yok) değişmesin.
+     *
+     * <p>Cookie ve kimlik taşınmadığı için credentials kapalı. Retry-After
+     * açıkça izinli: cross-origin yanıtta istemci onu başka türlü okuyamaz.
+     */
+    private static CorsConfigurationSource eventsCorsSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("capacitor://localhost", "https://localhost"));
+        config.setAllowedMethods(List.of("POST"));
+        config.setAllowedHeaders(List.of("Content-Type"));
+        config.setExposedHeaders(List.of("Retry-After"));
+        config.setAllowCredentials(false);
+        config.setMaxAge(Duration.ofDays(1));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration(EVENTS_PATH, config);
+        return source;
     }
 
     /**
