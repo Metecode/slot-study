@@ -5,12 +5,25 @@
 -- (install_id) taşır; buradaki "kullanıcı" her yerde "kurulum" demek: aynı
 -- kişi iki cihazda iki kurulum sayılır, uygulamayı silip kuran yeni kurulumdur.
 --
--- GÜN TANIMI. Uygulamadaki gibi gün 04:00'da döner (src/domain/studyDay.ts):
--- 23:50'deki oturum önceki güne sayılır, app_open.dueCount da bu güne göre
--- hesaplanıyor. Saat dilimi Europe/Istanbul: istemcinin dilimi gönderilmiyor,
--- kullanıcıların büyük kısmı Türkiye'de. Her sorgunun başındaki `e` CTE'si
--- study_day'i bu kuralla üretir; bir sorguda değiştirilirse hepsinde
--- değiştirilmeli.
+-- GÜN TANIMI: Europe/Istanbul saatiyle 04:00 — gece yarısı DEĞİL, bilinçli.
+-- 00:00–03:59 arasındaki olaylar önceki güne sayılır.
+--
+-- Gerekçe:
+-- 1. Uygulamanın kendi günü 04:00'da dönüyor (src/domain/studyDay.ts,
+--    CLAUDE.md "Gün 04:00'da döner"). app_open.dueCount o güne göre
+--    hesaplanıyor; analiz günü farklı olsaydı Leitner oranında pay
+--    (wasDue self_eval) ile payda (dueCount) farklı günleri sayardı.
+-- 2. Gece yarısını aşan tek bir oturum (23:30–00:30) gece yarısı sınırında
+--    iki güne bölünür: DAU şişer, kurulum ertesi gün "geri dönmüş" sayılır ve
+--    D1 yapay olarak yükselir.
+--
+-- Saat dilimi Europe/Istanbul, çünkü istemci kendi dilimini göndermiyor ve
+-- kullanıcıların büyük kısmı Türkiye'de. Uygulama cihazın yerel saatini
+-- kullanıyor; yurt dışındaki bir kullanıcının günü burada birkaç saat
+-- kayabilir.
+--
+-- Her sorgunun başındaki `e` CTE'si study_day'i bu kuralla üretir. Kural bir
+-- sorguda değişirse hepsinde değişmeli.
 --
 -- SINIRLAR.
 -- * Satırlar 13 ay saklanır (AnalyticsRetentionJob): ondan eski kohortlar

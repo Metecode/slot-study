@@ -105,7 +105,7 @@ Sonraki fazlarda güvenle değişiklik yapabilmek için güvenlik ağı. Takım 
 
 **Mülakat konusu:** Neden H2 değil Testcontainers; migration geri alma stratejisi; token yenilemenin test edilmesi.
 
-## Faz 2 — Anonim metrik ve olay toplama
+## Faz 2 — Kullanım ölçümü ve olay toplama
 
 Kurulun ilk koşulu: aktif kullanıcı, 7/30 gün geri dönüş ve Leitner tamamlanma oranını ölçmek. Hesapsız mobil kullanıcılar dahil, hesapla ilişkilendirilmeyen, rastgele kurulum kimliğiyle; ad, e-posta, IP, user-agent tutulmadan.
 
