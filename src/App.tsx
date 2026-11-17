@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 import styles from "./App.module.css";
+import { trackAnswerSubmitted, trackSelfEval, trackSpin } from "./analytics/trackers";
+import { useAnalytics } from "./analytics/useAnalytics";
 import { useAuth } from "./auth/useAuth";
 import { CategoryPicker } from "./components/CategoryPicker";
 import { Footer } from "./components/Footer";
@@ -54,7 +56,7 @@ type SessionProps = {
 /*
   Oturum, ayarlar ve hatırlatıcı kendi hook'larında; burası onları
   birbirine bağlıyor. Efektli hook'ların çağrı sırası bilinçli: diske
-  yazma → senkron → hatırlatıcı → spinKey. Bölmeden önceki sıra buydu;
+  yazma → senkron → hatırlatıcı → kullanım ölçümü → spinKey. Bölmeden önceki sıra buydu;
   üstteki üç hook (useSession, useSettings, useReminderSettings) pasif
   efekt içermediği için öne alınmaları bu sırayı değiştirmiyor.
 */
@@ -97,18 +99,42 @@ function Session({ store, warning, save }: SessionProps) {
     onPermissionLost: reminder.permissionLost,
   });
 
+  // Kullanım ölçümü: app_open, periyodik ve arka plana geçişte gönderim.
+  // Sıra: hatırlatıcıdan sonra, spinKey'den önce; diske yazmayla ilişkisi yok,
+  // kendi namespace'ine yazıyor.
+  useAnalytics({ progress, questions: QUESTIONS, activeCategories });
+
   // spinKey yalnızca gerçek bir dönüş başladığında artar — çekiliş havuzu
   // boşsa reducer state'i değiştirmez, Machine'e anlamsız bir dönüş gitmez.
+  // spin olayı da burada: reducer çekilişi reddederse olay da gitmez.
   useEffect(() => {
     if (state.phase === "spinning" && prevPhaseRef.current !== "spinning") {
       setSpinKey((key) => key + 1);
+      trackSpin(state.activeCategories);
     }
     prevPhaseRef.current = state.phase;
   }, [state]);
 
+  function handleSubmit(answer: string) {
+    if (state.current) trackAnswerSubmitted(state.current, answer);
+    session.submit(answer);
+  }
+
   function handleRate(rating: SelfRating) {
     // Soru id'si dispatch'ten önce alınır: RATE turu kapatınca current null olur.
     if (state.current) pushQuestion(state.current.id);
+    // Ölçüm de önce: değerlendirmeden önceki kutu ve kayıt yalnızca şimdi elde.
+    if (state.phase === "evaluated" && state.current) {
+      trackSelfEval({
+        question: state.current,
+        previous: progress[state.current.id],
+        evaluation: state.evaluation,
+        passed: state.passed,
+        answer: session.lastAnswer,
+        rating,
+        now: new Date(),
+      });
+    }
     session.rate(rating);
     // Bu değerlendirme henüz state'e yansımadı.
     reminder.offerAfterRating(countRatings(progress) + 1);
@@ -175,7 +201,7 @@ function Session({ store, warning, save }: SessionProps) {
         {/* Soru kartı ve sonuç ekranı burada; geçişi Stage yönetiyor. */}
         <Stage
           state={state}
-          onSubmit={session.submit}
+          onSubmit={handleSubmit}
           onPass={session.pass}
           onRate={handleRate}
           lastAnswer={session.lastAnswer}
