@@ -10,6 +10,7 @@ function makeQuestion(): Question {
     kind: "definition",
     topic: "Index",
     difficulty: 2,
+    origin: { kind: "own" },
     prompt: "  Index nedir ve ne zaman zarar verir?  ",
     modelAnswer: "MODEL CEVAP: index okumayı hızlandırır, yazmayı yavaşlatır.",
     keyConcepts: [

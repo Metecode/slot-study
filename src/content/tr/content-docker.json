@@ -62,7 +62,10 @@
         "Docker Compose kullandığında servisler birbirini nasıl buluyor?",
         "Konteyner içinden host makinedeki bir servise nasıl erişirsin?"
       ],
-      "source": "Kendi derleme — Docker Docs: Bridge network driver (Differences between user-defined bridges and the default bridge), Port publishing and mapping"
+      "source": "Kendi derleme — Docker Docs: Bridge network driver (Differences between user-defined bridges and the default bridge), Port publishing and mapping",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-image-vs-container",
@@ -135,7 +138,10 @@
       "followUps": [
         "Çalışan bir container'da yaptığın değişikliği yeni bir image'a nasıl dönüştürürsün ve bu neden önerilmez?"
       ],
-      "source": "Kendi derleme — Docker Docs: Docker overview (Images, Containers), Storage drivers (Images and layers, Container and layers)"
+      "source": "Kendi derleme — Docker Docs: Docker overview (Images, Containers), Storage drivers (Images and layers, Container and layers)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-vs-vm",
@@ -219,7 +225,10 @@
       "followUps": [
         "Docker Desktop Windows'ta Linux container'larını nasıl çalıştırır?"
       ],
-      "source": "Kendi derleme — Docker Docs: What is a container? (Containers versus virtual machines), Docker overview (The underlying technology), Resource constraints"
+      "source": "Kendi derleme — Docker Docs: What is a container? (Containers versus virtual machines), Docker overview (The underlying technology), Resource constraints",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-layer-cache",
@@ -291,7 +300,10 @@
       "followUps": [
         "Önbelleği tamamen yok sayarak build almak için ne yaparsın, ne zaman gerekir?"
       ],
-      "source": "Kendi derleme — Docker Docs: Docker build cache, Optimize cache usage in builds (Order your layers), Building best practices (apt-get)"
+      "source": "Kendi derleme — Docker Docs: Docker build cache, Optimize cache usage in builds (Order your layers), Building best practices (apt-get)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-multi-stage",
@@ -361,7 +373,10 @@
       "followUps": [
         "Son aşamada distroless image kullanmanın artısı ve eksisi nedir?"
       ],
-      "source": "Kendi derleme — Docker Docs: Multi-stage builds, Docker build cache"
+      "source": "Kendi derleme — Docker Docs: Multi-stage builds, Docker build cache",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-cmd-vs-entrypoint",
@@ -433,7 +448,10 @@
       "followUps": [
         "Container başlarken önce bir hazırlık script'i çalıştırıp sonra uygulamayı başlatmak istersen ENTRYPOINT'i nasıl yazarsın?"
       ],
-      "source": "Kendi derleme — Docker Docs: Dockerfile reference (CMD, ENTRYPOINT, Understand how CMD and ENTRYPOINT interact), docker container stop"
+      "source": "Kendi derleme — Docker Docs: Dockerfile reference (CMD, ENTRYPOINT, Understand how CMD and ENTRYPOINT interact), docker container stop",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-copy-vs-add",
@@ -506,7 +524,10 @@
       "followUps": [
         "Build context nedir ve .dockerignore build'i nasıl etkiler?"
       ],
-      "source": "Kendi derleme — Docker Docs: Building best practices (ADD or COPY), Dockerfile reference (ADD)"
+      "source": "Kendi derleme — Docker Docs: Building best practices (ADD or COPY), Dockerfile reference (ADD)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-volume-vs-bind",
@@ -589,7 +610,10 @@
       "followUps": [
         "Bir PostgreSQL volume'unun yedeğini nasıl alırsın?"
       ],
-      "source": "Kendi derleme — Docker Docs: Volumes, Bind mounts, Storage drivers, docker compose down, docker volume prune"
+      "source": "Kendi derleme — Docker Docs: Volumes, Bind mounts, Storage drivers, docker compose down, docker volume prune",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-expose-vs-publish",
@@ -660,7 +684,10 @@
       "followUps": [
         "Container'ın yayınlanmış portlarını hangi komutla görürsün?"
       ],
-      "source": "Kendi derleme — Docker Docs: Dockerfile reference (EXPOSE), Port publishing and mapping, Packet filtering and firewalls (Docker and ufw)"
+      "source": "Kendi derleme — Docker Docs: Dockerfile reference (EXPOSE), Port publishing and mapping, Packet filtering and firewalls (Docker and ufw)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-compose",
@@ -728,7 +755,10 @@
       "followUps": [
         "Compose'ta up ile up --build arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Docker Docs: Compose application model, Networking in Compose, Use Compose in production"
+      "source": "Kendi derleme — Docker Docs: Compose application model, Networking in Compose, Use Compose in production",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-depends-on-healthcheck",
@@ -807,7 +837,10 @@
       "followUps": [
         "Spring Boot uygulaması için healthcheck'i neyle yazarsın?"
       ],
-      "source": "Kendi derleme — Docker Docs: Control startup and shutdown order in Compose"
+      "source": "Kendi derleme — Docker Docs: Control startup and shutdown order in Compose",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-env-secrets",
@@ -875,7 +908,10 @@
       "followUps": [
         "Environment variable'ların docker inspect çıktısında görünmesi neden risklidir?"
       ],
-      "source": "Kendi derleme — Docker Docs: Secrets in Compose, Build secrets, Building best practices"
+      "source": "Kendi derleme — Docker Docs: Secrets in Compose, Build secrets, Building best practices",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-image-size",
@@ -954,7 +990,10 @@
       "followUps": [
         "Distroless image kullanan bir container'da hata ayıklamak neden zordur?"
       ],
-      "source": "Kendi derleme — Docker Docs: Building best practices (base image, multi-stage builds, apt-get, .dockerignore); Docker Hub: alpine; musl libc FAQ"
+      "source": "Kendi derleme — Docker Docs: Building best practices (base image, multi-stage builds, apt-get, .dockerignore); Docker Hub: alpine; musl libc FAQ",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-debug-container",
@@ -1034,7 +1073,10 @@
       "followUps": [
         "Container içinde shell yoksa (distroless) nasıl hata ayıklarsın?"
       ],
-      "source": "Kendi derleme — Docker Docs: docker container run (Exit status), Docker Engine API (ContainerState); GNU Bash Reference Manual: Exit Status"
+      "source": "Kendi derleme — Docker Docs: docker container run (Exit status), Docker Engine API (ContainerState); GNU Bash Reference Manual: Exit Status",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-exits-immediately",
@@ -1115,7 +1157,10 @@
       "followUps": [
         "Windows'ta geliştirip Linux container'ında çalıştırılan script'lerde CRLF sorununu kalıcı olarak nasıl önlersin?"
       ],
-      "source": "Kendi derleme — Docker Docs: Run multiple processes in a container, Running containers (Exit status), docker container run"
+      "source": "Kendi derleme — Docker Docs: Run multiple processes in a container, Running containers (Exit status), docker container run",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-restart-policy",
@@ -1180,7 +1225,10 @@
       "followUps": [
         "Docker servisinin kendisi sunucu açılışında başlamazsa restart policy işe yarar mı?"
       ],
-      "source": "Kendi derleme — Docker Docs: Start containers automatically, Docker Engine API (RestartCount)"
+      "source": "Kendi derleme — Docker Docs: Start containers automatically, Docker Engine API (RestartCount)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-resource-limits",
@@ -1262,7 +1310,10 @@
       "followUps": [
         "Container'ın bellek kullanımını anlık olarak nasıl izlersin?"
       ],
-      "source": "Kendi derleme — Docker Docs: Resource constraints, Compose Deploy Specification (resources); Oracle Java SE 21: java komutu (UseContainerSupport, MaxRAMPercentage)"
+      "source": "Kendi derleme — Docker Docs: Resource constraints, Compose Deploy Specification (resources); Oracle Java SE 21: java komutu (UseContainerSupport, MaxRAMPercentage)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-non-root",
@@ -1347,7 +1398,10 @@
       "followUps": [
         "Bind mount edilmiş bir klasöre root olmayan kullanıcı yazamıyorsa sorunu nasıl çözersin?"
       ],
-      "source": "Kendi derleme — Docker Docs: Building best practices (USER), Running containers (User, Runtime privilege and Linux capabilities), Docker Engine security, docker container run; Docker Engine 20.10 release notes (moby/moby#41030)"
+      "source": "Kendi derleme — Docker Docs: Building best practices (USER), Running containers (User, Runtime privilege and Linux capabilities), Docker Engine security, docker container run; Docker Engine 20.10 release notes (moby/moby#41030)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-image-tags",
@@ -1420,7 +1474,10 @@
       "followUps": [
         "Kendi uygulamanın image'ını CI'da nasıl tag'lersin?"
       ],
-      "source": "Kendi derleme — Docker Docs: docker image tag, docker image pull (Pull an image by digest), Building best practices (Pin base image versions)"
+      "source": "Kendi derleme — Docker Docs: docker image tag, docker image pull (Pull an image by digest), Building best practices (Pin base image versions)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-network-drivers",
@@ -1490,7 +1547,10 @@
       "followUps": [
         "host ağ modunda çalışan iki container aynı portu dinlemeye çalışırsa ne olur?"
       ],
-      "source": "Kendi derleme — Docker Docs: Network drivers, Host network driver, None network driver, Bridge network driver"
+      "source": "Kendi derleme — Docker Docs: Network drivers, Host network driver, None network driver, Bridge network driver",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "docker-registry",
@@ -1574,7 +1634,10 @@
       "followUps": [
         "Sunucunun özel bir registry'den image çekebilmesi için kimlik doğrulamayı nasıl yaparsın?"
       ],
-      "source": "Kendi derleme — Docker Docs: What is a registry?, Docker overview (Docker registries), docker image tag"
+      "source": "Kendi derleme — Docker Docs: What is a registry?, Docker overview (Docker registries), docker image tag",
+      "origin": {
+        "kind": "own"
+      }
     }
   ]
 }

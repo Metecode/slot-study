@@ -64,7 +64,10 @@
         "children yerine bir fonksiyon geçirilirse (render props) ne değişir?",
         "Sarmalayıcı bileşen children'a ekstra prop eklemek isterse ne yapar?"
       ],
-      "source": "Kendi derleme — react.dev: Passing Props to a Component (Passing JSX as children), Children; legacy.reactjs.org: Composition vs Inheritance"
+      "source": "Kendi derleme — react.dev: Passing Props to a Component (Passing JSX as children), Children; legacy.reactjs.org: Composition vs Inheritance",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "react-virtual-dom",
@@ -127,7 +130,10 @@
         "Listede index'i key olarak vermek ne zaman soruna yol açar?",
         "Virtual DOM olmayan bir kütüphane aynı işi nasıl yapıyor olabilir?"
       ],
-      "source": "Kendi derleme — legacy.reactjs.org: Virtual DOM and Internals, Reconciliation"
+      "source": "Kendi derleme — legacy.reactjs.org: Virtual DOM and Internals, Reconciliation",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "react-nedir",
@@ -197,6 +203,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org ana sayfa; react.dev: Meet the Team, Introducing the React Foundation; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "React'in kütüphane, Angular'ın framework olarak anılması proje kurarken hangi kararları sana bırakır?"
       ]
@@ -279,6 +291,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org ana sayfa; react.dev: Thinking in React; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Tek yönlü veri akışında bir child, parent'taki veriyi değiştirmek istediğinde ne yapılır?"
       ]
@@ -337,6 +355,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Writing Markup with JSX; legacy.reactjs.org: Introducing the New JSX Transform; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "JSX içinde neden doğrudan if yazılamaz, koşullu render nasıl yapılır?"
       ]
@@ -409,6 +433,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: createElement; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir component'i JSX ile değil de düz fonksiyon gibi Profile() diye çağırmak neyi bozar?"
       ]
@@ -483,6 +513,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: State: A Component's Memory, useState; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "State'teki bir diziyi setter yerine push ile doğrudan değiştirirsen ne olur?"
       ]
@@ -557,6 +593,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Passing Props to a Component; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir component'in aldığı prop'u başlangıç değeri olarak state'e kopyalaması hangi soruna yol açabilir?"
       ]
@@ -629,6 +671,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Thinking in React (Props vs State); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir veri parçasının state mi, prop mu, yoksa hesaplanan bir değer mi olması gerektiğine nasıl karar verirsin?"
       ]
@@ -683,6 +731,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Responding to Events; legacy.reactjs.org: Handling Events; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "onClick={handleClick()} yazılırsa ne olur?"
       ]
@@ -752,6 +806,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Common components (React event object); legacy.reactjs.org: React v17.0 RC (Changes to Event Delegation); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "React 17'de olay dinleyicilerinin document yerine kök elemana bağlanması neyi çözdü?"
       ]
@@ -826,6 +886,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Rendering Lists (Keeping list items in order with key); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "key olarak Math.random() vermek neden index vermekten bile kötüdür?"
       ]
@@ -900,6 +966,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org: Virtual DOM and Internals; MDN: Using shadow DOM; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir React bileşenini web component'in shadow root'u içine render ettiğinde stil ve olaylar açısından neye dikkat edersin?"
       ]
@@ -957,6 +1029,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: <input> (Controlling an input with a state variable), Sharing State Between Components; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir input'a value verip onChange vermezsen ne olur?"
       ]
@@ -1014,6 +1092,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: <input> (Providing an initial value for an input), useRef; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir input önce value olmadan, sonra value ile render edilirse React neden uyarı verir?"
       ]
@@ -1085,6 +1169,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: <Fragment>; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Fragment'a key dışında className gibi başka bir prop verilebilir mi?"
       ]
@@ -1154,6 +1244,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Common components (Dangerously setting the inner HTML); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Kullanıcı içeriğini HTML yerine Markdown olarak saklayıp render etmek XSS riskini tek başına ortadan kaldırır mı?"
       ]
@@ -1226,6 +1322,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org: Reconciliation; react.dev: Preserving and Resetting State; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Aynı yerde koşula göre input yerine textarea render edilirse kullanıcının yazdığı metne ne olur?"
       ]
@@ -1295,6 +1397,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org: Virtual DOM and Internals, Codebase Overview (Fiber reconciler); acdlite/react-fiber-architecture; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Render işi yarıda kesilip yeniden başlatılabiliyorsa, render sırasında yan etki çalıştırmak neden sorun olur?"
       ]
@@ -1353,6 +1461,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Sharing State Between Components; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "State'i yukarı taşımak hangi durumda gereksiz render'lara yol açar, bunu nasıl sınırlarsın?"
       ]
@@ -1424,6 +1538,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org: Higher-Order Components; react.dev: Reusing Logic with Custom Hooks; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "HOC'ları iç içe kullanmanın dezavantajları nelerdir, custom hook bunları nasıl çözer?"
       ]
@@ -1494,6 +1614,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: createPortal; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Portal ile açılan bir modalda klavye odağını ve erişilebilirliği nasıl yönetirsin?"
       ]
@@ -1569,6 +1695,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Rendering Lists; legacy.reactjs.org: Reconciliation (Keys); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Verinde kararlı bir id yoksa key'i nerede ve nasıl üretirsin?"
       ]
@@ -1641,6 +1773,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: memo, PureComponent; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "React.memo'ya kendi karşılaştırma fonksiyonunu vermek ne zaman mantıklıdır, riski nedir?"
       ]
@@ -1725,6 +1863,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: lazy; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Kullanıcı bir lazy sayfaya geçmeden önce o sayfanın kodunu önceden yüklemek için ne yaparsın?"
       ]
@@ -1791,6 +1935,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org: React v16.8 (The One With Hooks); react.dev: Reusing Logic with Custom Hooks; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Hook'lar class component'teki yaşam döngüsü metotlarının birebir karşılığı mıdır?"
       ]
@@ -1862,6 +2012,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Rules of Hooks, State: A Component's Memory; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir hook'un yalnızca bir koşul sağlandığında çalışması gerekiyorsa kuralı bozmadan bunu nasıl yaparsın?"
       ]
@@ -1934,6 +2090,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Component (Catching rendering errors with an Error Boundary); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir event handler'da oluşan hatayı error boundary'nin fallback'inde göstermek istersen ne yaparsın?"
       ]
@@ -2020,6 +2182,12 @@
         }
       ],
       "source": "Kendi derleme — webpack: Code Splitting, Caching; Vite: Features (Async Chunk Loading Optimization); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "React'te bir bölme noktasını nasıl kurarsın ve parça yüklenirken kullanıcıya ne gösterirsin?"
       ]
@@ -2092,6 +2260,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: <Suspense>, use; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Ekranda görünen bir içerik, alt bileşen yeniden askıya alınınca neden fallback'e dönebilir, bunu nasıl önlersin?"
       ]
@@ -2163,6 +2337,12 @@
         }
       ],
       "source": "Kendi derleme — legacy.reactjs.org: Optimizing Performance (Virtualize Long Lists); TanStack Virtual: Introduction; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Satır yükseklikleri farklı olan bir listede windowing'i zorlaştıran nedir?"
       ]
@@ -2236,6 +2416,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: useEffect; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Effect içinde veri çekerken component unmount olursa ya da yanıtlar sırasız gelirse ne yaparsın?"
       ]
@@ -2320,6 +2506,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Server Components, 'use client'; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Bir server component'ten client component'e fonksiyon ya da class örneği gibi her türlü prop geçirilebilir mi?"
       ]
@@ -2378,6 +2570,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Passing Data Deeply with Context; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Context'e geçmeden önce prop drilling'i hangi durumda sorun saymazsın?"
       ]
@@ -2452,6 +2650,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: useRef; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Render sırasında ref.current okumak ya da yazmak neden önerilmez?"
       ]
@@ -2523,6 +2727,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: useLayoutEffect, useEffect; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "useLayoutEffect sunucu tarafı render'da çalışır mı, ölçüme dayanan bir arayüzde bu ne demektir?"
       ]
@@ -2594,6 +2804,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: <StrictMode>; legacy.reactjs.org: Strict Mode; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "StrictMode'da effect iki kez çalıştığı için bir API'ye iki istek gidiyorsa doğru düzeltme nedir?"
       ]
@@ -2663,6 +2879,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Queueing a Series of State Updates, React v18.0 (Automatic Batching), flushSync; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "flushSync'i sık kullanmak neden performansı düşürür?"
       ]
@@ -2735,6 +2957,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: hydrateRoot; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Sunucuda ve istemcide farklı çıkan bir değeri, örneğin yerel saati, hydration hatası olmadan nasıl gösterirsin?"
       ]
@@ -2808,6 +3036,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Extracting State Logic into a Reducer; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Reducer içinde API çağrısı yapmak ya da state'i doğrudan değiştirmek neden yanlıştır?"
       ]
@@ -2880,6 +3114,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: useState (Updating state based on the previous state); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Updater fonksiyonu StrictMode'da neden iki kez çağrılır, bu fonksiyon için ne anlama gelir?"
       ]
@@ -2952,6 +3192,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: useCallback (How is useCallback related to useMemo?); soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "React Compiler kullanılan bir projede useMemo ve useCallback'e hâlâ ihtiyaç var mı?"
       ]
@@ -3023,6 +3269,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: Reusing Logic with Custom Hooks; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "İki component aynı custom hook'u kullanırken aynı veriyi görmeleri gerekiyorsa ne yaparsın?"
       ]
@@ -3094,6 +3346,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: useTransition, useDeferredValue; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Kontrollü bir input'un kendi değerini startTransition içinde güncellemek neden işe yaramaz?"
       ]
@@ -3167,6 +3425,12 @@
         }
       ],
       "source": "Kendi derleme — react.dev: memo (Updating a memoized component using a context), useContext; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "use(Context) ile useContext arasında context okuma açısından ne fark var?"
       ]
@@ -3242,6 +3506,12 @@
         }
       ],
       "source": "Kendi derleme — TanStack Query: Overview; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)",
+      "origin": {
+        "kind": "external",
+        "repo": "sudheerj/reactjs-interview-questions",
+        "url": "https://github.com/sudheerj/reactjs-interview-questions",
+        "license": "MIT"
+      },
       "followUps": [
         "Server state'i useState ve useEffect ile elle yönetirken en sık hangi sorunlar çıkar?"
       ]

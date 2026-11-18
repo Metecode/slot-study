@@ -15,6 +15,7 @@ function makeQuestion(category: Question["category"], id: string): Question {
     kind: "definition",
     topic: "Konu",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: "Bu bir test sorusudur.",
     modelAnswer: "Bu, testin beklediği kadar uzun bir model cevaptır.",
     keyConcepts: [

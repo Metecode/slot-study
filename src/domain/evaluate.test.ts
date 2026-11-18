@@ -28,6 +28,7 @@ function makeQuestion(over: Partial<Question> = {}): Question {
     kind: "definition",
     topic: "Index",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: "Test sorusu",
     modelAnswer: "Yeterince uzun bir örnek cevap metni.",
     keyConcepts: [

@@ -37,6 +37,31 @@ export const keyConceptSchema = z.object({
 });
 export type KeyConcept = z.infer<typeof keyConceptSchema>;
 
+/**
+ * Kabul edilen dış içerik lisansları. İçerik CC BY-SA 4.0; buraya eklenen
+ * her lisans önce onunla uyum açısından değerlendirilir
+ * (docs/content-audit.md, bölüm 3).
+ */
+export const EXTERNAL_LICENSES = ["MIT", "CC-BY-4.0", "CC-BY-SA-4.0", "Apache-2.0"] as const;
+
+/**
+ * Sorunun kökeni: kendi yazımın mı, dış bir eserden mi türetildi.
+ * `source` alanı başvurulan belgeleri listeler; köken ayrı ve yapısal
+ * tutulur. Zorunlu ve varsayılansız: unutulan alan dış kaynaklı bir
+ * soruyu sessizce "kendi" göstermesin.
+ */
+export const originSchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("own") }),
+  z.object({
+    kind: z.literal("external"),
+    /** "sahip/repo" biçimi; THIRD_PARTY_NOTICES'taki başlıkla aynı. */
+    repo: z.string().regex(/^[\w.-]+\/[\w.-]+$/, "sahip/repo olmalı"),
+    url: z.url(),
+    license: z.enum(EXTERNAL_LICENSES),
+  }),
+]);
+export type Origin = z.infer<typeof originSchema>;
+
 export const questionSchema = z.object({
   /** Diller arasında sabit kalır — tr ve en aynı id'yi paylaşır. */
   id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "kebab-case olmalı"),
@@ -60,6 +85,7 @@ export const questionSchema = z.object({
   followUps: z.array(z.string().min(10)).max(3).optional(),
   /** Katkı rehberi gereği: soru nereden türetildi. */
   source: z.string().optional(),
+  origin: originSchema,
 });
 export type Question = z.infer<typeof questionSchema>;
 

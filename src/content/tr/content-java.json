@@ -86,7 +86,10 @@
       "followUps": [
         "== ile equals arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: Object.equals ve Object.hashCode sözleşmesi"
+      "source": "Kendi derleme — Java SE 21 API: Object.equals ve Object.hashCode sözleşmesi",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-string-immutable",
@@ -171,7 +174,10 @@
       "followUps": [
         "Döngü içinde String birleştirmek neden yavaştır?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: String; JLS §3.10.5 String Literals"
+      "source": "Kendi derleme — Java SE 21 API: String; JLS §3.10.5 String Literals",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-stringbuilder",
@@ -259,7 +265,10 @@
       "followUps": [
         "StringBuilder'ın başlangıç kapasitesini vermek neden performansa yardımcı olabilir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: StringBuilder, StringBuffer; JEP 280: Indify String Concatenation"
+      "source": "Kendi derleme — Java SE 21 API: StringBuilder, StringBuffer; JEP 280: Indify String Concatenation",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-hashmap-internals",
@@ -345,7 +354,10 @@
       "followUps": [
         "HashMap null anahtar kabul eder mi? Hashtable ve ConcurrentHashMap'te durum nedir?"
       ],
-      "source": "Kendi derleme — OpenJDK 21: HashMap kaynak kodu ve API belgesi"
+      "source": "Kendi derleme — OpenJDK 21: HashMap kaynak kodu ve API belgesi",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-arraylist-vs-linkedlist",
@@ -432,7 +444,10 @@
       "followUps": [
         "ArrayList'in kapasitesi dolduğunda içeride tam olarak ne olur?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: ArrayList, LinkedList, ArrayDeque"
+      "source": "Kendi derleme — Java SE 21 API: ArrayList, LinkedList, ArrayDeque",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-checked-unchecked",
@@ -504,7 +519,10 @@
       "followUps": [
         "Bir checked exception'ı yakalayıp RuntimeException'a sarmak ne zaman doğru bir yaklaşımdır?"
       ],
-      "source": "Kendi derleme — JLS §11.1.1 The Kinds of Exceptions"
+      "source": "Kendi derleme — JLS §11.1.1 The Kinds of Exceptions",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-final-finally-finalize",
@@ -577,7 +595,10 @@
       "followUps": [
         "finally bloğunun çalışmadığı bir durum var mıdır?"
       ],
-      "source": "Kendi derleme — JLS §4.12.4 final Variables, §14.20.2 try-finally; JEP 421"
+      "source": "Kendi derleme — JLS §4.12.4 final Variables, §14.20.2 try-finally; JEP 421",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-interface-vs-abstract",
@@ -651,7 +672,10 @@
       "followUps": [
         "Bir sınıf aynı imzalı default metoda sahip iki interface'i uygularsa ne olur?"
       ],
-      "source": "Kendi derleme — JLS §9 Interfaces, §8.1.1.1 abstract Classes"
+      "source": "Kendi derleme — JLS §9 Interfaces, §8.1.1.1 abstract Classes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-oop-principles",
@@ -730,7 +754,10 @@
       "followUps": [
         "Overloading ile overriding arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Nesne yönelimli programlama temel ilkeleri; Effective Java, Item 18: Favor composition over inheritance"
+      "source": "Kendi derleme — Nesne yönelimli programlama temel ilkeleri; Effective Java, Item 18: Favor composition over inheritance",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-pass-by-value",
@@ -800,7 +827,10 @@
       "followUps": [
         "Bir metodun iki Integer'ın değerini değiştiren bir swap metodu yazılabilir mi?"
       ],
-      "source": "Kendi derleme — JLS §8.4.1 Formal Parameters"
+      "source": "Kendi derleme — JLS §8.4.1 Formal Parameters",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-memory-gc",
@@ -873,7 +903,10 @@
       "followUps": [
         "Bir nesnenin young generation'dan old generation'a taşınması neye bağlıdır?"
       ],
-      "source": "Kendi derleme — JVM Specification §2.5 Run-Time Data Areas; HotSpot GC Tuning Guide (JDK 21)"
+      "source": "Kendi derleme — JVM Specification §2.5 Run-Time Data Areas; HotSpot GC Tuning Guide (JDK 21)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-synchronized-volatile",
@@ -961,7 +994,10 @@
       "followUps": [
         "synchronized metot ile synchronized blok arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — JLS §17.4 Memory Model; Java SE 21 API: AtomicInteger"
+      "source": "Kendi derleme — JLS §17.4 Memory Model; Java SE 21 API: AtomicInteger",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-concurrenthashmap",
@@ -1044,7 +1080,10 @@
       "followUps": [
         "ConcurrentHashMap üzerinde iterasyon yaparken başka bir thread eleman eklerse ne olur?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: ConcurrentHashMap, Collections.synchronizedMap, Hashtable"
+      "source": "Kendi derleme — Java SE 21 API: ConcurrentHashMap, Collections.synchronizedMap, Hashtable",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-executor-service",
@@ -1130,7 +1169,10 @@
       "followUps": [
         "Java 21'deki virtual thread'ler thread havuzu ihtiyacını nasıl değiştirir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: ExecutorService, Executors, ThreadPoolExecutor"
+      "source": "Kendi derleme — Java SE 21 API: ExecutorService, Executors, ThreadPoolExecutor",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-stream-api",
@@ -1219,7 +1261,10 @@
       "followUps": [
         "Stream içinde dışarıdaki bir listeye eleman ekleyen yan etkili bir lambda neden sorunludur?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: java.util.stream paket açıklaması"
+      "source": "Kendi derleme — Java SE 21 API: java.util.stream paket açıklaması",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-optional",
@@ -1303,7 +1348,10 @@
       "followUps": [
         "Optional.of ile Optional.ofNullable arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: Optional"
+      "source": "Kendi derleme — Java SE 21 API: Optional",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-record",
@@ -1388,7 +1436,10 @@
       "followUps": [
         "Record'ın içine bir List alanı koyarsan record gerçekten immutable olur mu?"
       ],
-      "source": "Kendi derleme — JEP 395: Records; JLS §8.10 Record Classes"
+      "source": "Kendi derleme — JEP 395: Records; JLS §8.10 Record Classes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-try-with-resources",
@@ -1457,7 +1508,10 @@
       "followUps": [
         "Kendi sınıfını try-with-resources ile kullanılabilir yapmak için ne yaparsın?"
       ],
-      "source": "Kendi derleme — JLS §14.20.3 try-with-resources; Java SE 21 API: Throwable.getSuppressed"
+      "source": "Kendi derleme — JLS §14.20.3 try-with-resources; Java SE 21 API: Throwable.getSuppressed",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-generics-erasure",
@@ -1540,7 +1594,10 @@
       "followUps": [
         "List<Object> türündeki bir parametreye neden List<String> veremezsin?"
       ],
-      "source": "Kendi derleme — JLS §4.6 Type Erasure"
+      "source": "Kendi derleme — JLS §4.6 Type Erasure",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-comparable-comparator",
@@ -1623,7 +1680,10 @@
       "followUps": [
         "TreeMap'e Comparable olmayan bir nesne anahtar olarak verirsen ne olur?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: Comparable, Comparator"
+      "source": "Kendi derleme — Java SE 21 API: Comparable, Comparator",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-virtual-threads",
@@ -1707,7 +1767,10 @@
       "followUps": [
         "Virtual thread kullanan bir uygulamada ThreadLocal kullanmanın riski nedir?"
       ],
-      "source": "Kendi derleme — JEP 444: Virtual Threads; JEP 491; Spring Boot 3.2 sürüm notları"
+      "source": "Kendi derleme — JEP 444: Virtual Threads; JEP 491; Spring Boot 3.2 sürüm notları",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jvm-jdk-jre",
@@ -1778,7 +1841,10 @@
       "followUps": [
         "Bir Docker image'ında tam JDK yerine jlink ile üretilmiş bir çalışma ortamı kullanmanın faydası nedir?"
       ],
-      "source": "Kendi derleme — JDK 21 belgeleri: Java SE platform bileşenleri, jlink"
+      "source": "Kendi derleme — JDK 21 belgeleri: Java SE platform bileşenleri, jlink",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-bytecode-jit",
@@ -1862,7 +1928,10 @@
       "followUps": [
         "JIT ile AOT derleme (GraalVM native image) arasındaki fark nedir, hangisi ne zaman tercih edilir?"
       ],
-      "source": "Kendi derleme — JVM Specification, HotSpot JIT derleyicisi"
+      "source": "Kendi derleme — JVM Specification, HotSpot JIT derleyicisi",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-gc-stop-the-world",
@@ -1948,7 +2017,10 @@
       "followUps": [
         "Bir uygulamada GC duraklamalarının soruna yol açıp açmadığını nasıl ölçersin?"
       ],
-      "source": "Kendi derleme — HotSpot Virtual Machine Garbage Collection Tuning Guide (JDK 21): G1, ZGC"
+      "source": "Kendi derleme — HotSpot Virtual Machine Garbage Collection Tuning Guide (JDK 21): G1, ZGC",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-memory-leak",
@@ -2021,7 +2093,10 @@
       "followUps": [
         "Sınırsız büyüyen bir cache'i sızıntı olmaktan nasıl çıkarırsın?"
       ],
-      "source": "Kendi derleme — Java SE 21 Troubleshooting Guide: Troubleshoot Memory Leaks"
+      "source": "Kendi derleme — Java SE 21 Troubleshooting Guide: Troubleshoot Memory Leaks",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-oom-vs-soe",
@@ -2080,7 +2155,10 @@
       "followUps": [
         "OutOfMemoryError aldığında ilk hangi bilgiyi toplarsın?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: VirtualMachineError; Troubleshooting Guide"
+      "source": "Kendi derleme — Java SE 21 API: VirtualMachineError; Troubleshooting Guide",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-classloader",
@@ -2169,7 +2247,10 @@
       "followUps": [
         "Uygulama sunucuları ve hot reload araçları parent delegation'ı neden bazen tersine çevirir?"
       ],
-      "source": "Kendi derleme — JVM Specification §5.3 Creation and Loading; Java SE 21 API: ClassLoader"
+      "source": "Kendi derleme — JVM Specification §5.3 Creation and Loading; Java SE 21 API: ClassLoader",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-immutable-class",
@@ -2241,7 +2322,10 @@
       "followUps": [
         "record'un alanlarından biri List ise record gerçekten immutable olur mu?"
       ],
-      "source": "Kendi derleme — Effective Java (Bloch), Item 17: Minimize mutability"
+      "source": "Kendi derleme — Effective Java (Bloch), Item 17: Minimize mutability",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-autoboxing-integer-cache",
@@ -2328,7 +2412,10 @@
       "followUps": [
         "Bir Map<String, Integer>'dan okunan değeri int'e atarken hangi hata riski vardır?"
       ],
-      "source": "Kendi derleme — JLS §5.1.7 Boxing Conversion; Java SE 21 API: Integer.valueOf"
+      "source": "Kendi derleme — JLS §5.1.7 Boxing Conversion; Java SE 21 API: Integer.valueOf",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-throw-vs-throws",
@@ -2386,7 +2473,10 @@
       "followUps": [
         "Bir metodu override ederken throws listesine yeni bir checked exception ekleyebilir misin? Neden?"
       ],
-      "source": "Kendi derleme — JLS §8.4.6 Method Throws, §14.18 The throw Statement"
+      "source": "Kendi derleme — JLS §8.4.6 Method Throws, §14.18 The throw Statement",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-solid",
@@ -2473,7 +2563,10 @@
       "followUps": [
         "SOLID'i aşırı uygulamanın (over-engineering) belirtileri nelerdir?"
       ],
-      "source": "Kendi derleme — Robert C. Martin, SOLID prensipleri"
+      "source": "Kendi derleme — Robert C. Martin, SOLID prensipleri",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-open-closed",
@@ -2546,7 +2639,10 @@
       "followUps": [
         "Java 21'de sealed arayüz ve exhaustive switch kullanmak Open/Closed ile çelişir mi?"
       ],
-      "source": "Kendi derleme — Bertrand Meyer ve Robert C. Martin, Open-Closed Principle"
+      "source": "Kendi derleme — Bertrand Meyer ve Robert C. Martin, Open-Closed Principle",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-liskov",
@@ -2621,7 +2717,10 @@
       "followUps": [
         "Collections.unmodifiableList'in add çağrısında exception fırlatması Liskov'u ihlal eder mi?"
       ],
-      "source": "Kendi derleme — Barbara Liskov, behavioral subtyping; SOLID prensipleri"
+      "source": "Kendi derleme — Barbara Liskov, behavioral subtyping; SOLID prensipleri",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-dip-vs-di",
@@ -2694,7 +2793,10 @@
       "followUps": [
         "Soyutlamayı (interface'i) alt seviye modülün değil üst seviye modülün paketine koymak neden önemlidir?"
       ],
-      "source": "Kendi derleme — Robert C. Martin, Dependency Inversion Principle; Martin Fowler, Inversion of Control Containers and the Dependency Injection pattern"
+      "source": "Kendi derleme — Robert C. Martin, Dependency Inversion Principle; Martin Fowler, Inversion of Control Containers and the Dependency Injection pattern",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-fail-fast-fail-safe",
@@ -2763,7 +2865,10 @@
       "followUps": [
         "CopyOnWriteArrayList hangi senaryoda uygundur, hangisinde pahalıya patlar?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: ConcurrentModificationException, java.util.concurrent"
+      "source": "Kendi derleme — Java SE 21 API: ConcurrentModificationException, java.util.concurrent",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-map-implementations",
@@ -2851,7 +2956,10 @@
       "followUps": [
         "Çok thread'li bir ortamda sıralı bir map gerekirse hangi sınıfı kullanırsın?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: HashMap, LinkedHashMap, TreeMap"
+      "source": "Kendi derleme — Java SE 21 API: HashMap, LinkedHashMap, TreeMap",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-hashset-internals",
@@ -2923,7 +3031,10 @@
       "followUps": [
         "HashSet'e eklenmiş bir nesnenin hashCode'unu etkileyen alanını değiştirirsen ne olur?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: HashSet; Object.hashCode sözleşmesi"
+      "source": "Kendi derleme — Java SE 21 API: HashSet; Object.hashCode sözleşmesi",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-immutable-collections",
@@ -2994,7 +3105,10 @@
       "followUps": [
         "Bir metottan iç listeyi döndürürken List.copyOf ile unmodifiableList arasında nasıl seçim yaparsın?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: List.of, Collections.unmodifiableList, Arrays.asList"
+      "source": "Kendi derleme — Java SE 21 API: List.of, Collections.unmodifiableList, Arrays.asList",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-deadlock",
@@ -3080,7 +3194,10 @@
       "followUps": [
         "Deadlock ile livelock ve starvation arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Java Concurrency in Practice, Bölüm 10; JDK araçları: jstack, jcmd"
+      "source": "Kendi derleme — Java Concurrency in Practice, Bölüm 10; JDK araçları: jstack, jcmd",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-completablefuture",
@@ -3154,7 +3271,10 @@
       "followUps": [
         "thenApply ile thenApplyAsync arasındaki fark nedir; callback hangi thread'de çalışır?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: CompletableFuture, CompletionStage"
+      "source": "Kendi derleme — Java SE 21 API: CompletableFuture, CompletionStage",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-runnable-vs-callable",
@@ -3225,7 +3345,10 @@
       "followUps": [
         "submit(() -> ...) yazdığında derleyici lambdayı Runnable mı Callable mı sayar, neye göre karar verir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: Runnable, Callable, ExecutorService"
+      "source": "Kendi derleme — Java SE 21 API: Runnable, Callable, ExecutorService",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-reentrantlock",
@@ -3309,7 +3432,10 @@
       "followUps": [
         "ReadWriteLock ne zaman ReentrantLock'tan daha uygundur?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: java.util.concurrent.locks; JEP 491"
+      "source": "Kendi derleme — Java SE 21 API: java.util.concurrent.locks; JEP 491",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-threadlocal",
@@ -3382,7 +3508,10 @@
       "followUps": [
         "ScopedValue, ThreadLocal'ın hangi sorunlarını çözmeyi hedefler?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: ThreadLocal; Spring Security belgeleri: SecurityContextHolder"
+      "source": "Kendi derleme — Java SE 21 API: ThreadLocal; Spring Security belgeleri: SecurityContextHolder",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-wait-vs-sleep",
@@ -3462,7 +3591,10 @@
       "followUps": [
         "Üretici–tüketici problemini wait/notify yerine hangi sınıfla çözersin?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: Object.wait, Thread.sleep"
+      "source": "Kendi derleme — Java SE 21 API: Object.wait, Thread.sleep",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-lambda",
@@ -3549,7 +3681,10 @@
       "followUps": [
         "Lambda içinde dışarıdaki bir sayacı artırmak istersen neden derlenmez, nasıl çözersin?"
       ],
-      "source": "Kendi derleme — JLS §15.27 Lambda Expressions"
+      "source": "Kendi derleme — JLS §15.27 Lambda Expressions",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-functional-interface",
@@ -3620,7 +3755,10 @@
       "followUps": [
         "Function'ları andThen ve compose ile birleştirmenin farkı nedir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: java.util.function, @FunctionalInterface"
+      "source": "Kendi derleme — Java SE 21 API: java.util.function, @FunctionalInterface",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-method-reference",
@@ -3693,7 +3831,10 @@
       "followUps": [
         "String::compareToIgnoreCase bir Comparator<String> yerine nasıl geçebilir? Parametreler nasıl eşleşir?"
       ],
-      "source": "Kendi derleme — JLS §15.13 Method Reference Expressions"
+      "source": "Kendi derleme — JLS §15.13 Method Reference Expressions",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-stream-map-flatmap",
@@ -3767,7 +3908,10 @@
       "followUps": [
         "Java 16'daki mapMulti, flatMap'e göre ne zaman daha verimlidir?"
       ],
-      "source": "Kendi derleme — Java SE 21 API: Stream.map, Stream.flatMap, Optional.flatMap"
+      "source": "Kendi derleme — Java SE 21 API: Stream.map, Stream.flatMap, Optional.flatMap",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-sealed-class",
@@ -3839,7 +3983,10 @@
       "followUps": [
         "Sealed hiyerarşi ile Visitor kalıbı arasındaki ilişki nedir?"
       ],
-      "source": "Kendi derleme — JEP 409: Sealed Classes"
+      "source": "Kendi derleme — JEP 409: Sealed Classes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-pattern-matching-switch",
@@ -3912,7 +4059,10 @@
       "followUps": [
         "Bir switch'te case sıralaması neden önemlidir; dominance hatası nedir?"
       ],
-      "source": "Kendi derleme — JEP 441: Pattern Matching for switch; JEP 440: Record Patterns"
+      "source": "Kendi derleme — JEP 441: Pattern Matching for switch; JEP 440: Record Patterns",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-generics-wildcards",
@@ -3985,7 +4135,10 @@
       "followUps": [
         "Bir metot parametresinde List<Object> yerine List<?> kullanmanın farkı nedir?"
       ],
-      "source": "Kendi derleme — JLS §4.5.1 Type Arguments of Parameterized Types; Effective Java, Item 31"
+      "source": "Kendi derleme — JLS §4.5.1 Type Arguments of Parameterized Types; Effective Java, Item 31",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-ioc-di",
@@ -4058,7 +4211,10 @@
       "followUps": [
         "ApplicationContext ile BeanFactory arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: The IoC Container"
+      "source": "Kendi derleme — Spring Framework belgeleri: The IoC Container",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-injection-types",
@@ -4140,7 +4296,10 @@
       "followUps": [
         "Lombok'un @RequiredArgsConstructor'ı constructor injection'da nasıl kullanılır?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Dependency Injection; Spring Boot 2.6 sürüm notları"
+      "source": "Kendi derleme — Spring Framework belgeleri: Dependency Injection; Spring Boot 2.6 sürüm notları",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-bean-scopes",
@@ -4225,7 +4384,10 @@
       "followUps": [
         "Request scope'lu bir bean'i singleton bir servise enjekte etmek nasıl mümkün olur?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Bean Scopes"
+      "source": "Kendi derleme — Spring Framework belgeleri: Bean Scopes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-prototype-in-singleton",
@@ -4294,7 +4456,10 @@
       "followUps": [
         "Aynı problem request scope'lu bir bean'de neden genelde fark edilmez?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Method Injection, Scoped Beans as Dependencies"
+      "source": "Kendi derleme — Spring Framework belgeleri: Method Injection, Scoped Beans as Dependencies",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-bean-lifecycle",
@@ -4378,7 +4543,10 @@
       "followUps": [
         "@PostConstruct içinde aynı bean'in @Transactional bir metodunu çağırmak neden beklendiği gibi çalışmaz?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Customizing the Nature of a Bean, Container Extension Points"
+      "source": "Kendi derleme — Spring Framework belgeleri: Customizing the Nature of a Bean, Container Extension Points",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-component-vs-bean",
@@ -4451,7 +4619,10 @@
       "followUps": [
         "Aynı türden hem bir @Component sınıf hem bir @Bean metodu tanımlarsan ne olur?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Using the @Bean Annotation, Full @Configuration vs lite @Bean mode"
+      "source": "Kendi derleme — Spring Framework belgeleri: Using the @Bean Annotation, Full @Configuration vs lite @Bean mode",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-stereotypes",
@@ -4523,7 +4694,10 @@
       "followUps": [
         "Spring Data JPA repository arayüzlerine neden @Repository yazmak gerekmez?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Classpath Scanning and Managed Components, Exception Translation"
+      "source": "Kendi derleme — Spring Framework belgeleri: Classpath Scanning and Managed Components, Exception Translation",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-primary-qualifier",
@@ -4609,7 +4783,10 @@
       "followUps": [
         "Parametre adının bean adıyla eşleşmesi seçimde nasıl rol oynar?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Fine-tuning Annotation-based Autowiring with @Primary and @Qualifier"
+      "source": "Kendi derleme — Spring Framework belgeleri: Fine-tuning Annotation-based Autowiring with @Primary and @Qualifier",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-aop-concepts",
@@ -4682,7 +4859,10 @@
       "followUps": [
         "Spring AOP ile AspectJ arasındaki fark nedir; hangi durumda AspectJ gerekir?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Aspect Oriented Programming with Spring"
+      "source": "Kendi derleme — Spring Framework belgeleri: Aspect Oriented Programming with Spring",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-aop-proxy-types",
@@ -4769,7 +4949,10 @@
       "followUps": [
         "Bir sınıfı final yapmak Spring'de hangi özellikleri sessizce bozabilir?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Proxying Mechanisms; Spring Boot: spring.aop.proxy-target-class"
+      "source": "Kendi derleme — Spring Framework belgeleri: Proxying Mechanisms; Spring Boot: spring.aop.proxy-target-class",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-advice-types",
@@ -4853,7 +5036,10 @@
       "followUps": [
         "Birden fazla aspect aynı metoda uygulanıyorsa çalışma sırasını nasıl belirlersin?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Declaring Advice"
+      "source": "Kendi derleme — Spring Framework belgeleri: Declaring Advice",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-transactional-basics",
@@ -4925,7 +5111,10 @@
       "followUps": [
         "Bir @Transactional metodun içinden yeni bir thread başlatırsan o thread aynı transaction'ı görür mü?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Understanding the Spring Framework's Declarative Transaction Implementation"
+      "source": "Kendi derleme — Spring Framework belgeleri: Understanding the Spring Framework's Declarative Transaction Implementation",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-propagation",
@@ -5010,7 +5199,10 @@
       "followUps": [
         "REQUIRES_NEW ile açılan iç transaction, dıştakinin kilitlediği bir satırı güncellemeye çalışırsa ne olur?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Transaction Propagation; JpaTransactionManager Javadoc"
+      "source": "Kendi derleme — Spring Framework belgeleri: Transaction Propagation; JpaTransactionManager Javadoc",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-transaction-isolation",
@@ -5097,7 +5289,10 @@
       "followUps": [
         "Isolation seviyesini yükseltmek yerine bir lost update problemini nasıl çözebilirsin?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Transaction Isolation; PostgreSQL ve MySQL belgeleri: varsayılan izolasyon seviyeleri"
+      "source": "Kendi derleme — Spring Framework belgeleri: Transaction Isolation; PostgreSQL ve MySQL belgeleri: varsayılan izolasyon seviyeleri",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-rollback-rules",
@@ -5166,7 +5361,10 @@
       "followUps": [
         "Checked exception'da commit etmek hangi senaryoda bilinçli olarak istenir?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Rolling Back a Declarative Transaction; RollbackOn Javadoc (6.2)"
+      "source": "Kendi derleme — Spring Framework belgeleri: Rolling Back a Declarative Transaction; RollbackOn Javadoc (6.2)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-self-invocation",
@@ -5239,7 +5437,10 @@
       "followUps": [
         "Bir metodun gerçekten transaction içinde çalıştığını çalışma anında nasıl doğrularsın?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Declarative Transaction Management, proxy modu"
+      "source": "Kendi derleme — Spring Framework belgeleri: Declarative Transaction Management, proxy modu",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-readonly",
@@ -5322,7 +5523,10 @@
       "followUps": [
         "readOnly bir transaction'ın içinden readOnly olmayan REQUIRED bir metot çağrılırsa ne olur?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: @Transactional Settings, HibernateJpaDialect; PostgreSQL: SET TRANSACTION READ ONLY"
+      "source": "Kendi derleme — Spring Framework belgeleri: @Transactional Settings, HibernateJpaDialect; PostgreSQL: SET TRANSACTION READ ONLY",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-persistence-context",
@@ -5396,7 +5600,10 @@
       "followUps": [
         "Bir persistence context'te binlerce entity işleyen toplu bir işte bellek sorununu nasıl önlersin?"
       ],
-      "source": "Kendi derleme — Jakarta Persistence 3.1 spesifikasyonu: Persistence Contexts; Hibernate ORM belgeleri: Flushing"
+      "source": "Kendi derleme — Jakarta Persistence 3.1 spesifikasyonu: Persistence Contexts; Hibernate ORM belgeleri: Flushing",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-entity-states",
@@ -5482,7 +5689,10 @@
       "followUps": [
         "merge'ün döndürdüğü nesne yerine parametre olarak verdiğin nesneyi değiştirmeye devam edersen ne olur?"
       ],
-      "source": "Kendi derleme — Jakarta Persistence 3.1: Entity Instance's Life Cycle; Spring Data JPA: SimpleJpaRepository.save; Hibernate ORM 6.6 Migration Guide"
+      "source": "Kendi derleme — Jakarta Persistence 3.1: Entity Instance's Life Cycle; Spring Data JPA: SimpleJpaRepository.save; Hibernate ORM 6.6 Migration Guide",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-lazy-vs-eager",
@@ -5570,7 +5780,10 @@
       "followUps": [
         "Bir @ManyToOne ilişkisini LAZY yapınca Jackson ile serileştirmede hangi sorunla karşılaşabilirsin?"
       ],
-      "source": "Kendi derleme — Jakarta Persistence 3.1: FetchType ve ilişki anotasyonlarının varsayılanları"
+      "source": "Kendi derleme — Jakarta Persistence 3.1: FetchType ve ilişki anotasyonlarının varsayılanları",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-lazy-initialization-exception",
@@ -5657,7 +5870,10 @@
       "followUps": [
         "open-in-view kapatıldıktan sonra ortaya çıkan LazyInitializationException'ları sistematik olarak nasıl bulursun?"
       ],
-      "source": "Kendi derleme — Spring Boot: spring.jpa.open-in-view (JpaBaseConfiguration); Hibernate ORM belgeleri: Fetching"
+      "source": "Kendi derleme — Spring Boot: spring.jpa.open-in-view (JpaBaseConfiguration); Hibernate ORM belgeleri: Fetching",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-eager-n-plus-one",
@@ -5744,7 +5960,10 @@
       "followUps": [
         "Bir sorgunun kaç SQL ürettiğini testte nasıl doğrularsın?"
       ],
-      "source": "Kendi derleme — Hibernate ORM belgeleri: Fetching strategies, Batch fetching"
+      "source": "Kendi derleme — Hibernate ORM belgeleri: Fetching strategies, Batch fetching",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-cache-levels",
@@ -5832,7 +6051,10 @@
       "followUps": [
         "Second-level cache'te entity'ler için hangi concurrency stratejileri vardır, READ_WRITE ne sağlar?"
       ],
-      "source": "Kendi derleme — Hibernate ORM belgeleri: Caching; Jakarta Persistence 3.1: @Cacheable"
+      "source": "Kendi derleme — Hibernate ORM belgeleri: Caching; Jakarta Persistence 3.1: @Cacheable",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-locking",
@@ -5919,7 +6141,10 @@
       "followUps": [
         "@Version alanı olan bir entity'yi REST üzerinden güncellerken istemciden gelen sürümü nasıl kullanırsın?"
       ],
-      "source": "Kendi derleme — Jakarta Persistence 3.1: Optimistic Locking and Concurrency, Pessimistic Locking; Spring Data JPA: @Lock"
+      "source": "Kendi derleme — Jakarta Persistence 3.1: Optimistic Locking and Concurrency, Pessimistic Locking; Spring Data JPA: @Lock",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-jpa-mappedby",
@@ -6005,7 +6230,10 @@
       "followUps": [
         "orphanRemoval ile CascadeType.REMOVE arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — Jakarta Persistence 3.1: Bidirectional Relationships; Hibernate ORM belgeleri: Associations"
+      "source": "Kendi derleme — Jakarta Persistence 3.1: Bidirectional Relationships; Hibernate ORM belgeleri: Associations",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-security-filter-chain",
@@ -6077,7 +6305,10 @@
       "followUps": [
         "Bir uygulamada session'lı ve stateless iki ayrı SecurityFilterChain tanımlamak ne zaman gerekir?"
       ],
-      "source": "Kendi derleme — Spring Security 6 belgeleri: Servlet Architecture; Spring Security 7 Migration: Configuration"
+      "source": "Kendi derleme — Spring Security 6 belgeleri: Servlet Architecture; Spring Security 7 Migration: Configuration",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-security-authentication",
@@ -6164,7 +6395,10 @@
       "followUps": [
         "Bir controller metodunda o anki kullanıcıya hangi yollarla erişebilirsin?"
       ],
-      "source": "Kendi derleme — Spring Security 6 belgeleri: Servlet Authentication Architecture"
+      "source": "Kendi derleme — Spring Security 6 belgeleri: Servlet Authentication Architecture",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-security-401-403",
@@ -6252,7 +6486,10 @@
       "followUps": [
         "Spring Security'nin varsayılan 401 yanıtını bir REST API için JSON gövdeli hâle nasıl getirirsin?"
       ],
-      "source": "Kendi derleme — RFC 9110 §15.5.2 ve §15.5.4; Spring Security 6 belgeleri: Handling Security Exceptions"
+      "source": "Kendi derleme — RFC 9110 §15.5.2 ve §15.5.4; Spring Security 6 belgeleri: Handling Security Exceptions",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-security-csrf",
@@ -6338,7 +6575,10 @@
       "followUps": [
         "Cookie'de token taşıyan bir SPA için CSRF korumasını Spring Security'de nasıl yapılandırırsın?"
       ],
-      "source": "Kendi derleme — OWASP Cross-Site Request Forgery Prevention Cheat Sheet; Spring Security 6 belgeleri: Cross Site Request Forgery (CSRF)"
+      "source": "Kendi derleme — OWASP Cross-Site Request Forgery Prevention Cheat Sheet; Spring Security 6 belgeleri: Cross Site Request Forgery (CSRF)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "java-spring-data-access-exception",
@@ -6425,7 +6665,10 @@
       "followUps": [
         "Unique constraint ihlalini yakalayıp kullanıcıya anlamlı bir hata dönmek için hangi exception'ı nerede yakalarsın?"
       ],
-      "source": "Kendi derleme — Spring Framework belgeleri: Consistent Exception Hierarchy, Exception Translation"
+      "source": "Kendi derleme — Spring Framework belgeleri: Consistent Exception Hierarchy, Exception Translation",
+      "origin": {
+        "kind": "own"
+      }
     }
   ]
 }

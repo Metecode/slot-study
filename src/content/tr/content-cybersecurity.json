@@ -91,7 +91,10 @@
         "Frontend ile API farklı origin'lerdeyse HttpOnly refresh cookie'sini API'ye nasıl iletirsin?",
         "XSS açığı olan bir sitede HttpOnly kullanılıyorsa saldırgan token'ı çalamasa bile kullanıcı adına neler yapabilir?"
       ],
-      "source": "Kendi derleme — OWASP HTML5 Security Cheat Sheet (Local Storage); RFC 10017 (OAuth 2.0 for Browser-Based Applications) §5, §8; MDN: Set-Cookie"
+      "source": "Kendi derleme — OWASP HTML5 Security Cheat Sheet (Local Storage); RFC 10017 (OAuth 2.0 for Browser-Based Applications) §5, §8; MDN: Set-Cookie",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-owasp-top10",
@@ -164,7 +167,10 @@
       "followUps": [
         "Top 10'daki bir kategoriyi kod incelemesinde nasıl somut kontrollere çevirirsin?"
       ],
-      "source": "Kendi derleme — OWASP Top 10:2025 (Introduction); OWASP Top 10:2021 — How to use the OWASP Top 10 as a standard; OWASP ASVS"
+      "source": "Kendi derleme — OWASP Top 10:2025 (Introduction); OWASP Top 10:2021 — How to use the OWASP Top 10 as a standard; OWASP ASVS",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-broken-access-control",
@@ -254,7 +260,10 @@
       "followUps": [
         "Yetki kontrolünün yeni eklenen bir uçta unutulmadığını kod tabanında nasıl güvenceye alırsın?"
       ],
-      "source": "Kendi derleme — OWASP Top 10:2025 A01 Broken Access Control; OWASP Authorization Cheat Sheet"
+      "source": "Kendi derleme — OWASP Top 10:2025 A01 Broken Access Control; OWASP Authorization Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-idor",
@@ -329,7 +338,10 @@
       "followUps": [
         "Bir dosya indirme ucunda IDOR riskini azaltmak için isteği nasıl tasarlarsın?"
       ],
-      "source": "Kendi derleme — OWASP Insecure Direct Object Reference Prevention Cheat Sheet; OWASP API Security Top 10 2023 (API1 Broken Object Level Authorization)"
+      "source": "Kendi derleme — OWASP Insecure Direct Object Reference Prevention Cheat Sheet; OWASP API Security Top 10 2023 (API1 Broken Object Level Authorization)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-mass-assignment",
@@ -403,7 +415,10 @@
       "followUps": [
         "Aynı DTO'yu hem oluşturma hem güncelleme isteğinde kullanmak neden sorun çıkarabilir?"
       ],
-      "source": "Kendi derleme — OWASP Mass Assignment Cheat Sheet; OWASP API Security Top 10 2023 (API3 Broken Object Property Level Authorization)"
+      "source": "Kendi derleme — OWASP Mass Assignment Cheat Sheet; OWASP API Security Top 10 2023 (API3 Broken Object Property Level Authorization)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-path-traversal",
@@ -478,7 +493,10 @@
       "followUps": [
         "Kullanıcının yüklediği bir ZIP arşivi açılırken path traversal nasıl ortaya çıkabilir?"
       ],
-      "source": "Kendi derleme — OWASP Path Traversal (Attacks); OWASP Input Validation Cheat Sheet"
+      "source": "Kendi derleme — OWASP Path Traversal (Attacks); OWASP Input Validation Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-allowlist-validation",
@@ -553,7 +571,10 @@
       "followUps": [
         "Kullanıcının serbest metin girdiği bir yorum alanında allowlist nasıl uygulanır?"
       ],
-      "source": "Kendi derleme — OWASP Input Validation Cheat Sheet"
+      "source": "Kendi derleme — OWASP Input Validation Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-file-upload",
@@ -643,7 +664,10 @@
       "followUps": [
         "Kullanıcıların yüklediği görselleri uygulamanın kendi alan adından sunmak neden risklidir?"
       ],
-      "source": "Kendi derleme — OWASP File Upload Cheat Sheet"
+      "source": "Kendi derleme — OWASP File Upload Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-open-redirect",
@@ -717,7 +741,10 @@
       "followUps": [
         "Girişten sonra kullanıcıyı geldiği sayfaya döndürmek için göreli bir yol kabul ederken nelere dikkat edersin?"
       ],
-      "source": "Kendi derleme — OWASP Unvalidated Redirects and Forwards Cheat Sheet; RFC 9700 §4.11 (Open Redirection)"
+      "source": "Kendi derleme — OWASP Unvalidated Redirects and Forwards Cheat Sheet; RFC 9700 §4.11 (Open Redirection)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-ssrf",
@@ -806,7 +833,10 @@
       "followUps": [
         "Kullanıcının verdiği bir adresten görsel indiren bir özellikte DNS rebinding riskini nasıl kapatırsın?"
       ],
-      "source": "Kendi derleme — OWASP Server-Side Request Forgery Prevention Cheat Sheet; OWASP Top 10:2025 A01 Broken Access Control"
+      "source": "Kendi derleme — OWASP Server-Side Request Forgery Prevention Cheat Sheet; OWASP Top 10:2025 A01 Broken Access Control",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-command-injection",
@@ -880,7 +910,10 @@
       "followUps": [
         "Girdiyi kaçış karakterleriyle temizlemek neden argüman listesi kullanmaktan daha zayıf bir savunmadır?"
       ],
-      "source": "Kendi derleme — OWASP OS Command Injection Defense Cheat Sheet"
+      "source": "Kendi derleme — OWASP OS Command Injection Defense Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-orm-injection",
@@ -955,7 +988,10 @@
       "followUps": [
         "Spring Data JPA'da `@Query` ile yazılmış bir sorguda kullanıcıdan gelen sıralama alanını güvenli biçimde nasıl uygularsın?"
       ],
-      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP Query Parameterization Cheat Sheet; Microsoft Learn: EF Core SQL Queries"
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP Query Parameterization Cheat Sheet; Microsoft Learn: EF Core SQL Queries",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-second-order-sqli",
@@ -1030,7 +1066,10 @@
       "followUps": [
         "Bir kod incelemesinde second-order injection riskini taşıyan sorguları nasıl bulursun?"
       ],
-      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP WSTG: Testing for SQL Injection"
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet; OWASP WSTG: Testing for SQL Injection",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-ssti",
@@ -1105,7 +1144,10 @@
       "followUps": [
         "Kullanıcının adını içeren bir e-postayı şablon motoruyla üretirken adı şablona nasıl vermelisin?"
       ],
-      "source": "Kendi derleme — OWASP WSTG: Testing for Server-side Template Injection; PortSwigger Web Security Academy: Server-side template injection"
+      "source": "Kendi derleme — OWASP WSTG: Testing for Server-side Template Injection; PortSwigger Web Security Academy: Server-side template injection",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-xxe",
@@ -1180,7 +1222,10 @@
       "followUps": [
         "Bir API yalnızca JSON kabul ediyorsa XXE riski tamamen ortadan kalkar mı?"
       ],
-      "source": "Kendi derleme — OWASP XML External Entity Prevention Cheat Sheet"
+      "source": "Kendi derleme — OWASP XML External Entity Prevention Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-insecure-deserialization",
@@ -1254,7 +1299,10 @@
       "followUps": [
         "Bir oturum nesnesini serileştirip istemcide cookie olarak taşımak hangi koşulda kabul edilebilir?"
       ],
-      "source": "Kendi derleme — OWASP Deserialization Cheat Sheet"
+      "source": "Kendi derleme — OWASP Deserialization Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-xss-types",
@@ -1329,7 +1377,10 @@
       "followUps": [
         "Bir XSS açığı HttpOnly cookie kullanan bir uygulamada hâlâ ne yapabilir?"
       ],
-      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP DOM based XSS Prevention Cheat Sheet; OWASP Types of XSS"
+      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP DOM based XSS Prevention Cheat Sheet; OWASP Types of XSS",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-xss-output-encoding",
@@ -1419,7 +1470,10 @@
       "followUps": [
         "Kullanıcı verisini sayfadaki bir JavaScript değişkenine aktarman gerekirse bunu güvenle nasıl yaparsın?"
       ],
-      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP Input Validation Cheat Sheet"
+      "source": "Kendi derleme — OWASP Cross Site Scripting Prevention Cheat Sheet; OWASP Input Validation Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-dom-xss",
@@ -1493,7 +1547,10 @@
       "followUps": [
         "Bir SPA'da route parametresini sayfaya basarken framework kullanıyorsan DOM XSS riski nerede kalır?"
       ],
-      "source": "Kendi derleme — OWASP DOM based XSS Prevention Cheat Sheet; MDN: Trusted Types API"
+      "source": "Kendi derleme — OWASP DOM based XSS Prevention Cheat Sheet; MDN: Trusted Types API",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-csp",
@@ -1568,7 +1625,10 @@
       "followUps": [
         "CSP'yi `<meta>` etiketiyle vermek ile yanıt başlığıyla vermek arasında ne fark vardır?"
       ],
-      "source": "Kendi derleme — MDN: Content Security Policy (CSP); OWASP Content Security Policy Cheat Sheet"
+      "source": "Kendi derleme — MDN: Content Security Policy (CSP); OWASP Content Security Policy Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-csp-nonce-hash",
@@ -1658,7 +1718,10 @@
       "followUps": [
         "Önbellekten sunulan bir HTML sayfasında nonce tabanlı CSP neden sorun çıkarır?"
       ],
-      "source": "Kendi derleme — MDN: Content Security Policy (CSP) — strict CSP, nonces, hashes, strict-dynamic; OWASP Content Security Policy Cheat Sheet"
+      "source": "Kendi derleme — MDN: Content Security Policy (CSP) — strict CSP, nonces, hashes, strict-dynamic; OWASP Content Security Policy Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-clickjacking",
@@ -1732,7 +1795,10 @@
       "followUps": [
         "Uygulamanın yalnızca kendi alt alan adlarında çerçevelenmesine izin vermesi gerekiyorsa başlığı nasıl yazarsın?"
       ],
-      "source": "Kendi derleme — OWASP Clickjacking Defense Cheat Sheet; MDN: X-Frame-Options, CSP frame-ancestors"
+      "source": "Kendi derleme — OWASP Clickjacking Defense Cheat Sheet; MDN: X-Frame-Options, CSP frame-ancestors",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-hash-vs-encryption",
@@ -1806,7 +1872,10 @@
       "followUps": [
         "Bir sistem parolanı unuttuğunda sana mevcut parolanı e-postayla gönderebiliyorsa bu, parolaların nasıl saklandığı hakkında ne söyler?"
       ],
-      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Hashing vs Encryption)"
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Hashing vs Encryption)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-salt-pepper",
@@ -1881,7 +1950,10 @@
       "followUps": [
         "Pepper'ı uygulamanın yapılandırma dosyasına koymak neden HSM'de tutmaktan daha zayıftır?"
       ],
-      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Salting, Peppering); NIST SP 800-63B-4 §3.1.1.2"
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet (Salting, Peppering); NIST SP 800-63B-4 §3.1.1.2",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-slow-password-hash",
@@ -1956,7 +2028,10 @@
       "followUps": [
         "Parolaları hâlâ tuzsuz MD5 ile saklayan eski bir sistemde, kullanıcıları zorla sıfırlatmadan daha güçlü bir algoritmaya nasıl geçersin?"
       ],
-      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet"
+      "source": "Kendi derleme — OWASP Password Storage Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-password-policy",
@@ -2046,7 +2121,10 @@
       "followUps": [
         "Yeni bir parolayı sızmış parola listesiyle karşılaştırırken parolanın kendisini üçüncü bir servise göndermeden bunu nasıl yaparsın?"
       ],
-      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.1, §3.2.2, Ek A; NIST SP 800-63 FAQ (Q-B05)"
+      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.1, §3.2.2, Ek A; NIST SP 800-63 FAQ (Q-B05)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-symmetric-vs-asymmetric",
@@ -2121,7 +2199,10 @@
       "followUps": [
         "Veritabanında bir kolonu şifreliyorsan şifreleme anahtarını nerede tutar, nasıl döndürürsün?"
       ],
-      "source": "Kendi derleme — OWASP Cryptographic Storage Cheat Sheet; RFC 8446 §1.2"
+      "source": "Kendi derleme — OWASP Cryptographic Storage Cheat Sheet; RFC 8446 §1.2",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-hmac-vs-signature",
@@ -2211,7 +2292,10 @@
       "followUps": [
         "Bir webhook'un gerçekten beklenen servisten geldiğini HMAC ile nasıl doğrularsın; karşılaştırmayı neden sabit zamanlı yaparsın?"
       ],
-      "source": "Kendi derleme — RFC 2104 (HMAC); NIST FIPS 186-5 (Digital Signature Standard)"
+      "source": "Kendi derleme — RFC 2104 (HMAC); NIST FIPS 186-5 (Digital Signature Standard)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-mfa-phishing",
@@ -2286,7 +2370,10 @@
       "followUps": [
         "Kullanıcılarının bir kısmı yalnızca SMS ile doğrulama yapabiliyorsa bu yöntemin riskini nasıl azaltırsın?"
       ],
-      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.3 (Out-of-Band), §3.2.5 (Phishing Resistance); OWASP Multifactor Authentication Cheat Sheet"
+      "source": "Kendi derleme — NIST SP 800-63B-4 §3.1.3 (Out-of-Band), §3.2.5 (Phishing Resistance); OWASP Multifactor Authentication Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-passkeys",
@@ -2376,7 +2463,10 @@
       "followUps": [
         "Kullanıcı passkey'inin bulunduğu tek cihazını kaybederse hesap kurtarma akışı phishing direncini nasıl bozabilir?"
       ],
-      "source": "Kendi derleme — FIDO Alliance: Passkeys; NIST SP 800-63B-4 §3.2.5 ve Ek B (Syncable Authenticators); W3C Web Authentication"
+      "source": "Kendi derleme — FIDO Alliance: Passkeys; NIST SP 800-63B-4 §3.2.5 ve Ek B (Syncable Authenticators); W3C Web Authentication",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-session-fixation",
@@ -2451,7 +2541,10 @@
       "followUps": [
         "Token kullanan stateless bir API'de session fixation'a benzeyen bir risk var mı?"
       ],
-      "source": "Kendi derleme — OWASP Session Management Cheat Sheet (Session ID renewal, Session Fixation)"
+      "source": "Kendi derleme — OWASP Session Management Cheat Sheet (Session ID renewal, Session Fixation)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-credential-stuffing",
@@ -2541,7 +2634,10 @@
       "followUps": [
         "Giriş ucunu IP bazlı hız sınırıyla koruyorsan binlerce farklı IP'den gelen dağıtık bir denemeyi nasıl fark edersin?"
       ],
-      "source": "Kendi derleme — OWASP Credential Stuffing Prevention Cheat Sheet; OWASP Authentication Cheat Sheet; NIST SP 800-63B-4 §3.2.2"
+      "source": "Kendi derleme — OWASP Credential Stuffing Prevention Cheat Sheet; OWASP Authentication Cheat Sheet; NIST SP 800-63B-4 §3.2.2",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-oauth-vs-oidc",
@@ -2631,7 +2727,10 @@
       "followUps": [
         "Bir SPA kullanıcı adını göstermek için access token'ın içini çözüp okuyorsa bu neden kırılgan bir tasarımdır?"
       ],
-      "source": "Kendi derleme — RFC 6749 §1; OpenID Connect Core 1.0 §1, §2, §3.1.3.7, §5.3"
+      "source": "Kendi derleme — RFC 6749 §1; OpenID Connect Core 1.0 §1, §2, §3.1.3.7, §5.3",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-auth-code-pkce",
@@ -2721,7 +2820,10 @@
       "followUps": [
         "PKCE kullanılan bir akışta `state` parametresine hâlâ ihtiyaç var mı?"
       ],
-      "source": "Kendi derleme — RFC 7636 §1, §4; RFC 9700 §2.1, §2.1.1; RFC 6749 §4.1"
+      "source": "Kendi derleme — RFC 7636 §1, §4; RFC 9700 §2.1, §2.1.1; RFC 6749 §4.1",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-implicit-flow",
@@ -2811,7 +2913,10 @@
       "followUps": [
         "Implicit flow kullanan eski bir SPA'yı authorization code + PKCE'ye geçirirken token'ları tarayıcıda nerede tutarsın?"
       ],
-      "source": "Kendi derleme — RFC 9700 §2.1.2, §4.2, §4.3, §4.6; RFC 6749 §4.2; draft-ietf-oauth-v2-1-16"
+      "source": "Kendi derleme — RFC 9700 §2.1.2, §4.2, §4.3, §4.6; RFC 6749 §4.2; draft-ietf-oauth-v2-1-16",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-jwt-signature",
@@ -2886,7 +2991,10 @@
       "followUps": [
         "Bir mikroservis yalnızca imzayı doğrulayıp `aud`'u kontrol etmezse hangi senaryoda başka bir servisin token'ını kabul eder?"
       ],
-      "source": "Kendi derleme — RFC 7519 (JWT); RFC 8725 §3.8, §3.9; OWASP JSON Web Token Cheat Sheet"
+      "source": "Kendi derleme — RFC 7519 (JWT); RFC 8725 §3.8, §3.9; OWASP JSON Web Token Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-jwt-algorithm",
@@ -2976,7 +3084,10 @@
       "followUps": [
         "Yayıncı imzalama anahtarını döndürdüğünde doğrulayıcı servisler kesintisiz nasıl geçiş yapar?"
       ],
-      "source": "Kendi derleme — RFC 8725 §2.1, §2.2, §3.1, §3.2, §3.5, §3.10; RFC 7518 (JWA)"
+      "source": "Kendi derleme — RFC 8725 §2.1, §2.2, §3.1, §3.2, §3.5, §3.10; RFC 7518 (JWA)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-refresh-token-rotation",
@@ -3066,7 +3177,10 @@
       "followUps": [
         "Rotation kullanan bir sistemde kullanıcının iki sekmesi aynı anda yenileme yaparsa ne olur, bunu nasıl ele alırsın?"
       ],
-      "source": "Kendi derleme — RFC 9700 §2.2.2, §4.14.2; RFC 9449 (DPoP); RFC 8705 (OAuth mTLS)"
+      "source": "Kendi derleme — RFC 9700 §2.2.2, §4.14.2; RFC 9449 (DPoP); RFC 8705 (OAuth mTLS)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-leaked-secret",
@@ -3156,7 +3270,10 @@
       "followUps": [
         "Bir sızıntıdan sonra git geçmişini yeniden yazmanın ekip için yan etkileri nelerdir?"
       ],
-      "source": "Kendi derleme — OWASP Secrets Management Cheat Sheet"
+      "source": "Kendi derleme — OWASP Secrets Management Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-dependency-scanning",
@@ -3246,7 +3363,10 @@
       "followUps": [
         "SCA aracı uygulamanın hiç çağırmadığı bir fonksiyondaki kritik bir açığı raporlarsa önceliği nasıl belirlersin?"
       ],
-      "source": "Kendi derleme — OWASP Top 10:2025 A03 Software Supply Chain Failures; OWASP Vulnerable Dependency Management Cheat Sheet"
+      "source": "Kendi derleme — OWASP Top 10:2025 A03 Software Supply Chain Failures; OWASP Vulnerable Dependency Management Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-least-privilege",
@@ -3321,7 +3441,10 @@
       "followUps": [
         "Tek bir veritabanı kullanıcısıyla hem uygulama sorgularını hem migration'ları çalıştıran bir sistemi bu ilkeye göre nasıl ayırırsın?"
       ],
-      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Principle of Least Privilege); Saltzer ve Schroeder, The Protection of Information in Computer Systems (1975)"
+      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Principle of Least Privilege); Saltzer ve Schroeder, The Protection of Information in Computer Systems (1975)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-defense-in-depth",
@@ -3396,7 +3519,10 @@
       "followUps": [
         "Bir API'nin önüne WAF koymak neden uygulamadaki girdi doğrulamanın yerine geçmez?"
       ],
-      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Defense in Depth)"
+      "source": "Kendi derleme — OWASP Secure Product Design Cheat Sheet (Defense in Depth)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-fail-secure",
@@ -3471,7 +3597,10 @@
       "followUps": [
         "Bir feature flag servisi yanıt vermediğinde yetki kontrolü henüz tamamlanmamış yeni bir özelliğin açılmasını nasıl önlersin?"
       ],
-      "source": "Kendi derleme — OWASP Top 10:2025 A10 Mishandling of Exceptional Conditions; OWASP Secure Product Design Cheat Sheet; OWASP Error Handling Cheat Sheet"
+      "source": "Kendi derleme — OWASP Top 10:2025 A10 Mishandling of Exceptional Conditions; OWASP Secure Product Design Cheat Sheet; OWASP Error Handling Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "cybersecurity-secure-logging",
@@ -3561,7 +3690,10 @@
       "followUps": [
         "Bir hata loguna kullanıcının gönderdiği isteğin tamamını eklemek neden hem gizlilik hem güvenlik sorunu yaratabilir?"
       ],
-      "source": "Kendi derleme — OWASP Logging Cheat Sheet; OWASP Top 10:2025 A09 Security Logging and Alerting Failures"
+      "source": "Kendi derleme — OWASP Logging Cheat Sheet; OWASP Top 10:2025 A09 Security Logging and Alerting Failures",
+      "origin": {
+        "kind": "own"
+      }
     }
   ]
 }

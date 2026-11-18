@@ -32,6 +32,7 @@ function makeQuestion(id: string, category: Category, topic: string): Question {
     kind: "definition",
     topic,
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: `${id} için soru metni`,
     modelAnswer: "Yeterince uzun bir örnek cevap metni.",
     keyConcepts: [],

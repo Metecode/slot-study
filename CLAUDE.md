@@ -115,7 +115,13 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - Three.js veya WebGL. Makine CSS 3D ve SVG ile çizilir.
 - localStorage'a JWT yazma.
 - Soru içeriğini başka sitelerden kopyalama. İçerik özgün yazılır,
-  `source` alanında türetildiği konu belirtilir.
+  `source` alanında türetildiği konu belirtilir. Kökeni `origin` taşır
+  (`own` ya da `external`: repo, url, lisans); zorunlu ve varsayılansız.
+  Dış kaynaklı soru `source`'ta "soru kaynağı: <sahip/repo> (<lisans>)"
+  ile biter, repo'nun lisans metni `THIRD_PARTY_NOTICES`'ta olur; çelişkiyi
+  `check:content` (çıkış 1) ve `content/origin.test.ts` reddeder. Lisans
+  `EXTERNAL_LICENSES`'ta değilse önce CC BY-SA 4.0 ile uyumu değerlendirilir
+  (`docs/content-audit.md`, bölüm 3).
 
 ## Derleme ve CI
 

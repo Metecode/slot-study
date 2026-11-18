@@ -25,6 +25,7 @@ function makeQuestion(id: string, category: Category = "sql", conceptCount = 3):
     kind: "definition",
     topic: "Index",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: `${id} için soru metni`,
     modelAnswer: "Yeterince uzun bir örnek cevap metni.",
     keyConcepts: Array.from({ length: conceptCount }, (_, i) => ({

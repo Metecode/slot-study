@@ -6,6 +6,7 @@ import { parseArgs } from "./cli.ts";
 import { diffLines } from "./compare.ts";
 import { formatIssues, sentenceCount } from "./format.ts";
 import { findPairs } from "./pairs.ts";
+import { originProblems } from "./origin.ts";
 import { overlay } from "./pool.ts";
 import { conceptWarnings, indexAnswers } from "./rules.ts";
 import { findSubstringTraps } from "./substrings.ts";
@@ -23,6 +24,7 @@ function question(id: string, overrides: Partial<Question> = {}): Question {
     kind: "definition",
     topic: "Index",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: `${id} nedir, açıkla?`,
     modelAnswer: "Alfa ile beta birlikte çalışır. Gama ise ayrı durur.",
     keyConcepts: [concept("a", ["alfa", "alpha"]), concept("b", ["beta", "bêta"]), concept("c", ["gama", "gamma"])],
@@ -146,5 +148,32 @@ describe("parseArgs", () => {
     expect(parseArgs(["--categry", "sql"])).toEqual({ error: "bilinmeyen seçenek: --categry" });
     expect(parseArgs(["--category", "sqll"])).toMatchObject({ error: expect.stringContaining("bilinmeyen kategori: sqll") });
     expect(parseArgs(["--base"])).toEqual({ error: "--base bir değer ister" });
+  });
+});
+
+describe("köken", () => {
+  const sudheerj = {
+    kind: "external",
+    repo: "sudheerj/reactjs-interview-questions",
+    url: "https://github.com/sudheerj/reactjs-interview-questions",
+    license: "MIT",
+  } as const;
+  const marker = "Kendi derleme — react.dev: Hooks; soru kaynağı: sudheerj/reactjs-interview-questions (MIT)";
+
+  it("source ile çelişen origin'i ve bildirimi olmayan repo'yu satır olarak verir", () => {
+    const pool = [
+      question("tutarli"),
+      question("celisen", { source: marker }),
+      question("dis", { source: marker, origin: sudheerj }),
+    ];
+    expect(originProblems(pool, "başka bir bildirim")).toEqual([
+      "celisen: source dış kaynak diyor (sudheerj/reactjs-interview-questions), origin own",
+      "sudheerj/reactjs-interview-questions: THIRD_PARTY_NOTICES'ta bölümü yok",
+    ]);
+  });
+
+  it("tutarlı havuzda boş", () => {
+    const pool = [question("tutarli"), question("dis", { source: marker, origin: sudheerj })];
+    expect(originProblems(pool, "sudheerj/reactjs-interview-questions")).toEqual([]);
   });
 });

@@ -19,7 +19,7 @@ npm run check:content -- --base main                    # PR öncesi
 | `--prefix` | Alt dize taramasında önek eşleşmelerini de listeler. |
 | `-v` | Çiftlerde her kavramı hangi alias'ın tuttuğunu, doğal cevapta kaçan kavramları gösterir. |
 
-Çıktıda önce ayrıntı bölümleri, en sonda kategori başına özet tablo gelir. Betik rapor üretir, kapı değildir: uyarı olsa da çıkış kodu 0. Dosya okunamazsa 1, seçenek yanlışsa 2 döner.
+Çıktıda önce ayrıntı bölümleri, sonra kategori başına özet tablo, en sonda köken bölümü gelir. Betik çoğunlukla rapor üretir, kapı değildir: uyarı olsa da çıkış kodu 0. Tek istisna köken: sorun varsa 1 (bkz. Kontroller → Köken). Dosya okunamazsa 1, seçenek yanlışsa 2 döner.
 
 **Sayıyı değil satırı karşılaştır.** Bir çift kalkıp yerine başka biri gelince kategorinin çift sayısı aynı kalır. `--base` bu yüzden çiftleri, uyarıları ve tuzakları tek tek karşılaştırır.
 
@@ -49,6 +49,17 @@ npm run check:content -- --base main                    # PR öncesi
 - Kod bloğu ve madde listesi yok.
 - Kalın içinde kod ve tek yıldızlı italik yok, ikisi de çizilmiyor.
 - followUp var; source `Kendi derleme — <birincil belge: bölüm>` ile başlıyor.
+
+### Köken (`origin.ts`) — kapı
+
+Her sorunun zorunlu bir `origin` alanı var: `{ "kind": "own" }` ya da `{ "kind": "external", "repo", "url", "license" }`. Alanı eksik soru şemadan geçmez, dosya okunamaz. Bu bölüm iki durumu daha reddeder:
+
+- `origin` ile `source` çelişiyor. `source` `soru kaynağı: <sahip/repo> (<lisans>)` ile bitiyorsa `origin` `external` olmalı, repo ve lisans aynı olmalı; bitmiyorsa `own`.
+- `external` bir repo'nun `src/content/THIRD_PARTY_NOTICES`'ta bölümü yok.
+
+Sorun varsa çıkış kodu 1. Kurallar `src/domain/origin.ts`'te. Bu betik CI'da çalışmadığı için aynı kontrol `src/content/origin.test.ts` ile CI'da da çalışır. Kabul edilen lisanslar `EXTERNAL_LICENSES` (`src/domain/question.ts`); listeye ekleme önce `docs/content-audit.md` bölüm 3'teki uyum değerlendirmesinden geçer.
+
+`--base` ile okunan eski revizyonlarda `origin` yoksa `source`'tan türetilir; yalnızca okunan kopyada, diske yazılmaz.
 
 ### Yarı isabet çiftleri (`pairs.ts`)
 
@@ -96,7 +107,7 @@ Tek kaynak `generic.ts`. Listeyi değiştirirsen bu bölümü de güncelle.
 ## Dosyalar
 
 - **Giriş:** `scripts/content-check.ts`.
-- **Kontroller:** `rules.ts`, `format.ts`, `pairs.ts`, `substrings.ts`, `probes.ts`.
+- **Kontroller:** `rules.ts`, `format.ts`, `pairs.ts`, `substrings.ts`, `probes.ts`, `origin.ts`.
 - **Okuma:** `pool.ts` içeriği dizinden, git revizyonundan ya da `--edits` dosyalarından okur.
 - **Çıktı:** `analyze.ts` ölçümleri toplar. `lines.ts` ve `report.ts` çıktıyı yazar, `compare.ts` karşılaştırmayı yapar.
 - **Testler:** `checks.test.ts`, `npm test` ile birlikte çalışır.

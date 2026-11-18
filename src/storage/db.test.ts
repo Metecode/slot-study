@@ -23,6 +23,7 @@ const QUESTION: Question = {
   kind: "definition",
   topic: "Index",
   difficulty: 1,
+  origin: { kind: "own" },
   prompt: "q1 için soru metni",
   modelAnswer: "Yeterince uzun bir örnek cevap metni.",
   keyConcepts: [
