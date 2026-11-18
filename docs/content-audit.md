@@ -201,6 +201,11 @@ reviewed: z.boolean(),
 (A) bu raporu inceleme kaydı olarak kullanır. (B) daha güvenli ama yayında
 313 sorunun hepsini inceleme bitene kadar gizler.
 
+> **Karar (2026-11-18):** `reviewed` alanı eklenmeyecek; bu denetim inceleme
+> kaydı sayılıyor. Alan ve aşağıdaki filtre planı v1.1'de topluluk içeriğiyle
+> birlikte ele alınacak. `origin` alanı 2.2'deki biçimiyle, `reviewed`
+> olmadan uygulanıyor.
+
 ### 2.4 `reviewed` filtresi — plan (uygulanmadı)
 
 - **Yalnızca frontend'de, `content/index.ts`'te.** `loadQuestions` tüm
