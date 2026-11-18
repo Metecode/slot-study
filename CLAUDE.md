@@ -477,6 +477,11 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - **Hukuki dayanak: kapatma hakkı + meşru menfaat.** Bilinçli tercih:
   varsayılan açık, Ayarlar'dan kapatılır. AB'den anlamlı kullanıcı gelirse
   ilk açılış kartı açık rızaya çevrilecek.
+- **Mağaza beyanı:** Play'de "Uygulama işlemleri" ve "Cihaz veya diğer
+  kimlikler", App Store'da "Device ID" ve "Product Interaction"; ikisi de
+  yalnızca Analytics, Not Linked, takip yok. `analytics_event` kullanıcı
+  hesabıyla ya da başka bir tabloyla ilişkilendirilirse bu beyanlar
+  (Apple'da "Linked to You", Play'de ilgili alanlar) güncellenmeli.
 - **Hesapla hiçbir bağ yok.** `analytics_event`'te `user_id`, IP ve
   user-agent kolonu yok, `app_user`'a yabancı anahtar yok. Girişli web
   kullanıcısının olayları da bağlanmaz: `/api/events` kendi güvenlik
