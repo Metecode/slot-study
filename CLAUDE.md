@@ -466,7 +466,7 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   - Gizlilik politikası (TR ve EN, `docs/gizlilik-politikasi.md` ve
     `privacy/`): güncellendi, 2a bölümü.
   - Play veri güvenliği formu: "Uygulama etkinliği → Uygulama
-    etkileşimleri" ve "Cihaz veya diğer kimlikler" toplanıyor; paylaşılmıyor,
+    işlemleri" ve "Cihaz veya diğer kimlikler" toplanıyor; paylaşılmıyor,
     aktarımda şifreli, kullanıcı kapatabiliyor.
   - Host nginx'teki `/api/events` bloğu (`access_log off`) uygulanmadan
     politika yayına alınmamalı; aksi halde "erişim kaydı tutulmaz" cümlesi
