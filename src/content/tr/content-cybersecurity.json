@@ -1718,7 +1718,6 @@
           "id": "csp-oncelikli",
           "label": "CSP yolu güncel; uygulanırsa X-Frame-Options yok sayılır",
           "aliases": [
-            "content security policy",
             "csp ile",
             "csp'de",
             "csp'nin",
