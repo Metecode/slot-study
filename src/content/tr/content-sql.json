@@ -8,7 +8,7 @@
       "kind": "definition",
       "topic": "Index türleri",
       "difficulty": 2,
-      "prompt": "PostgreSQL'de index türleri nelerdir ve hangisi hangi sorgu tipine uyar?",
+      "prompt": "PostgreSQL'de hangi index türleri var, her biri hangi sorguya uyar?",
       "modelAnswer": "PostgreSQL'de varsayılan index B-tree'dir; sıralanabilen veride eşitlik, aralık, BETWEEN, IN ve IS NULL koşullarında çalışır ve sonucu index sırasıyla da döndürebildiği için çoğu durumu karşılar. Hash index yalnızca eşitlik karşılaştırmasında kullanılabilir. GIN, dizi, JSONB ya da tam metin arama için `tsvector` gibi bir satırda birden çok değer barındıran alanlar içindir; GiST ve SP-GiST geometrik veri ve aralık tipleri gibi farklı arama stratejilerine altyapı sağlar. BRIN ardışık disk bloklarının özetini tuttuğu için çok küçük yer kaplar, ama yalnızca değerleri fiziksel sırayla güçlü ilişkili kolonlarda, örneğin zaman damgasına göre eklenen bir log tablosunda işe yarar. Her index okumayı hızlandırırken yazmayı yavaşlatır, çünkü INSERT ve UPDATE ilgili bütün index'leri güncellemek zorundadır; hiç kullanılmayan index'ler kaldırılmalıdır.",
       "keyConcepts": [
         {
@@ -104,7 +104,7 @@
       "kind": "applied",
       "topic": "Veri modelleme",
       "difficulty": 2,
-      "prompt": "Çalışanlar ve projeler var. Bir çalışan birden fazla projede yer alabilir, bir projede birden fazla çalışan olabilir. Tabloları yaz ve kararlarını açıkla.",
+      "prompt": "Bir çalışan birden çok projede, bir projede birden çok çalışan olabilir. Tabloları nasıl kurarsın, neden?",
       "modelAnswer": "Çok-a-çok ilişki iki tabloyla ifade edilemez; `employee` ve `project` tablolarının arasına, iki tarafın kimliklerini tutan `employee_project` adlı bir bağlantı tablosu girer. Bu tabloda `employee_id` ve `project_id` kendi tablolarına foreign key olarak bağlanır (silinen çalışanın ya da projenin atamaları için `ON DELETE CASCADE`), birincil anahtar da ikisinin bileşimidir; bu hem aynı çalışanın aynı projeye iki kez atanmasını engeller hem ayrı bir yapay anahtara gerek bırakmaz. Rol ve atanma tarihi gibi alanlar da bağlantı tablosunda durur, çünkü bu bilgi ne çalışana ne projeye, ikisinin ilişkisine aittir. Bileşik anahtar (employee_id, project_id) sırasıyla kurulduğu için 'bu çalışanın projeleri' sorgusu doğrudan index'ten yararlanır; ters yön için, yani bir projedeki çalışanları bulmak için project_id üzerine ayrı bir index açılır, çünkü PostgreSQL foreign key kolonuna kendiliğinden index açmaz.",
       "keyConcepts": [
         {
@@ -187,7 +187,7 @@
       "kind": "applied",
       "topic": "Kilitleme stratejileri",
       "difficulty": 3,
-      "prompt": "Aynı hesaptan aynı anda para çekilmeye çalışıldığında bakiyenin yanlış hesaplanmasını (Lost Update) önlemek için SELECT ... FOR UPDATE (Pessimistic) ile Versiyon kolonu (Optimistic) stratejilerini karşılaştır. Banka hesabında hangisini tercih edersin?",
+      "prompt": "Lost update'i önlemede pessimistic ve optimistic kilitlemeyi karşılaştır. Aynı hesaptan eşzamanlı para çekmede hangisini seçersin?",
       "modelAnswer": "Pessimistic yaklaşımda bakiye `SELECT balance FROM accounts WHERE id = 1 FOR UPDATE` ile okunur; bu satırı kilitler, aynı satırı güncellemek ya da kilitlemek isteyen ikinci işlem ilki commit ya da rollback yapana dek bekletilir, ardından güncelleme güncel bakiye üzerinden yapılır. Optimistic yaklaşım kilit koymaz; satırda bir version kolonu tutulur ve güncelleme `UPDATE accounts SET balance = balance - 100, version = version + 1 WHERE id = 1 AND version = 7` gibi yazılır, araya başka bir işlem girip sürümü artırdıysa sıfır satır etkilenir ve uygulama işlemi baştan tekrarlar. Aynı hesaba kısa sürede çok istek geliyorsa, yani çakışma oranı yüksekse pessimistic tercih edilir, çünkü optimistic sürekli retry döngüsüne girip sistemi yorar; çakışma seyrekse optimistic kilit tutmadığı için daha iyi ölçeklenir. PostgreSQL'in varsayılan Read Committed seviyesinde tek başına `UPDATE accounts SET balance = balance - 100 WHERE id = 1` zaten güncel satıra uygulanır; kayıp güncelleme asıl olarak bakiyeyi okuyup yeni değeri uygulamada hesaplayıp geri yazınca ortaya çıkar.",
       "keyConcepts": [
         {
@@ -317,7 +317,7 @@
       "kind": "definition",
       "topic": "Hata yönetimi",
       "difficulty": 2,
-      "prompt": "SQL exception nedir? Veritabanında bir sorgu hata verdiğinde ne olur ve uygulama tarafında nasıl ele alınır?",
+      "prompt": "SQL exception nedir, uygulama tarafında nasıl ele alınır?",
       "modelAnswer": "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır; kısıt ihlali (unique, foreign key, not null), sözdizimi hatası, tip uyuşmazlığı, deadlock ya da bağlantı kopması gibi. Her hata standart bir SQLSTATE koduyla gelir; PostgreSQL'de örneğin 23505 unique ihlali, 23503 foreign key ihlali, 40P01 deadlock, 40001 serialization hatasıdır. Java'da hata JDBC'de `SQLException` olarak gelir, Spring bunu `DataAccessException` hiyerarşisine çevirir; örneğin unique ve foreign key ihlalleri `DataIntegrityViolationException` ailesinden gelir. PostgreSQL'de transaction içinde bir komut hata verirse transaction bozulur, sonraki komutlar da 25P02 (in_failed_sql_transaction) ile reddedilir ve işlem ROLLBACK ile geri alınmalıdır; Spring'de `@Transactional` metottan RuntimeException fırlarsa rollback kendiliğinden yapılır. Hatayı yakalayıp yutmak veriyi tutarsız bırakabilir, hata ya anlamlı bir iş hatasına çevrilmeli ya da yukarı fırlatılmalıdır; deadlock ve serialization gibi geçici hatalarda ise işlemi yeniden denemek doğrudur.",
       "keyConcepts": [
         {
@@ -405,7 +405,7 @@
       "kind": "applied",
       "topic": "Performans",
       "difficulty": 2,
-      "prompt": "Bir sorgu yavaş çalışıyor. Sebebini bulmak için hangi komutu kullanırsın ve çıktısında nelere bakarsın?",
+      "prompt": "Yavaş bir sorgunun sebebini hangi komutla incelersin, çıktıda neye bakarsın?",
       "modelAnswer": "Sorgunun nasıl çalıştırılacağını görmek için EXPLAIN, gerçekten çalıştırıp ölçmek için EXPLAIN ANALYZE kullanılır; çıktı her düğümde maliyet ve satır tahminini gösteren bir sorgu planıdır (execution plan) ve PostgreSQL 18'den beri ANALYZE, BUFFERS bilgisini de varsayılan olarak verir. Büyük bir tabloda az satır dönen bir sorguda Seq Scan görülüyorsa, yani tablo baştan sona taranıyorsa, genelde eksik ya da kullanılamayan bir index vardır. En önemli kontrol tahmini satır sayısının (rows) gerçek satır sayısına (actual rows) yakın olup olmadığıdır; tahmin çok saparsa planlayıcı yanlış plan seçebilir ve sebeplerden biri eski istatistiktir, `ANALYZE` ile güncellenir. En çok zamanı alan düğüm darboğazdır; pahalı bir Nested Loop ya da diske taşan bir Sort veya Hash tipik örneklerdir. EXPLAIN ANALYZE sorguyu gerçekten çalıştırdığı için UPDATE ya da DELETE incelenecekse komut bir transaction içinde çalıştırılıp ardından ROLLBACK yapılır.",
       "keyConcepts": [
         {
@@ -489,7 +489,7 @@
       "kind": "applied",
       "topic": "Performans",
       "difficulty": 2,
-      "prompt": "Canlı sistemde hangi sorguların yavaş olduğunu, daha hiçbir sorguyu bilmeden nasıl tespit edersin?",
+      "prompt": "Hangi sorguların yavaş olduğunu bilmiyorsan canlı sistemde onları nasıl bulursun?",
       "modelAnswer": "PostgreSQL'de ilk araç `pg_stat_statements` eklentisidir; sunucu başlarken yüklenir ve her sorgu kalıbının kaç kez çalıştığını (`calls`), toplam ve ortalama süresini (`total_exec_time`, `mean_exec_time`) tutar. Toplam süreye göre sıralamak sistemi en çok yoran sorguyu verir; asıl yük çoğu zaman tek seferlik yavaş bir sorgudan değil, çok sık çalışan orta hızlı bir sorgudan gelir. İkinci araç `log_min_duration_statement` ayarıdır, belirlenen süreden (örneğin 500 ms) uzun süren her sorguyu süresi ve metniyle loga yazar; MySQL'deki karşılığı slow query log'dur. O anda çalışan ve takılı kalan sorgular için `pg_stat_activity` görünümüne bakılır; `wait_event_type` değeri Lock olan satırlar kilit bekleyen sorgulardır ve bulunan yavaş sorgunun planı sonra EXPLAIN ANALYZE ile incelenir.",
       "keyConcepts": [
         {
@@ -559,7 +559,7 @@
       "kind": "applied",
       "topic": "Hata yönetimi",
       "difficulty": 3,
-      "prompt": "Veritabanı tarafında (stored procedure veya fonksiyon içinde) bir hatayı nasıl yakalar ve ele alırsın?",
+      "prompt": "Stored procedure ya da fonksiyon içinde oluşan bir hatayı nasıl yakalarsın?",
       "modelAnswer": "PostgreSQL'de PL/pgSQL blokları hatayı EXCEPTION bölümüyle yakalar (`BEGIN ... EXCEPTION WHEN unique_violation THEN ... END`); SQL Server'da bunun karşılığı TRY...CATCH, Oracle PL/SQL'de yine bloğun EXCEPTION bölümüdür. Hata belirli bir türe göre (`unique_violation`, `division_by_zero`) ya da `WHEN OTHERS` ile genel olarak yakalanabilir; kendi hatanı fırlatmak için `RAISE EXCEPTION` kullanılır ve yetersiz bakiye gibi bir iş kuralı ihlalini veritabanında durdurmanın yolu budur. Hata yakalandığında yalnızca o bloğun içindeki kalıcı veritabanı değişiklikleri geri alınır ve dış transaction devam eder, çünkü EXCEPTION bölümü olan blok arka planda bir alt transaction oluşturur; bu yüzden böyle bir bloğun içinde transaction bitirilemez. Bu alt transaction'ın bedeli vardır; EXCEPTION bölümü olan bir bloğa girip çıkmak belirgin biçimde pahalıdır, döngü içinde gereksiz EXCEPTION bloğu performansı düşürür.",
       "keyConcepts": [
         {

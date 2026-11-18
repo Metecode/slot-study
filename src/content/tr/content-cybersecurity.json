@@ -8,7 +8,7 @@
       "kind": "applied",
       "topic": "JWT",
       "difficulty": 2,
-      "prompt": "React tabanlı bir Single Page Application'da kimlik doğrulama için JWT kullanılıyor. JWT'nin XSS (Cross-Site Scripting) saldırılarıyla çalınmasını önlemek için mimaride token nerede saklanmalıdır ve bu tercihin getirdiği yeni risk nedir?",
+      "prompt": "Bir SPA'da JWT'yi XSS ile çalınmaya karşı nerede saklarsın? Bu tercih hangi yeni riski getirir?",
       "modelAnswer": "Token `localStorage` ya da `sessionStorage`'da tutulursa aynı origin'de çalışan her JavaScript onu okuyabilir; bir XSS açığında enjekte edilen kod token'ı alıp dışarı gönderir ve saldırgan onu kendi makinesinden, süresi dolana kadar kullanır. Yaygın tercih access token'ı yalnızca bellekte, bir JavaScript değişkeninde tutmak, uzun ömürlü refresh token'ı ise sunucunun `HttpOnly` ve `Secure` öznitelikleriyle yazdığı bir cookie'de taşımaktır; `HttpOnly` cookie'yi sayfadaki JavaScript'e kapatır, `Secure` yalnızca HTTPS üzerinden gönderilmesini sağlar, bellekteki access token da sayfa yenilenince kaybolur ve refresh ile yeniden alınır. Bu tercih maruziyeti azaltır ama XSS'i çözmez; enjekte edilen kod uygulamayla aynı yetkiye sahip olduğu için sayfa açıkken kullanıcı adına istek atabilir, RFC 10017'ye göre de hiçbir tarayıcı saklama yöntemi token'ın dışarı sızdırılmasını tamamen engellemez, asıl savunma XSS'i önlemektir. Getirdiği yeni risk CSRF'tir; tarayıcı cookie'yi isteğe kendiliğinden eklediği için başka bir site cookie ile çalışan bir uca kullanıcı adına istek attırabilir, bu yüzey de refresh cookie'si yalnızca yenileme ucuna gönderilip `SameSite=Strict` ya da `Lax` ile yazıldığında küçük kalır.",
       "keyConcepts": [
         {

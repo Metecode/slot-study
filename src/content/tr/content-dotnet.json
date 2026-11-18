@@ -8,7 +8,7 @@
       "kind": "definition",
       "topic": "DI Yaşam Döngüleri",
       "difficulty": 2,
-      "prompt": "ASP.NET Core'da yerleşik Dependency Injection kullanırken Transient, Scoped ve Singleton servis kayıtları arasındaki fark nedir? Entity Framework Core DbContext sınıfını kaydederken varsayılan olarak hangisi kullanılır ve neden?",
+      "prompt": "ASP.NET Core DI'da Transient, Scoped ve Singleton farkı nedir? DbContext varsayılan olarak hangisiyle kaydedilir, neden?",
       "modelAnswer": "Transient her istendiğinde yepyeni bir nesne oluşturur, Scoped her HTTP isteği başına bir nesne oluşturup istek boyunca aynısını verir, Singleton ise ilk istendiğinde tek bir nesne oluşturur ve uygulama kapanana kadar herkese onu verir. DbContext, AddDbContext ile varsayılan olarak Scoped kaydedilir, çünkü bir DbContext tek bir iş birimi (unit of work) için tasarlanmıştır ve web uygulamalarında her HTTP isteği genelde tek bir iş birimine denk gelir. Böylece aynı istekteki servisler aynı DbContext'i paylaşır, değişiklikler aynı change tracker'da toplanır ve tek seferde veritabanına yazılır. DbContext thread-safe değildir; Singleton yapılsaydı eşzamanlı istekler aynı örneği paralel kullanır, bu da hataya ve veri bozulmasına yol açardı.",
       "keyConcepts": [
         {
@@ -91,7 +91,7 @@
       "kind": "applied",
       "topic": "IQueryable/IEnumerable",
       "difficulty": 2,
-      "prompt": "Entity Framework Core ile veritabanından veri çekerken filtreleme işlemlerinde (Where) IEnumerable ve IQueryable kullanmanın SQL sorguları ve bellek tüketimi açısından farkı nedir?",
+      "prompt": "EF Core'da Where filtresi IQueryable ya da IEnumerable üzerinde çalışınca ne fark eder?",
       "modelAnswer": "IQueryable üzerinde yazılan Where koşulu bir ifade ağacında (expression tree) tutulur; sorgu ToList gibi bir çağrıyla çalıştırıldığında EF Core onu SQL'e çevirir, yani filtre veritabanı tarafında uygulanır ve ağdan yalnızca eşleşen satırlar gelir. AsEnumerable ile IEnumerable'a geçildikten sonra yazılan Where ise SQL'e çevrilmez; EF Core filtresiz bir sorguyla tüm tabloyu çeker ve filtreyi uygulamanın belleğinde çalıştırır. Milyonlarca kayıtlı bir tabloda her satır ağdan gelip nesneye dönüştürüldüğü için bu hem ağı hem belleği gereksiz yere yorar ve bellek taşmasına kadar gidebilir.",
       "keyConcepts": [
         {

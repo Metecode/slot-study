@@ -8,7 +8,7 @@
       "kind": "applied",
       "topic": "Konteyner iletişimi",
       "difficulty": 2,
-      "prompt": "Aynı host üzerinde çalışan A konteynerinden B konteynerine nasıl erişirsin? Konteyner adıyla erişmek her durumda çalışır mı?",
+      "prompt": "Aynı host'taki iki container birbirine nasıl erişir? Container adıyla erişim her zaman çalışır mı?",
       "modelAnswer": "İki konteyner aynı kullanıcı tanımlı ağa bağlanır (ağ `docker network create` ile açılır, konteynerler `--network` ile katılır); bu ağda Docker'ın gömülü DNS'i konteyner adını çözer ve A, B'ye adıyla ulaşır. Adla erişim her durumda çalışmaz, çünkü varsayılan bridge ağında ad çözümlemesi yoktur ve konteynerler birbirine yalnızca IP ile erişir. IP'ler yeniden başlatmada değişebildiği için bu kırılgan bir düzendir. Aynı ağdaki konteynerler birbirinin bütün portlarına erişebildiği için portu -p ile yayınlamak gerekmez; o bayrak portu host'a ve dış dünyaya açar.",
       "keyConcepts": [
         {

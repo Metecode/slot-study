@@ -8,7 +8,7 @@
       "kind": "definition",
       "topic": "Tipler ve eşitlik",
       "difficulty": 1,
-      "prompt": "JavaScript'te null ile undefined arasındaki fark nedir?",
+      "prompt": "JavaScript'te null ile undefined'ı ayıran nedir?",
       "modelAnswer": "`undefined`, bir değişken tanımlanıp henüz değer atanmadığında, var olmayan bir özellik okunduğunda ya da fonksiyon bir şey döndürmediğinde motorun kendiliğinden verdiği değerdir; `null` ise geliştiricinin bir değerin bilinçli olarak boş olduğunu belirtmek için atadığı değerdir. İkisi gevşek eşitlikte birbirine eşittir ama türleri farklı olduğu için katı eşitlikte ayrışır (`null == undefined` true, `null === undefined` false döner); bu yüzden \"ikisinden biri mi\" kontrolü tek bir `== null` ile yapılabilir. `typeof null` sonucunun `\"object\"` olması dilin ilk uygulamasından kalma bir hatadır; düzeltmek için yapılan öneri reddedildiği için bugün de böyledir. Varsayılan parametre değerleri yalnızca parametreye hiçbir şey geçilmediğinde ya da `undefined` geçildiğinde devreye girer; `null` geçerli bir değer sayılır ve varsayılan uygulanmaz.",
       "keyConcepts": [
         {
