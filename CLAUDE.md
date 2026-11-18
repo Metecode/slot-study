@@ -58,6 +58,16 @@ cevabını yazar, kavram bazlı geri bildirim alır.
   kapatılmıştır, kapalı kalır. İçerikten kalkan bilinenlerden düşmez
   (geri döndüğünde kapatılmışsa açılmasın), `CATEGORIES`'ten kalkan düşer.
   Alanın yokluğu "eski kayıt" demek; şemaya default konmaz.
+- **Kategori gizleme yalnızca frontend'de** (`HIDDEN_CATEGORIES`,
+  `content/index.ts`). Açık liste, soru sayısı eşiği değil. Gizli
+  kategorinin soruları yüklenir ve doğrulanır (`LOADED_QUESTIONS`) ama
+  `QUESTIONS`'a, çekilişe ve seçiciye girmez. Seeder'a ASLA filtre konmaz:
+  `upsertAndPrune` içerikte olmayan soruyu siliyor ve `question_progress`
+  `ON DELETE CASCADE`, kullanıcıların ilerlemesi ve denemeleri kalıcı olarak
+  giderdi. Sunucu gizli soruları tutmaya devam eder. Kullanıcının kayıtlı
+  seçimi korunur (`categoryHydration`, "içerikten kalkan" gibi). İçerik
+  testleri (`registry`, `contentFences`, `origin`) `LOADED_QUESTIONS`'la
+  çalışır.
 - **`LEGACY_KNOWN_CATEGORIES` dondurulmuş bir listedir.** 1.0.1'de içeriği
   olan kategoriler; alanı olmayan eski kayıt bunları görmüş sayılır. Yeni
   kategori ASLA buraya eklenmez — eklenirse mevcut kullanıcılarda kapalı
@@ -115,7 +125,13 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 - Three.js veya WebGL. Makine CSS 3D ve SVG ile çizilir.
 - localStorage'a JWT yazma.
 - Soru içeriğini başka sitelerden kopyalama. İçerik özgün yazılır,
-  `source` alanında türetildiği konu belirtilir.
+  `source` alanında türetildiği konu belirtilir. Kökeni `origin` taşır
+  (`own` ya da `external`: repo, url, lisans); zorunlu ve varsayılansız.
+  Dış kaynaklı soru `source`'ta "soru kaynağı: <sahip/repo> (<lisans>)"
+  ile biter, repo'nun lisans metni `THIRD_PARTY_NOTICES`'ta olur; çelişkiyi
+  `check:content` (çıkış 1) ve `content/origin.test.ts` reddeder. Lisans
+  `EXTERNAL_LICENSES`'ta değilse önce CC BY-SA 4.0 ile uyumu değerlendirilir
+  (`docs/content-audit.md`, bölüm 3).
 
 ## Derleme ve CI
 
@@ -530,6 +546,10 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   döner (Europe/Istanbul). Leitner tamamlanma: o günkü `wasDue=true`
   `self_eval` ÷ günün ilk `app_open.dueCount`'u, tavan 1, `dueCount = 0`
   günleri hariç.
+- **aliasResult'ta kırılma.** normalizeTr değişikliği (commit 5bcc44c, deploy
+  tarihi: <DEPLOY_TARİHİ>) öncesindeki aliasResult değerleri karşılaştırmaya
+  dahil edilmemeli: kelime içi tire ve alt çizgi o commit'ten sonra boşluk
+  sayılıyor, aynı cevap daha sık "all" alıyor. Not `queries.sql`'in başında da var.
 
 ### İstemci (`src/analytics/`)
 

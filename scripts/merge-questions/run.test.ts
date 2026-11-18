@@ -33,6 +33,7 @@ function question(id: string, category = "react", prompt = `${id} nedir, açıkl
     category,
     topic: "Temeller",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt,
     modelAnswer: "Yeterince uzun bir model cevap metni.",
     keyConcepts: [concept("a"), concept("b"), concept("c")],

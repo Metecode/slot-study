@@ -8,7 +8,7 @@
       "kind": "definition",
       "topic": "Index türleri",
       "difficulty": 2,
-      "prompt": "PostgreSQL'de index türleri nelerdir ve hangisi hangi sorgu tipine uyar?",
+      "prompt": "PostgreSQL'de hangi index türleri var, her biri hangi sorguya uyar?",
       "modelAnswer": "PostgreSQL'de varsayılan index B-tree'dir; sıralanabilen veride eşitlik, aralık, BETWEEN, IN ve IS NULL koşullarında çalışır ve sonucu index sırasıyla da döndürebildiği için çoğu durumu karşılar. Hash index yalnızca eşitlik karşılaştırmasında kullanılabilir. GIN, dizi, JSONB ya da tam metin arama için `tsvector` gibi bir satırda birden çok değer barındıran alanlar içindir; GiST ve SP-GiST geometrik veri ve aralık tipleri gibi farklı arama stratejilerine altyapı sağlar. BRIN ardışık disk bloklarının özetini tuttuğu için çok küçük yer kaplar, ama yalnızca değerleri fiziksel sırayla güçlü ilişkili kolonlarda, örneğin zaman damgasına göre eklenen bir log tablosunda işe yarar. Her index okumayı hızlandırırken yazmayı yavaşlatır, çünkü INSERT ve UPDATE ilgili bütün index'leri güncellemek zorundadır; hiç kullanılmayan index'ler kaldırılmalıdır.",
       "keyConcepts": [
         {
@@ -93,7 +93,10 @@
         "Bileşik index'te kolon sırası neden önemli?",
         "Bir index'in gerçekten kullanılıp kullanılmadığını nasıl anlarsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Index Types, GIN Indexes, Indexes (Introduction)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Index Types, GIN Indexes, Indexes (Introduction)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-many-to-many-employee-project",
@@ -101,7 +104,7 @@
       "kind": "applied",
       "topic": "Veri modelleme",
       "difficulty": 2,
-      "prompt": "Çalışanlar ve projeler var. Bir çalışan birden fazla projede yer alabilir, bir projede birden fazla çalışan olabilir. Tabloları yaz ve kararlarını açıkla.",
+      "prompt": "Bir çalışan birden çok projede, bir projede birden çok çalışan olabilir. Tabloları nasıl kurarsın, neden?",
       "modelAnswer": "Çok-a-çok ilişki iki tabloyla ifade edilemez; `employee` ve `project` tablolarının arasına, iki tarafın kimliklerini tutan `employee_project` adlı bir bağlantı tablosu girer. Bu tabloda `employee_id` ve `project_id` kendi tablolarına foreign key olarak bağlanır (silinen çalışanın ya da projenin atamaları için `ON DELETE CASCADE`), birincil anahtar da ikisinin bileşimidir; bu hem aynı çalışanın aynı projeye iki kez atanmasını engeller hem ayrı bir yapay anahtara gerek bırakmaz. Rol ve atanma tarihi gibi alanlar da bağlantı tablosunda durur, çünkü bu bilgi ne çalışana ne projeye, ikisinin ilişkisine aittir. Bileşik anahtar (employee_id, project_id) sırasıyla kurulduğu için 'bu çalışanın projeleri' sorgusu doğrudan index'ten yararlanır; ters yön için, yani bir projedeki çalışanları bulmak için project_id üzerine ayrı bir index açılır, çünkü PostgreSQL foreign key kolonuna kendiliğinden index açmaz.",
       "keyConcepts": [
         {
@@ -173,67 +176,10 @@
         "Bir çalışan aynı projeye farklı rollerle iki kez atanabilseydi şema nasıl değişirdi?",
         "Bağlantı tablosuna ayrı bir id kolonu koymanın artısı ve eksisi ne olurdu?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Constraints (Primary Keys, Foreign Keys), Multicolumn Indexes"
-    },
-    {
-      "id": "sql-transaction-dirty-read",
-      "category": "sql",
-      "kind": "definition",
-      "topic": "Kirli Okuma ve İzolasyon",
-      "difficulty": 2,
-      "prompt": "Finansal bir sistemde 'Dirty Read' (kirli okuma) anomalisi nasıl oluşur ve varsayılan olarak bunu hangi izolasyon seviyesi engeller?",
-      "modelAnswer": "Dirty read, A işlemi bir hesaba para ekleyip henüz commit etmeden B işleminin bu yeni bakiyeyi okumasıyla oluşur; A hata alıp rollback yaparsa B hiç var olmamış bir bakiye üzerinden işlem yapmış olur. PostgreSQL ve SQL Server'da varsayılan izolasyon seviyesi olan Read Committed yalnızca commit edilmiş veriyi okuttuğu için bunu engeller; MySQL InnoDB'de varsayılan daha katı olan Repeatable Read'dir. PostgreSQL'de Read Uncommitted istense bile Read Committed gibi davrandığı için dirty read hiç oluşmaz. Read Committed ise aynı transaction içinde aynı satır iki kez okunduğunda farklı değer gelmesini (non-repeatable read) engellemez, çünkü her komut kendi başladığı andaki veriyi görür; bunun için Repeatable Read ya da Serializable gerekir.",
-      "keyConcepts": [
-        {
-          "id": "dirty-read-definition",
-          "label": "Commit edilmemiş veriyi okuma",
-          "aliases": [
-            "commit edilmemiş",
-            "commit etmeden",
-            "henüz commit",
-            "uncommitted",
-            "iptal edilecek",
-            "hiç var olmamış"
-          ],
-          "anchors": [
-            "Dirty read, bir transaction'ın henüz commit edilmemiş, askıda olan değişikliklerini başka bir transaction'ın okumasıdır.",
-            "Başka bir işlemin yazıp henüz onaylamadığı geçici veriyi okumak kirli okumadır."
-          ]
-        },
-        {
-          "id": "read-committed-solution",
-          "label": "Read Committed ile çözüm",
-          "aliases": [
-            "read committed",
-            "read-committed",
-            "read_committed",
-            "commit edilmiş veri"
-          ],
-          "anchors": [
-            "Bu problemi çözmek için en az Read Committed izolasyon seviyesi kullanılmalıdır.",
-            "Veritabanlarının çoğunda varsayılan olan Read Committed seviyesi kirli okumayı (dirty read) engeller."
-          ]
-        },
-        {
-          "id": "non-repeatable-read-gap",
-          "label": "Non-repeatable read riski",
-          "aliases": [
-            "non-repeatable",
-            "repeatable read",
-            "ikinci okuma",
-            "iki kez okun",
-            "farklı değer"
-          ],
-          "anchors": [
-            "Read Committed kirli okumayı önlese de, okunan verinin aynı işlem içinde tekrar okunduğunda değişmemesini garanti etmez.",
-            "Kirli okuma çözülse bile aynı satırın farklı okunması anomalisine karşı Repeatable Read seviyesine çıkmak gerekebilir."
-          ]
-        }
-      ],
-      "followUps": [
-        "Sadece Read Committed kullanarak, para çekme işlemi sırasında bakiyenin eksiye düşmesini (Lost Update) nasıl engellersin?"
-      ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Transaction Isolation; Microsoft Learn: SET TRANSACTION ISOLATION LEVEL (SQL Server); MySQL 8.4 Reference Manual: Transaction Isolation Levels"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Constraints (Primary Keys, Foreign Keys), Multicolumn Indexes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-locking-lost-update",
@@ -241,7 +187,7 @@
       "kind": "applied",
       "topic": "Kilitleme stratejileri",
       "difficulty": 3,
-      "prompt": "Aynı hesaptan aynı anda para çekilmeye çalışıldığında bakiyenin yanlış hesaplanmasını (Lost Update) önlemek için SELECT ... FOR UPDATE (Pessimistic) ile Versiyon kolonu (Optimistic) stratejilerini karşılaştır. Banka hesabında hangisini tercih edersin?",
+      "prompt": "Lost update'i önlemede pessimistic ve optimistic kilitlemeyi karşılaştır. Aynı hesaptan eşzamanlı para çekmede hangisini seçersin?",
       "modelAnswer": "Pessimistic yaklaşımda bakiye `SELECT balance FROM accounts WHERE id = 1 FOR UPDATE` ile okunur; bu satırı kilitler, aynı satırı güncellemek ya da kilitlemek isteyen ikinci işlem ilki commit ya da rollback yapana dek bekletilir, ardından güncelleme güncel bakiye üzerinden yapılır. Optimistic yaklaşım kilit koymaz; satırda bir version kolonu tutulur ve güncelleme `UPDATE accounts SET balance = balance - 100, version = version + 1 WHERE id = 1 AND version = 7` gibi yazılır, araya başka bir işlem girip sürümü artırdıysa sıfır satır etkilenir ve uygulama işlemi baştan tekrarlar. Aynı hesaba kısa sürede çok istek geliyorsa, yani çakışma oranı yüksekse pessimistic tercih edilir, çünkü optimistic sürekli retry döngüsüne girip sistemi yorar; çakışma seyrekse optimistic kilit tutmadığı için daha iyi ölçeklenir. PostgreSQL'in varsayılan Read Committed seviyesinde tek başına `UPDATE accounts SET balance = balance - 100 WHERE id = 1` zaten güncel satıra uygulanır; kayıp güncelleme asıl olarak bakiyeyi okuyup yeni değeri uygulamada hesaplayıp geri yazınca ortaya çıkar.",
       "keyConcepts": [
         {
@@ -295,7 +241,10 @@
       "followUps": [
         "Pessimistic locking kullanırken Deadlock (kördüğüm) oluşmasını engellemek için birden fazla satırı güncellerken nelere dikkat etmeliyiz?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Explicit Locking (Row-Level Locks), Transaction Isolation (Read Committed Isolation Level)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Explicit Locking (Row-Level Locks), Transaction Isolation (Read Committed Isolation Level)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-window-running-total",
@@ -357,7 +306,10 @@
       "followUps": [
         "Müşterilerin değil de bankanın tüm şubelerinin kümülatif hesap hareketlerini tek sorguda 'şube bazlı' ayrı ayrı göstermek istesek sorguya hangi ifadeyi eklerdik?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Window Functions (Tutorial), Value Expressions (Window Function Calls)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Window Functions (Tutorial), Value Expressions (Window Function Calls)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-exception",
@@ -365,7 +317,7 @@
       "kind": "definition",
       "topic": "Hata yönetimi",
       "difficulty": 2,
-      "prompt": "SQL exception nedir? Veritabanında bir sorgu hata verdiğinde ne olur ve uygulama tarafında nasıl ele alınır?",
+      "prompt": "SQL exception nedir, uygulama tarafında nasıl ele alınır?",
       "modelAnswer": "SQL exception, veritabanının bir komutu çalıştıramadığında döndürdüğü hatadır; kısıt ihlali (unique, foreign key, not null), sözdizimi hatası, tip uyuşmazlığı, deadlock ya da bağlantı kopması gibi. Her hata standart bir SQLSTATE koduyla gelir; PostgreSQL'de örneğin 23505 unique ihlali, 23503 foreign key ihlali, 40P01 deadlock, 40001 serialization hatasıdır. Java'da hata JDBC'de `SQLException` olarak gelir, Spring bunu `DataAccessException` hiyerarşisine çevirir; örneğin unique ve foreign key ihlalleri `DataIntegrityViolationException` ailesinden gelir. PostgreSQL'de transaction içinde bir komut hata verirse transaction bozulur, sonraki komutlar da 25P02 (in_failed_sql_transaction) ile reddedilir ve işlem ROLLBACK ile geri alınmalıdır; Spring'de `@Transactional` metottan RuntimeException fırlarsa rollback kendiliğinden yapılır. Hatayı yakalayıp yutmak veriyi tutarsız bırakabilir, hata ya anlamlı bir iş hatasına çevrilmeli ya da yukarı fırlatılmalıdır; deadlock ve serialization gibi geçici hatalarda ise işlemi yeniden denemek doğrudur.",
       "keyConcepts": [
         {
@@ -442,7 +394,10 @@
       "followUps": [
         "Hatayı yakalayıp logladıktan sonra transaction'a devam etmek isteseydin hangi mekanizmayı kullanırdın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: PostgreSQL Error Codes; Spring Framework: DuplicateKeyException (Javadoc), Rolling Back a Declarative Transaction"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: PostgreSQL Error Codes; Spring Framework: DuplicateKeyException (Javadoc), Rolling Back a Declarative Transaction",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-slow-query-explain",
@@ -450,7 +405,7 @@
       "kind": "applied",
       "topic": "Performans",
       "difficulty": 2,
-      "prompt": "Bir sorgu yavaş çalışıyor. Sebebini bulmak için hangi komutu kullanırsın ve çıktısında nelere bakarsın?",
+      "prompt": "Yavaş bir sorgunun sebebini hangi komutla incelersin, çıktıda neye bakarsın?",
       "modelAnswer": "Sorgunun nasıl çalıştırılacağını görmek için EXPLAIN, gerçekten çalıştırıp ölçmek için EXPLAIN ANALYZE kullanılır; çıktı her düğümde maliyet ve satır tahminini gösteren bir sorgu planıdır (execution plan) ve PostgreSQL 18'den beri ANALYZE, BUFFERS bilgisini de varsayılan olarak verir. Büyük bir tabloda az satır dönen bir sorguda Seq Scan görülüyorsa, yani tablo baştan sona taranıyorsa, genelde eksik ya da kullanılamayan bir index vardır. En önemli kontrol tahmini satır sayısının (rows) gerçek satır sayısına (actual rows) yakın olup olmadığıdır; tahmin çok saparsa planlayıcı yanlış plan seçebilir ve sebeplerden biri eski istatistiktir, `ANALYZE` ile güncellenir. En çok zamanı alan düğüm darboğazdır; pahalı bir Nested Loop ya da diske taşan bir Sort veya Hash tipik örneklerdir. EXPLAIN ANALYZE sorguyu gerçekten çalıştırdığı için UPDATE ya da DELETE incelenecekse komut bir transaction içinde çalıştırılıp ardından ROLLBACK yapılır.",
       "keyConcepts": [
         {
@@ -523,7 +478,10 @@
       "followUps": [
         "Sorgu planında index olmasına rağmen Seq Scan görüyorsan olası sebepler nelerdir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Using EXPLAIN; PostgreSQL 18 release notes (EXPLAIN BUFFERS)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Using EXPLAIN; PostgreSQL 18 release notes (EXPLAIN BUFFERS)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-find-slow-queries",
@@ -531,7 +489,7 @@
       "kind": "applied",
       "topic": "Performans",
       "difficulty": 2,
-      "prompt": "Canlı sistemde hangi sorguların yavaş olduğunu, daha hiçbir sorguyu bilmeden nasıl tespit edersin?",
+      "prompt": "Hangi sorguların yavaş olduğunu bilmiyorsan canlı sistemde onları nasıl bulursun?",
       "modelAnswer": "PostgreSQL'de ilk araç `pg_stat_statements` eklentisidir; sunucu başlarken yüklenir ve her sorgu kalıbının kaç kez çalıştığını (`calls`), toplam ve ortalama süresini (`total_exec_time`, `mean_exec_time`) tutar. Toplam süreye göre sıralamak sistemi en çok yoran sorguyu verir; asıl yük çoğu zaman tek seferlik yavaş bir sorgudan değil, çok sık çalışan orta hızlı bir sorgudan gelir. İkinci araç `log_min_duration_statement` ayarıdır, belirlenen süreden (örneğin 500 ms) uzun süren her sorguyu süresi ve metniyle loga yazar; MySQL'deki karşılığı slow query log'dur. O anda çalışan ve takılı kalan sorgular için `pg_stat_activity` görünümüne bakılır; `wait_event_type` değeri Lock olan satırlar kilit bekleyen sorgulardır ve bulunan yavaş sorgunun planı sonra EXPLAIN ANALYZE ile incelenir.",
       "keyConcepts": [
         {
@@ -590,7 +548,10 @@
       "followUps": [
         "Uygulama tarafında N+1 problemi olduğunu pg_stat_statements çıktısından nasıl anlarsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: pg_stat_statements, Error Reporting and Logging (log_min_duration_statement), The Cumulative Statistics System (pg_stat_activity); MySQL 8.4 Reference Manual: The Slow Query Log"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: pg_stat_statements, Error Reporting and Logging (log_min_duration_statement), The Cumulative Statistics System (pg_stat_activity); MySQL 8.4 Reference Manual: The Slow Query Log",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-exception-handling-db",
@@ -598,7 +559,7 @@
       "kind": "applied",
       "topic": "Hata yönetimi",
       "difficulty": 3,
-      "prompt": "Veritabanı tarafında (stored procedure veya fonksiyon içinde) bir hatayı nasıl yakalar ve ele alırsın?",
+      "prompt": "Stored procedure ya da fonksiyon içinde oluşan bir hatayı nasıl yakalarsın?",
       "modelAnswer": "PostgreSQL'de PL/pgSQL blokları hatayı EXCEPTION bölümüyle yakalar (`BEGIN ... EXCEPTION WHEN unique_violation THEN ... END`); SQL Server'da bunun karşılığı TRY...CATCH, Oracle PL/SQL'de yine bloğun EXCEPTION bölümüdür. Hata belirli bir türe göre (`unique_violation`, `division_by_zero`) ya da `WHEN OTHERS` ile genel olarak yakalanabilir; kendi hatanı fırlatmak için `RAISE EXCEPTION` kullanılır ve yetersiz bakiye gibi bir iş kuralı ihlalini veritabanında durdurmanın yolu budur. Hata yakalandığında yalnızca o bloğun içindeki kalıcı veritabanı değişiklikleri geri alınır ve dış transaction devam eder, çünkü EXCEPTION bölümü olan blok arka planda bir alt transaction oluşturur; bu yüzden böyle bir bloğun içinde transaction bitirilemez. Bu alt transaction'ın bedeli vardır; EXCEPTION bölümü olan bir bloğa girip çıkmak belirgin biçimde pahalıdır, döngü içinde gereksiz EXCEPTION bloğu performansı düşürür.",
       "keyConcepts": [
         {
@@ -663,7 +624,10 @@
       "followUps": [
         "Uygulama tarafında birden fazla adımlı bir işlemde sadece bir adımı geri almak isteseydin SQL'de hangi komutu kullanırdın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: PL/pgSQL Control Structures (Trapping Errors), PL/pgSQL Transaction Management; Microsoft Learn: TRY...CATCH (Transact-SQL); Oracle Database 23ai PL/SQL Language Reference: Overview of Exception Handling"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: PL/pgSQL Control Structures (Trapping Errors), PL/pgSQL Transaction Management; Microsoft Learn: TRY...CATCH (Transact-SQL); Oracle Database 23ai PL/SQL Language Reference: Overview of Exception Handling",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-deadlock",
@@ -735,7 +699,10 @@
       "followUps": [
         "Deadlock ile uzun süren kilit beklemesi (lock wait) arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Explicit Locking (Deadlocks), PostgreSQL Error Codes, Client Connection Defaults (lock_timeout)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Explicit Locking (Deadlocks), PostgreSQL Error Codes, Client Connection Defaults (lock_timeout)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-acid",
@@ -808,7 +775,10 @@
       "followUps": [
         "Durability'yi sağlamak için veritabanı commit anında diske tam olarak ne yazar?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Glossary (ACID, Atomicity, Consistency, Isolation, Durability), Write-Ahead Logging (WAL)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Glossary (ACID, Atomicity, Consistency, Isolation, Durability), Write-Ahead Logging (WAL)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-isolation-levels",
@@ -876,7 +846,10 @@
       "followUps": [
         "Serializable seviyesinde çalışan bir uygulama serialization failure hatası aldığında ne yapmalıdır?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Transaction Isolation; Microsoft Learn: SET TRANSACTION ISOLATION LEVEL (SQL Server); Oracle Database 23ai Concepts: Data Concurrency and Consistency; MySQL 8.4 Reference Manual: Transaction Isolation Levels"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Transaction Isolation; Microsoft Learn: SET TRANSACTION ISOLATION LEVEL (SQL Server); Oracle Database 23ai Concepts: Data Concurrency and Consistency; MySQL 8.4 Reference Manual: Transaction Isolation Levels",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-join-types",
@@ -962,7 +935,10 @@
       "followUps": [
         "Hiç hesabı olmayan müşterileri bulmak için hangi JOIN'i ve hangi koşulu kullanırsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Table Expressions (Joined Tables)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Table Expressions (Joined Tables)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-where-vs-having",
@@ -1034,7 +1010,10 @@
       "followUps": [
         "SELECT içinde verdiğin bir takma adı (alias) WHERE içinde neden kullanamazsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Table Expressions (The WHERE Clause, The GROUP BY and HAVING Clauses)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Table Expressions (The WHERE Clause, The GROUP BY and HAVING Clauses)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-primary-foreign-key",
@@ -1118,7 +1097,10 @@
       "followUps": [
         "Natural key yerine surrogate key (yapay id) kullanmanın avantajları nelerdir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Constraints (Primary Keys, Foreign Keys)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Constraints (Primary Keys, Foreign Keys)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-normalization",
@@ -1205,7 +1187,10 @@
       "followUps": [
         "Bir bankanın raporlama veritabanında neden bilerek denormalize tablolar kullanılır?"
       ],
-      "source": "Kendi derleme — Microsoft Learn: Database normalization description"
+      "source": "Kendi derleme — Microsoft Learn: Database normalization description",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-composite-index-order",
@@ -1278,7 +1263,10 @@
       "followUps": [
         "created_at tek başına da sık sorgulanıyorsa ne yaparsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Multicolumn Indexes; PostgreSQL 18 release notes (skip scan)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Multicolumn Indexes; PostgreSQL 18 release notes (skip scan)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-index-not-used",
@@ -1363,7 +1351,10 @@
       "followUps": [
         "Büyük/küçük harf duyarsız email araması için index'i nasıl tasarlarsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Indexes on Expressions, Index Types (LIKE), Operator Classes and Operator Families; PostgreSQL 8.3 release notes (casts to text); MySQL 8.4 Reference Manual: Type Conversion in Expression Evaluation"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Indexes on Expressions, Index Types (LIKE), Operator Classes and Operator Families; PostgreSQL 8.3 release notes (casts to text); MySQL 8.4 Reference Manual: Type Conversion in Expression Evaluation",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-covering-index",
@@ -1433,7 +1424,10 @@
       "followUps": [
         "INCLUDE ile kolon eklemek ile o kolonu bileşik index'in parçası yapmak arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Index-Only Scans and Covering Indexes, Routine Vacuuming (Updating the Visibility Map)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Index-Only Scans and Covering Indexes, Routine Vacuuming (Updating the Visibility Map)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-clustered-index",
@@ -1506,7 +1500,10 @@
       "followUps": [
         "InnoDB'de primary key olarak rastgele UUID kullanmak neden yazma performansını düşürür?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: CLUSTER; Microsoft Learn: Create a Clustered Index (SQL Server); MySQL 8.4 Reference Manual: Clustered and Secondary Indexes"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: CLUSTER; Microsoft Learn: Create a Clustered Index (SQL Server); MySQL 8.4 Reference Manual: Clustered and Secondary Indexes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-cte",
@@ -1578,7 +1575,10 @@
       "followUps": [
         "Bir çalışanın en üst yöneticiye kadar tüm yönetici zincirini recursive CTE ile nasıl yazarsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: WITH Queries (Common Table Expressions); PostgreSQL 12 release notes"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: WITH Queries (Common Table Expressions); PostgreSQL 12 release notes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-subquery-vs-join",
@@ -1650,7 +1650,10 @@
       "followUps": [
         "Hiç işlem yapmamış hesapları bulmak için LEFT JOIN ve NOT EXISTS çözümlerini karşılaştır."
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Subquery Expressions (EXISTS, IN, NOT IN)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Subquery Expressions (EXISTS, IN, NOT IN)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-rank-functions",
@@ -1739,7 +1742,10 @@
       "followUps": [
         "Her şubenin en yüksek bakiyeli 3 müşterisini, eşitlik durumunda hepsini gösterecek şekilde nasıl listelersin?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Window Functions (functions-window), Window Functions (Tutorial)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Window Functions (functions-window), Window Functions (Tutorial)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-delete-truncate-drop",
@@ -1813,7 +1819,10 @@
       "followUps": [
         "Milyonlarca satırlık bir tablodan eski kayıtları silmen gerekiyor; tek bir DELETE çalıştırmak neden risklidir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: TRUNCATE; MySQL 8.4 Reference Manual: Statements That Cause an Implicit Commit; Oracle Database 23ai SQL Language Reference: TRUNCATE TABLE"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: TRUNCATE; MySQL 8.4 Reference Manual: Statements That Cause an Implicit Commit; Oracle Database 23ai SQL Language Reference: TRUNCATE TABLE",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-union-vs-union-all",
@@ -1887,7 +1896,10 @@
       "followUps": [
         "UNION ile INTERSECT ve EXCEPT arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Combining Queries (UNION, INTERSECT, EXCEPT)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Combining Queries (UNION, INTERSECT, EXCEPT)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-null-handling",
@@ -1966,7 +1978,10 @@
       "followUps": [
         "Bir kolonun UNIQUE kısıtı varken iki satırda NULL değer olabilir mi? Neden?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Comparison Functions and Operators, Aggregate Functions, Conditional Expressions (COALESCE)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Comparison Functions and Operators, Aggregate Functions, Conditional Expressions (COALESCE)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-n-plus-one",
@@ -2050,7 +2065,10 @@
       "followUps": [
         "JOIN FETCH ile iki farklı koleksiyonu aynı anda çekmeye çalışırsan ne olur?"
       ],
-      "source": "Kendi derleme — Hibernate ORM 7.0: Introduction (Association fetching, Batch fetching), User Guide (pagination with fetch join)"
+      "source": "Kendi derleme — Hibernate ORM 7.0: Introduction (Association fetching, Batch fetching), User Guide (pagination with fetch join)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-injection",
@@ -2124,7 +2142,10 @@
       "followUps": [
         "JPA kullanıyorsan SQL injection'dan tamamen korunmuş olur musun? Hangi durumda hâlâ risk vardır?"
       ],
-      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet (Prepared Statements, Allow-list Input Validation, Least Privilege)"
+      "source": "Kendi derleme — OWASP SQL Injection Prevention Cheat Sheet (Prepared Statements, Allow-list Input Validation, Least Privilege)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-view-vs-materialized",
@@ -2197,7 +2218,10 @@
       "followUps": [
         "Bir view üzerinden INSERT veya UPDATE yapılabilir mi?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: CREATE VIEW, REFRESH MATERIALIZED VIEW"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: CREATE VIEW, REFRESH MATERIALIZED VIEW",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-procedure-vs-function",
@@ -2281,7 +2305,10 @@
       "followUps": [
         "Uygulamada mı yoksa stored procedure'de mi faiz hesaplaması yapardın? Neden?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: User-Defined Procedures, PL/pgSQL Transaction Management"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: User-Defined Procedures, PL/pgSQL Transaction Management",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-trigger",
@@ -2352,7 +2379,10 @@
       "followUps": [
         "Audit log'u trigger yerine uygulama katmanında tutmanın avantajı ve dezavantajı nedir?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Overview of Trigger Behavior"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: Overview of Trigger Behavior",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "sql-pagination",
@@ -2439,7 +2469,10 @@
       "followUps": [
         "Keyset pagination'da geri (önceki sayfa) gitmeyi nasıl uygularsın?"
       ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: LIMIT and OFFSET, Row and Array Comparisons (Row Constructor Comparison)"
+      "source": "Kendi derleme — PostgreSQL 18 Docs: LIMIT and OFFSET, Row and Array Comparisons (Row Constructor Comparison)",
+      "origin": {
+        "kind": "own"
+      }
     }
   ]
 }

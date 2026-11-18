@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { originFromSource } from "../../src/domain/origin.ts";
 import { parseQuestionFile } from "../../src/domain/question.ts";
 import type { Question } from "../../src/domain/question.ts";
 
@@ -36,8 +37,23 @@ export function loadFromRevision(repoRoot: string, revision: string): Question[]
     .sort()
     .flatMap((path) => {
       const ref = `${revision}:${path}`;
-      return parseQuestionFile(ref, JSON.parse(git("show", ref))).questions;
+      return parseQuestionFile(ref, withOrigin(JSON.parse(git("show", ref)))).questions;
     });
+}
+
+/**
+ * origin alanı gelmeden önceki revizyonlarda soru şemadan geçmez. Kıyas
+ * yapılabilsin diye eksik origin source'tan türetilir; yalnızca okunan
+ * kopyada, diske yazılmaz. Alanı olan sorulara dokunulmaz.
+ */
+function withOrigin(file: { questions?: Record<string, unknown>[] }): unknown {
+  if (!Array.isArray(file.questions)) return file;
+  return {
+    ...file,
+    questions: file.questions.map((question) =>
+      "origin" in question ? question : { ...question, origin: originFromSource(question.source as string | undefined) },
+    ),
+  };
 }
 
 /**

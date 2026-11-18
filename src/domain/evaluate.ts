@@ -10,9 +10,23 @@ import type { Evaluation, Question } from "./question";
 /* ------------------------------------------------------------------ */
 
 /**
- * Türkçe karakterleri sadeleştirir, küçük harfe çevirir, fazla boşluğu
- * temizler. Küçük harfe çevirme Türkçe yerel ayarıyla: "I" önce "ı" olur,
- * sonra "i" — Türkçe olmayan bir `toLowerCase` bunu "i̇" yapardı.
+ * Kelime içindeki tire ve alt çizgi: yalnızca iki harf ya da rakam
+ * arasındakiler. "health-check", "service_healthy" boşluklu yazımla aynı
+ * olur; "-p", "sh -c", "copy --from", "__html" gibi baştaki işaretler
+ * kalır. Hepsi boşluğa çevrilseydi "-?" yalnızca "?" olup her soru
+ * işaretini, "-slim" "teslim"in içini tutardı.
+ */
+const WORD_JOINER = /(?<=[\p{L}\p{N}])[-_]+(?=[\p{L}\p{N}])/gu;
+
+/**
+ * Türkçe karakterleri sadeleştirir, küçük harfe çevirir, kelime içi tire
+ * ve alt çizgiyi boşluğa çevirir, fazla boşluğu temizler. Küçük harfe
+ * çevirme Türkçe yerel ayarıyla: "I" önce "ı" olur, sonra "i" — Türkçe
+ * olmayan bir `toLowerCase` bunu "i̇" yapardı.
+ *
+ * Cevap da alias da buradan geçer; tireli bir alias boşluklu cevabı,
+ * boşluklu bir alias tireli cevabı tutar. Bitişik yazım ("healthcheck")
+ * ayrı kalır: gereken yerde iki yazım da alias olarak eklenir.
  */
 export function normalizeTr(text: string): string {
   return text
@@ -23,6 +37,7 @@ export function normalizeTr(text: string): string {
     .replace(/ü/g, "u")
     .replace(/ö/g, "o")
     .replace(/ç/g, "c")
+    .replace(WORD_JOINER, " ")
     .replace(/\s+/g, " ")
     .trim();
 }

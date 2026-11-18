@@ -1,4 +1,4 @@
-import { availableCategories, parseQuestionFile } from "../domain/question";
+import { availableCategories, parseQuestionFile, visibleQuestions } from "../domain/question";
 import type { Category, Question } from "../domain/question";
 import cybersecurity from "./tr/content-cybersecurity.json";
 import docker from "./tr/content-docker.json";
@@ -44,7 +44,28 @@ function loadQuestions(): Question[] {
   return questions;
 }
 
-export const QUESTIONS: Question[] = loadQuestions();
+/** Kayıtlı ve doğrulanmış bütün sorular, gizli kategoriler dahil. */
+export const LOADED_QUESTIONS: Question[] = loadQuestions();
+
+/**
+ * Yayında gizlenen kategoriler. Açık bir liste, eşik değil: soru sayısına
+ * bağlı bir kural bir silmede kategoriyi sessizce kaybeder, geliştirilen
+ * yeni bir kategoriyi kendiliğinden saklardı. Buraya eklemek PR'da
+ * görünen bir karar.
+ *
+ * Filtre YALNIZCA burada. Seeder'a konmaz: içerikte olmayan soruyu
+ * sunucudan siliyor ve question_progress ON DELETE CASCADE, kullanıcıların
+ * o sorulardaki ilerlemesi ve denemeleri giderdi. Gizli kategorinin
+ * içeriği yine yüklenir ve doğrulanır; yalnızca çekilişe ve seçiciye
+ * girmez. Kullanıcının kayıtlı seçimi korunur (categoryHydration):
+ * kategori geri açılınca kapattıysa kapalı, açıksa açık gelir.
+ *
+ * dotnet: 2 soru; 15'e tamamlanana kadar gizli (docs/content-audit.md 0.5).
+ */
+export const HIDDEN_CATEGORIES: ReadonlySet<Category> = new Set<Category>(["dotnet"]);
+
+/** Yayında görünen sorular: çekiliş, seçici ve ölçüm bunu kullanır. */
+export const QUESTIONS: Question[] = visibleQuestions(LOADED_QUESTIONS, HIDDEN_CATEGORIES);
 
 /**
  * Arayüzün göstereceği kategoriler. CATEGORIES ileride eklenecekleri de

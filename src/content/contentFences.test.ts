@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { parseInline, parseModelAnswer } from "../domain/modelAnswer";
 import type { Question } from "../domain/question";
-import { QUESTIONS } from "./index";
+import { LOADED_QUESTIONS } from "./index";
 
 /* ------------------------------------------------------------------ */
 /* Kayıp kod çiti taraması                                             */
@@ -137,6 +137,6 @@ describe("kayıp kod çiti algılayıcısı", () => {
 
 describe("içerik", () => {
   it("hiçbir metin alanında kayıp kod çiti belirtisi yok", () => {
-    expect(findLostFences(QUESTIONS)).toEqual([]);
+    expect(findLostFences(LOADED_QUESTIONS)).toEqual([]);
   });
 });

@@ -89,7 +89,10 @@
       "followUps": [
         "Ağ hatasından sonra bir POST isteğini güvenle tekrarlamak için ne yapılabilir?"
       ],
-      "source": "Kendi derleme — RFC 9110 §9.2.1 Safe Methods, §9.2.2 Idempotent Methods"
+      "source": "Kendi derleme — RFC 9110 §9.2.1 Safe Methods, §9.2.2 Idempotent Methods",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-get-vs-post",
@@ -178,7 +181,10 @@
       "followUps": [
         "GET isteğindeki URL'nin uzunluğu için HTTP'de bir sınır var mı?"
       ],
-      "source": "Kendi derleme — RFC 9110 §9.3.1 GET, §9.3.3 POST; MDN: HTTP request methods"
+      "source": "Kendi derleme — RFC 9110 §9.3.1 GET, §9.3.3 POST; MDN: HTTP request methods",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-put-vs-patch",
@@ -263,7 +269,10 @@
       "followUps": [
         "Bir PATCH isteğini idempotent hâle getirmek için ne yapabilirsin?"
       ],
-      "source": "Kendi derleme — RFC 9110 §9.3.4 PUT; RFC 5789 (PATCH); RFC 7396 (JSON Merge Patch); RFC 6902 (JSON Patch)"
+      "source": "Kendi derleme — RFC 9110 §9.3.4 PUT; RFC 5789 (PATCH); RFC 7396 (JSON Merge Patch); RFC 6902 (JSON Patch)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-head-options",
@@ -351,7 +360,10 @@
       "followUps": [
         "Sunucu HEAD yanıtında Content-Length göndermek zorunda mı?"
       ],
-      "source": "Kendi derleme — RFC 9110 §9.3.2 HEAD, §9.3.7 OPTIONS; MDN: OPTIONS"
+      "source": "Kendi derleme — RFC 9110 §9.3.2 HEAD, §9.3.7 OPTIONS; MDN: OPTIONS",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-status-classes",
@@ -439,7 +451,10 @@
       "followUps": [
         "Bir API doğrulama hatasında 200 dönüp gövdeye success: false yazarsa ne kaybeder?"
       ],
-      "source": "Kendi derleme — RFC 9110 §15 Status Codes"
+      "source": "Kendi derleme — RFC 9110 §15 Status Codes",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-redirect-codes",
@@ -526,7 +541,10 @@
       "followUps": [
         "Bir API'nin adresini kalıcı olarak taşırken POST yapan istemcilerin bozulmaması için hangi kodu seçersin?"
       ],
-      "source": "Kendi derleme — RFC 9110 §15.4 Redirection 3xx"
+      "source": "Kendi derleme — RFC 9110 §15.4 Redirection 3xx",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-400-vs-422",
@@ -599,7 +617,10 @@
       "followUps": [
         "Aynı e-posta adresiyle ikinci kez kayıt olmaya çalışan bir istek için 400, 409 ve 422'den hangisini seçersin?"
       ],
-      "source": "Kendi derleme — RFC 9110 §15.5.1 400, §15.5.21 422; RFC 9457 (Problem Details for HTTP APIs)"
+      "source": "Kendi derleme — RFC 9110 §15.5.1 400, §15.5.21 422; RFC 9457 (Problem Details for HTTP APIs)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-409-vs-412",
@@ -684,7 +705,10 @@
       "followUps": [
         "PUT isteklerinde If-Match'i zorunlu tutan bir sunucu, başlıksız gelen isteğe hangi kodu döner?"
       ],
-      "source": "Kendi derleme — RFC 9110 §13.1.1 If-Match, §15.5.10 409, §15.5.13 412"
+      "source": "Kendi derleme — RFC 9110 §13.1.1 If-Match, §15.5.10 409, §15.5.13 412",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-429",
@@ -756,7 +780,10 @@
       "followUps": [
         "Sunucu tarafında rate limiting için token bucket ile fixed window yaklaşımları nasıl ayrışır?"
       ],
-      "source": "Kendi derleme — RFC 6585 §4 (429 Too Many Requests); RFC 9110 §10.2.3 Retry-After"
+      "source": "Kendi derleme — RFC 6585 §4 (429 Too Many Requests); RFC 9110 §10.2.3 Retry-After",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-5xx",
@@ -842,7 +869,10 @@
       "followUps": [
         "Bir sağlık kontrolü (health check) ucu, bakım sırasında hangi kodu dönmeli?"
       ],
-      "source": "Kendi derleme — RFC 9110 §15.6 Server Error 5xx"
+      "source": "Kendi derleme — RFC 9110 §15.6 Server Error 5xx",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-401-www-authenticate",
@@ -915,7 +945,10 @@
       "followUps": [
         "Herkese açık bir uca süresi dolmuş bir Bearer token ile istek gelirse sunucu 401 mi dönmeli, isteği anonim olarak mı işlemeli?"
       ],
-      "source": "Kendi derleme — RFC 9110 §11.6.1 WWW-Authenticate, §15.5.2 401, §15.5.4 403; RFC 6750 §3"
+      "source": "Kendi derleme — RFC 9110 §11.6.1 WWW-Authenticate, §15.5.2 401, §15.5.4 403; RFC 6750 §3",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-content-negotiation",
@@ -1000,7 +1033,10 @@
       "followUps": [
         "Sunucu yanıtı Accept-Language'e göre seçiyorsa önbelleğin yanlış dilde yanıt vermemesi için ne eklemelidir?"
       ],
-      "source": "Kendi derleme — RFC 9110 §8.3 Content-Type, §12 Content Negotiation, §15.5.7 406, §15.5.16 415"
+      "source": "Kendi derleme — RFC 9110 §8.3 Content-Type, §12 Content Negotiation, §15.5.7 406, §15.5.16 415",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-content-encoding-chunked",
@@ -1089,7 +1125,10 @@
       "followUps": [
         "Bir HTTP/1.1 isteğinde hem Content-Length hem Transfer-Encoding: chunked bulunursa neden güvenlik sorunu doğabilir?"
       ],
-      "source": "Kendi derleme — RFC 9110 §8.4 Content-Encoding; RFC 9112 §7 Transfer Codings; RFC 9113 §8.1; RFC 9114 §4.1"
+      "source": "Kendi derleme — RFC 9110 §8.4 Content-Encoding; RFC 9112 §7 Transfer Codings; RFC 9113 §8.1; RFC 9114 §4.1",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-no-cache-vs-no-store",
@@ -1177,7 +1216,10 @@
       "followUps": [
         "must-revalidate ile no-cache arasındaki fark nedir?"
       ],
-      "source": "Kendi derleme — RFC 9111 §5.2.2.4 no-cache, §5.2.2.5 no-store; MDN: Cache-Control"
+      "source": "Kendi derleme — RFC 9111 §5.2.2.4 no-cache, §5.2.2.5 no-store; MDN: Cache-Control",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-cache-control",
@@ -1266,7 +1308,10 @@
       "followUps": [
         "Bir kullanıcının profil sayfası yanlışlıkla public olarak CDN'de önbelleğe alınırsa ne olur?"
       ],
-      "source": "Kendi derleme — RFC 9111 §3.5, §5.2.2 (max-age, private, public, s-maxage); RFC 8246 (immutable)"
+      "source": "Kendi derleme — RFC 9111 §3.5, §5.2.2 (max-age, private, public, s-maxage); RFC 8246 (immutable)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-conditional-request",
@@ -1351,7 +1396,10 @@
       "followUps": [
         "Zayıf ETag (W/ önekli) ile güçlü ETag arasındaki fark nedir, hangisi ne zaman kullanılır?"
       ],
-      "source": "Kendi derleme — RFC 9110 §8.8 Validator Fields, §13.1 Preconditions, §15.4.5 304; RFC 9111 §4.3"
+      "source": "Kendi derleme — RFC 9110 §8.8 Validator Fields, §13.1 Preconditions, §15.4.5 304; RFC 9111 §4.3",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-vary",
@@ -1438,7 +1486,10 @@
       "followUps": [
         "CORS yanıtında Access-Control-Allow-Origin isteğe göre değişiyorsa Vary'ye ne eklenmelidir?"
       ],
-      "source": "Kendi derleme — RFC 9110 §12.5.5 Vary; RFC 9111 §4.1"
+      "source": "Kendi derleme — RFC 9110 §12.5.5 Vary; RFC 9111 §4.1",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-rest-constraints",
@@ -1520,7 +1571,10 @@
       "followUps": [
         "HTTP üzerinden JSON dönen RPC tarzı bir API'yi REST'ten ayıran nedir?"
       ],
-      "source": "Kendi derleme — Roy T. Fielding, Architectural Styles and the Design of Network-based Software Architectures (2000), Bölüm 5"
+      "source": "Kendi derleme — Roy T. Fielding, Architectural Styles and the Design of Network-based Software Architectures (2000), Bölüm 5",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-rest-stateless",
@@ -1610,7 +1664,10 @@
       "followUps": [
         "JWT kullanan her API stateless mıdır; sunucuda bir token iptal listesi tutmak bu kısıtı bozar mı?"
       ],
-      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.3 Stateless"
+      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.3 Stateless",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-idempotency-key",
@@ -1684,7 +1741,10 @@
       "followUps": [
         "Sunucuda aynı anahtarla gelen iki eşzamanlı isteğin ikisinin de işlenmesini nasıl önlersin?"
       ],
-      "source": "Kendi derleme — RFC 9110 §9.2.2 Idempotent Methods; IETF draft-ietf-httpapi-idempotency-key-header"
+      "source": "Kendi derleme — RFC 9110 §9.2.2 Idempotent Methods; IETF draft-ietf-httpapi-idempotency-key-header",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-hateoas",
@@ -1772,7 +1832,10 @@
       "followUps": [
         "Bir API'nin Richardson olgunluk modelinde hangi seviyede olduğunu nasıl anlarsın?"
       ],
-      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.5 Uniform Interface; Martin Fowler, Richardson Maturity Model (2010)"
+      "source": "Kendi derleme — Roy T. Fielding (2000), §5.1.5 Uniform Interface; Martin Fowler, Richardson Maturity Model (2010)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-tcp-vs-udp",
@@ -1860,7 +1923,10 @@
       "followUps": [
         "UDP üzerinde çalışan bir uygulama paket kaybını ve sırayı nasıl ele alabilir?"
       ],
-      "source": "Kendi derleme — RFC 9293 (TCP); RFC 768 (UDP)"
+      "source": "Kendi derleme — RFC 9293 (TCP); RFC 768 (UDP)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-tcp-handshake",
@@ -1945,7 +2011,10 @@
       "followUps": [
         "SYN flood saldırısı nasıl çalışır, SYN cookie'leri bunu nasıl hafifletir?"
       ],
-      "source": "Kendi derleme — RFC 9293 §3.4 Sequence Numbers, §3.5 Establishing a Connection; RFC 6528"
+      "source": "Kendi derleme — RFC 9293 §3.4 Sequence Numbers, §3.5 Establishing a Connection; RFC 6528",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-dns-resolution",
@@ -2032,7 +2101,10 @@
       "followUps": [
         "DNS over HTTPS (DoH) neyi çözer, neyi değiştirmez?"
       ],
-      "source": "Kendi derleme — RFC 1034 §2.4, §5.3.1; RFC 1035; RFC 3596 (AAAA)"
+      "source": "Kendi derleme — RFC 1034 §2.4, §5.3.1; RFC 1035; RFC 3596 (AAAA)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-url-to-page",
@@ -2121,7 +2193,10 @@
       "followUps": [
         "Bir <script> etiketine async ya da defer eklemek bu sırayı nasıl değiştirir?"
       ],
-      "source": "Kendi derleme — HTML Living Standard: Parsing HTML documents; MDN: How browsers work; RFC 6797 §8.3"
+      "source": "Kendi derleme — HTML Living Standard: Parsing HTML documents; MDN: How browsers work; RFC 6797 §8.3",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-http11-hol",
@@ -2206,7 +2281,10 @@
       "followUps": [
         "Tarayıcılar aynı host'a açtıkları bağlantı sayısını neden sınırlar?"
       ],
-      "source": "Kendi derleme — RFC 9112 §9.3 Persistence, §9.3.2 Pipelining; MDN: Connection management in HTTP/1.x"
+      "source": "Kendi derleme — RFC 9112 §9.3 Persistence, §9.3.2 Pipelining; MDN: Connection management in HTTP/1.x",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-http2",
@@ -2295,7 +2373,10 @@
       "followUps": [
         "Tarayıcılar HTTP/2'yi neden yalnızca TLS üzerinden kullanır?"
       ],
-      "source": "Kendi derleme — RFC 9113 §1, §5 Streams and Multiplexing; RFC 7541 (HPACK)"
+      "source": "Kendi derleme — RFC 9113 §1, §5 Streams and Multiplexing; RFC 7541 (HPACK)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-http3-quic",
@@ -2384,7 +2465,10 @@
       "followUps": [
         "HTTP/3 neden HPACK yerine QPACK kullanır?"
       ],
-      "source": "Kendi derleme — RFC 9000 (QUIC) §9 Connection Migration; RFC 9001; RFC 9114; RFC 7838 (Alt-Svc); RFC 9460"
+      "source": "Kendi derleme — RFC 9000 (QUIC) §9 Connection Migration; RFC 9001; RFC 9114; RFC 7838 (Alt-Svc); RFC 9460",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-tls13-handshake",
@@ -2474,7 +2558,10 @@
       "followUps": [
         "Bir sunucu 0-RTT ile gelen bir isteği işlemeyi riskli bulursa istemciye ne söyleyebilir?"
       ],
-      "source": "Kendi derleme — RFC 8446 §1.2, §2, §2.3, §8; RFC 8470 (Using Early Data in HTTP)"
+      "source": "Kendi derleme — RFC 8446 §1.2, §2, §2.3, §8; RFC 8470 (Using Early Data in HTTP)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-certificate-chain",
@@ -2562,7 +2649,10 @@
       "followUps": [
         "Bir sertifika süresi dolmadan geri çekilirse istemciler bunu nasıl öğrenir?"
       ],
-      "source": "Kendi derleme — RFC 5280 §6 Certification Path Validation; RFC 9525 (hizmet kimliği doğrulama); RFC 8446 §4.4.2"
+      "source": "Kendi derleme — RFC 5280 §6 Certification Path Validation; RFC 9525 (hizmet kimliği doğrulama); RFC 8446 §4.4.2",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-hsts",
@@ -2651,7 +2741,10 @@
       "followUps": [
         "includeSubDomains içeren bir HSTS başlığı yanlışlıkla canlıya çıkarsa hangi alt alan adları etkilenir, geri almak neden zordur?"
       ],
-      "source": "Kendi derleme — RFC 6797 §6.1, §8.1, §8.3, §12.1, §14.6; hstspreload.org"
+      "source": "Kendi derleme — RFC 6797 §6.1, §8.1, §8.3, §12.1, §14.6; hstspreload.org",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-sni",
@@ -2726,7 +2819,10 @@
       "followUps": [
         "Bir reverse proxy TLS'i sonlandırmadan gelen bağlantıyı doğru arka uca nasıl yönlendirir?"
       ],
-      "source": "Kendi derleme — RFC 6066 §3 Server Name Indication; RFC 8446 §4.1.2; RFC 9849 (TLS Encrypted Client Hello)"
+      "source": "Kendi derleme — RFC 6066 §3 Server Name Indication; RFC 8446 §4.1.2; RFC 9849 (TLS Encrypted Client Hello)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-samesite",
@@ -2816,7 +2912,10 @@
       "followUps": [
         "Ana sitesi example.com, API'si api.example.com olan bir uygulamada SameSite=Strict bir cookie API isteklerinde gönderilir mi?"
       ],
-      "source": "Kendi derleme — RFC 6265bis taslağı (SameSite, same-site tanımı); MDN: Set-Cookie ve browser-compat-data (Ekim 2026)"
+      "source": "Kendi derleme — RFC 6265bis taslağı (SameSite, same-site tanımı); MDN: Set-Cookie ve browser-compat-data (Ekim 2026)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-cookie-domain-path",
@@ -2905,7 +3004,10 @@
       "followUps": [
         "Kullanıcıların kendi alt alan adında içerik yayımladığı bir platformda oturum cookie'si nasıl yapılandırılmalı?"
       ],
-      "source": "Kendi derleme — RFC 6265 §4.1.2.3, §4.1.2.4, §5.3; RFC 6265bis taslağı (cookie prefixes); MDN: Set-Cookie"
+      "source": "Kendi derleme — RFC 6265 §4.1.2.3, §4.1.2.4, §5.3; RFC 6265bis taslağı (cookie prefixes); MDN: Set-Cookie",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-session-vs-token",
@@ -2994,7 +3096,10 @@
       "followUps": [
         "Bir kullanıcının yetkisi alındığında bunun JWT kullanan bir sistemde hemen etkili olması için ne yapılabilir?"
       ],
-      "source": "Kendi derleme — RFC 7519 (JWT); OWASP Session Management Cheat Sheet; OWASP JSON Web Token Cheat Sheet"
+      "source": "Kendi derleme — RFC 7519 (JWT); OWASP Session Management Cheat Sheet; OWASP JSON Web Token Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-same-origin-policy",
@@ -3081,7 +3186,10 @@
       "followUps": [
         "Bir sayfa başka origin'den <script> yükleyebiliyorsa, JSONP bir zamanlar CORS'un yerine nasıl kullanıldı?"
       ],
-      "source": "Kendi derleme — RFC 6454 (The Web Origin Concept); HTML Living Standard: Origin; MDN: Same-origin policy"
+      "source": "Kendi derleme — RFC 6454 (The Web Origin Concept); HTML Living Standard: Origin; MDN: Same-origin policy",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-cors-preflight",
@@ -3170,7 +3278,10 @@
       "followUps": [
         "Preflight isteğine sunucu 401 dönerse ne olur; kimlik doğrulama katmanı OPTIONS isteklerini nasıl ele almalı?"
       ],
-      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol, CORS-safelisted method ve request-header; MDN: Access-Control-Max-Age"
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol, CORS-safelisted method ve request-header; MDN: Access-Control-Max-Age",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-cors-credentials",
@@ -3253,7 +3364,10 @@
       "followUps": [
         "Birden fazla frontend origin'ine izin vermesi gereken bir API, credentials'lı CORS'u güvenli biçimde nasıl yapılandırır?"
       ],
-      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol and credentials, HTTP responses; MDN: Cross-Origin Resource Sharing"
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol and credentials, HTTP responses; MDN: Cross-Origin Resource Sharing",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-cors-not-protection",
@@ -3343,7 +3457,10 @@
       "followUps": [
         "Origin başlığını tarayıcıdaki bir sayfa değiştiremiyorsa, sunucu tarafında Origin kontrolü CSRF'e karşı ne kadar işe yarar?"
       ],
-      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol; MDN: Cross-Origin Resource Sharing; OWASP Cross-Site Request Forgery Prevention Cheat Sheet"
+      "source": "Kendi derleme — WHATWG Fetch Standard: CORS protocol; MDN: Cross-Origin Resource Sharing; OWASP Cross-Site Request Forgery Prevention Cheat Sheet",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-polling",
@@ -3429,7 +3546,10 @@
       "followUps": [
         "Long polling yapan istemcilerin sayısı on binlere çıkınca sunucu tarafında ne gibi sorunlar çıkar?"
       ],
-      "source": "Kendi derleme — RFC 6202 (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)"
+      "source": "Kendi derleme — RFC 6202 (Known Issues and Best Practices for the Use of Long Polling and Streaming in Bidirectional HTTP)",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-sse",
@@ -3518,7 +3638,10 @@
       "followUps": [
         "Tarayıcının EventSource API'siyle Authorization başlığı gönderilemiyorsa SSE ucunda kimlik doğrulama nasıl yapılır?"
       ],
-      "source": "Kendi derleme — HTML Living Standard: Server-sent events; MDN: Using server-sent events"
+      "source": "Kendi derleme — HTML Living Standard: Server-sent events; MDN: Using server-sent events",
+      "origin": {
+        "kind": "own"
+      }
     },
     {
       "id": "web-websocket",
@@ -3608,7 +3731,10 @@
       "followUps": [
         "Bir WebSocket sunucusunu birden fazla örneğe ölçeklerken bir kullanıcıya giden mesaj doğru örneğe nasıl ulaştırılır?"
       ],
-      "source": "Kendi derleme — RFC 6455 §1.3 Opening Handshake, §4, §10.2 Origin Considerations; MDN: The WebSocket API"
+      "source": "Kendi derleme — RFC 6455 §1.3 Opening Handshake, §4, §10.2 Origin Considerations; MDN: The WebSocket API",
+      "origin": {
+        "kind": "own"
+      }
     }
   ]
 }

@@ -28,6 +28,7 @@ function makeQuestion(over: Partial<Question> = {}): Question {
     kind: "definition",
     topic: "Index",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: "Test sorusu",
     modelAnswer: "Yeterince uzun bir örnek cevap metni.",
     keyConcepts: [
@@ -52,6 +53,56 @@ describe("normalizeTr", () => {
 
   it("fazla boşluğu temizler", () => {
     expect(normalizeTr("  çok   boşluklu   metin  ")).toBe("cok bosluklu metin");
+  });
+
+  it("kelime içi tire ve alt çizgiyi boşluğa çevirir", () => {
+    expect(normalizeTr("health-check")).toBe("health check");
+    expect(normalizeTr("health_check")).toBe("health check");
+    expect(normalizeTr("health check")).toBe("health check");
+    expect(normalizeTr("health -- check")).toBe("health -- check");
+    expect(normalizeTr("Read--Only")).toBe("read only");
+    expect(normalizeTr("e-posta")).toBe("e posta");
+  });
+
+  it("bitişik yazım ayrı kalır, iki yazım gerekiyorsa ikisi de alias olur", () => {
+    expect(normalizeTr("healthcheck")).toBe("healthcheck");
+    expect(normalizeTr("healthcheck")).not.toBe(normalizeTr("health check"));
+  });
+
+  it("baştaki ve sondaki işaretleri korur", () => {
+    expect(normalizeTr("-p 8080:80")).toBe("-p 8080:80");
+    expect(normalizeTr("sh -c")).toBe("sh -c");
+    expect(normalizeTr("copy --from")).toBe("copy --from");
+    expect(normalizeTr("-?")).toBe("-?");
+    expect(normalizeTr("__html")).toBe("__html");
+    expect(normalizeTr("__Host-")).toBe("__host-");
+  });
+});
+
+describe("evaluateLexical — yazım ayırıcıları", () => {
+  const question = makeQuestion({
+    keyConcepts: [
+      makeConcept({ id: "tireli", aliases: ["health-check"] }),
+      makeConcept({ id: "bosluklu", aliases: ["service healthy"] }),
+      makeConcept({ id: "bayrak", aliases: ["-p 8080"] }),
+    ],
+  });
+
+  it.each(["health-check", "health_check", "health check"])("tireli alias %s yazımını tutar", (answer) => {
+    expect(evaluateLexical(question, answer).hits).toContain("tireli");
+  });
+
+  it("boşluklu alias alt çizgili cevabı tutar", () => {
+    expect(evaluateLexical(question, "condition: service_healthy").hits).toContain("bosluklu");
+  });
+
+  it("bitişik yazım tireli alias'ı tutmaz", () => {
+    expect(evaluateLexical(question, "healthcheck").hits).not.toContain("tireli");
+  });
+
+  it("baştaki tireli bayrak yalnızca bayrakla eşleşir", () => {
+    expect(evaluateLexical(question, "docker run -p 8080:80").hits).toContain("bayrak");
+    expect(evaluateLexical(question, "port 8080").hits).not.toContain("bayrak");
   });
 });
 

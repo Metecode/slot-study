@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { CATEGORIES, availableCategories } from "./question";
+import { CATEGORIES, availableCategories, visibleQuestions } from "./question";
 import type { Question } from "./question";
 
 /* ------------------------------------------------------------------ */
@@ -15,6 +15,7 @@ function makeQuestion(category: Question["category"], id: string): Question {
     kind: "definition",
     topic: "Konu",
     difficulty: 1,
+    origin: { kind: "own" },
     prompt: "Bu bir test sorusudur.",
     modelAnswer: "Bu, testin beklediği kadar uzun bir model cevaptır.",
     keyConcepts: [
@@ -45,5 +46,21 @@ describe("availableCategories", () => {
 
   it("içerik boşsa boş liste döner", () => {
     expect(availableCategories([])).toEqual([]);
+  });
+});
+
+describe("visibleQuestions", () => {
+  const questions = [makeQuestion("dotnet", "d1"), makeQuestion("sql", "s1"), makeQuestion("dotnet", "d2")];
+
+  it("gizli kategorinin sorularını çıkarır, sırayı korur", () => {
+    expect(visibleQuestions(questions, new Set(["dotnet"])).map((question) => question.id)).toEqual(["s1"]);
+  });
+
+  it("gizli kategori seçicide de görünmez", () => {
+    expect(availableCategories(visibleQuestions(questions, new Set(["dotnet"])))).toEqual(["sql"]);
+  });
+
+  it("gizli liste boşsa hepsi görünür", () => {
+    expect(visibleQuestions(questions, new Set())).toHaveLength(3);
   });
 });
