@@ -252,7 +252,7 @@
       "kind": "applied",
       "topic": "Pencere Fonksiyonu",
       "difficulty": 2,
-      "prompt": "Müşterinin 'transactions' tablosunda, tarih sırasına göre her işlem sonrası oluşan güncel bakiyesini (running total) hesaplayan sorguyu nasıl yazarsın?",
+      "prompt": "Bir hesabın her işleminden sonraki bakiyeyi (running total) veren sorguyu nasıl yazarsın?",
       "modelAnswer": "Kümülatif toplam için pencere fonksiyonu kullanılır; GROUP BY satırları tek satıra indirirken `SUM(amount) OVER (ORDER BY transaction_date)` her satırı korur ve yanına o ana kadarki toplamı yazar, örneğin `SELECT transaction_date, amount, SUM(amount) OVER (ORDER BY transaction_date) AS running_balance FROM transactions WHERE account_id = 100`. OVER içinde ORDER BY verilince varsayılan pencere bölümün başından o anki satıra kadar uzanır, bu yüzden toplam ilk işlemden o anki satıra kadar birikir. Bu varsayılan pencere RANGE modunda olduğu için ORDER BY değeri aynı olan satırları da içerir; tarih kolonunda saat yoksa aynı gündeki bütün işlemler aynı ara toplamı alır. Bunu çözmek için sıralamaya `ORDER BY transaction_date, id` gibi eşsiz bir kırılım (tie-breaker) eklenir ya da pencere `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW` ile satır bazına çevrilir.",
       "keyConcepts": [
         {
