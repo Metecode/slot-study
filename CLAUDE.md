@@ -547,7 +547,7 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   `self_eval` ÷ günün ilk `app_open.dueCount`'u, tavan 1, `dueCount = 0`
   günleri hariç.
 - **aliasResult'ta kırılma.** normalizeTr değişikliği (commit 5bcc44c, deploy
-  tarihi: <DEPLOY_TARİHİ>) öncesindeki aliasResult değerleri karşılaştırmaya
+  tarihi: 2026-11-18) öncesindeki aliasResult değerleri karşılaştırmaya
   dahil edilmemeli: kelime içi tire ve alt çizgi o commit'ten sonra boşluk
   sayılıyor, aynı cevap daha sık "all" alıyor. Not `queries.sql`'in başında da var.
 

@@ -1,5 +1,5 @@
 -- METRİK KIRILMASI — aliasResult: normalizeTr değişikliği (commit 5bcc44c,
--- deploy tarihi: <DEPLOY_TARİHİ>) öncesindeki aliasResult değerleri
+-- deploy tarihi: 2026-11-18) öncesindeki aliasResult değerleri
 -- karşılaştırmaya dahil edilmemeli. O commit'ten sonra kelime içi tire ve alt
 -- çizgi boşluk sayılıyor; aynı cevap daha sık "all" alıyor.
 --
