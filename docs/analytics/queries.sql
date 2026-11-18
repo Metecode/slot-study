@@ -1,3 +1,8 @@
+-- METRİK KIRILMASI — aliasResult: normalizeTr değişikliği (commit 5bcc44c,
+-- deploy tarihi: <DEPLOY_TARİHİ>) öncesindeki aliasResult değerleri
+-- karşılaştırmaya dahil edilmemeli. O commit'ten sonra kelime içi tire ve alt
+-- çizgi boşluk sayılıyor; aynı cevap daha sık "all" alıyor.
+--
 -- Kullanım ölçümü analiz sorguları (analytics_event, V4 migration).
 --
 -- Her sorgu kendi başına çalışır; psql ya da herhangi bir istemcide tek tek
