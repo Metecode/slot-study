@@ -182,69 +182,6 @@
       }
     },
     {
-      "id": "sql-transaction-dirty-read",
-      "category": "sql",
-      "kind": "definition",
-      "topic": "Kirli Okuma ve İzolasyon",
-      "difficulty": 2,
-      "prompt": "Finansal bir sistemde 'Dirty Read' (kirli okuma) anomalisi nasıl oluşur ve varsayılan olarak bunu hangi izolasyon seviyesi engeller?",
-      "modelAnswer": "Dirty read, A işlemi bir hesaba para ekleyip henüz commit etmeden B işleminin bu yeni bakiyeyi okumasıyla oluşur; A hata alıp rollback yaparsa B hiç var olmamış bir bakiye üzerinden işlem yapmış olur. PostgreSQL ve SQL Server'da varsayılan izolasyon seviyesi olan Read Committed yalnızca commit edilmiş veriyi okuttuğu için bunu engeller; MySQL InnoDB'de varsayılan daha katı olan Repeatable Read'dir. PostgreSQL'de Read Uncommitted istense bile Read Committed gibi davrandığı için dirty read hiç oluşmaz. Read Committed ise aynı transaction içinde aynı satır iki kez okunduğunda farklı değer gelmesini (non-repeatable read) engellemez, çünkü her komut kendi başladığı andaki veriyi görür; bunun için Repeatable Read ya da Serializable gerekir.",
-      "keyConcepts": [
-        {
-          "id": "dirty-read-definition",
-          "label": "Commit edilmemiş veriyi okuma",
-          "aliases": [
-            "commit edilmemiş",
-            "commit etmeden",
-            "henüz commit",
-            "uncommitted",
-            "iptal edilecek",
-            "hiç var olmamış"
-          ],
-          "anchors": [
-            "Dirty read, bir transaction'ın henüz commit edilmemiş, askıda olan değişikliklerini başka bir transaction'ın okumasıdır.",
-            "Başka bir işlemin yazıp henüz onaylamadığı geçici veriyi okumak kirli okumadır."
-          ]
-        },
-        {
-          "id": "read-committed-solution",
-          "label": "Read Committed ile çözüm",
-          "aliases": [
-            "read committed",
-            "read-committed",
-            "read_committed",
-            "commit edilmiş veri"
-          ],
-          "anchors": [
-            "Bu problemi çözmek için en az Read Committed izolasyon seviyesi kullanılmalıdır.",
-            "Veritabanlarının çoğunda varsayılan olan Read Committed seviyesi kirli okumayı (dirty read) engeller."
-          ]
-        },
-        {
-          "id": "non-repeatable-read-gap",
-          "label": "Non-repeatable read riski",
-          "aliases": [
-            "non-repeatable",
-            "repeatable read",
-            "ikinci okuma",
-            "iki kez okun",
-            "farklı değer"
-          ],
-          "anchors": [
-            "Read Committed kirli okumayı önlese de, okunan verinin aynı işlem içinde tekrar okunduğunda değişmemesini garanti etmez.",
-            "Kirli okuma çözülse bile aynı satırın farklı okunması anomalisine karşı Repeatable Read seviyesine çıkmak gerekebilir."
-          ]
-        }
-      ],
-      "followUps": [
-        "Sadece Read Committed kullanarak, para çekme işlemi sırasında bakiyenin eksiye düşmesini (Lost Update) nasıl engellersin?"
-      ],
-      "source": "Kendi derleme — PostgreSQL 18 Docs: Transaction Isolation; Microsoft Learn: SET TRANSACTION ISOLATION LEVEL (SQL Server); MySQL 8.4 Reference Manual: Transaction Isolation Levels",
-      "origin": {
-        "kind": "own"
-      }
-    },
-    {
       "id": "sql-locking-lost-update",
       "category": "sql",
       "kind": "applied",
