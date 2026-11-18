@@ -16,3 +16,8 @@ dosyasında belirtilen MIT lisansına tabidir.
 İstisna: THIRD_PARTY_NOTICES dosyası CC BY-SA 4.0 kapsamında değildir.
 sudheerj/reactjs-interview-questions kaynaklı kısımlar için o dosyadaki
 MIT lisans bildirimi geçerlidir.
+
+React kategorisindeki 44 soru MIT lisanslı bir eserden
+(sudheerj/reactjs-interview-questions) türetilmiştir; bu sorular
+origin alanında "external" olarak işaretlidir. O kısımlar için CC BY-SA
+4.0'a ek olarak THIRD_PARTY_NOTICES'taki MIT bildirimi de geçerlidir.

@@ -129,6 +129,8 @@ Bu repo iki farklı lisansla korunmaktadır:
 
 İçerikleri dilediğin gibi kullanabilir, değiştirebilir ve paylaşabilirsin. Sadece kaynağı (bu repoyu) belirtmen ve türettiğin işleri de aynı lisansla paylaşman yeterli.
 
+Hangi içeriğin nereden geldiği, başvurulan kaynakların lisansları ve dış kaynaktan soru eklerken uyulacak kurallar: [ATTRIBUTION.md](ATTRIBUTION.md). Uygulamada aynı metinler alt bilgideki "Açık kaynak · Lisanslar" panelinde.
+
 ---
 
 <div align="center">
