@@ -110,6 +110,19 @@ export function availableCategories(questions: readonly Question[]): Category[] 
   return CATEGORIES.filter((category) => filled.has(category));
 }
 
+/**
+ * Yayında gizlenen kategorilerin soruları çıkarılmış liste. Gizli
+ * kategorinin içeriği yine yüklenir ve doğrulanır; yalnızca çekilişe ve
+ * seçiciye girmez. Seçici `availableCategories` ile bu listeden türediği
+ * için gizli kategori orada da görünmez.
+ */
+export function visibleQuestions(
+  questions: readonly Question[],
+  hidden: ReadonlySet<Category>,
+): Question[] {
+  return questions.filter((question) => !hidden.has(question.category));
+}
+
 /* ------------------------------------------------------------------ */
 /* Değerlendirme — türetilmiş, saklanmaz                               */
 /* ------------------------------------------------------------------ */

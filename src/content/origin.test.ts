@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { originIssues, reposMissingFromNotices } from "../domain/origin";
-import { QUESTIONS } from "./index";
+import { LOADED_QUESTIONS } from "./index";
 import notices from "./THIRD_PARTY_NOTICES?raw";
 
 /* ------------------------------------------------------------------ */
@@ -11,11 +11,11 @@ import notices from "./THIRD_PARTY_NOTICES?raw";
 
 describe("içerik kökeni", () => {
   it("her sorunun origin'i source ile tutarlı", () => {
-    const problems = QUESTIONS.flatMap((question) => originIssues(question).map((issue) => `${question.id}: ${issue}`));
+    const problems = LOADED_QUESTIONS.flatMap((question) => originIssues(question).map((issue) => `${question.id}: ${issue}`));
     expect(problems).toEqual([]);
   });
 
   it("dış kaynaklı her repo'nun THIRD_PARTY_NOTICES'ta bölümü var", () => {
-    expect(reposMissingFromNotices(QUESTIONS, notices)).toEqual([]);
+    expect(reposMissingFromNotices(LOADED_QUESTIONS, notices)).toEqual([]);
   });
 });

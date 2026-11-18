@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { QUESTIONS } from "../content";
+import { LOADED_QUESTIONS } from "../content";
 import { buildHandoffUrl, MAX_HANDOFF_URL_LENGTH } from "./aiHandoff";
 import type { AiTarget } from "./aiTargets";
 import { AI_TARGETS } from "./aiTargets";
@@ -151,7 +151,7 @@ describe("buildHandoffUrl — içerikteki en uzun istem", () => {
   };
 
   for (const [answerName, answer] of Object.entries(answers)) {
-    const longestPrompt = QUESTIONS.map((question) => buildOwnAiPrompt(question, answer)).reduce((a, b) =>
+    const longestPrompt = LOADED_QUESTIONS.map((question) => buildOwnAiPrompt(question, answer)).reduce((a, b) =>
       encodeURIComponent(b).length > encodeURIComponent(a).length ? b : a,
     );
 

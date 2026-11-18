@@ -58,6 +58,16 @@ cevabını yazar, kavram bazlı geri bildirim alır.
   kapatılmıştır, kapalı kalır. İçerikten kalkan bilinenlerden düşmez
   (geri döndüğünde kapatılmışsa açılmasın), `CATEGORIES`'ten kalkan düşer.
   Alanın yokluğu "eski kayıt" demek; şemaya default konmaz.
+- **Kategori gizleme yalnızca frontend'de** (`HIDDEN_CATEGORIES`,
+  `content/index.ts`). Açık liste, soru sayısı eşiği değil. Gizli
+  kategorinin soruları yüklenir ve doğrulanır (`LOADED_QUESTIONS`) ama
+  `QUESTIONS`'a, çekilişe ve seçiciye girmez. Seeder'a ASLA filtre konmaz:
+  `upsertAndPrune` içerikte olmayan soruyu siliyor ve `question_progress`
+  `ON DELETE CASCADE`, kullanıcıların ilerlemesi ve denemeleri kalıcı olarak
+  giderdi. Sunucu gizli soruları tutmaya devam eder. Kullanıcının kayıtlı
+  seçimi korunur (`categoryHydration`, "içerikten kalkan" gibi). İçerik
+  testleri (`registry`, `contentFences`, `origin`) `LOADED_QUESTIONS`'la
+  çalışır.
 - **`LEGACY_KNOWN_CATEGORIES` dondurulmuş bir listedir.** 1.0.1'de içeriği
   olan kategoriler; alanı olmayan eski kayıt bunları görmüş sayılır. Yeni
   kategori ASLA buraya eklenmez — eklenirse mevcut kullanıcılarda kapalı
