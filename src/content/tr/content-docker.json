@@ -776,7 +776,9 @@
             "başlatma sıra",
             "sadece sıra",
             "yalnızca sıra",
-            "başlatıldıktan"
+            "başlatıldıktan",
+            "başlama sıra",
+            "başlamasını bekler"
           ],
           "anchors": [
             "Varsayılan depends_on yalnızca başlatma sırasını belirler."
@@ -790,7 +792,8 @@
             "hazır olmayabilir",
             "hazır değil",
             "bağlantı kabul",
-            "ready"
+            "ready",
+            "hazır olana"
           ],
           "anchors": [
             "Container'ın başlamış olması içindeki servisin hazır olduğu anlamına gelmez."
@@ -802,7 +805,8 @@
           "aliases": [
             "healthcheck",
             "pg_isready",
-            "sağlık kontrol"
+            "sağlık kontrol",
+            "health check"
           ],
           "anchors": [
             "Veritabanına bir healthcheck tanımlanır."
@@ -827,7 +831,8 @@
             "yeniden dene",
             "retry",
             "yeniden bağlan",
-            "dayanıklı"
+            "dayanıklı",
+            "tekrar dene"
           ],
           "anchors": [
             "Uygulamanın kendisi de bağlantı hatasında yeniden denemelidir."
