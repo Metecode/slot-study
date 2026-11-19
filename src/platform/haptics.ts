@@ -1,3 +1,4 @@
+import { RESULT_FEEDBACK_GAP_MS, WEB_LEVER_VIBRATE_MS } from "../domain/spinTiming";
 import { platformFeatures } from "./index";
 
 /* ------------------------------------------------------------------ */
@@ -22,16 +23,11 @@ import { platformFeatures } from "./index";
 type HapticsModule = typeof import("@capacitor/haptics");
 type Impact = "light" | "medium";
 
-/** Web'de kol çekişindeki titreşim; Lever'ın eski davranışı. */
-const WEB_LEVER_VIBRATE_MS = 15;
-
-/**
- * Tambur duruşu, önceki titreşimden bu kadar kısa süre sonra gelirse
- * düşer. Hareket azaltmada iki tambur kolla aynı anda duruyor, animasyon
- * atlandığında da ikisi aynı karede; üç darbe üst üste binip tek bir
- * vızıltıya dönüşüyordu.
- */
-const REEL_STOP_MIN_GAP_MS = 80;
+/*
+  Süreler domain/spinTiming.ts'te: web kol titreşimi ve tambur duruşunun
+  önceki titreşimden en az ne kadar sonra gelebileceği (iki tambur aynı
+  karede durunca darbeler üst üste binip tek bir vızıltıya dönüşüyordu).
+*/
 
 let enabled = true;
 let lastImpactAt = Number.NEGATIVE_INFINITY;
@@ -81,7 +77,7 @@ export const haptics = {
   /** Dönen bir tambur durdu; duruş sesiyle aynı anda çağrılır. */
   reelStop(): void {
     if (!platformFeatures.haptics || !enabled) return;
-    if (Date.now() - lastImpactAt < REEL_STOP_MIN_GAP_MS) return;
+    if (Date.now() - lastImpactAt < RESULT_FEEDBACK_GAP_MS) return;
     impact("light");
   },
 

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 
+import { FULL_SPIN_TIMING } from "../domain/spinTiming";
 import styles from "./Lever.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -19,8 +20,8 @@ const DRAG_TO_ANGLE = 0.46;
 /** Bu mesafenin altında kalan bırakma sürükleme değil, tıklamadır. */
 const CLICK_TOLERANCE_PX = 6;
 
-const PULL_MS = 165;
-const RECOVER_MS = 430;
+const PULL_MS = FULL_SPIN_TIMING.leverPullMs;
+const RECOVER_MS = FULL_SPIN_TIMING.leverRecoverMs;
 
 /** Pivot ve topuz merkezleri — SVG geometrisiyle birebir aynı olmalı. */
 const PIVOT = { x: 40, y: 144 };

@@ -14,6 +14,7 @@ import { haptics } from "../platform/haptics";
 import { CATEGORY_LABELS } from "../content/labels";
 import type { Category, Question } from "../domain/question";
 import { buildReelLayout, pairOf, restingPair, WINNING_FACE } from "../domain/reels";
+import { FULL_SPIN_TIMING, LEGACY_FAST_REELS } from "../domain/spinTiming";
 import type { ReelColumn, ReelLayout } from "../domain/reels";
 import styles from "./Machine.module.css";
 
@@ -30,11 +31,6 @@ import styles from "./Machine.module.css";
  */
 const EMPTY_FACE = "—";
 
-const NORMAL_TIMING = {
-  first: { durationMs: 1300, turns: 3 },
-  second: { durationMs: 1600, turns: 4 },
-};
-
 /**
  * Ödeme okunun boyu. Bant (üst ve alt kenarı çizili orta satır) logodaki
  * çerçeveye karşılık geliyor: ok satıra, logodaki ok çerçeveye ne oranla
@@ -45,11 +41,6 @@ const PAYLINE_ARROW_VARS = {
   "--payline-arrow-h": `calc(var(--row) * ${ARROW.height / SYMBOL_EDGE})`,
   "--payline-arrow-w": `calc(var(--row) * ${ARROW.width / SYMBOL_EDGE})`,
 } as CSSProperties;
-
-const FAST_TIMING = {
-  first: { durationMs: 300, turns: 1 },
-  second: { durationMs: 400, turns: 1 },
-};
 
 export type MachineProps = {
   /** Çekilen soru; spinning'e girerken gelir. */
@@ -235,7 +226,7 @@ export function Machine({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [spinning]);
 
-  const timing = fastMode ? FAST_TIMING : NORMAL_TIMING;
+  const timing = fastMode ? LEGACY_FAST_REELS : FULL_SPIN_TIMING;
 
   // İki tambur da donmuşsa yuva tek satır yüksekliğinde kalır; ödeme
   // çizgisi sabit yerinden bu satıra çekilmeli.
@@ -286,8 +277,8 @@ export function Machine({
                 labels={leftFaces}
                 targetIndex={WINNING_FACE}
                 spinKey={spinKey}
-                durationMs={timing.first.durationMs}
-                turns={timing.first.turns}
+                durationMs={timing.left.durationMs}
+                turns={timing.left.turns}
                 frozenLabel={frozenLeft}
                 onRowPass={onRowPass}
                 onSettle={() => {
@@ -304,8 +295,8 @@ export function Machine({
                 labels={rightFaces}
                 targetIndex={WINNING_FACE}
                 spinKey={spinKey}
-                durationMs={timing.second.durationMs}
-                turns={timing.second.turns}
+                durationMs={timing.right.durationMs}
+                turns={timing.right.turns}
                 frozenLabel={frozenRight}
                 onRowPass={onRowPass}
                 onSettle={() => {
