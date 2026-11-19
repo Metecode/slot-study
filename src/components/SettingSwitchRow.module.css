@@ -1,20 +1,12 @@
 /*
-  36x20 kapsül anahtar. Renkler tokens.css'ten gelir.
+  Anahtarlı satır: düzen SettingRow.module.css'te, burada yalnızca satırın
+  dokunulabilirliği ve 36x20 kapsül anahtar. Renkler tokens.css'ten gelir.
   Açık durum accent kullanır — tek bir öğe, "seçili durum" bütçesine girer.
 */
 
 .row {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--fs-body-sm);
-  color: var(--text-dim);
-}
-
-/* Metin kırılmaz: "Hızlı mod" iki satıra bölünüp komşu anahtara taşmasın. */
-.label {
-  white-space: nowrap;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .track {

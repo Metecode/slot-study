@@ -8,7 +8,7 @@ import { Collapse } from "./Collapse";
 import { ReminderSetting } from "./ReminderSetting";
 import { SegmentedControl } from "./SegmentedControl";
 import type { SegmentedOption } from "./SegmentedControl";
-import { Switch } from "./Switch";
+import { SettingSwitchRow } from "./SettingSwitchRow";
 import { UsageStatsSetting } from "./UsageStatsSetting";
 import styles from "./SettingsPanel.module.css";
 
@@ -104,22 +104,15 @@ export function SettingsPanel({
             value={animationMode}
             onChange={onAnimationModeChange}
           />
-          <span className={styles.soundControl}>
-            <Switch
-              checked={soundEnabled}
-              onChange={onSoundChange}
-              label="Ses"
-              describedBy={IS_APPLE_TOUCH_DEVICE ? "silent-switch-note" : undefined}
-            />
-            {/* Web'den sessiz anahtar okunamıyor; iOS'ta kalıcı hatırlatma. */}
-            {IS_APPLE_TOUCH_DEVICE && (
-              <span id="silent-switch-note" className={styles.settingsNote}>
-                iPhone sessiz moddayken ses çalmaz.
-              </span>
-            )}
-          </span>
+          <SettingSwitchRow
+            label="Ses"
+            checked={soundEnabled}
+            onChange={onSoundChange}
+            // Web'den sessiz anahtar okunamıyor; iOS'ta kalıcı hatırlatma, yalnızca Ses'in.
+            description={IS_APPLE_TOUCH_DEVICE ? "iPhone sessiz moddayken ses çalmaz." : undefined}
+          />
           {platformFeatures.haptics && (
-            <Switch checked={hapticsEnabled} onChange={onHapticsChange} label="Titreşim" />
+            <SettingSwitchRow label="Titreşim" checked={hapticsEnabled} onChange={onHapticsChange} />
           )}
           {platformFeatures.reminders && (
             <ReminderSetting
