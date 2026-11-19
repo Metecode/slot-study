@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { trackAnswerSubmitted, trackSelfEval, trackSpin } from "../analytics/trackers";
 import { countRatings } from "../domain/reminder";
+import { spinStarted } from "../domain/spinStart";
 import type { SelfRating } from "../domain/progress";
 import type { useSession } from "./useSession";
 
@@ -40,7 +41,7 @@ export function useTurnFlow({ session, pushQuestion, offerReminderAfterRating }:
   // boşsa reducer state'i değiştirmez, Machine'e anlamsız bir dönüş gitmez.
   // spin olayı da burada: reducer çekilişi reddederse olay da gitmez.
   useEffect(() => {
-    if (state.phase === "spinning" && prevPhaseRef.current !== "spinning") {
+    if (spinStarted(prevPhaseRef.current, state.phase)) {
       setSpinKey((key) => key + 1);
       trackSpin(state.activeCategories);
     }
