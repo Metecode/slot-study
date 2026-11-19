@@ -1,0 +1,20 @@
+/*
+  Görünmez, ekranı kaplayan atlama katmanı. Üst çubuk (20) ve açılır
+  menülerin (30) önünde; native <dialog> zaten üst katmanda.
+
+  touch-action: manipulation — çift dokunuşla yakınlaştırma ve tıklama
+  gecikmesi yok. Kaydırma hareketi click üretmez: sayfa kayar, animasyon
+  atlanmaz.
+*/
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

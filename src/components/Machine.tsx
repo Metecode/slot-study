@@ -7,6 +7,7 @@ import { Lever } from "./Lever";
 import { ARROW, SYMBOL_EDGE } from "./logoGeometry";
 import { PaylineArrow } from "./PaylineArrow";
 import { reelLabel } from "./reelLabel";
+import { SkipLayer } from "./SkipLayer";
 import { SoundHint } from "./SoundHint";
 import { SoundToggle } from "./SoundToggle";
 import { useSpinFeedback } from "../hooks/useSpinFeedback";
@@ -217,11 +218,17 @@ export function Machine({
     onSettle();
   }, [spinKey, settleOwner, spinning, onSettle]);
 
+  /** Çalışan dönüşü sona atar; tamburlar yine birer kez oturur, sonuç aynı. */
+  function finishSpin() {
+    leftDrumRef.current?.finish();
+    rightDrumRef.current?.finish();
+  }
+
   /*
-    Animasyonu atlamanın klavye yolu. Fare için tamburlara tıklamak
-    yetiyordu ama kol dönüş boyunca disabled olduğu için odak gövdeye
-    düşüyor ve klavyedeki kullanıcının atlayacak bir hedefi kalmıyordu.
-    Dinleyici yalnızca dönüş sürerken bağlanır.
+    Animasyonu atlamanın klavye yolu. Dokunma ve fare için ekranı kaplayan
+    katman var (SkipLayer); kol dönüş boyunca disabled olduğu için odak
+    gövdeye düşüyor ve klavyedeki kullanıcının atlayacak bir hedefi
+    kalmıyordu. Dinleyici yalnızca dönüş sürerken bağlanır.
   */
   useEffect(() => {
     if (!spinning) return;
@@ -254,15 +261,10 @@ export function Machine({
     el.classList.add(styles.tick);
   }
 
-  /** Dönerken tamburlara tıklanınca animasyon atlanır. */
-  function handleBayClick() {
-    if (!spinning) return;
-    leftDrumRef.current?.finish();
-    rightDrumRef.current?.finish();
-  }
-
   return (
     <div className={styles.stage}>
+      {/* Dönüş sürerken ekrana dokunmak atlar; Kapalı modda dönüş zaten anında. */}
+      {spinning && plan.reelsAnimated && <SkipLayer onSkip={finishSpin} />}
       <div className={styles.machine}>
         <div className={styles.contact} aria-hidden="true" />
 
@@ -277,7 +279,6 @@ export function Machine({
             className={styles.bay}
             style={PAYLINE_ARROW_VARS}
             data-rows={bayRows}
-            onClick={handleBayClick}
           >
             <div ref={leftSlotRef} className={`${styles.drumSlot} ${styles.drumSlotLeft}`}>
               <Drum
