@@ -169,6 +169,34 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   `useSettings.soundEnabled`'ı yönetir; `settingsPanel.test.tsx` iki
   kontrolün aynı değerle aynı durumu çizdiğini doğruluyor.
 
+## Diyaloglar
+
+- **Tek kaydırma alanı.** `<dialog>` kaymaz (`overflow: hidden`), başlık
+  flex ile sabit, kaydırma yalnızca gövdede (`overflow-y: auto`,
+  `overscroll-behavior: contain`). İç öğelerde (lisans metni dahil)
+  overflow ve max-height yok. Diyaloğun kendisi kayınca iOS kaydırmayı
+  sona dayanınca arkadaki belgeye zincirliyordu; parmağın altına göre
+  bazen içerisi bazen dışarısı kayıyordu. Örnek: `LicensesDialog`.
+- **Arka plan kilidi: `useBodyScrollLock`.** iOS'ta body'ye
+  `overflow: hidden` yetmiyor; body `position: fixed` ile kaydırma
+  konumunda sabitlenir, kalkınca konum geri yazılır. Sayaçlı: üst üste
+  açılan diyaloglarda kilit sonuncusu kapanınca kalkar, konum yalnızca
+  ilk kilitte kaydedilir (`bodyScrollLock.test.ts`). Bugün yalnızca
+  LicensesDialog kullanıyor; DeleteAccountDialog'da da aynı kalıp var
+  (diyalogda overflow + max-height, kilit yok) ve ileride bu hook'a ve
+  ortak bir diyalog kabuğuna geçebilir.
+- **Dar ekranda tam ekran.** 560 px altında diyalog tam ekran sayfa,
+  boşluklar `--safe-*`'tan (gövdenin alt boşluğu dahil: son satır ev
+  göstergesinin altında kalmasın). Geniş ekranda ortalanmış kart.
+  Yükseklik `dvh` ya da flex; `100vh` değil.
+- **İlk odak açılış yöntemine göre.** WebKit betikle verilen odağı
+  `:focus-visible` sayıyor: dokunuşla açılan diyalogda Kapat'a odak
+  verilince halka çiziliyordu. Açan düğme `event.detail === 0` ile
+  klavyeyi ayırır; klavyede odak Kapat'a (halka görünür), dokunuşta
+  diyaloğun kendisine (`tabIndex={-1}`, halkasız) gider. Kapanınca odak
+  açan düğmeye `focus({ focusVisible })` ile döner. CSS kuralı zaten her
+  yerde `:focus-visible`; sorun stilde değil, odağın veriliş biçiminde.
+
 ## Tambur etiketleri
 
 - **Etiket en fazla iki satır, yüz yüksekliği sabit.** Şerit satır
