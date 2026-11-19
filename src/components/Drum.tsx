@@ -40,6 +40,11 @@ export type DrumProps = {
   targetIndex: number;
   /** Her artışında yeni bir dönüş tetiklenir. */
   spinKey: number;
+  /**
+   * Dönüş süresi. 0 ise tambur sonuca anında gelir ve hemen oturur
+   * (Kapalı mod). Hareket azaltma tercihi burada okunmaz: etkin mod onu
+   * zaten hesaba katıyor (domain/spinTiming.ts resolveAnimationMode).
+   */
   durationMs: number;
   /** Hedefe varmadan kaç tur atılacağı. Tur = FACES satır (domain/reels.ts). */
   turns: number;
@@ -64,10 +69,6 @@ export type DrumProps = {
    */
   onRowPass?: () => void;
 };
-
-function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 /**
  * Tek satır yüksekliğini piksel olarak okur. --row doğrudan okunamaz,
@@ -187,7 +188,7 @@ export const Drum = forwardRef<DrumHandle, DrumProps>(function Drum(
       latest.current.onSettle?.();
     };
 
-    if (prefersReducedMotion()) {
+    if (latest.current.durationMs <= 0) {
       strip.style.transform = end;
       settle();
       return;

@@ -82,15 +82,18 @@ function thump(
  * Kol çekildi: mandalın kısa metalik çıtırtısı ve altında düşük bir
  * darbe. Toplam ~120ms. İkinci, daha zayıf çıtırtı mandalın yerine
  * oturmasıdır.
+ *
+ * scale süreleri çarpar (domain/spinTiming.ts soundScale): Kısa modda
+ * ses kısalır, tınısı aynı kalır.
  */
-export function playLever(): void {
+export function playLever(scale = 1): void {
   const graph = getRunningGraph();
   if (!graph) return;
   const t = graph.context.currentTime;
 
-  noiseBurst(graph, { start: t, filter: "bandpass", frequency: 2200, q: 1.2, peak: 0.9, decay: 0.04 });
-  noiseBurst(graph, { start: t + 0.045, filter: "bandpass", frequency: 3200, q: 1.5, peak: 0.45, decay: 0.03 });
-  thump(graph, { start: t, from: 150, to: 60, peak: 0.8, decay: 0.12 });
+  noiseBurst(graph, { start: t, filter: "bandpass", frequency: 2200, q: 1.2, peak: 0.9, decay: 0.04 * scale });
+  noiseBurst(graph, { start: t + 0.045 * scale, filter: "bandpass", frequency: 3200, q: 1.5, peak: 0.45, decay: 0.03 * scale });
+  thump(graph, { start: t, from: 150, to: 60, peak: 0.8, decay: 0.12 * scale });
 }
 
 /**
@@ -115,12 +118,12 @@ export function playTick(): void {
   });
 }
 
-/** Tambur durdu: tok bir darbe ve boğuk bir temas sesi. */
-export function playStop(): void {
+/** Tambur durdu: tok bir darbe ve boğuk bir temas sesi. scale: bkz. playLever. */
+export function playStop(scale = 1): void {
   const graph = getRunningGraph();
   if (!graph) return;
   const t = graph.context.currentTime;
 
-  thump(graph, { start: t, from: 120, to: 50, peak: 1, decay: 0.16 });
-  noiseBurst(graph, { start: t, filter: "lowpass", frequency: 900, q: 0.7, peak: 0.6, decay: 0.035 });
+  thump(graph, { start: t, from: 120, to: 50, peak: 1, decay: 0.16 * scale });
+  noiseBurst(graph, { start: t, filter: "lowpass", frequency: 900, q: 0.7, peak: 0.6, decay: 0.035 * scale });
 }

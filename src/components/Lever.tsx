@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 
-import { FULL_SPIN_TIMING } from "../domain/spinTiming";
 import styles from "./Lever.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -20,9 +19,6 @@ const DRAG_TO_ANGLE = 0.46;
 /** Bu mesafenin altında kalan bırakma sürükleme değil, tıklamadır. */
 const CLICK_TOLERANCE_PX = 6;
 
-const PULL_MS = FULL_SPIN_TIMING.leverPullMs;
-const RECOVER_MS = FULL_SPIN_TIMING.leverRecoverMs;
-
 /** Pivot ve topuz merkezleri — SVG geometrisiyle birebir aynı olmalı. */
 const PIVOT = { x: 40, y: 144 };
 const KNOB = { x: 40, y: 28 };
@@ -30,11 +26,16 @@ const KNOB = { x: 40, y: 28 };
 export type LeverProps = {
   disabled?: boolean;
   onPull: () => void;
+  /**
+   * false: kol oynamaz, tıklama ve klavye çekilişi hemen bildirir
+   * (Kapalı mod). Hareket azaltma burada okunmaz; etkin mod onu zaten
+   * hesaba katıyor (domain/spinTiming.ts).
+   */
+  animated: boolean;
+  /** Kolun inişi ve yerine dönüşü (domain/spinTiming.ts). */
+  pullMs: number;
+  recoverMs: number;
 };
-
-function prefersReducedMotion(): boolean {
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -50,7 +51,7 @@ function easeOutCubic(t: number): number {
   return 1 - (1 - t) ** 3;
 }
 
-export function Lever({ disabled = false, onPull }: LeverProps) {
+export function Lever({ disabled = false, onPull, animated, pullMs, recoverMs }: LeverProps) {
   const rootRef = useRef<HTMLButtonElement>(null);
   const armGRef = useRef<SVGGElement>(null);
   const knobGRef = useRef<SVGGElement>(null);
@@ -66,6 +67,14 @@ export function Lever({ disabled = false, onPull }: LeverProps) {
 
   /** Otomatik çekme sürerken ikinci bir çekme başlamasın. */
   const autoPullingRef = useRef(false);
+
+  /**
+   * Çekiliş bildirildi, kol henüz yerine dönmedi. Bu sırada gelen dokunuş
+   * yeni bir çekiliş başlatmaz: Kısa ve Kapalı modda dönüş kol
+   * toparlanmadan bitebiliyor ve kol yeniden etkinleşiyordu. Kol sesi ve
+   * titreşimi de çift çalardı.
+   */
+  const recoveringRef = useRef(false);
 
   useEffect(() => {
     return () => {
@@ -97,8 +106,8 @@ export function Lever({ disabled = false, onPull }: LeverProps) {
   ) {
     stopAnimation();
 
-    // Hareket kapalıysa ara kareler atlanır, sonuç aynı kalır.
-    if (prefersReducedMotion()) {
+    // Animasyon kapalıysa ara kareler atlanır, sonuç aynı kalır.
+    if (!animated || durationMs <= 0) {
       applyAngle(to);
       onDone?.();
       return;
@@ -122,29 +131,37 @@ export function Lever({ disabled = false, onPull }: LeverProps) {
     frameRef.current = requestAnimationFrame(step);
   }
 
+  /** Çekilişi bildirir ve kol yerine dönene kadar yeni çekilişi kapatır. */
+  function pullAndRecover() {
+    recoveringRef.current = true;
+    onPull();
+    animateAngle(0, recoverMs, easeOutCubic, () => {
+      recoveringRef.current = false;
+      autoPullingRef.current = false;
+    });
+  }
+
   /** Tıklama ve klavyenin ortak yolu: kol kendi iner, sonra toparlanır. */
   function autoPull() {
-    if (disabled || autoPullingRef.current) return;
+    if (disabled || autoPullingRef.current || recoveringRef.current) return;
 
-    if (prefersReducedMotion()) {
+    if (!animated) {
       // Kolu oynatmadan sonucu ver.
       onPull();
       return;
     }
 
     autoPullingRef.current = true;
-    animateAngle(MAX_ANGLE, PULL_MS, easeInCubic, () => {
-      onPull();
-      animateAngle(0, RECOVER_MS, easeOutCubic, () => {
-        autoPullingRef.current = false;
-      });
-    });
+    animateAngle(MAX_ANGLE, pullMs, easeInCubic, pullAndRecover);
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
     if (disabled || event.button !== 0) return;
+    // Çekiliş bildirildi, kol dönüyor: yakalamak yeni bir çekiliş başlatmasın.
+    if (recoveringRef.current) return;
 
-    // Otomatik çekmenin ortasında kol yakalanabilir; kontrolü kullanıcı alır.
+    // Otomatik çekmenin ortasında (çekiliş bildirilmeden) kol yakalanabilir;
+    // kontrolü kullanıcı alır, yarım kalan çekiliş sayılmaz.
     stopAnimation();
     autoPullingRef.current = false;
 
@@ -179,20 +196,21 @@ export function Lever({ disabled = false, onPull }: LeverProps) {
 
     const reachedThreshold = angleRef.current >= THRESHOLD_ANGLE;
     if (reachedThreshold) {
-      onPull();
+      pullAndRecover();
+      return;
     }
-    animateAngle(0, RECOVER_MS, easeOutCubic);
+    animateAngle(0, recoverMs, easeOutCubic);
   }
 
   function handlePointerCancel() {
     if (!draggingRef.current) return;
     draggingRef.current = false;
     // İptal edilen sürükleme çekiliş sayılmaz, kol sessizce toparlanır.
-    animateAngle(0, RECOVER_MS, easeOutCubic);
+    animateAngle(0, recoverMs, easeOutCubic);
   }
 
   function handleKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
-    if (disabled || event.repeat) return;
+    if (disabled || event.repeat || recoveringRef.current) return;
     if (event.key !== "Enter" && event.key !== " ") return;
 
     // Varsayılan davranış engellenmezse buton ayrıca click üretir ve

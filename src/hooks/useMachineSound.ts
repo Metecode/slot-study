@@ -18,9 +18,10 @@ export type MachineSound = {
    * açılır. Ses varsayılan açık olduğu için çoğu kullanıcıda ilk kilit burası.
    */
   unlock: () => void;
-  lever: () => void;
+  /** scale: süre çarpanı (domain/spinTiming.ts soundScale). */
+  lever: (scale?: number) => void;
   tick: () => void;
-  stop: () => void;
+  stop: (scale?: number) => void;
 };
 
 export function useMachineSound(enabled: boolean): MachineSound {
@@ -34,14 +35,14 @@ export function useMachineSound(enabled: boolean): MachineSound {
   const unlock = useCallback(() => {
     if (enabledRef.current) ensureAudioReady();
   }, []);
-  const lever = useCallback(() => {
-    if (enabledRef.current) playLever();
+  const lever = useCallback((scale?: number) => {
+    if (enabledRef.current) playLever(scale);
   }, []);
   const tick = useCallback(() => {
     if (enabledRef.current) playTick();
   }, []);
-  const stop = useCallback(() => {
-    if (enabledRef.current) playStop();
+  const stop = useCallback((scale?: number) => {
+    if (enabledRef.current) playStop(scale);
   }, []);
 
   return { unlock, lever, tick, stop };

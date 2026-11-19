@@ -38,11 +38,78 @@ export const FULL_SPIN_TIMING: SpinTiming = {
   soundScale: 1,
 };
 
-/** Eski ikili "hızlı mod"un tambur süreleri. */
-export const LEGACY_FAST_REELS: Pick<SpinTiming, "left" | "right"> = {
-  left: { durationMs: 300, turns: 1 },
-  right: { durationMs: 400, turns: 1 },
+/** Kısa modda tambur sürelerinin çarpanı (tamın ~%35'i). */
+export const SHORT_REEL_SCALE = 0.35;
+
+/** Kısa modda kol ve ses sürelerinin çarpanı. */
+export const SHORT_LEVER_SCALE = 0.6;
+export const SHORT_SOUND_SCALE = 0.6;
+
+/**
+ * Bir çekişin tam planı: süreler ve hangi geri bildirimlerin çalacağı.
+ * Sonuç geri bildirimi (duruş sesi ve titreşimi) her modda var; burada
+ * yalnızca isteğe bağlı olanlar.
+ */
+export type SpinPlan = SpinTiming & {
+  /** false: tamburlar sonuca anında gelir (yalnızca oturma tıkı). */
+  reelsAnimated: boolean;
+  /** false: kol oynamaz, çekiliş hemen bildirilir. */
+  leverAnimated: boolean;
+  /** Kol sesi ve kol titreşimi. */
+  leverFeedback: boolean;
+  /** Dönüş sırasındaki satır tıkları. */
+  ticks: boolean;
 };
+
+const FULL_PLAN: SpinPlan = {
+  ...FULL_SPIN_TIMING,
+  reelsAnimated: true,
+  leverAnimated: true,
+  leverFeedback: true,
+  ticks: true,
+};
+
+function scaledReel(reel: ReelTiming): ReelTiming {
+  // Tur sayısı da kısalır: tam turda kısa sürede şerit bulanıklaşırdı.
+  // Tek tur ~455 ms'de satır hızını Tam'a yakın tutuyor; makara yine dönüp oturuyor.
+  return { durationMs: Math.round(reel.durationMs * SHORT_REEL_SCALE), turns: 1 };
+}
+
+const SHORT_PLAN: SpinPlan = {
+  left: scaledReel(FULL_SPIN_TIMING.left),
+  right: scaledReel(FULL_SPIN_TIMING.right),
+  leverPullMs: Math.round(FULL_SPIN_TIMING.leverPullMs * SHORT_LEVER_SCALE),
+  leverRecoverMs: Math.round(FULL_SPIN_TIMING.leverRecoverMs * SHORT_LEVER_SCALE),
+  soundScale: SHORT_SOUND_SCALE,
+  reelsAnimated: true,
+  leverAnimated: true,
+  leverFeedback: true,
+  ticks: true,
+};
+
+/** Kapalı: süre yok; yalnızca tek bir sonuç sesi ve titreşimi. */
+const OFF_PLAN: SpinPlan = {
+  left: { durationMs: 0, turns: 0 },
+  right: { durationMs: 0, turns: 0 },
+  leverPullMs: 0,
+  leverRecoverMs: 0,
+  soundScale: 1,
+  reelsAnimated: false,
+  leverAnimated: false,
+  leverFeedback: false,
+  ticks: false,
+};
+
+/**
+ * Moda ve çekişin oturumdaki sırasına göre plan. spinIndex 1'den başlar:
+ * oturumun (sayfa ya da uygulama açılışı) ilk çekişi 1. Kısa modda ilk
+ * çekiş tam oynar: makinenin hissi bir kez görülsün, sonrakiler beklemesin.
+ */
+export function spinPlanFor(mode: AnimationMode, spinIndex: number): SpinPlan {
+  if (mode === "off") return OFF_PLAN;
+  if (mode === "short" && spinIndex > 1) return SHORT_PLAN;
+  return FULL_PLAN;
+}
 
 /**
  * Bir sonuç geri bildirimi (duruş sesi ya da titreşimi) öncekinden bu

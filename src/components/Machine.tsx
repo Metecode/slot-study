@@ -9,13 +9,12 @@ import { PaylineArrow } from "./PaylineArrow";
 import { reelLabel } from "./reelLabel";
 import { SoundHint } from "./SoundHint";
 import { SoundToggle } from "./SoundToggle";
-import { useMachineSound } from "../hooks/useMachineSound";
-import { haptics } from "../platform/haptics";
+import { useSpinFeedback } from "../hooks/useSpinFeedback";
 import { CATEGORY_LABELS } from "../content/labels";
 import type { AnimationMode } from "../domain/progress";
 import type { Category, Question } from "../domain/question";
 import { buildReelLayout, pairOf, restingPair, WINNING_FACE } from "../domain/reels";
-import { FULL_SPIN_TIMING, LEGACY_FAST_REELS } from "../domain/spinTiming";
+import { spinPlanFor } from "../domain/spinTiming";
 import type { ReelColumn, ReelLayout } from "../domain/reels";
 import styles from "./Machine.module.css";
 
@@ -134,9 +133,18 @@ export function Machine({
   onPull,
   onSettle,
 }: MachineProps) {
-  const sound = useMachineSound(soundEnabled);
+  const feedback = useSpinFeedback(soundEnabled);
+
+  /*
+    Süreler ve geri bildirimler moddan ve çekişin oturumdaki sırasından
+    (domain/spinTiming.ts). spinKey oturumda kaç dönüş başladığını sayıyor:
+    tamburlar şu anki dönüşü (spinKey), kol ise bir sonrakini (spinKey + 1)
+    oynatır. Kısa modda oturumun ilk çekişi tam.
+  */
+  const plan = spinPlanFor(animationMode, spinKey);
+  const leverPlan = spinPlanFor(animationMode, spinKey + 1);
   // Dinleyen yoksa Drum şeridi hiç izlemiyor; ses kapalıyken kare başı iş yok.
-  const onRowPass = soundEnabled ? sound.tick : undefined;
+  const onRowPass = feedback.rowPass(plan);
 
   const leftDrumRef = useRef<DrumHandle>(null);
   const rightDrumRef = useRef<DrumHandle>(null);
@@ -228,8 +236,6 @@ export function Machine({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [spinning]);
 
-  const timing = animationMode === "full" ? FULL_SPIN_TIMING : LEGACY_FAST_REELS;
-
   // İki tambur da donmuşsa yuva tek satır yüksekliğinde kalır; ödeme
   // çizgisi sabit yerinden bu satıra çekilmeli.
   const bayRows = leftFrozen && rightFrozen ? "1" : "3";
@@ -279,13 +285,12 @@ export function Machine({
                 labels={leftFaces}
                 targetIndex={WINNING_FACE}
                 spinKey={spinKey}
-                durationMs={timing.left.durationMs}
-                turns={timing.left.turns}
+                durationMs={plan.left.durationMs}
+                turns={plan.left.turns}
                 frozenLabel={frozenLeft}
                 onRowPass={onRowPass}
                 onSettle={() => {
-                  sound.stop();
-                  haptics.reelStop();
+                  feedback.reelStopped(plan);
                   bumpTick(leftSlotRef.current);
                   if (settleOwner === "left") onSettle();
                 }}
@@ -297,13 +302,12 @@ export function Machine({
                 labels={rightFaces}
                 targetIndex={WINNING_FACE}
                 spinKey={spinKey}
-                durationMs={timing.right.durationMs}
-                turns={timing.right.turns}
+                durationMs={plan.right.durationMs}
+                turns={plan.right.turns}
                 frozenLabel={frozenRight}
                 onRowPass={onRowPass}
                 onSettle={() => {
-                  sound.stop();
-                  haptics.reelStop();
+                  feedback.reelStopped(plan);
                   bumpTick(rightSlotRef.current);
                   if (settleOwner === "right") onSettle();
                 }}
@@ -349,16 +353,17 @@ export function Machine({
           */}
           <div
             className={styles.leverSlot}
-            onPointerUpCapture={sound.unlock}
-            onTouchEndCapture={sound.unlock}
-            onKeyDownCapture={sound.unlock}
+            onPointerUpCapture={feedback.unlock}
+            onTouchEndCapture={feedback.unlock}
+            onKeyDownCapture={feedback.unlock}
           >
             <Lever
               disabled={spinning || !canSpin}
+              animated={leverPlan.leverAnimated}
+              pullMs={leverPlan.leverPullMs}
+              recoverMs={leverPlan.leverRecoverMs}
               onPull={() => {
-                // Ses ve titreşim aynı anda: kol çekişinin tek anı burası.
-                sound.lever();
-                haptics.leverPull();
+                feedback.leverPulled(leverPlan);
                 onPull();
               }}
             />
