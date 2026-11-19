@@ -18,28 +18,32 @@
 }
 
 .group {
-  display: grid;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
+  /* Bölmeler eşit genişlikte (flex: 1 1 0) ve kelime ortasından
+     bölünmez (min-width: max-content). Yer yetmezse (büyük yazı, %200)
+     alt satıra geçerler; grid'de "Kapalı" "K a p alı" diye bölünüyordu. */
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-1);
   padding: var(--space-1);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  /* Hap değil yuvarlatılmış kutu: sarıldığında da düzgün kalsın.
+     Bölme 36 px, yarıçap bölmenin yarısı + iç boşluk. */
+  border-radius: 22px;
 }
 
 .option {
   /* Dokunma hedefi: bölme 36 px, grubun iç boşluğuyla satır 44 px'i geçer. */
+  flex: 1 1 0;
+  min-width: max-content;
   min-height: 36px;
-  min-width: 0;
-  padding: 0 var(--space-2);
+  padding: 0 var(--space-3);
   font: inherit;
   font-size: var(--fs-body-sm);
-  /* Büyük yazıda sarılsın, bölmeden taşmasın. */
-  overflow-wrap: anywhere;
+  white-space: nowrap;
   color: var(--text-dim);
   background: transparent;
   border: 0;
-  border-radius: 999px;
+  border-radius: 18px;
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease-out),

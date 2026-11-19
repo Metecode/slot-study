@@ -30,6 +30,10 @@
   gap: var(--space-1);
   /* Uzun açıklama sarılsın, kontrolü dışarı itmesin. */
   min-width: 0;
+  /* Büyük yazıda (%200) "istatistiklerini" gibi tek kelime satırdan
+     genişti; satırın en küçük genişliği ekranı aşıp sayfayı yatay
+     kaydırıyordu. Kelime gerekirse içinden sarılır. */
+  overflow-wrap: anywhere;
 }
 
 .label {
