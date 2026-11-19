@@ -35,6 +35,6 @@ describe("lisans metinleri", () => {
 
   it("üçüncü taraf bölümündeki soru sayısı içerikle aynı", () => {
     const external = LOADED_QUESTIONS.filter((question) => question.origin.kind === "external").length;
-    expect(byId("ucuncu-taraf").scope).toContain(`${external} soru`);
+    expect(byId("ucuncu-taraf").description).toContain(`${external} soru`);
   });
 });

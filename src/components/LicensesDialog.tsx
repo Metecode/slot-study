@@ -1,8 +1,10 @@
 import { useEffect, useId, useRef } from "react";
 
-import { reflowLicenseText } from "./licenseText";
+import { LicenseRow } from "./LicenseRow";
 import styles from "./LicensesDialog.module.css";
-import { CC_BY_SA_URL, LICENSE_SECTIONS, REPO_URL } from "../content/licenses";
+// Kart Ayarlar'daki grupla aynı yüzey; stil tek yerde kalsın diye oradan.
+import groupStyles from "./SettingGroup.module.css";
+import { LICENSE_SECTIONS, REPO_URL } from "../content/licenses";
 import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 
 /* ------------------------------------------------------------------ */
@@ -77,27 +79,18 @@ export function LicensesDialog({ open, openedWithKeyboard, onClose }: LicensesDi
 
       <div ref={bodyRef} className={styles.body}>
         <p className={styles.intro}>
-          Slot açık kaynak.{" "}
+          Slot açık kaynak;{" "}
           <a className={styles.link} href={REPO_URL} target="_blank" rel="noreferrer">
-            Kaynak kodu GitHub'da
+            kaynak kodu GitHub'da
           </a>
-          . Kod MIT, soru içeriği{" "}
-          <a className={styles.link} href={CC_BY_SA_URL} target="_blank" rel="noreferrer">
-            CC BY-SA 4.0
-          </a>{" "}
-          lisanslı; içeriği kaynak belirterek ve aynı lisansla paylaşabilirsin.
+          . Lisansların tam metinleri aşağıda.
         </p>
 
-        {LICENSE_SECTIONS.map((section) => (
-          <section key={section.id} className={styles.section} aria-labelledby={`${titleId}-${section.id}`}>
-            <h3 id={`${titleId}-${section.id}`} className={styles.sectionTitle}>
-              {section.title}
-            </h3>
-            <p className={styles.scope}>{section.scope}</p>
-            {/* Elle kırılmış paragraflar akıtılır, başlık ve listeler korunur. */}
-            <pre className={styles.text}>{reflowLicenseText(section.text)}</pre>
-          </section>
-        ))}
+        <div className={groupStyles.card}>
+          {LICENSE_SECTIONS.map((section) => (
+            <LicenseRow key={section.id} section={section} />
+          ))}
+        </div>
       </div>
     </dialog>
   );
