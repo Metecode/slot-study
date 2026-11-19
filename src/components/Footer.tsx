@@ -11,6 +11,8 @@ import styles from "./Footer.module.css";
 
 export function Footer() {
   const [licensesOpen, setLicensesOpen] = useState(false);
+  // Klavyeyle etkinleştirilen düğmenin click'inde detail 0 olur.
+  const [openedWithKeyboard, setOpenedWithKeyboard] = useState(false);
   const licensesButtonRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -23,7 +25,10 @@ export function Footer() {
             type="button"
             className={`${styles.link} ${styles.button}`}
             aria-haspopup="dialog"
-            onClick={() => setLicensesOpen(true)}
+            onClick={(event) => {
+              setOpenedWithKeyboard(event.detail === 0);
+              setLicensesOpen(true);
+            }}
           >
             {/* Satır yalnızca birimler arasında kırılır; "·" kendinden
                 sonraki öğeyle birlikte alta iner, satır sonunda asılı kalmaz. */}
@@ -46,10 +51,14 @@ export function Footer() {
       </div>
       <LicensesDialog
         open={licensesOpen}
+        openedWithKeyboard={openedWithKeyboard}
         onClose={() => {
           setLicensesOpen(false);
-          // Diyalog kapanınca odak onu açan düğmeye döner.
-          licensesButtonRef.current?.focus();
+          // Diyalog kapanınca odak onu açan düğmeye döner. Dokunuşla
+          // açıldıysa halka çizilmesin: WebKit betikle verilen odağı
+          // :focus-visible sayıyor. focusVisible'ı tanımayan tarayıcı
+          // seçeneği yok sayar, kendi buluşsalına döner.
+          licensesButtonRef.current?.focus({ focusVisible: openedWithKeyboard });
         }}
       />
     </footer>

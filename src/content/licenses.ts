@@ -17,30 +17,37 @@ export const CC_BY_SA_URL = "https://creativecommons.org/licenses/by-sa/4.0/";
 
 export type LicenseSection = {
   id: string;
-  title: string;
-  /** Metnin neyi kapsadığı, tek cümle. */
-  scope: string;
+  /** Satırın adı: neyin lisansı. */
+  name: string;
+  /** Lisansın kısa adı; satırda adın yanında. */
+  license: string;
+  /** Satırın altında tek cümle; yoksa satır yalnızca ad ve lisans. */
+  description?: string;
+  /** Lisansın resmî sayfası; açılan bölümde metnin üstünde. */
+  url?: string;
   text: string;
 };
 
 export const LICENSE_SECTIONS: readonly LicenseSection[] = [
   {
     id: "kod",
-    title: "Kaynak kod — MIT",
-    scope: "Uygulamanın kaynak kodu.",
+    name: "Kaynak kod",
+    license: "MIT",
     text: codeLicense.trim(),
   },
   {
     id: "icerik",
-    title: "Soru içeriği — CC BY-SA 4.0",
-    scope: "Sorular, örnek cevaplar ve kavramlar.",
+    name: "Soru içeriği",
+    license: "CC BY-SA 4.0",
+    description: "Kaynak belirterek ve aynı lisansla paylaşabilirsin.",
+    url: CC_BY_SA_URL,
     text: contentLicense.trim(),
   },
   {
     id: "ucuncu-taraf",
-    title: "Üçüncü taraf içerik",
-    scope:
-      "React kategorisindeki 44 soru sudheerj/reactjs-interview-questions'tan türetildi; o kısımlar için MIT bildirimi de geçerli.",
+    name: "sudheerj/reactjs-interview-questions",
+    license: "MIT",
+    description: "44 soru bu kaynaktan uyarlandı.",
     text: thirdPartyNotices.trim(),
   },
 ];
