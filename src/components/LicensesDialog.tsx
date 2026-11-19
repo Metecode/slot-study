@@ -3,6 +3,7 @@ import { useEffect, useId, useRef } from "react";
 import { reflowLicenseText } from "./licenseText";
 import styles from "./LicensesDialog.module.css";
 import { CC_BY_SA_URL, LICENSE_SECTIONS, REPO_URL } from "../content/licenses";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 
 /* ------------------------------------------------------------------ */
 /* Lisanslar — kod (MIT), içerik (CC BY-SA 4.0), üçüncü taraf bildirimi  */
@@ -16,36 +17,55 @@ import { CC_BY_SA_URL, LICENSE_SECTIONS, REPO_URL } from "../content/licenses";
   tarayıcısına veriyor.
 
   Native <dialog> + showModal(): odak tuzağı, Escape ve arka planın
-  etkisizleşmesi tarayıcıdan geliyor. İlk odak üstteki "Kapat"ta; ilk
-  bağlantıya düşseydi uzun metin açılışta aşağı kayabilirdi.
+  etkisizleşmesi tarayıcıdan geliyor. Tek kaydırma alanı gövde; diyalog
+  kaymıyor, arkadaki sayfa kilitli (useBodyScrollLock). Kilit olmasa iOS
+  kaydırmayı sona dayanınca belgeye zincirliyordu.
+
+  İlk odak: klavyeyle açıldıysa Kapat (halka görünür), dokunuş ya da
+  fareyle açıldıysa diyaloğun kendisi. WebKit betikle verilen odağı
+  :focus-visible sayıyor; Kapat'a odak verilse dokunuşta da halka
+  çiziliyordu. Diyaloğun kendisi odakta halka çizmez, ekran okuyucu
+  yine diyaloğun adını okur.
 
   Giriş hareketi yok (DeleteAccountDialog ile aynı gerekçe).
 */
 
 export type LicensesDialogProps = {
   open: boolean;
+  /** Açan etkileşim klavyeyse ilk odak Kapat'a, değilse diyaloğa gider. */
+  openedWithKeyboard: boolean;
   onClose: () => void;
 };
 
-export function LicensesDialog({ open, onClose }: LicensesDialogProps) {
+export function LicensesDialog({ open, openedWithKeyboard, onClose }: LicensesDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
+
+  useBodyScrollLock(open);
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open && !dialog.open) {
       dialog.showModal();
-      dialog.scrollTop = 0;
-      closeRef.current?.focus();
+      if (bodyRef.current) bodyRef.current.scrollTop = 0;
+      if (openedWithKeyboard) closeRef.current?.focus();
+      else dialog.focus();
     } else if (!open && dialog.open) {
       dialog.close();
     }
-  }, [open]);
+  }, [open, openedWithKeyboard]);
 
   return (
-    <dialog ref={dialogRef} className={styles.dialog} aria-labelledby={titleId} onClose={onClose}>
+    <dialog
+      ref={dialogRef}
+      className={styles.dialog}
+      aria-labelledby={titleId}
+      tabIndex={-1}
+      onClose={onClose}
+    >
       <div className={styles.header}>
         <h2 id={titleId} className={styles.title}>
           Lisanslar
@@ -55,28 +75,30 @@ export function LicensesDialog({ open, onClose }: LicensesDialogProps) {
         </button>
       </div>
 
-      <p className={styles.intro}>
-        Slot açık kaynak.{" "}
-        <a className={styles.link} href={REPO_URL} target="_blank" rel="noreferrer">
-          Kaynak kodu GitHub'da
-        </a>
-        . Kod MIT, soru içeriği{" "}
-        <a className={styles.link} href={CC_BY_SA_URL} target="_blank" rel="noreferrer">
-          CC BY-SA 4.0
-        </a>{" "}
-        lisanslı; içeriği kaynak belirterek ve aynı lisansla paylaşabilirsin.
-      </p>
+      <div ref={bodyRef} className={styles.body}>
+        <p className={styles.intro}>
+          Slot açık kaynak.{" "}
+          <a className={styles.link} href={REPO_URL} target="_blank" rel="noreferrer">
+            Kaynak kodu GitHub'da
+          </a>
+          . Kod MIT, soru içeriği{" "}
+          <a className={styles.link} href={CC_BY_SA_URL} target="_blank" rel="noreferrer">
+            CC BY-SA 4.0
+          </a>{" "}
+          lisanslı; içeriği kaynak belirterek ve aynı lisansla paylaşabilirsin.
+        </p>
 
-      {LICENSE_SECTIONS.map((section) => (
-        <section key={section.id} className={styles.section} aria-labelledby={`${titleId}-${section.id}`}>
-          <h3 id={`${titleId}-${section.id}`} className={styles.sectionTitle}>
-            {section.title}
-          </h3>
-          <p className={styles.scope}>{section.scope}</p>
-          {/* Elle kırılmış paragraflar akıtılır, başlık ve listeler korunur. */}
-          <pre className={styles.text}>{reflowLicenseText(section.text)}</pre>
-        </section>
-      ))}
+        {LICENSE_SECTIONS.map((section) => (
+          <section key={section.id} className={styles.section} aria-labelledby={`${titleId}-${section.id}`}>
+            <h3 id={`${titleId}-${section.id}`} className={styles.sectionTitle}>
+              {section.title}
+            </h3>
+            <p className={styles.scope}>{section.scope}</p>
+            {/* Elle kırılmış paragraflar akıtılır, başlık ve listeler korunur. */}
+            <pre className={styles.text}>{reflowLicenseText(section.text)}</pre>
+          </section>
+        ))}
+      </div>
     </dialog>
   );
 }
