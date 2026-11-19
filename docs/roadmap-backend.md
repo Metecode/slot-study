@@ -200,6 +200,16 @@ DevOps tarafını gösterir; üretimi gereksiz karmaşıklaştırmadan.
 
 **Bitti tanımı:** Yeni bir VPS'te `ansible-playbook site.yml` + geri yükleme scripti ile Slot veriyle birlikte ayağa kalkıyor.
 
+## Büyük yazı boyutu desteği (yayın sonrası)
+
+Ayarlar düzeni işinde (feat/settings-layout) %200 yakınlaştırmada bulundu; main'de de var. Ölçüm Chromium'da, 360 px ekran → 180 CSS px, 430 px → 215 CSS px. Ayarlar ve alt bilgi aynı dalda düzeltildi; aşağıdakiler yayından sonra.
+
+- [ ] **Tambur etiketleri.** 360 px'te tambur yüzü 114 px, etikete 89 px kalıyor. 180 CSS px'te yüz 25 px, etiketin görünen genişliği 0 px ("Siber Güvenlik" 56 px istiyor); 215'te yüz 41 px, etiket 17 px. Etiket okunmuyor. Kol paneli ve kenar boşlukları px'le sabit, kalan yer tamburlara yetmiyor (bkz. CLAUDE.md, Tambur etiketleri).
+- [ ] **Üst çubuk.** 180 CSS px'te marka bloğu 81 px istiyor, 52 px'e sıkışıyor; "slot" yazısına 45 px yerine 16 px kalıyor ve "Giriş yap" (80 px) ile çakışıyor. 215'te sığıyor.
+- [ ] **Kullanım bildirimi kartı.** 180 CSS px'te kart 196 px genişliğinde, sağ kenarı 212 px'te: sayfayı 32 px yatay kaydırıyor. 215'te sığıyor (sağ kenar 212).
+
+**Bitti tanımı:** 180 CSS px'te sayfa yatay kaymıyor, tambur etiketi okunuyor (kısaltılmış da olsa), üst çubukta çakışma yok; Android'in yazı boyutu ayarı ve iOS Dinamik Yazı'da da elle denendi.
+
 ## Repo vitrini
 
 Takım lideri repoya 2–3 dakika bakar; bu sürede mimariyi, kararları ve kanıtı görmeli.
