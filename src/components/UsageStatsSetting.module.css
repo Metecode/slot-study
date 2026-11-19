@@ -1,16 +1,4 @@
-/* Hatırlatıcı anahtarıyla aynı düzen: anahtar üstte, açıklama altında. */
-.root {
-  display: inline-flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  max-width: 32ch;
-}
-
-.note {
-  font-size: var(--fs-label);
-  color: var(--text-faint);
-}
-
+/* Açıklamadaki bağlantı; satır düzeni SettingRow.module.css'te. */
 .link {
   color: var(--text-dim);
   text-decoration: underline;

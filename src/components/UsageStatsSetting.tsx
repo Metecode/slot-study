@@ -1,7 +1,7 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import { PrivacyLink } from "./PrivacyLink";
-import { Switch } from "./Switch";
+import { SettingSwitchRow } from "./SettingSwitchRow";
 import styles from "./UsageStatsSetting.module.css";
 
 /* ------------------------------------------------------------------ */
@@ -12,6 +12,10 @@ import styles from "./UsageStatsSetting.module.css";
   Metinde "anonim" kelimesi geçmez: kalıcı bir kurulum kimliği anonim
   değildir (CLAUDE.md, Kullanım ölçümü). Kapatınca kuyruk ve kimlik silinir;
   karar analyticsClient.setEnabled'da.
+
+  Açıklamadaki bağlantı satırın label'ının içinde ama anahtarı tetiklemez:
+  label, içindeki etkileşimli öğeye yapılan tıklamayı iletmez
+  (bkz. SettingSwitchRow).
 */
 
 export type UsageStatsSettingProps = {
@@ -22,26 +26,25 @@ export type UsageStatsSettingProps = {
 };
 
 export function UsageStatsSetting({ checked, onChange, focusRequest }: UsageStatsSettingProps) {
-  const noteId = useId();
-  const rootRef = useRef<HTMLSpanElement>(null);
+  const switchRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (focusRequest === 0) return;
-    rootRef.current?.querySelector<HTMLButtonElement>('[role="switch"]')?.focus();
+    switchRef.current?.focus();
   }, [focusRequest]);
 
   return (
-    <span className={styles.root} ref={rootRef}>
-      <Switch
-        checked={checked}
-        onChange={onChange}
-        label="Kullanım istatistiklerini paylaş"
-        describedBy={noteId}
-      />
-      <span id={noteId} className={styles.note}>
-        Hesabınla ilişkilendirilmeyen, rastgele bir kurulum kimliğiyle.{" "}
-        <PrivacyLink className={styles.link}>Gizlilik politikası</PrivacyLink>
-      </span>
-    </span>
+    <SettingSwitchRow
+      label="Kullanım istatistiklerini paylaş"
+      checked={checked}
+      onChange={onChange}
+      switchRef={switchRef}
+      description={
+        <>
+          Hesabınla ilişkilendirilmeyen, rastgele bir kurulum kimliğiyle.{" "}
+          <PrivacyLink className={styles.link}>Gizlilik politikası</PrivacyLink>
+        </>
+      }
+    />
   );
 }

@@ -18,8 +18,9 @@
      kenar gereğinden kalın kalıyor. Masaüstünde max(0, 16px) = 16px. */
   padding-bottom: max(var(--safe-bottom), var(--space-4));
   display: flex;
-  /* Dar ekranda sürüm satırı alta iner; sol grup kendi içinde bölünmez,
-     "·" satır sonunda asılı kalmaz. */
+  /* Dar ekranda sürüm satırı alta iner. Sol grup gerekirse kendi içinde
+     de sarılır (büyük yazı, %200), ama yalnızca birimler arasında: "·"
+     satır sonunda asılı kalmaz. */
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
@@ -30,6 +31,13 @@
 }
 
 .start {
+  /* Tek satırda kalsaydı %200'de (180 CSS px) 254 px'le sayfayı yatay
+     kaydırıyordu. */
+  min-width: 0;
+}
+
+/* "Açık kaynak", "· Lisanslar", "· Gizlilik": ayırıcı sonraki öğeye bağlı. */
+.unit {
   white-space: nowrap;
 }
 
@@ -66,6 +74,8 @@
 .button {
   padding: 0;
   font: inherit;
+  /* Sarıldığında düğme metni ortalanmasın, satırın başından başlasın. */
+  text-align: start;
   background: none;
   border: none;
   cursor: pointer;

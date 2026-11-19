@@ -138,6 +138,37 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   sonda tek `expect(ihlaller).toEqual([])`. Yeni özellik testlerinde de
   aynı kalıp.
 
+## Ayarlar düzeni
+
+- **Üç grup, kart zemininde** (`SettingGroup`): GÖRÜNÜM VE GERİ BİLDİRİM
+  (Animasyon, Ses, Titreşim), HATIRLATMA, GİZLİLİK. `role="group"` +
+  `aria-labelledby`. Görünen satırlar platforma bağlı (Titreşim ve
+  hatırlatıcı yalnızca native'de, kullanım yalnızca ölçüm açıkken); içi
+  boş grup çizilmez. Kart `--surface`, makine kasasıyla aynı 8 px yarıçap.
+- **Grup başlığı** makinedeki KATEGORİ/KONU etiketinin dili: mono, büyük
+  harf, 0.06em aralık, `--text-dim`, `--fs-mono-sm` (11 px). Token ileride
+  küçülse de başlık 11 px'in altına inmez (`max(var(--fs-mono-sm), 11px)`).
+  "Ayarlar" başlığı `--fs-heading` ve kalın: hiyerarşi boyuttan okunur.
+- **Satır:** solda etiket ve altında açıklama, en sağda kontrol; en az
+  44 px, satırlar arasında 1 px `--line`. Açıklama yalnızca kendi
+  satırının altında ve `aria-describedby` ile yalnızca kendi kontrolüne
+  bağlı. Açıklamalar `--text-dim` (`--surface` üzerinde 6.1:1); bu yalnızca
+  Ayarlar için, `--text-faint`'in başka yerlerdeki kullanımı ayrı.
+- **Anahtarlı satırın tamamı `<label>`** (`SettingSwitchRow`): etikete ya
+  da boş alana dokunmak anahtarı bir kez değiştirir. Label, içindeki
+  etkileşimli öğeye yapılan tıklamayı iletmez: açıklamadaki "Gizlilik
+  politikası" anahtarı tetiklemez, anahtarın kendisi çift değişmez.
+  Erişilebilir ad `aria-labelledby` ile yalnızca etiketten: label'ın
+  metni açıklamayı da içerdiği için ad uzun okunurdu.
+- **Animasyon satırı:** etiket üstte, segmentli kontrol tam genişlikte,
+  bölmeler eşit. Bölmeler flex: kelime ortasından bölünmez, büyük yazıda
+  alt satıra geçer. Etiket ve açıklama gerekirse kelime içinden sarılır;
+  %200 yakınlaştırmada (360 px → 180 CSS px) satır ekranı aşmasın.
+- **Ses tek ayar:** makinedeki hoparlör (`changeSpeakerSound`, iOS
+  ipucuyla) ve Ayarlar'daki anahtar (`changeSound`) aynı
+  `useSettings.soundEnabled`'ı yönetir; `settingsPanel.test.tsx` iki
+  kontrolün aynı değerle aynı durumu çizdiğini doğruluyor.
+
 ## Tambur etiketleri
 
 - **Etiket en fazla iki satır, yüz yüksekliği sabit.** Şerit satır

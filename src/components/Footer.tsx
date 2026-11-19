@@ -25,9 +25,14 @@ export function Footer() {
             aria-haspopup="dialog"
             onClick={() => setLicensesOpen(true)}
           >
-            Açık kaynak · Lisanslar
+            {/* Satır yalnızca birimler arasında kırılır; "·" kendinden
+                sonraki öğeyle birlikte alta iner, satır sonunda asılı kalmaz. */}
+            <span className={styles.unit}>Açık kaynak</span>{" "}
+            <span className={styles.unit}>· Lisanslar</span>
           </button>{" "}
-          · <PrivacyLink className={styles.link}>Gizlilik</PrivacyLink>
+          <span className={styles.unit}>
+            · <PrivacyLink className={styles.link}>Gizlilik</PrivacyLink>
+          </span>
         </span>
         <div className={styles.end}>
           {/* Hangi derlemenin çalıştığını söyler; hata bildiriminde işe yarar. */}

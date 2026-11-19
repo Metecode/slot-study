@@ -1,0 +1,37 @@
+/*
+  Ayarlar grubu. Başlık makinedeki "KATEGORİ / KONU" etiketleriyle aynı
+  dil: mono, büyük harf, harf aralıklı, --text-dim, küçük punto.
+  Punto token'dan; token ileride küçülse de 11 px'in altına inmez
+  (CLAUDE.md, Ayarlar düzeni).
+
+  Kart makine kasasıyla aynı köşe yarıçapında (8 px) ve yüzey
+  token'larıyla; satırlar arasında 1 px ayırıcı.
+*/
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.title {
+  font-family: var(--mono);
+  font-size: max(var(--fs-mono-sm), 11px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  /* Kartın iç boşluğuyla hizalı: başlık ilk satırın etiketiyle aynı çizgide. */
+  padding-inline: var(--space-4);
+}
+
+.card {
+  border-radius: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  /* Odak halkası kart kenarında kırpılmasın diye overflow kesilmiyor;
+     köşeler satırların kendi zemini olmadığı için zaten temiz. */
+}
+
+.card > * + * {
+  border-top: 1px solid var(--line);
+}

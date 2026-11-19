@@ -1,0 +1,49 @@
+/*
+  Ayarlar satırı. Solda etiket ve altında (varsa) açıklama, en sağda
+  kontrol; satır kartın tam genişliğinde. En az 44 px: dokunma hedefi.
+  Satırlar arasındaki ayırıcı kartta (SettingGroup), satırda değil.
+
+  Renkler: etiket --text, açıklama --text-dim (kart zemini --surface
+  üzerinde 6.1:1; küçük punto için 4.5:1 hedefinin rahat üstünde).
+*/
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: var(--space-3) var(--space-4);
+}
+
+/* Etiket üstte, kontrol altında ve tam genişlikte (Animasyon). */
+.stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  /* Uzun açıklama sarılsın, kontrolü dışarı itmesin. */
+  min-width: 0;
+  /* Büyük yazıda (%200) "istatistiklerini" gibi tek kelime satırdan
+     genişti; satırın en küçük genişliği ekranı aşıp sayfayı yatay
+     kaydırıyordu. Kelime gerekirse içinden sarılır. */
+  overflow-wrap: anywhere;
+}
+
+.label {
+  font-size: var(--fs-body-sm);
+  line-height: var(--lh-snug);
+  color: var(--text);
+}
+
+.description {
+  font-size: var(--fs-label);
+  line-height: var(--lh-snug);
+  color: var(--text-dim);
+}
