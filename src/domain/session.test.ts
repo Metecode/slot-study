@@ -475,7 +475,6 @@ describe("HYDRATE", () => {
   // senaryolarını test eder; ilk açılış davranışı ayrı testlerde.
   function makeSettings(over: Partial<Store["settings"]> = {}): Store["settings"] {
     return {
-      fastMode: false,
       soundEnabled: false,
       soundHintShown: false,
       hapticsEnabled: true,
@@ -580,7 +579,7 @@ describe("toStore", () => {
     });
 
     const store = toStore(state, {
-      fastMode: true,
+      animationMode: "off",
       soundEnabled: true,
       soundHintShown: true,
       hapticsEnabled: false,
@@ -592,7 +591,7 @@ describe("toStore", () => {
       schemaVersion: SCHEMA_VERSION,
       progress,
       settings: {
-        fastMode: true,
+        animationMode: "off",
         soundEnabled: true,
         soundHintShown: true,
         hapticsEnabled: false,
@@ -609,7 +608,6 @@ describe("toStore", () => {
   it("initialized'ı her zaman true yazar", () => {
     // toStore'a giren state bir oturumdan geldiği için "ilk açılış" artık geçmişte.
     const store = toStore(makeState(), {
-      fastMode: false,
       soundEnabled: false,
       soundHintShown: false,
       hapticsEnabled: true,
@@ -618,6 +616,20 @@ describe("toStore", () => {
     });
 
     expect(store.settings.initialized).toBe(true);
+  });
+
+  it("animasyon modu seçilmediyse alanı hiç yazmaz", () => {
+    // Varsayılan diske yazılsaydı hareket azaltma tercihi sonradan değişince izlenmezdi.
+    const store = toStore(makeState(), {
+      animationMode: undefined,
+      soundEnabled: true,
+      soundHintShown: false,
+      hapticsEnabled: true,
+      reminderEnabled: false,
+      reminderOfferShown: false,
+    });
+
+    expect("animationMode" in store.settings).toBe(false);
   });
 
 });

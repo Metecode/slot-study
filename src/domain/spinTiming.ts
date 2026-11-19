@@ -1,3 +1,5 @@
+import type { AnimationMode } from "./progress";
+
 /* ------------------------------------------------------------------ */
 /* Dönüş süreleri — animasyon, ses ve haptiğin tek kaynağı              */
 /*                                                                     */
@@ -52,3 +54,16 @@ export const RESULT_FEEDBACK_GAP_MS = 80;
 
 /** Web'de kol çekişindeki titreşim (navigator.vibrate). */
 export const WEB_LEVER_VIBRATE_MS = 15;
+
+/**
+ * Etkin animasyon modu. Kullanıcının açık seçimi her zaman kazanır;
+ * seçim yoksa sistemin hareket azaltma tercihi varsayılanı belirler:
+ * açıksa Kapalı, değilse Kısa.
+ */
+export function resolveAnimationMode(
+  chosen: AnimationMode | undefined,
+  prefersReducedMotion: boolean,
+): AnimationMode {
+  if (chosen) return chosen;
+  return prefersReducedMotion ? "off" : "short";
+}

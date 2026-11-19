@@ -12,6 +12,7 @@ import { SoundToggle } from "./SoundToggle";
 import { useMachineSound } from "../hooks/useMachineSound";
 import { haptics } from "../platform/haptics";
 import { CATEGORY_LABELS } from "../content/labels";
+import type { AnimationMode } from "../domain/progress";
 import type { Category, Question } from "../domain/question";
 import { buildReelLayout, pairOf, restingPair, WINNING_FACE } from "../domain/reels";
 import { FULL_SPIN_TIMING, LEGACY_FAST_REELS } from "../domain/spinTiming";
@@ -54,7 +55,8 @@ export type MachineProps = {
   spinning: boolean;
   /** false ise kol devre dışı. */
   canSpin: boolean;
-  fastMode: boolean;
+  /** Etkin animasyon modu (domain/spinTiming.ts). */
+  animationMode: AnimationMode;
   /** Makine sesi açık mı; varsayılan açık, tercih settings'te. */
   soundEnabled: boolean;
   /** Makinenin köşesindeki hoparlör düğmesi; ayarlar anahtarı ayrı yoldan gelir. */
@@ -125,7 +127,7 @@ export function Machine({
   spinKey,
   spinning,
   canSpin,
-  fastMode,
+  animationMode,
   soundEnabled,
   onSoundChange,
   soundHintKey,
@@ -226,7 +228,7 @@ export function Machine({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [spinning]);
 
-  const timing = fastMode ? LEGACY_FAST_REELS : FULL_SPIN_TIMING;
+  const timing = animationMode === "full" ? FULL_SPIN_TIMING : LEGACY_FAST_REELS;
 
   // İki tambur da donmuşsa yuva tek satır yüksekliğinde kalır; ödeme
   // çizgisi sabit yerinden bu satıra çekilmeli.

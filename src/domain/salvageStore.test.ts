@@ -35,7 +35,7 @@ describe("salvageStore", () => {
       schemaVersion: SCHEMA_VERSION,
       progress: {},
       settings: {
-        fastMode: true,
+        animationMode: "full",
         soundEnabled: "evet",
         hapticsEnabled: 1,
         reminderEnabled: "açık",
@@ -47,7 +47,7 @@ describe("salvageStore", () => {
 
     expect(result.store.settings).toEqual({
       ...emptyStore().settings,
-      fastMode: true,
+      animationMode: "full",
       reminderOfferShown: true,
       initialized: true,
     });
@@ -61,7 +61,7 @@ describe("salvageStore", () => {
     const kept = salvageStore({
       schemaVersion: SCHEMA_VERSION,
       progress: {},
-      settings: { ...settings, knownCategories: ["sql"], fastMode: "bozuk" },
+      settings: { ...settings, knownCategories: ["sql"], soundEnabled: "bozuk" },
     });
     expect(kept.store.settings.knownCategories).toEqual(["sql"]);
 
@@ -73,6 +73,19 @@ describe("salvageStore", () => {
     // Alan yok sayılınca kayıt eski kayıt gibi geçişten geçer (bkz. categoryHydration.ts).
     expect(dropped.store.settings.knownCategories).toBeUndefined();
     expect(dropped.resetSettings).toEqual(["knownCategories"]);
+  });
+
+  it("bozuk animasyon modunu seçilmemişe döndürür, diğer ayarları korur", () => {
+    const result = salvageStore({
+      schemaVersion: SCHEMA_VERSION,
+      progress: {},
+      settings: { animationMode: "hızlı", soundEnabled: false, initialized: true },
+    });
+
+    // Seçilmemiş: etkin mod hareket azaltma tercihinden gelir (Kısa ya da Kapalı).
+    expect(result.store.settings.animationMode).toBeUndefined();
+    expect(result.store.settings.soundEnabled).toBe(false);
+    expect(result.resetSettings).toEqual(["animationMode"]);
   });
 
   it("nesne olmayan settings'in tüm alanlarını sıfırlanmış sayar", () => {

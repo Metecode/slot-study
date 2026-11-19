@@ -69,7 +69,7 @@ function Session({ store, warning, save }: SessionProps) {
   const reminder = useReminderSettings(store.settings);
 
   useSaveOnChange(save, state, {
-    fastMode: settings.fastMode,
+    animationMode: settings.animationMode,
     soundEnabled: settings.soundEnabled,
     soundHintShown: settings.soundHintShown,
     hapticsEnabled: settings.hapticsEnabled,
@@ -135,7 +135,7 @@ function Session({ store, warning, save }: SessionProps) {
             spinKey={spinKey}
             spinning={state.phase === "spinning"}
             canSpin={session.canSpin}
-            fastMode={settings.fastMode}
+            animationMode={settings.effectiveAnimationMode}
             soundEnabled={settings.soundEnabled}
             onSoundChange={settings.changeSpeakerSound}
             soundHintKey={settings.soundHintKey}
@@ -165,8 +165,8 @@ function Session({ store, warning, save }: SessionProps) {
           )}
 
           <SettingsPanel
-            fastMode={settings.fastMode}
-            onFastModeChange={settings.setFastMode}
+            animationMode={settings.effectiveAnimationMode}
+            onAnimationModeChange={settings.setAnimationMode}
             soundEnabled={settings.soundEnabled}
             onSoundChange={settings.changeSound}
             hapticsEnabled={settings.hapticsEnabled}

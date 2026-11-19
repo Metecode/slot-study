@@ -2,12 +2,14 @@ import { useLayoutEffect, useState } from "react";
 
 import { ensureAudioReady } from "../audio/audioContext";
 import { playLever } from "../audio/sounds";
-import type { Store } from "../domain/progress";
+import type { AnimationMode, Store } from "../domain/progress";
+import { resolveAnimationMode } from "../domain/spinTiming";
 import { haptics } from "../platform/haptics";
+import { usePrefersReducedMotion } from "./usePrefersReducedMotion";
 import { useSoundHint } from "./useSoundHint";
 
 /* ------------------------------------------------------------------ */
-/* Makine ayarları: hızlı mod, ses, titreşim                           */
+/* Makine ayarları: animasyon modu, ses, titreşim                     */
 /*                                                                     */
 /* Ayarlar reducer'da değil, düz React state'te (bkz. session.ts        */
 /* toStore). Hatırlatıcı ayrı: izin ve öneri kartıyla birlikte          */
@@ -15,8 +17,11 @@ import { useSoundHint } from "./useSoundHint";
 /* ------------------------------------------------------------------ */
 
 export type Settings = {
-  fastMode: boolean;
-  setFastMode: (enabled: boolean) => void;
+  /** Kullanıcının açık seçimi; seçmediyse undefined (diske de yazılmaz). */
+  animationMode: AnimationMode | undefined;
+  /** Etkin mod: seçim, yoksa hareket azaltma tercihinden varsayılan. */
+  effectiveAnimationMode: AnimationMode;
+  setAnimationMode: (mode: AnimationMode) => void;
   soundEnabled: boolean;
   /** Ayarlar panelindeki anahtar. */
   changeSound: (enabled: boolean) => void;
@@ -29,7 +34,10 @@ export type Settings = {
 };
 
 export function useSettings(initial: Store["settings"]): Settings {
-  const [fastMode, setFastMode] = useState(initial.fastMode);
+  const [animationMode, setAnimationMode] = useState(initial.animationMode);
+  // Tercih oturum ortasında değişirse varsayılan da onu izler; seçim yapılmışsa etkisiz.
+  const reducedMotion = usePrefersReducedMotion();
+  const effectiveAnimationMode = resolveAnimationMode(animationMode, reducedMotion);
   const [soundEnabled, setSoundEnabled] = useState(initial.soundEnabled);
   const soundHint = useSoundHint(initial.soundHintShown);
   const [hapticsEnabled, setHapticsEnabled] = useState(initial.hapticsEnabled);
@@ -71,8 +79,9 @@ export function useSettings(initial: Store["settings"]): Settings {
   }
 
   return {
-    fastMode,
-    setFastMode,
+    animationMode,
+    effectiveAnimationMode,
+    setAnimationMode,
     soundEnabled,
     changeSound,
     changeSpeakerSound,
