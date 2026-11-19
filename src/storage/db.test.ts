@@ -59,7 +59,6 @@ function rate(state: SessionState, now: Date): SessionState {
 
 function persisted(state: SessionState): Store {
   return toStore(state, {
-    fastMode: false,
     soundEnabled: true,
     soundHintShown: false,
     hapticsEnabled: true,

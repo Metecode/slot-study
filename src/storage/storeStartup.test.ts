@@ -14,7 +14,7 @@ import { createStoreStartup } from "./storeStartup";
 
 /** Açılış değerinden farklı bir store; yazıcı bunu "değişiklik" görür. */
 function changed(store: Store): Store {
-  return { ...store, settings: { ...store.settings, fastMode: !store.settings.fastMode } };
+  return { ...store, settings: { ...store.settings, soundEnabled: !store.settings.soundEnabled } };
 }
 
 vi.mock("@capacitor/filesystem", () => import("../platform/storage/fakeFilesystem"));

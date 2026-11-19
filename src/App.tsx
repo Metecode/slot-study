@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import styles from "./App.module.css";
-import { trackAnswerSubmitted, trackSelfEval, trackSpin } from "./analytics/trackers";
 import { useAnalytics } from "./analytics/useAnalytics";
 import { useAuth } from "./auth/useAuth";
 import { CategoryPicker } from "./components/CategoryPicker";
@@ -18,13 +17,13 @@ import { useReminderSettings } from "./hooks/useReminderSettings";
 import { useReviewReminder } from "./hooks/useReviewReminder";
 import { useSession } from "./hooks/useSession";
 import { useSettings } from "./hooks/useSettings";
+import { useTurnFlow } from "./hooks/useTurnFlow";
 import { AVAILABLE_CATEGORIES, QUESTIONS } from "./content";
-import { countRatings } from "./domain/reminder";
 import { loadWarning } from "./storage/loadWarning";
 import { useSaveOnChange } from "./storage/useSaveOnChange";
 import { useStore } from "./storage/useStore";
 import { useProgressSync } from "./sync/useProgressSync";
-import type { SelfRating, Store } from "./domain/progress";
+import type { Store } from "./domain/progress";
 
 export default function App() {
   const { loaded, save } = useStore();
@@ -55,9 +54,10 @@ type SessionProps = {
 };
 
 /*
-  Oturum, ayarlar ve hatırlatıcı kendi hook'larında; burası onları
-  birbirine bağlıyor. Efektli hook'ların çağrı sırası bilinçli: diske
-  yazma → senkron → hatırlatıcı → kullanım ölçümü → spinKey. Bölmeden önceki sıra buydu;
+  Oturum, ayarlar, hatırlatıcı ve turun akışı kendi hook'larında; burası
+  onları birbirine bağlıyor. Efektli hook'ların çağrı sırası bilinçli: diske
+  yazma → senkron → hatırlatıcı → kullanım ölçümü → spinKey (useTurnFlow).
+  Bölmeden önceki sıra buydu;
   üstteki üç hook (useSession, useSettings, useReminderSettings) pasif
   efekt içermediği için öne alınmaları bu sırayı değiştirmiyor.
 */
@@ -67,11 +67,9 @@ function Session({ store, warning, save }: SessionProps) {
   const { progress, activeCategories } = state;
   const settings = useSettings(store.settings);
   const reminder = useReminderSettings(store.settings);
-  const [spinKey, setSpinKey] = useState(0);
-  const prevPhaseRef = useRef(state.phase);
 
   useSaveOnChange(save, state, {
-    fastMode: settings.fastMode,
+    animationMode: settings.animationMode,
     soundEnabled: settings.soundEnabled,
     soundHintShown: settings.soundHintShown,
     hapticsEnabled: settings.hapticsEnabled,
@@ -106,41 +104,12 @@ function Session({ store, warning, save }: SessionProps) {
   const usage = useAnalytics({ progress, questions: QUESTIONS, activeCategories });
   const [settingsOpenRequest, setSettingsOpenRequest] = useState(0);
 
-  // spinKey yalnızca gerçek bir dönüş başladığında artar — çekiliş havuzu
-  // boşsa reducer state'i değiştirmez, Machine'e anlamsız bir dönüş gitmez.
-  // spin olayı da burada: reducer çekilişi reddederse olay da gitmez.
-  useEffect(() => {
-    if (state.phase === "spinning" && prevPhaseRef.current !== "spinning") {
-      setSpinKey((key) => key + 1);
-      trackSpin(state.activeCategories);
-    }
-    prevPhaseRef.current = state.phase;
-  }, [state]);
-
-  function handleSubmit(answer: string) {
-    if (state.current) trackAnswerSubmitted(state.current, answer);
-    session.submit(answer);
-  }
-
-  function handleRate(rating: SelfRating) {
-    // Soru id'si dispatch'ten önce alınır: RATE turu kapatınca current null olur.
-    if (state.current) pushQuestion(state.current.id);
-    // Ölçüm de önce: değerlendirmeden önceki kutu ve kayıt yalnızca şimdi elde.
-    if (state.phase === "evaluated" && state.current) {
-      trackSelfEval({
-        question: state.current,
-        previous: progress[state.current.id],
-        evaluation: state.evaluation,
-        passed: state.passed,
-        answer: session.lastAnswer,
-        rating,
-        now: new Date(),
-      });
-    }
-    session.rate(rating);
-    // Bu değerlendirme henüz state'e yansımadı.
-    reminder.offerAfterRating(countRatings(progress) + 1);
-  }
+  // Turun akışı (spinKey efekti, cevap, değerlendirme). Efekt sırasında son.
+  const { spinKey, handleSubmit, handleRate } = useTurnFlow({
+    session,
+    pushQuestion,
+    offerReminderAfterRating: reminder.offerAfterRating,
+  });
 
   return (
     <div className={styles.root}>
@@ -166,7 +135,7 @@ function Session({ store, warning, save }: SessionProps) {
             spinKey={spinKey}
             spinning={state.phase === "spinning"}
             canSpin={session.canSpin}
-            fastMode={settings.fastMode}
+            animationMode={settings.effectiveAnimationMode}
             soundEnabled={settings.soundEnabled}
             onSoundChange={settings.changeSpeakerSound}
             soundHintKey={settings.soundHintKey}
@@ -196,8 +165,8 @@ function Session({ store, warning, save }: SessionProps) {
           )}
 
           <SettingsPanel
-            fastMode={settings.fastMode}
-            onFastModeChange={settings.setFastMode}
+            animationMode={settings.effectiveAnimationMode}
+            onAnimationModeChange={settings.setAnimationMode}
             soundEnabled={settings.soundEnabled}
             onSoundChange={settings.changeSound}
             hapticsEnabled={settings.hapticsEnabled}

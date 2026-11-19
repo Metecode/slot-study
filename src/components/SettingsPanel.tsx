@@ -1,10 +1,13 @@
 import { useState } from "react";
 
+import type { AnimationMode } from "../domain/progress";
 import { IS_APPLE_TOUCH_DEVICE } from "../hooks/useSoundHint";
 import { platformFeatures } from "../platform";
 import { ChevronIcon } from "./ChevronIcon";
 import { Collapse } from "./Collapse";
 import { ReminderSetting } from "./ReminderSetting";
+import { SegmentedControl } from "./SegmentedControl";
+import type { SegmentedOption } from "./SegmentedControl";
 import { Switch } from "./Switch";
 import { UsageStatsSetting } from "./UsageStatsSetting";
 import styles from "./SettingsPanel.module.css";
@@ -19,9 +22,20 @@ import styles from "./SettingsPanel.module.css";
   yalnızca açık/kapalı durumunu kendisi tutar, o da diske yazılmaz.
 */
 
+/**
+ * Dönüş animasyonu. Kısa: oturumun ilk çekişi tam, sonrakiler kısa.
+ * Kapalı: tamburlar sonuca anında gelir. Süreler domain/spinTiming.ts'te.
+ */
+const ANIMATION_OPTIONS: readonly SegmentedOption<AnimationMode>[] = [
+  { value: "full", label: "Tam" },
+  { value: "short", label: "Kısa" },
+  { value: "off", label: "Kapalı" },
+];
+
 export type SettingsPanelProps = {
-  fastMode: boolean;
-  onFastModeChange: (enabled: boolean) => void;
+  /** Etkin mod: seçim yoksa hareket azaltma tercihinden gelen varsayılan. */
+  animationMode: AnimationMode;
+  onAnimationModeChange: (mode: AnimationMode) => void;
   soundEnabled: boolean;
   onSoundChange: (enabled: boolean) => void;
   hapticsEnabled: boolean;
@@ -42,8 +56,8 @@ export type SettingsPanelProps = {
 };
 
 export function SettingsPanel({
-  fastMode,
-  onFastModeChange,
+  animationMode,
+  onAnimationModeChange,
   soundEnabled,
   onSoundChange,
   hapticsEnabled,
@@ -84,7 +98,12 @@ export function SettingsPanel({
 
       <Collapse open={open} id="settings-panel">
         <div className={styles.controls}>
-          <Switch checked={fastMode} onChange={onFastModeChange} label="Hızlı mod" />
+          <SegmentedControl
+            label="Animasyon"
+            options={ANIMATION_OPTIONS}
+            value={animationMode}
+            onChange={onAnimationModeChange}
+          />
           <span className={styles.soundControl}>
             <Switch
               checked={soundEnabled}

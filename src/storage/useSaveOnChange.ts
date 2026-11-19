@@ -20,7 +20,7 @@ export function useSaveOnChange(
   save: (store: Store) => void,
   { progress, activeCategories, knownCategories }: SaveInput,
   {
-    fastMode,
+    animationMode,
     soundEnabled,
     soundHintShown,
     hapticsEnabled,
@@ -32,14 +32,14 @@ export function useSaveOnChange(
     save(
       toStore(
         { progress, activeCategories, knownCategories },
-        { fastMode, soundEnabled, soundHintShown, hapticsEnabled, reminderEnabled, reminderOfferShown },
+        { animationMode, soundEnabled, soundHintShown, hapticsEnabled, reminderEnabled, reminderOfferShown },
       ),
     );
   }, [
     progress,
     activeCategories,
     knownCategories,
-    fastMode,
+    animationMode,
     soundEnabled,
     soundHintShown,
     hapticsEnabled,

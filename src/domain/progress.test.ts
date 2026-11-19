@@ -14,7 +14,24 @@ describe("readStore", () => {
 
     expect(recovered).toBe(false);
     expect(store.settings.soundEnabled).toBe(true);
-    expect(store.settings.fastMode).toBe(true);
+    // Eski ikili fastMode okunmuyor: mod seçilmemiş sayılır, varsayılan çalışır.
+    expect(store.settings.animationMode).toBeUndefined();
+    expect("fastMode" in store.settings).toBe(false);
+  });
+
+  it("animasyon modu seçimini korur", () => {
+    const saved = { schemaVersion: SCHEMA_VERSION, progress: {}, settings: { animationMode: "full" } };
+
+    expect(readStore(saved).store.settings.animationMode).toBe("full");
+  });
+
+  it("bozuk animasyon modu kaydı geçersiz kılar (kurtarma salvageStore'da)", () => {
+    const broken = { schemaVersion: SCHEMA_VERSION, progress: {}, settings: { animationMode: "hızlı" } };
+
+    const { store, recovered } = readStore(broken);
+
+    expect(recovered).toBe(true);
+    expect(store.settings.animationMode).toBeUndefined();
   });
 
   it("kapatılmış ses tercihini korur", () => {

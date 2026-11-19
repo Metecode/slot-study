@@ -99,7 +99,8 @@ function salvageSettings(value: unknown): { value: Store["settings"]; reset: str
 
   return {
     value: {
-      fastMode: pick("fastMode", shape.fastMode, defaults.fastMode),
+      // Geçersizse yok sayılır: kullanıcı seçmemiş gibi varsayılana döner.
+      animationMode: pick("animationMode", shape.animationMode, undefined),
       soundEnabled: pick("soundEnabled", shape.soundEnabled, defaults.soundEnabled),
       soundHintShown: pick("soundHintShown", shape.soundHintShown, defaults.soundHintShown),
       hapticsEnabled: pick("hapticsEnabled", shape.hapticsEnabled, defaults.hapticsEnabled),

@@ -7,13 +7,15 @@ import { Lever } from "./Lever";
 import { ARROW, SYMBOL_EDGE } from "./logoGeometry";
 import { PaylineArrow } from "./PaylineArrow";
 import { reelLabel } from "./reelLabel";
+import { SkipLayer } from "./SkipLayer";
 import { SoundHint } from "./SoundHint";
 import { SoundToggle } from "./SoundToggle";
-import { useMachineSound } from "../hooks/useMachineSound";
-import { haptics } from "../platform/haptics";
+import { useSpinFeedback } from "../hooks/useSpinFeedback";
 import { CATEGORY_LABELS } from "../content/labels";
+import type { AnimationMode } from "../domain/progress";
 import type { Category, Question } from "../domain/question";
 import { buildReelLayout, pairOf, restingPair, WINNING_FACE } from "../domain/reels";
+import { spinPlanFor } from "../domain/spinTiming";
 import type { ReelColumn, ReelLayout } from "../domain/reels";
 import styles from "./Machine.module.css";
 
@@ -30,11 +32,6 @@ import styles from "./Machine.module.css";
  */
 const EMPTY_FACE = "—";
 
-const NORMAL_TIMING = {
-  first: { durationMs: 1300, turns: 3 },
-  second: { durationMs: 1600, turns: 4 },
-};
-
 /**
  * Ödeme okunun boyu. Bant (üst ve alt kenarı çizili orta satır) logodaki
  * çerçeveye karşılık geliyor: ok satıra, logodaki ok çerçeveye ne oranla
@@ -45,11 +42,6 @@ const PAYLINE_ARROW_VARS = {
   "--payline-arrow-h": `calc(var(--row) * ${ARROW.height / SYMBOL_EDGE})`,
   "--payline-arrow-w": `calc(var(--row) * ${ARROW.width / SYMBOL_EDGE})`,
 } as CSSProperties;
-
-const FAST_TIMING = {
-  first: { durationMs: 300, turns: 1 },
-  second: { durationMs: 400, turns: 1 },
-};
 
 export type MachineProps = {
   /** Çekilen soru; spinning'e girerken gelir. */
@@ -63,7 +55,8 @@ export type MachineProps = {
   spinning: boolean;
   /** false ise kol devre dışı. */
   canSpin: boolean;
-  fastMode: boolean;
+  /** Etkin animasyon modu (domain/spinTiming.ts). */
+  animationMode: AnimationMode;
   /** Makine sesi açık mı; varsayılan açık, tercih settings'te. */
   soundEnabled: boolean;
   /** Makinenin köşesindeki hoparlör düğmesi; ayarlar anahtarı ayrı yoldan gelir. */
@@ -134,16 +127,25 @@ export function Machine({
   spinKey,
   spinning,
   canSpin,
-  fastMode,
+  animationMode,
   soundEnabled,
   onSoundChange,
   soundHintKey,
   onPull,
   onSettle,
 }: MachineProps) {
-  const sound = useMachineSound(soundEnabled);
+  const feedback = useSpinFeedback(soundEnabled);
+
+  /*
+    Süreler ve geri bildirimler moddan ve çekişin oturumdaki sırasından
+    (domain/spinTiming.ts). spinKey oturumda kaç dönüş başladığını sayıyor:
+    tamburlar şu anki dönüşü (spinKey), kol ise bir sonrakini (spinKey + 1)
+    oynatır. Kısa modda oturumun ilk çekişi tam.
+  */
+  const plan = spinPlanFor(animationMode, spinKey);
+  const leverPlan = spinPlanFor(animationMode, spinKey + 1);
   // Dinleyen yoksa Drum şeridi hiç izlemiyor; ses kapalıyken kare başı iş yok.
-  const onRowPass = soundEnabled ? sound.tick : undefined;
+  const onRowPass = feedback.rowPass(plan);
 
   const leftDrumRef = useRef<DrumHandle>(null);
   const rightDrumRef = useRef<DrumHandle>(null);
@@ -216,11 +218,17 @@ export function Machine({
     onSettle();
   }, [spinKey, settleOwner, spinning, onSettle]);
 
+  /** Çalışan dönüşü sona atar; tamburlar yine birer kez oturur, sonuç aynı. */
+  function finishSpin() {
+    leftDrumRef.current?.finish();
+    rightDrumRef.current?.finish();
+  }
+
   /*
-    Animasyonu atlamanın klavye yolu. Fare için tamburlara tıklamak
-    yetiyordu ama kol dönüş boyunca disabled olduğu için odak gövdeye
-    düşüyor ve klavyedeki kullanıcının atlayacak bir hedefi kalmıyordu.
-    Dinleyici yalnızca dönüş sürerken bağlanır.
+    Animasyonu atlamanın klavye yolu. Dokunma ve fare için ekranı kaplayan
+    katman var (SkipLayer); kol dönüş boyunca disabled olduğu için odak
+    gövdeye düşüyor ve klavyedeki kullanıcının atlayacak bir hedefi
+    kalmıyordu. Dinleyici yalnızca dönüş sürerken bağlanır.
   */
   useEffect(() => {
     if (!spinning) return;
@@ -234,8 +242,6 @@ export function Machine({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [spinning]);
-
-  const timing = fastMode ? FAST_TIMING : NORMAL_TIMING;
 
   // İki tambur da donmuşsa yuva tek satır yüksekliğinde kalır; ödeme
   // çizgisi sabit yerinden bu satıra çekilmeli.
@@ -255,15 +261,10 @@ export function Machine({
     el.classList.add(styles.tick);
   }
 
-  /** Dönerken tamburlara tıklanınca animasyon atlanır. */
-  function handleBayClick() {
-    if (!spinning) return;
-    leftDrumRef.current?.finish();
-    rightDrumRef.current?.finish();
-  }
-
   return (
     <div className={styles.stage}>
+      {/* Dönüş sürerken ekrana dokunmak atlar; Kapalı modda dönüş zaten anında. */}
+      {spinning && plan.reelsAnimated && <SkipLayer onSkip={finishSpin} />}
       <div className={styles.machine}>
         <div className={styles.contact} aria-hidden="true" />
 
@@ -278,7 +279,6 @@ export function Machine({
             className={styles.bay}
             style={PAYLINE_ARROW_VARS}
             data-rows={bayRows}
-            onClick={handleBayClick}
           >
             <div ref={leftSlotRef} className={`${styles.drumSlot} ${styles.drumSlotLeft}`}>
               <Drum
@@ -286,13 +286,12 @@ export function Machine({
                 labels={leftFaces}
                 targetIndex={WINNING_FACE}
                 spinKey={spinKey}
-                durationMs={timing.first.durationMs}
-                turns={timing.first.turns}
+                durationMs={plan.left.durationMs}
+                turns={plan.left.turns}
                 frozenLabel={frozenLeft}
                 onRowPass={onRowPass}
                 onSettle={() => {
-                  sound.stop();
-                  haptics.reelStop();
+                  feedback.reelStopped(plan);
                   bumpTick(leftSlotRef.current);
                   if (settleOwner === "left") onSettle();
                 }}
@@ -304,13 +303,12 @@ export function Machine({
                 labels={rightFaces}
                 targetIndex={WINNING_FACE}
                 spinKey={spinKey}
-                durationMs={timing.second.durationMs}
-                turns={timing.second.turns}
+                durationMs={plan.right.durationMs}
+                turns={plan.right.turns}
                 frozenLabel={frozenRight}
                 onRowPass={onRowPass}
                 onSettle={() => {
-                  sound.stop();
-                  haptics.reelStop();
+                  feedback.reelStopped(plan);
                   bumpTick(rightSlotRef.current);
                   if (settleOwner === "right") onSettle();
                 }}
@@ -356,16 +354,17 @@ export function Machine({
           */}
           <div
             className={styles.leverSlot}
-            onPointerUpCapture={sound.unlock}
-            onTouchEndCapture={sound.unlock}
-            onKeyDownCapture={sound.unlock}
+            onPointerUpCapture={feedback.unlock}
+            onTouchEndCapture={feedback.unlock}
+            onKeyDownCapture={feedback.unlock}
           >
             <Lever
               disabled={spinning || !canSpin}
+              animated={leverPlan.leverAnimated}
+              pullMs={leverPlan.leverPullMs}
+              recoverMs={leverPlan.leverRecoverMs}
               onPull={() => {
-                // Ses ve titreşim aynı anda: kol çekişinin tek anı burası.
-                sound.lever();
-                haptics.leverPull();
+                feedback.leverPulled(leverPlan);
                 onPull();
               }}
             />

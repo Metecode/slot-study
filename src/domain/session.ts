@@ -232,7 +232,7 @@ export function sessionReducer(
  * evaluation gibi oturuma özel alanlar diske hiç ulaşmasın diye imza
  * bunlara bakmadığını kendi söylüyor.
  *
- * Ayarlar (fastMode, ses, titreşim, hatırlatıcı...) state'te tutulmuyor
+ * Ayarlar (animasyon modu, ses, titreşim, hatırlatıcı...) state'te tutulmuyor
  * (HYDRATE de doldurmuyor), o yüzden dışarıdan geliyor — App'te düz React
  * state, reducer'ın işi değil.
  */
@@ -240,7 +240,7 @@ export function toStore(
   state: Pick<SessionState, "progress" | "activeCategories" | "knownCategories">,
   settings: Pick<
     Store["settings"],
-    | "fastMode"
+    | "animationMode"
     | "soundEnabled"
     | "soundHintShown"
     | "hapticsEnabled"
@@ -252,7 +252,8 @@ export function toStore(
     schemaVersion: SCHEMA_VERSION,
     progress: state.progress,
     settings: {
-      fastMode: settings.fastMode,
+      // Kullanıcı seçmediyse alan yazılmaz: varsayılan sistemin tercihini izlesin.
+      ...(settings.animationMode ? { animationMode: settings.animationMode } : {}),
       soundEnabled: settings.soundEnabled,
       soundHintShown: settings.soundHintShown,
       hapticsEnabled: settings.hapticsEnabled,

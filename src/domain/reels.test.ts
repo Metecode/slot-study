@@ -66,41 +66,59 @@ function randomSelection(rng: () => number): Category[] {
     : [AVAILABLE_CATEGORIES[Math.floor(rng() * AVAILABLE_CATEGORIES.length)]];
 }
 
-/** Ödeme çizgisi ve görünen komşular çekilen soruyla ve filtreyle tutarlı mı. */
-function expectConsistent(layout: ReelLayout, question: Question, pool: readonly Question[]) {
+/*
+  Döngülü testler her turda onlarca expect çağırıyordu: 3000 turda ~120 bin
+  çağrı, testin süresinin çoğu buydu ve tüm paket paralel çalışırken 5 sn
+  zaman aşımına takılıyordu. Kurallar burada ihlal listesi döndürür, test
+  sonda tek expect yapar: kapsam aynı, hata mesajı hangi turda neyin
+  bozulduğunu gösteriyor.
+*/
+
+/** Ödeme çizgisi ve görünen komşular çekilen soruyla ve filtreyle tutarlı mı; ihlaller döner. */
+function consistencyIssues(layout: ReelLayout, question: Question, pool: readonly Question[]): string[] {
+  const issues: string[] = [];
   const active = new Set(pool.map((q) => q.category));
   const poolTopics = new Set(pool.map((q) => q.topic));
+  const expected = pairOf(question);
 
-  expect(layout.pair).toEqual(pairOf(question));
-  expect(payline(layout.category)).toBe(question.category);
-  expect(payline(layout.topic)).toBe(question.topic);
+  if (layout.pair?.category !== expected.category || layout.pair?.topic !== expected.topic) {
+    issues.push(`çift ${JSON.stringify(layout.pair)} ≠ ${JSON.stringify(expected)}`);
+  }
+  if (payline(layout.category) !== question.category) issues.push(`kategori çizgisi ${payline(layout.category)}`);
+  if (payline(layout.topic) !== question.topic) issues.push(`konu çizgisi ${payline(layout.topic)}`);
   // Ödeme çizgisindeki çift havuzda gerçekten var olan bir soruya karşılık gelir.
-  expect(pool.some((q) => q.category === question.category && q.topic === question.topic)).toBe(
-    true,
-  );
+  if (!pool.some((q) => q.category === question.category && q.topic === question.topic)) {
+    issues.push("çift havuzda yok");
+  }
 
   // Filtre dışı hiçbir yüz yok.
   if (layout.category.kind === "spin") {
-    for (const face of layout.category.faces) expect(active.has(face)).toBe(true);
+    for (const face of layout.category.faces) if (!active.has(face)) issues.push(`filtre dışı kategori ${face}`);
   }
   if (layout.topic.kind === "spin") {
-    for (const face of layout.topic.faces) expect(poolTopics.has(face)).toBe(true);
+    for (const face of layout.topic.faces) if (!poolTopics.has(face)) issues.push(`filtre dışı konu ${face}`);
   }
 
   // Kategoride yeterince konu varsa üst/alt komşular da o kategoriden.
   const own = topicsOf(pool, question.category);
   if (own.size >= 3) {
     for (const face of neighbors(layout.topic)) {
-      expect(own.has(face)).toBe(true);
-      expect(face).not.toBe(question.topic);
+      if (!own.has(face)) issues.push(`komşu başka kategoriden: ${face}`);
+      if (face === question.topic) issues.push(`komşu kazananla aynı: ${face}`);
     }
   }
+  return issues;
+}
+
+function expectConsistent(layout: ReelLayout, question: Question, pool: readonly Question[]) {
+  expect(consistencyIssues(layout, question, pool)).toEqual([]);
 }
 
 describe("çekiliş ile tambur düzeni tutarlılığı", () => {
   it("çok sayıda rastgele çekişte hiçbir uyumsuz kategori–konu eşleşmesi yok", () => {
     const rng = seeded(20261006);
     let recentIds: string[] = [];
+    const issues: string[] = [];
 
     for (let round = 0; round < 3000; round++) {
       const activeCategories = randomSelection(rng);
@@ -114,31 +132,45 @@ describe("çekiliş ile tambur düzeni tutarlılığı", () => {
         rng,
       });
 
-      expect(question).not.toBeNull();
-      if (!question) return;
-      expect(activeCategories).toContain(question.category);
-
-      expectConsistent(buildReelLayout(pool, pairOf(question), rng), question, pool);
+      if (!question) {
+        issues.push(`tur ${round}: çekiliş boş döndü`);
+        break;
+      }
+      if (!activeCategories.includes(question.category)) {
+        issues.push(`tur ${round}: ${question.id} seçili kategoride değil`);
+      }
+      for (const issue of consistencyIssues(buildReelLayout(pool, pairOf(question), rng), question, pool)) {
+        issues.push(`tur ${round} (${question.id}): ${issue}`);
+      }
       recentIds = [...recentIds, question.id].slice(-10);
     }
+
+    expect(issues).toEqual([]);
   });
 
   it("filtre değişince boştaki tambur yeni filtrede var olan bir çifte geçer", () => {
     const rng = seeded(7);
     let previous: ReelPair | null = null;
+    const issues: string[] = [];
 
     for (let round = 0; round < 1000; round++) {
       const pool = poolOf(randomSelection(rng));
       const pair = restingPair(pool, previous);
-      expect(pair).not.toBeNull();
-      if (!pair) return;
+      if (!pair) {
+        issues.push(`tur ${round}: dinlenme çifti boş`);
+        break;
+      }
 
       const layout = buildReelLayout(pool, pair, rng);
-      expect(payline(layout.category)).toBe(pair.category);
-      expect(payline(layout.topic)).toBe(pair.topic);
-      expect(pool.some((q) => q.category === pair.category && q.topic === pair.topic)).toBe(true);
+      if (payline(layout.category) !== pair.category) issues.push(`tur ${round}: kategori çizgisi ${payline(layout.category)}`);
+      if (payline(layout.topic) !== pair.topic) issues.push(`tur ${round}: konu çizgisi ${payline(layout.topic)}`);
+      if (!pool.some((q) => q.category === pair.category && q.topic === pair.topic)) {
+        issues.push(`tur ${round}: çift havuzda yok`);
+      }
       previous = pair;
     }
+
+    expect(issues).toEqual([]);
   });
 });
 

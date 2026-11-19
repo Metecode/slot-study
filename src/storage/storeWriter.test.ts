@@ -52,7 +52,7 @@ describe.each(TEST_ADAPTERS)("%s", (_name, create) => {
       await writer.write(firstRenderValue(store));
       expect(set).not.toHaveBeenCalled();
 
-      const changed = firstRenderValue({ ...store, settings: { ...store.settings, fastMode: true } });
+      const changed = firstRenderValue({ ...store, settings: { ...store.settings, animationMode: "full" } });
       await writer.write(changed);
       await writer.write(changed);
       expect(set).toHaveBeenCalledTimes(1);
@@ -88,7 +88,7 @@ describe.each(TEST_ADAPTERS)("%s", (_name, create) => {
       const writer = createStoreWriter(storage, { enabled: status !== "failed" });
 
       await writer.write(firstRenderValue(store));
-      await writer.write(firstRenderValue({ ...store, settings: { ...store.settings, fastMode: true } }));
+      await writer.write(firstRenderValue({ ...store, settings: { ...store.settings, animationMode: "full" } }));
       await writer.write(firstRenderValue({ ...store, settings: { ...store.settings, soundEnabled: false } }));
 
       expect(set).not.toHaveBeenCalled();

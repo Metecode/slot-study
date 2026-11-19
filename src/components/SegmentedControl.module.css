@@ -1,0 +1,57 @@
+/*
+  Bölmeli seçim. Anahtarla (Switch) aynı satır dili: solda etiket, sağda
+  kontrol. Seçili bölme accent kullanır — anahtarın "açık" durumu gibi tek
+  bir öğe, seçili durum bütçesine girer.
+*/
+
+.row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-body-sm);
+  color: var(--text-dim);
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.group {
+  display: inline-flex;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.option {
+  /* Dokunma hedefi: metin küçük ama satır 28 px, bölme yeterince geniş. */
+  min-height: 24px;
+  padding: 0 var(--space-3);
+  font: inherit;
+  font-size: var(--fs-label);
+  white-space: nowrap;
+  color: var(--text-dim);
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
+}
+
+.option[aria-checked="true"] {
+  color: var(--bg);
+  background: var(--accent);
+}
+
+@media (hover: hover) {
+  .option[aria-checked="false"]:hover {
+    color: var(--text);
+  }
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}

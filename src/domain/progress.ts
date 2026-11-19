@@ -55,11 +55,24 @@ export type QuestionProgress = z.infer<typeof questionProgressSchema>;
  */
 export const SCHEMA_VERSION = 1;
 
+/** Dönüş animasyonu modları; sıra Ayarlar'daki seçimin sırası. */
+export const ANIMATION_MODES = ["full", "short", "off"] as const;
+export const animationModeSchema = z.enum(ANIMATION_MODES);
+export type AnimationMode = z.infer<typeof animationModeSchema>;
+
 export const storeSchema = z.object({
   schemaVersion: z.literal(SCHEMA_VERSION),
   progress: z.record(z.string(), questionProgressSchema),
   settings: z.object({
-    fastMode: z.boolean().default(false),
+    /**
+     * Dönüş animasyonu: Tam / Kısa / Kapalı (bkz. domain/spinTiming.ts).
+     * default YOK, bilerek: alanın olmaması "kullanıcı seçmedi" demek ve
+     * etkin mod o zaman sistemin hareket azaltma tercihinden türetilir
+     * (resolveAnimationMode). Varsayılan diske yazılsaydı tercih sonradan
+     * değişince izlenmezdi. Eski ikili fastMode alanı okunmuyor: true olan
+     * da varsayılan Kısa'ya düşer. Kırıcı değil, schemaVersion artmıyor.
+     */
+    animationMode: animationModeSchema.optional(),
     /**
      * Makine sesi. Varsayılan açık: ses makinenin hissinin parçası, kapatmak
      * isteyen köşedeki düğmeyi görüyor. Tarayıcı zaten ilk kol çekişine
@@ -115,7 +128,6 @@ export const emptyStore = (): Store => ({
   schemaVersion: SCHEMA_VERSION,
   progress: {},
   settings: {
-    fastMode: false,
     soundEnabled: true,
     soundHintShown: false,
     hapticsEnabled: true,

@@ -91,8 +91,52 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
 ## Erişilebilirlik ve hareket
 
 - Her etkileşimli öğe klavyeyle kullanılabilir olmalı.
-- `prefers-reduced-motion` her animasyonda kontrol edilir.
+- prefers-reduced-motion yalnızca varsayılanı belirler; kullanıcının açık
+  seçimi her zaman kazanır. Dönüş animasyonunda bu, Ayarlar'daki moddur
+  (aşağıda); CSS mikro geçişleri (oturma tıkı, ödeme oku, panel açılışı)
+  tokens.css'te tercihe bağlı kalır.
 - Animasyon atlanabilir olmalı; kullanıcı 40. soruda beklemek istemez.
+
+## Dönüş animasyonu modları
+
+- **Tam / Kısa / Kapalı** (`settings.animationMode`, opsiyonel). Alan
+  yoksa kullanıcı seçmemiştir; etkin mod `resolveAnimationMode`'dan:
+  hareket azaltma açıksa Kapalı, değilse Kısa. Seçilmemiş mod diske
+  yazılmaz, sistem tercihi değişince varsayılan izler. Eski ikili
+  `fastMode` okunmuyor.
+- **Süreler tek yerde:** `domain/spinTiming.ts`. `spinPlanFor(mod,
+  oturumdaki sıra)` tambur süre/turlarını, kolu, ses çarpanını ve hangi
+  geri bildirimin çalacağını verir. Kısa: oturumun (sayfa/uygulama
+  açılışı, `spinKey === 1`) ilk çekişi tam, sonrakiler tamburda ×0.35
+  (455/560 ms, 1'er tur), kol ve ses ×0.6. Kapalı: tamburlar anında,
+  kol oynamaz, kol sesi/titreşimi ve tıklar yok. Bileşenler süre sabiti
+  tutmaz, hareket azaltmayı kendileri okumaz. Şeridin biçimi (aşma,
+  easing) Drum'da, tık aralığı reelTicks'te: süre değil.
+- **Sonuç geri bildirimi tek kapıdan** (`domain/resultFeedback.ts`):
+  öncekinden 80 ms içinde gelen duruş ne ses ne titreşim çalar. Atlamada
+  ve Kapalı'da iki tambur aynı anda durur, bir kez çalar; Tam ve Kısa'da
+  iki duruş ayrı duyulur. Capacitor darbeleri süre almıyor; haptikte moda
+  göre değişen darbelerin sayısı.
+- **Atlama katmanı** (`SkipLayer`): dönüş sürerken ekranı kaplayan
+  görünmez bir `<button>`, body'ye portal. Belge düzeyinde dinleyici
+  değil: iOS WebKit etkileşimsiz öğeye dokunuşu document'a click olarak
+  iletmiyor. Atlama click'te, pointerdown'da değil: aksi halde aynı
+  dokunuşun click'i yeni açılan karttaki bir düğmeye düşerdi. Kaydırma
+  click üretmez, sayfa kayar. Klavyenin yolu Escape.
+- **Kol toparlanırken yeni çekiliş yok** (Lever `recoveringRef`): Kısa
+  ve Kapalı'da dönüş kol yerine dönmeden bitebiliyor.
+- **`spin` olayı spinning'e girişte bir kez** (`domain/spinStart.ts`,
+  `useTurnFlow`). Mod ve atlama faz sırasını değiştirmez, yalnızca
+  SETTLE'ın zamanını; `spinFlow.test.ts` her mod ve atlama için doğruluyor.
+- **Bilinen sınır (iOS):** Kapalı modda sonuç sesi, kola dokunuştaki
+  kilit açma çağrısından hemen sonra çalıyor. İlk kurulumda AudioContext
+  henüz `running` değilse ilk sonuç sesi duyulmayabilir; sonraki
+  çekişlerde sorun yok. Kuyruk kurulmadı, bilinçli.
+- **Döngülü testlerde tek expect.** `reels.test.ts`'teki 3000 turluk
+  test tur başına ~40 expect çağırıyordu (~120 bin); tüm paket paralel
+  koşarken 5 sn zaman aşımına düşüyordu. Kurallar ihlal listesi döndürür,
+  sonda tek `expect(ihlaller).toEqual([])`. Yeni özellik testlerinde de
+  aynı kalıp.
 
 ## Tambur etiketleri
 
