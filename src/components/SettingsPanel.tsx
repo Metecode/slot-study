@@ -7,17 +7,23 @@ import { ChevronIcon } from "./ChevronIcon";
 import { Collapse } from "./Collapse";
 import { ReminderSetting } from "./ReminderSetting";
 import { SegmentedControl } from "./SegmentedControl";
+import { SettingGroup } from "./SettingGroup";
+import { SettingRow } from "./SettingRow";
 import type { SegmentedOption } from "./SegmentedControl";
 import { SettingSwitchRow } from "./SettingSwitchRow";
 import { UsageStatsSetting } from "./UsageStatsSetting";
 import styles from "./SettingsPanel.module.css";
 
 /* ------------------------------------------------------------------ */
-/* Makinenin ayarları — varsayılan kapalı, tek satırlık özet            */
+/* Makinenin ayarları — varsayılan kapalı, üç grup                     */
 /* ------------------------------------------------------------------ */
 
 /*
   Makineye ait ayarlar, soruya değil: yeri makinenin hemen altı.
+  Üç grup (SettingGroup), her satır tam genişlikte: etiket solda, kontrol
+  sağda. Görünen satırlar platforma bağlı (Titreşim ve hatırlatıcı
+  yalnızca native'de, kullanım yalnızca ölçüm açıkken); içi boş grup
+  çizilmez.
   Değerler ve kararlar App'te (useSettings, useReminderSettings); panel
   yalnızca açık/kapalı durumunu kendisi tutar, o da diske yazılmaz.
 */
@@ -97,33 +103,39 @@ export function SettingsPanel({
       </button>
 
       <Collapse open={open} id="settings-panel">
-        <div className={styles.controls}>
-          <SegmentedControl
-            label="Animasyon"
-            options={ANIMATION_OPTIONS}
-            value={animationMode}
-            onChange={onAnimationModeChange}
-          />
-          <SettingSwitchRow
-            label="Ses"
-            checked={soundEnabled}
-            onChange={onSoundChange}
-            // Web'den sessiz anahtar okunamıyor; iOS'ta kalıcı hatırlatma, yalnızca Ses'in.
-            description={IS_APPLE_TOUCH_DEVICE ? "iPhone sessiz moddayken ses çalmaz." : undefined}
-          />
-          {platformFeatures.haptics && (
-            <SettingSwitchRow label="Titreşim" checked={hapticsEnabled} onChange={onHapticsChange} />
-          )}
-          {platformFeatures.reminders && (
-            <ReminderSetting
-              checked={reminderEnabled}
-              onChange={onReminderChange}
-              denied={reminderDenied}
+        <div className={styles.groups}>
+          <SettingGroup title="Görünüm ve geri bildirim">
+            <SettingRow stacked>
+              <SegmentedControl
+                label="Animasyon"
+                options={ANIMATION_OPTIONS}
+                value={animationMode}
+                onChange={onAnimationModeChange}
+              />
+            </SettingRow>
+            <SettingSwitchRow
+              label="Ses"
+              checked={soundEnabled}
+              onChange={onSoundChange}
+              // Web'den sessiz anahtar okunamıyor; iOS'ta kalıcı hatırlatma, yalnızca Ses'in.
+              description={IS_APPLE_TOUCH_DEVICE ? "iPhone sessiz moddayken ses çalmaz." : undefined}
             />
-          )}
-          {usageAvailable && (
-            <UsageStatsSetting checked={usageEnabled} onChange={onUsageChange} focusRequest={focusRequest} />
-          )}
+            {platformFeatures.haptics && (
+              <SettingSwitchRow label="Titreşim" checked={hapticsEnabled} onChange={onHapticsChange} />
+            )}
+          </SettingGroup>
+
+          <SettingGroup title="Hatırlatma">
+            {platformFeatures.reminders && (
+              <ReminderSetting checked={reminderEnabled} onChange={onReminderChange} denied={reminderDenied} />
+            )}
+          </SettingGroup>
+
+          <SettingGroup title="Gizlilik">
+            {usageAvailable && (
+              <UsageStatsSetting checked={usageEnabled} onChange={onUsageChange} focusRequest={focusRequest} />
+            )}
+          </SettingGroup>
         </div>
       </Collapse>
     </div>

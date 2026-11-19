@@ -1,7 +1,11 @@
 /*
-  Makineye ait ayarlar burada toplanır: varsayılan kapalı, tek satırlık
-  bir özet olarak durur — makinenin altında çıplak iki onay kutusu
-  yerine tek bir yer.
+  Makineye ait ayarlar: varsayılan kapalı, açılınca üç grup.
+
+  Hiyerarşi: "Ayarlar" başlığı --fs-heading ve kalın, --text; grup
+  başlıkları 11 px mono (SettingGroup); satır etiketleri --fs-body-sm.
+  Boşluk ritmi: gruplar arası --space-6 (24 px), grup başlığıyla kart
+  arası --space-2 (8 px), satır içi --space-1 (4 px). Gruplar arası
+  boşluk satır aralığından belirgin büyük: grup sınırı boşluktan okunur.
 */
 .settings {
   font-size: var(--fs-body-sm);
@@ -12,10 +16,13 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
+  /* Dokunma hedefi: metin 16 px, düğme 44 px. */
+  min-height: 44px;
   padding: 0;
   font: inherit;
-  font-size: var(--fs-body-sm);
-  color: var(--text-dim);
+  font-size: var(--fs-heading);
+  font-weight: var(--fw-semibold);
+  color: var(--text);
   background: none;
   border: 0;
   cursor: pointer;
@@ -25,13 +32,12 @@
 }
 
 .settingsToggle:active {
-  color: var(--text);
   transform: translateY(1px);
 }
 
 @media (hover: hover) {
   .settingsToggle:hover {
-    color: var(--text);
+    color: var(--text-dim);
   }
 }
 
@@ -48,25 +54,11 @@
   transform: rotate(180deg);
 }
 
-/* Her anahtar kendi öğesi; aralarında belirgin boşluk, dar ekranda alt satıra geçer. */
-.controls {
+.groups {
   display: flex;
-  flex-wrap: wrap;
-  /* Üste hizalı: iOS'ta ses anahtarının altındaki not sütunu uzatır,
-     ortalı olsaydı "Hızlı mod" aşağı kayardı. */
-  align-items: flex-start;
-  gap: var(--space-2) var(--space-6);
-  margin-top: var(--space-2);
-}
-
-/* Ses anahtarı ve iOS notu alt alta; not anahtarın hemen altında kalsın. */
-.soundControl {
-  display: inline-flex;
   flex-direction: column;
-  gap: var(--space-1);
-}
-
-.settingsNote {
-  font-size: var(--fs-label);
-  color: var(--text-faint);
+  gap: var(--space-6);
+  margin-top: var(--space-2);
+  /* Collapse'in overflow'u odak halkasını kesmesin. */
+  padding-bottom: var(--space-1);
 }
