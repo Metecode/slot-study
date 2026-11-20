@@ -23,7 +23,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["capacitor.config.ts", "scripts/**/*.ts"],
+  "include": ["capacitor.config.ts", "scripts/**/*.ts", "build-info/**/*.test.ts"],
   /* src/domain'i import ediyor; kendi ayarıyla tsconfig.content-check.json'da */
   "exclude": ["scripts/content-check.ts", "scripts/content-check/**"]
 }

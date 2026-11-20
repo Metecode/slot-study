@@ -15,14 +15,15 @@ RUN npm ci
 # references'ındaki her proje ve kapsadığı dosyalar burada olmalı;
 # geliştirme araçlarının tsconfig'leri bilerek orada değil.
 COPY index.html vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json ./
+COPY build-info/commitLabel.ts build-info/
 COPY public public
 COPY src src
 COPY privacy privacy
 # Lisanslar paneli kök LICENSE'ı pakete gömüyor (src/content/licenses.ts).
 COPY LICENSE ./
 
-# Alt bilgideki commit kısaltması için; vite.config.ts okuyor. Verilmezse
-# boş kalır ve alt bilgi "dev" yazar.
+# Alt bilgideki commit kısaltması için (build-info/commitLabel.ts). İmajda
+# git yok; verilmezse alt bilgi yalnızca sürümü yazar.
 ARG GITHUB_SHA
 ENV GITHUB_SHA=$GITHUB_SHA
 RUN npm run build

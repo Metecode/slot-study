@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true
   },
   /* Yalnızca derlemenin kendisi; betikler ve capacitor.config.ts tsconfig.scripts.json'da */
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "build-info/commitLabel.ts"]
 }
