@@ -12,7 +12,6 @@
 /* Tarayıcı indirmez: sistemdeki Google Chrome'u kullanır.              */
 /* ------------------------------------------------------------------ */
 
-import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
@@ -54,10 +53,6 @@ const NATIVE_PLATFORM = "android";
 // sarmalanan ifade new'üyle birlikte alınmalı.
 const NOT_FOUND_ERRORS = /(?:\bnew\s+)?\bError\((["'`])(File|Folder|Entry) does not exist\.\1\)/g;
 const NOT_FOUND_CODE = "OS-PLUG-FILE-0008";
-
-// Alt bilgideki commit özeti CI'da GITHUB_SHA'dan geliyor; yerelde "dev"
-// yazmasın, görüntü o anki commit'in derlemesi olsun.
-process.env.GITHUB_SHA ??= execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf-8" }).trim();
 
 const questions = await loadQuestions();
 await build({ logLevel: "warn", build: { outDir: BUILD_DIR, emptyOutDir: true } });

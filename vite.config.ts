@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -6,14 +7,25 @@ import { defineConfig } from "vite";
 import type { Plugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
+import { resolveCommitLabel } from "./build-info/commitLabel.ts";
+
 // Alt bilgideki sürüm package.json'dan okunur, elle tekrar yazılmaz.
 const pkg = JSON.parse(
   readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf-8"),
 ) as { version: string };
 
-// Commit kısaltması CI'da GITHUB_SHA'dan gelir (Docker derlemesine build
-// arg olarak geçer, bkz. Dockerfile.frontend). Yerelde tanımsız: "dev".
-const commitSha = process.env.GITHUB_SHA?.slice(0, 7) || "dev";
+// Yerel depodaki HEAD. Docker imajında .git ve git yok: hata yutulur,
+// orada commit zaten GITHUB_SHA build arg'ından geliyor.
+function readGitHead(): string | undefined {
+  try {
+    return execFileSync("git", ["rev-parse", "HEAD"], {
+      encoding: "utf-8",
+      stdio: ["ignore", "pipe", "ignore"],
+    });
+  } catch {
+    return undefined;
+  }
+}
 
 // Backend'e giden yollar geliştirmede proxy'lenir: tarayıcı frontend'i ve
 // API'yi aynı origin'den (localhost:5173) görür. Refresh cookie'si
@@ -127,7 +139,7 @@ const staticPagesWithoutPwa: Plugin = {
   },
 };
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), pwa, staticPagesWithoutPwa],
   build: {
     rollupOptions: {
@@ -149,7 +161,11 @@ export default defineConfig({
   },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
-    __COMMIT_SHA__: JSON.stringify(commitSha),
+    // Kaynaklar ve sıra build-info/commitLabel.ts'te. Production'da
+    // bulunamazsa boş: alt bilgi yalnızca sürümü yazar.
+    __COMMIT_SHA__: JSON.stringify(
+      resolveCommitLabel({ env: process.env, isBuild: command === "build", readGitHead }),
+    ),
   },
   server: {
     proxy: {
@@ -159,4 +175,4 @@ export default defineConfig({
       "/login": backendProxy,
     },
   },
-});
+}));

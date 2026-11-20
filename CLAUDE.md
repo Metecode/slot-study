@@ -253,6 +253,11 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   ile çeker; frontend derlenemezse backend ve soru seeder'ı da eski sürümde
   kalır. Canlı içeriğin bir commit'le aynı olup olmadığını
   `npm run check:live -- [revizyon]` gösterir.
+- **Commit etiketi şu kaynaklardan gelir:** GITHUB_SHA (web), CM_COMMIT
+  (Codemagic), git (yerel). Sıra `build-info/commitLabel.ts`'te; git
+  yalnızca `vite build`'de okunur. Hiçbiri yoksa production'da alt bilgi
+  yalnızca sürümü yazar, build durmaz; dev sunucusunda "dev". Dosya
+  `tsconfig.node.json`'da ve `Dockerfile.frontend`'de tek tek sayılı.
 
 ## Backend (`backend/`)
 

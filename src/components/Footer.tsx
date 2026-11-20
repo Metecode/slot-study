@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 
 import { LicensesDialog } from "./LicensesDialog";
 import { PrivacyLink } from "./PrivacyLink";
+import { versionLabel } from "./versionLabel";
 import { REPO_URL } from "../content/licenses";
 import styles from "./Footer.module.css";
 
@@ -41,9 +42,7 @@ export function Footer() {
         </span>
         <div className={styles.end}>
           {/* Hangi derlemenin çalıştığını söyler; hata bildiriminde işe yarar. */}
-          <span className={styles.version}>
-            v{__APP_VERSION__} · {__COMMIT_SHA__}
-          </span>
+          <span className={styles.version}>{versionLabel(__APP_VERSION__, __COMMIT_SHA__)}</span>
           <a className={styles.link} href={REPO_URL} target="_blank" rel="noreferrer">
             GitHub
           </a>
