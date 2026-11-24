@@ -1,7 +1,8 @@
 /*
   Alt bilgi: tam sayfa genişliğinde ayırıcı, krom sütununa hizalanır —
   üst çubukla aynı gerekçeyle (bkz. TopBar.module.css).
-  Renkler tokens.css'ten gelir.
+  Solda bağlantılar, sağda sürüm; ayraç ya da ikon yok, hiyerarşi boyut,
+  renk ve konumdan okunur. Renkler tokens.css'ten gelir.
 */
 
 .footer {
@@ -12,57 +13,55 @@
   /* Üst çubukla aynı krom sütunu; bkz. TopBar.module.css */
   max-width: var(--shell-bar);
   margin: 0 auto;
-  padding: var(--space-4) var(--gutter);
+  /* 44px'lik hedeflerin içinde de boşluk var; metnin çizgiye ve alt
+     kenara görünen uzaklığı eşit, ~22px. */
+  padding: var(--space-2) var(--gutter);
   /* Ev göstergesi son satırın üstüne binmesin. Toplam değil en büyüğü:
      gösterge bölgesi zaten boş, kendi boşluğumuzu üstüne eklersek alt
-     kenar gereğinden kalın kalıyor. Masaüstünde max(0, 16px) = 16px. */
-  padding-bottom: max(var(--safe-bottom), var(--space-4));
+     kenar gereğinden kalın kalıyor. */
+  padding-bottom: max(var(--safe-bottom), var(--space-2));
   display: flex;
-  /* Dar ekranda sürüm satırı alta iner. Sol grup gerekirse kendi içinde
-     de sarılır (büyük yazı, %200), ama yalnızca birimler arasında: "·"
-     satır sonunda asılı kalmaz. */
+  /* Tek satır; sığmazsa (büyük yazı, %200) sürüm alta iner. */
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2) var(--space-3);
-  font-family: var(--mono);
-  font-size: var(--fs-mono);
-  color: var(--text-faint);
+  column-gap: var(--space-2);
 }
 
-.start {
-  /* Tek satırda kalsaydı %200'de (180 CSS px) 254 px'le sayfayı yatay
-     kaydırıyordu. */
-  min-width: 0;
-}
-
-/* "Açık kaynak", "· Lisanslar", "· Gizlilik": ayırıcı sonraki öğeye bağlı. */
-.unit {
-  white-space: nowrap;
-}
-
-.end {
+/* Hedeflerin yan dolgusu kadar dışarı taşar: metin üst çubuktaki logoyla
+   ve sağdaki avatarla aynı kenardan hizalansın, dolgudan değil. */
+.links {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
+  flex-wrap: wrap;
+  column-gap: var(--space-2);
+  min-width: 0;
+  margin: 0;
+  margin-inline-start: calc(var(--space-2) * -1);
+  padding: 0;
+  list-style: none;
 }
 
-/* Sürüm satırı bilgi, bağlantı değil: bir basamak küçük ve hep sönük. */
-.version {
-  font-size: var(--fs-mono-sm);
-  color: var(--text-faint);
-  white-space: nowrap;
+/* Alta indiğinde de sağda: commit açılınca sürüm düğmesi yana kaymasın. */
+.meta {
+  margin-inline: auto calc(var(--space-2) * -1);
 }
 
 .link {
-  color: var(--text-faint);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-2);
+  font-family: var(--sans);
+  font-size: var(--fs-label);
+  color: var(--text-dim);
   text-decoration: none;
+  white-space: nowrap;
+  border-radius: 6px;
   transition: color var(--dur-fast) var(--ease-out);
 }
 
 @media (hover: hover) {
   .link:hover {
-    color: var(--text-dim);
+    color: var(--text);
   }
 }
 
@@ -70,18 +69,19 @@
   color: var(--text);
 }
 
+.link:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: -2px;
+}
+
 /* Lisanslar düğmesi bağlantı gibi görünür: tarayıcı düğme stili sıfırlanır. */
 .button {
-  padding: 0;
-  font: inherit;
-  /* Sarıldığında düğme metni ortalanmasın, satırın başından başlasın. */
-  text-align: start;
   background: none;
   border: none;
   cursor: pointer;
 }
 
-.link:focus-visible {
-  outline: 2px solid var(--text);
-  outline-offset: 2px;
+/* Hedef zaten 44px; index.css'teki büyütme komşuların üstüne taşardı. */
+.button::after {
+  content: none;
 }

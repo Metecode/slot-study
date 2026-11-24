@@ -65,7 +65,7 @@
        --fs-body-sm  ikincil gövde: açıklama satırı, düğme metni.
        --fs-label    etiket ve yardımcı metin.
        --fs-mono     mono etiket: adım göstergesi, durum çubuğu, tambur.
-       --fs-mono-sm  mono mikro etiket: rozet, sürüm, birim.
+       --fs-mono-sm  mono mikro etiket: rozet, commit, birim.
 
      Hiyerarşi boyutla kurulur, renkle değil: soru --fs-display ve
      --text ile en öne çıkar; model cevap --fs-body kalır, aynı

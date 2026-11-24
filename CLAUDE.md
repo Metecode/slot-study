@@ -197,6 +197,18 @@ shadcn/ui bileşenleri ihtiyaç oldukça tek tek eklenir, toplu kurulmaz.
   açan düğmeye `focus({ focusVisible })` ile döner. CSS kuralı zaten her
   yerde `:focus-visible`; sorun stilde değil, odağın veriliş biçiminde.
 
+## Alt bilgi
+
+- **İki seviye.** Solda bağlantılar (Açık kaynak, Lisanslar, Gizlilik;
+  `--fs-label`, `--text-dim`), sağda sürüm (bir basamak küçük,
+  `--text-faint`, `--bg` üzerinde 5.2:1). Ayraç ve ikon yok. Repo'nun tek
+  bağlantısı "Açık kaynak"; ayrıca "GitHub" yazılmaz.
+- **Commit kapalı gelir,** sürüme dokununca solunda açılır (`VersionInfo`).
+  Düğmenin dışında durur ki seçilip kopyalanabilsin. Commit boşsa sürüm
+  düz metindir.
+- **Hedefler 44 px, araları en az 8 px.** Satır 360 px'te commit açıkken de
+  tek; sığmazsa (%130 yazı, %200) sürüm alta iner.
+
 ## Tambur etiketleri
 
 - **Etiket en fazla iki satır, yüz yüksekliği sabit.** Şerit satır
