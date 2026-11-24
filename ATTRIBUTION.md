@@ -9,7 +9,7 @@ kullanıldığını anlatır. Lisans metinlerinin kendisi ayrı dosyalarda:
 | Soru içeriği (`src/content/`: sorular, örnek cevaplar, kavramlar) | CC BY-SA 4.0 | [`src/content/LICENSE`](src/content/LICENSE) |
 | Dış kaynaktan türetilmiş içerik | Kaynağın lisansı (bugün yalnızca MIT) | [`src/content/THIRD_PARTY_NOTICES`](src/content/THIRD_PARTY_NOTICES) |
 
-Uygulamada aynı üç metin alt bilgideki **Açık kaynak · Lisanslar**
+Uygulamada aynı üç metin alt bilgideki **Lisanslar**
 panelinde, pakete gömülü olarak gösterilir (`src/content/licenses.ts`).
 
 ## Dış kaynaktan türetilmiş içerik

@@ -1,0 +1,60 @@
+/*
+  Sürüm bilgi, bağlantı değil: footer bağlantılarından bir basamak küçük
+  ve sönük. --text-faint, --bg üzerinde 5.2:1 (AA).
+*/
+
+/* Commit sürümün soluna açılır: satır sağa yaslıyken düğme yerinden
+   oynamaz, ikinci dokunuş aynı noktada kapatır. DOM'da düğmeden sonra. */
+.group {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.version {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 var(--space-2);
+  font-family: var(--sans);
+  font-size: var(--fs-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.button {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+/* Hedef zaten 44px; index.css'teki büyütme komşuların üstüne taşardı. */
+.button::after {
+  content: none;
+}
+
+@media (hover: hover) {
+  .button:hover {
+    color: var(--text-dim);
+  }
+}
+
+.button:active {
+  color: var(--text);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: -2px;
+}
+
+.commit {
+  font-family: var(--mono);
+  font-size: var(--fs-mono-sm);
+  color: var(--text-faint);
+}

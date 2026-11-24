@@ -3,7 +3,7 @@
 /** vite.config.ts'te package.json'dan enjekte edilir. */
 declare const __APP_VERSION__: string;
 
-/** vite.config.ts'te GITHUB_SHA'nın ilk 7 karakteri; yerelde "dev". */
+/** Commit'in ilk 7 karakteri; dev sunucusunda "dev", kaynak yoksa boş (build-info/commitLabel.ts). */
 declare const __COMMIT_SHA__: string;
 
 interface ImportMetaEnv {
